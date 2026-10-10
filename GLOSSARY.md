@@ -1,6 +1,6 @@
 # Skill Collection
 
-A personal collection of agent skills and the machinery around them, gathered and adapted from many sources, sized to one owner's work across Unity, C# libraries, web apps and agentic workflows.
+A personal collection of agent skills and the machinery around them, gathered and adapted from many sources, sized to one owner's work across Unity, C# libraries, web apps and agentic workflows. The collection is the installed whole, not this repo alone: it spans this repo and the fork.
 
 ## Where it is installed
 
@@ -33,11 +33,18 @@ A piece's position on both axes, spoken as two words, e.g. "core user-invoked" o
 
 **Source**:
 An external repository the collection may borrow skills, ideas or mechanisms from.
-_Avoid_: upstream (reserved for a source the collection tracks and merges from)
+_Avoid_: upstream (that is `mattpocock/skills`, which only the fork merges from)
 
 **The fork**:
-`Hissal/mattpocock-skills-unity`, the Unity edition of Matt Pocock's skills, expected to remain publishable in its own right.
-_Avoid_: base
+`Hissal/mattpocock-skills-unity`, the Unity edition of Matt Pocock's skills. A member of the collection, not a source: its skills belong to core and the Unity pack while living in their own repo, which stays usable without the rest of the collection.
+_Avoid_: base, source
+
+**Override**:
+A skill copied into this repo and edited slightly, keeping its name and staying recognisable as the skill it was copied from. A new skill built from other skills is not an override.
+_Avoid_: vendored copy, adapted copy
+
+**Fork override**:
+An override of one of the fork's skills, installed in place of the fork's version. The home for a personal change too large for the fork.
 
 **Candidate**:
 A single skill or mechanism from a source, under consideration and not yet decided.

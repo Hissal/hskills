@@ -29,6 +29,10 @@ _Avoid_: command, workflow skill
 **Address**:
 A piece's position on both axes, spoken as two words, e.g. "core user-invoked" or "Unity pack always-on".
 
+**Tripwire**:
+A token figure for one layer of the collection that prompts a review when crossed: cut something, or raise it on purpose. It measures the collection only, never what else is installed.
+_Avoid_: cap, limit, hard budget
+
 ## Building the collection
 
 **Source**:

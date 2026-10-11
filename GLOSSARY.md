@@ -2,14 +2,14 @@
 
 A personal collection of agent skills and the machinery around them, gathered and adapted from many sources, sized to one owner's work across Unity, C# libraries, web apps and agentic workflows. The collection is the installed whole, not this repo alone: it spans this repo and the fork.
 
-## Where it is installed
+## Which part it is
 
 **Core**:
-The part of the collection installed at user scope, reachable from every session in every repo.
-_Avoid_: global, base, always-active layer
+The universal skills of the collection: the ones everything else builds on, useful whatever the project. Usually installed at user scope, though nothing requires it.
+_Avoid_: global, always-active layer
 
 **Pack**:
-A domain-specific part of the collection (e.g. the Unity pack) installed only into the projects it serves, so it costs nothing elsewhere.
+An optional add-on to core, installed separately so that taking core never brings it along. Usually installed per project (the Unity pack in a Unity project), sometimes at user scope when it serves a person (the onboarding pack). A pack can be narrower than a domain, so two people on one project may pick different packs.
 _Avoid_: domain layer, local, kit
 
 ## How it reaches the agent
@@ -32,6 +32,34 @@ A piece's position on both axes, spoken as two words, e.g. "core user-invoked" o
 **Tripwire**:
 A token figure for one layer of the collection that prompts a review when crossed: cut something, or raise it on purpose. It measures the collection only, never what else is installed.
 _Avoid_: cap, limit, hard budget
+
+## Finding the right skill
+
+**Expensive workflow**:
+A skill expected to use a lot of tokens, typically because it spawns subagents or is built to run across sessions. User-invoked by default; a reasoned exception may stay model-invoked.
+_Avoid_: heavy skill, big workflow
+
+**Guide**:
+An entry skill that answers "where do I go for this?". It holds a needs table, routes, or both, and it suggests workflows without ever running them.
+_Avoid_: router, hub, mode, dispatcher, index, map (that is the wayfinder map)
+
+**Core guide**:
+The guide to core's workflows. It holds routes only, is user-invoked, and consults a pack guide when the situation touches that pack.
+
+**Automatic guide**:
+The core guide published model-invoked, so the agent can suggest a workflow unasked. Part of the onboarding pack, not of core.
+
+**Pack guide**:
+A pack's model-invoked guide, named `<pack>-guide`.
+
+**Need**:
+The moment an agent or a person reaches for knowledge, phrased as what they are trying to do.
+
+**Needs table**:
+A guide's table from needs to the knowledge that answers them: its own reference files, or other skills in the same pack.
+
+**Routes**:
+A guide's table from situations to the workflows that fit them.
 
 ## Building the collection
 

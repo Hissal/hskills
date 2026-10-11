@@ -1,6 +1,6 @@
 # Skill Collection
 
-A personal collection of agent skills and the machinery around them, gathered and adapted from many sources, sized to one owner's work across Unity, C# libraries, web apps and agentic workflows. The collection is the installed whole, not this repo alone: it spans this repo and the fork.
+A personal collection of agent skills and the machinery around them, gathered and adapted from many sources, sized to one owner's work across Unity, C# libraries, web apps and agentic workflows. Every skill in the collection lives in this repo.
 
 ## Which part it is
 
@@ -9,7 +9,7 @@ The universal skills of the collection: the ones everything else builds on, usef
 _Avoid_: global, always-active layer
 
 **Pack**:
-An optional add-on to core, installed separately so that taking core never brings it along. Usually installed per project (the Unity pack in a Unity project), sometimes at user scope when it serves a person (the onboarding pack). A pack can be narrower than a domain, so two people on one project may pick different packs.
+An optional add-on to core: a named list of skills, installed separately so that taking core never brings it along. A project takes the whole list or picks single skills from it. Usually installed per project (the Unity pack in a Unity project), sometimes at user scope when it serves a person (the onboarding pack). A pack can be narrower than a domain, so two people on one project may pick different packs.
 _Avoid_: domain layer, local, kit
 
 ## How it reaches the agent
@@ -65,18 +65,19 @@ A guide's table from situations to the workflows that fit them.
 
 **Source**:
 An external repository the collection may borrow skills, ideas or mechanisms from.
-_Avoid_: upstream (that is `mattpocock/skills`, which only the fork merges from)
+_Avoid_: upstream (that is `mattpocock/skills`, the source Matt-derived skills are tracked against)
 
 **The fork**:
-`Hissal/mattpocock-skills-unity`, the Unity edition of Matt Pocock's skills. A member of the collection, not a source: its skills belong to core and the Unity pack while living in their own repo, which stays usable without the rest of the collection.
-_Avoid_: base, source
+`Hissal/mattpocock-skills-unity`, the Unity edition of Matt Pocock's skills. A source: Matt-derived skills are copied from it into this repo, and it is no longer where they are authored.
+_Avoid_: base, member
 
 **Override**:
 A skill copied into this repo and edited slightly, keeping its name and staying recognisable as the skill it was copied from. A new skill built from other skills is not an override.
 _Avoid_: vendored copy, adapted copy
 
-**Fork override**:
-An override of one of the fork's skills, installed in place of the fork's version. The home for a personal change too large for the fork.
+**Project configuration**:
+Facts a project states about itself for skills to read: its tracker, label names, where files live, commands to run, what needs approval. It lives in the project, never inside an installed skill. A skill's behaviour is fixed and takes no preference switches.
+_Avoid_: settings, options, preferences
 
 **Candidate**:
 A single skill or mechanism from a source, under consideration and not yet decided.

@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: superseded by 0002
 ---
 
 # The fork stays a separate member repo

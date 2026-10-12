@@ -61,6 +61,16 @@ A guide's table from needs to the knowledge that answers them: its own reference
 **Routes**:
 A guide's table from situations to the workflows that fit them.
 
+## Reaching a pack
+
+**Extension point**:
+The place in a skill where it asks the project's pack guides for knowledge about a stated need. It names the need and never a pack.
+_Avoid_: delta line, pack hook
+
+**Pack list**:
+A project's list of the pack guides it uses, each with its domain in a few words. Part of project configuration.
+_Avoid_: job map, pack registry
+
 ## Building the collection
 
 **Source**:

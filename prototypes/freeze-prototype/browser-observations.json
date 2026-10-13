@@ -1,0 +1,246 @@
+{
+  "date": "2026-10-13",
+  "kind": "T3 headless HTML preview driving the actual guided buttons; all path and adapter behavior simulated",
+  "width": 728,
+  "contentHeight": 1891,
+  "walkthroughs": [
+    {
+      "platform": "windows",
+      "scenario": "Source + tests",
+      "outcomes": [
+        "Changed",
+        "Edit allowed",
+        "Edit blocked",
+        "Changed",
+        "Edit allowed",
+        "Read allowed"
+      ]
+    },
+    {
+      "platform": "windows",
+      "scenario": "Paths + links",
+      "outcomes": [
+        "Changed",
+        "Edit blocked",
+        "Edit blocked",
+        "Edit blocked",
+        "Edit allowed",
+        "Edit allowed",
+        "Edit blocked"
+      ]
+    },
+    {
+      "platform": "windows",
+      "scenario": "Isolation",
+      "outcomes": [
+        "Changed",
+        "Changed",
+        "Edit allowed",
+        "Changed",
+        "Changed",
+        "Edit blocked",
+        "Changed",
+        "Edit allowed",
+        "Changed"
+      ]
+    },
+    {
+      "platform": "windows",
+      "scenario": "Pause + finish",
+      "outcomes": [
+        "Changed",
+        "Changed",
+        "Changed",
+        "Edit blocked",
+        "Changed",
+        "Changed",
+        "Edit allowed"
+      ]
+    },
+    {
+      "platform": "windows",
+      "scenario": "Authority + gaps",
+      "outcomes": [
+        "Changed",
+        "Blocked",
+        "Blocked",
+        "Edit blocked",
+        "Shell wrote",
+        "Stopped",
+        "Changed",
+        "Edit allowed"
+      ]
+    },
+    {
+      "platform": "windows",
+      "scenario": "Platform fixtures",
+      "outcomes": [
+        "Changed",
+        "Edit allowed",
+        "Edit allowed",
+        "Edit allowed",
+        "Unsupported, stopped",
+        "Unsupported, stopped"
+      ]
+    },
+    {
+      "platform": "linux",
+      "scenario": "Source + tests",
+      "outcomes": [
+        "Changed",
+        "Edit allowed",
+        "Edit blocked",
+        "Changed",
+        "Edit allowed",
+        "Read allowed"
+      ]
+    },
+    {
+      "platform": "linux",
+      "scenario": "Paths + links",
+      "outcomes": [
+        "Changed",
+        "Edit blocked",
+        "Edit blocked",
+        "Edit blocked",
+        "Edit blocked",
+        "Edit allowed",
+        "Edit blocked"
+      ]
+    },
+    {
+      "platform": "linux",
+      "scenario": "Isolation",
+      "outcomes": [
+        "Changed",
+        "Changed",
+        "Edit allowed",
+        "Changed",
+        "Changed",
+        "Edit blocked",
+        "Changed",
+        "Edit allowed",
+        "Changed"
+      ]
+    },
+    {
+      "platform": "linux",
+      "scenario": "Pause + finish",
+      "outcomes": [
+        "Changed",
+        "Changed",
+        "Changed",
+        "Edit blocked",
+        "Changed",
+        "Changed",
+        "Edit allowed"
+      ]
+    },
+    {
+      "platform": "linux",
+      "scenario": "Authority + gaps",
+      "outcomes": [
+        "Changed",
+        "Blocked",
+        "Blocked",
+        "Edit blocked",
+        "Shell wrote",
+        "Stopped",
+        "Changed",
+        "Edit allowed"
+      ]
+    },
+    {
+      "platform": "linux",
+      "scenario": "Platform fixtures",
+      "outcomes": [
+        "Changed",
+        "Edit blocked",
+        "Edit blocked",
+        "Edit blocked",
+        "Unsupported, stopped",
+        "Unsupported, stopped"
+      ]
+    },
+    {
+      "platform": "macos",
+      "scenario": "Source + tests",
+      "outcomes": [
+        "Changed",
+        "Edit allowed",
+        "Edit blocked",
+        "Changed",
+        "Edit allowed",
+        "Read allowed"
+      ]
+    },
+    {
+      "platform": "macos",
+      "scenario": "Paths + links",
+      "outcomes": [
+        "Changed",
+        "Edit blocked",
+        "Edit blocked",
+        "Edit blocked",
+        "Edit blocked",
+        "Edit allowed",
+        "Edit blocked"
+      ]
+    },
+    {
+      "platform": "macos",
+      "scenario": "Isolation",
+      "outcomes": [
+        "Changed",
+        "Changed",
+        "Edit allowed",
+        "Changed",
+        "Changed",
+        "Edit blocked",
+        "Changed",
+        "Edit allowed",
+        "Changed"
+      ]
+    },
+    {
+      "platform": "macos",
+      "scenario": "Pause + finish",
+      "outcomes": [
+        "Changed",
+        "Changed",
+        "Changed",
+        "Edit blocked",
+        "Changed",
+        "Changed",
+        "Edit allowed"
+      ]
+    },
+    {
+      "platform": "macos",
+      "scenario": "Authority + gaps",
+      "outcomes": [
+        "Changed",
+        "Blocked",
+        "Blocked",
+        "Edit blocked",
+        "Shell wrote",
+        "Stopped",
+        "Changed",
+        "Edit allowed"
+      ]
+    },
+    {
+      "platform": "macos",
+      "scenario": "Platform fixtures",
+      "outcomes": [
+        "Changed",
+        "Edit blocked",
+        "Edit blocked",
+        "Edit blocked",
+        "Unsupported, stopped",
+        "Unsupported, stopped"
+      ]
+    }
+  ],
+  "errors": []
+}

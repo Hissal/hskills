@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Freeze behavior prototype</title>
+<style>
+*{box-sizing:border-box}body{margin:0;color:var(--foreground,#202832);font:14px/1.5 var(--font-sans,system-ui,sans-serif);background:transparent}h1{font-size:23px;line-height:1.2;margin:0 0 8px}h2{font-size:16px;margin:0 0 12px}p{margin:6px 0 14px}.muted,small{color:var(--muted-foreground,#637080)}section{margin:16px 0}.panel{background:var(--card,#f4f6f8);border:1px solid var(--border,#d7dde4);border-radius:var(--radius,10px);padding:16px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}button,select,input{font:inherit;border:1px solid var(--border,#d7dde4);border-radius:6px;background:var(--card,#f4f6f8);color:var(--foreground,#202832);padding:7px 10px}button{cursor:pointer}button:hover{border-color:var(--primary,#315ecb)}button.active,button.primary{background:var(--primary,#315ecb);color:var(--primary-foreground,white)}button:disabled{opacity:.5;cursor:default}input{width:100%}label{display:block;margin-bottom:6px}code{font-size:12px;overflow-wrap:anywhere}#result{border-left:4px solid var(--primary,#315ecb)}#result strong{display:block;font-size:17px}ul{margin:8px 0;padding-left:20px}.sessions{display:grid;gap:8px}.session{padding:8px 0;border-bottom:1px solid var(--border,#d7dde4)}.session:last-child{border:0}table{border-collapse:collapse;width:100%;font-size:12px}td,th{text-align:left;vertical-align:top;border-bottom:1px solid var(--border,#d7dde4);padding:8px 5px}th{font-weight:600}.steps{display:grid;gap:8px}#log{max-height:155px;overflow:auto;font-size:12px}.tag{font-size:12px;color:var(--muted-foreground,#637080);margin-bottom:8px}.changed{color:var(--primary,#315ecb)}details{margin-top:12px}summary{cursor:pointer}@media(max-width:560px){.grid{grid-template-columns:1fr}h1{font-size:21px}td,th{padding:7px 3px}}
+</style></head><body>
+<h1>Does freeze catch accidental scope drift?</h1>
+<p>This throwaway model lets you choose writable directories, try edits, and move between projects and conversations. The browser changes imaginary files only. Its path and adapter behavior is simulated.</p>
+<div class="tag">Proposed lifetime: pause and resume keep the boundary; explicit finish clears it. Owner decision pending.</div>
+<div class="row"><label>Path model <select id="os"><option value="windows">Windows</option><option value="linux">Linux</option><option value="macos">macOS, case-sensitive model</option></select></label><button id="reset">Reset</button></div>
+<section class="grid">
+<div class="panel"><h2>Current context</h2><label>Project <select id="project"><option value="a">Game</option><option value="b">Library</option></select></label><label>Conversation <select id="session"><option value="one">Conversation A</option><option value="two">Conversation B, concurrent</option><option value="three">Conversation C, new</option></select></label><div id="context"></div></div>
+<div class="panel"><h2>All conversation boundaries</h2><div class="sessions" id="boundaries"></div></div>
+</section>
+<section class="panel" id="result" aria-live="polite"></section>
+<section><h2>Free play</h2><div class="row" id="controls"></div><div class="grid" style="margin-top:12px"><div><label for="path">Target path, relative or absolute</label><input id="path" value="src/player.txt"></div><div class="row" style="align-items:end"><button id="custom-edit">Try edit</button><button id="custom-read">Try read</button><button id="custom-shell">Try shell write</button></div></div><p class="muted" style="margin-top:8px">Several paths separated by semicolons model one atomic patch. A move checks both old and new paths.</p></section>
+<section class="panel"><h2>Guided walkthroughs</h2><div class="row" id="tabs" role="tablist"></div><p id="scenario" style="margin-top:12px"></p><div class="steps" id="steps"></div></section>
+<section class="grid"><div class="panel"><h2>Imaginary files</h2><div id="files"></div></div><div class="panel"><h2>Recent actions</h2><div id="log"></div></div></section>
+<section class="panel"><h2>What was actually checked</h2><p id="native-evidence">Native filesystem probes ran on Windows with Node 22.23.2 and Ubuntu under WSL with Node 18.19.1. Each recorded 19 observations. Directory containment and link cases matched expectations. A link followed by parent traversal resolved differently on the two systems. Missing intermediate directories and hard links stopped as unsupported. Real PowerShell and POSIX shell writes outside the chosen directory succeeded. A second Node process reloaded synthetic session state. Git Bash C-drive translation was observed separately. macOS and real harness adapters remain unverified.</p><details open><summary>Harness evidence, separate from operating systems</summary><table><thead><tr><th>Harness</th><th>Source establishes</th><th>Still unsupported here</th></tr></thead><tbody>
+<tr><td>Claude Code</td><td>Hook session ID and working directory; explicit skill expansion event.</td><td>Real edit payload interception, lifetime mapping and user invocation path. No hook installed.</td></tr>
+<tr><td>Codex</td><td>Session ID and working directory. Subagent hooks use the parent ID.</td><td>Patch target extraction, explicit invocation authority and lifecycle mapping. No hook installed.</td></tr>
+<tr><td>OpenCode</td><td>Plugin project/directory context; tool and session events.</td><td>Version-specific edit payloads, stable session wiring and user invocation path. No plugin installed.</td></tr>
+</tbody></table><p class="muted">Identity alone does not prove edit interception or authenticate a human. Actual installed full-access probes are needed before declaring support.</p></details>
+<details><summary>Assumptions and limits</summary><ul>
+<li>Freeze state is keyed by adapter, physical project root and conversation identity. The browser uses invented identities.</li>
+<li>Only an explicit human freeze or unfreeze changes a boundary. Buttons stand in for that authority; a local state file cannot prove it.</li>
+<li>Reads stay available. Shell writes and unknown edit tools have no freeze containment guarantee. Other core guard rules still apply.</li>
+<li>Covered edits with unresolved targets or failed evaluation stop. Installed adapter crash and timeout handling must enforce that.</li>
+<li>Several roots form a union. Freeze replaces that list. One outside target blocks the whole patch before any edit.</li>
+<li>The virtual link inside src points to Library. An outside alias points back into src. Physical containment decides.</li>
+<li>Windows case folding and WSL/Git Bash mappings here are fixtures. Actual case-sensitive Windows directories, UNC/device paths, mount mappings, link races and macOS volumes require independent checks.</li>
+<li>Fresh conversations start unrestricted by freeze. Explicit finish retires the old identity; resuming a retired identity is blocked in this proposed model.</li>
+</ul></details>
+<p class="muted">Primary references: <a href="https://code.claude.com/docs/en/hooks">Claude Code hooks</a>, <a href="https://learn.chatgpt.com/docs/hooks">Codex hooks</a>, <a href="https://opencode.ai/docs/plugins/">OpenCode plugins</a>. Read 2026-10-13. No security boundary against full operating-system access is claimed.</p>
+</section>
+<script>
+// Pure virtual model. Filesystem aliases and authority are fixtures, never native evidence.
+const FreezeModel = (() => {
+ const base=(os,p)=>os==='windows'?'C:/work/'+(p==='a'?'game':'library'):(os==='linux'?'/work/':'/Users/demo/')+(p==='a'?'game':'library');
+ const key=s=>JSON.stringify(['virtual-adapter',base(s.os,s.project),s.session]);
+ function initial(os='windows'){return {os,project:'a',session:'one',sessions:{},files:{},log:[],result:{verdict:'Ready',reason:'Choose a directory and try an edit.'}}}
+ function resolve(s,input){
+  let raw=input.trim(); if(!raw || /[\0\n]/.test(raw))throw Error('Target is missing or unsupported.');
+  if(s.os==='windows'){
+   raw=raw.replaceAll('\\','/');
+   if(raw.startsWith('/mnt/c/'))raw='C:/'+raw.slice(7); else if(raw.startsWith('/c/'))raw='C:/'+raw.slice(3);
+   if(raw.startsWith('//') || raw.includes(':')&&!/^[A-Za-z]:\//.test(raw) || raw.startsWith('/') )throw Error('Unknown Windows path mapping.');
+   raw=raw.toLowerCase();
+  }else if(raw.includes(':')||raw.includes('\\'))throw Error('Unknown native path mapping.');
+  const root=base(s.os,s.project).toLowerCase();
+  let absolute=/^(?:[a-z]:\/|\/)/i.test(raw)?raw:(s.os==='windows'?root:base(s.os,s.project))+'/'+raw;
+  // Model the observed ordinary Win32 path behavior. This is not a universal Windows resolver.
+  if(s.os==='windows'){const lexical=[];for(const piece of absolute.split('/')){if(!piece||piece==='.')continue;if(piece==='..'){if(lexical.length>1)lexical.pop();}else lexical.push(piece);}absolute=lexical.join('/');}
+  const parts=[];
+  for(const piece of absolute.split('/')){
+   if(!piece||piece==='.')continue;
+   if(piece==='..'){parts.pop();continue;}
+   parts.push(piece);
+   let prefix=(s.os==='windows'?'':'/')+parts.join('/');
+   const projectRoot=base(s.os,'a'); const compare=s.os==='windows'?projectRoot.toLowerCase():projectRoot;
+   if(prefix===compare+'/src/escape'){const replacement=base(s.os,'b');parts.splice(0,parts.length,...replacement.split('/').filter(Boolean));}
+   if(prefix===compare+'/source-alias'){const replacement=compare+'/src';parts.splice(0,parts.length,...replacement.split('/').filter(Boolean));}
+  }
+  return (s.os==='windows'?'':'/')+parts.join('/');
+ }
+ const inside=(target,root)=>target===root||target.startsWith(root+'/');
+ function reduce(previous,action){
+  let s=structuredClone(previous);const k=key(s);let record=s.sessions[k]||{status:'active',roots:[]};
+  let verdict='Changed',reason='';let paths=[];
+  if(action.type==='project'||action.type==='session'){s[action.type]=action.value;reason='Only the current context changed.';}
+  else if(record.status==='finished'){verdict='Blocked';reason='This conversation was explicitly finished. Select a new one.';}
+  else if(action.type==='freeze'){
+   try{paths=action.paths.map(p=>resolve(s,p));if(!paths.length)throw Error('Choose at least one directory.');if(action.actor==='agent'){verdict='Blocked';reason='The model cannot change the human boundary.';}else{record.roots=[...new Set(paths)];reason='Human replaced the writable directory list.';}}
+   catch(e){verdict='Unsupported, stopped';reason=e.message;}
+  }else if(action.type==='unfreeze'){
+   if(action.actor==='agent'){verdict='Blocked';reason='The model cannot loosen the boundary.';}else{record.roots=[];reason='Human removed this conversation boundary.';}
+  }else if(action.type==='pause'){record.status='paused';reason='Boundary saved for this conversation.';}
+  else if(action.type==='resume'){record.status='active';reason='Same conversation resumed with its saved boundary.';}
+  else if(action.type==='finish'){record.status='finished';record.roots=[];reason='Boundary cleared and conversation identity retired.';}
+  else if(record.status==='paused'){verdict='Blocked';reason='Resume this conversation before using its tools.';}
+  else if(action.type==='failure'){verdict='Stopped';reason='Covered call stopped because guard evaluation failed. Real adapter handling is unverified.';}
+  else if(['edit','read','shell'].includes(action.type)){
+   try{
+    paths=action.paths.map(p=>resolve(s,p));
+    if(action.type==='read'){verdict='Read allowed';reason='Freeze does not restrict reads.';}
+    else if(action.type==='shell'){verdict='Shell wrote';reason='Shell writes are outside edit-tool coverage. This simulated write escaped freeze.';paths.forEach(p=>s.files[p]='shell write');}
+    else if(record.roots.length && paths.some(p=>!record.roots.some(r=>inside(p,r)))){verdict='Edit blocked';reason='At least one physical target is outside every chosen directory. The whole operation stopped.';}
+    else{verdict='Edit allowed';reason=record.roots.length?'Every physical target is inside a chosen directory.':'This conversation has no freeze boundary.';paths.forEach(p=>s.files[p]='edit');}
+   }catch(e){verdict='Unsupported, stopped';reason=e.message;}
+  }
+  if(!['project','session'].includes(action.type))s.sessions[k]=record;
+  s.result={verdict,reason,paths};s.log.unshift(verdict+': '+reason);s.log=s.log.slice(0,15);return s;
+ }
+ return {initial,reduce,resolve,base,key};
+})();
+</script>
+<script>
+const $=id=>document.getElementById(id);let state=FreezeModel.initial();let scenarioIndex=0;let stepIndex=0;
+const edit=(...paths)=>({type:'edit',paths});const freeze=(...paths)=>({type:'freeze',paths,actor:'human'});const unfreeze={type:'unfreeze',actor:'human'};
+const scenarios=[
+ {name:'Source + tests',text:'A source-only boundary blocks the test change. Choosing both directories allows one patch.',steps:[['Freeze source',freeze('src')],['Edit source',edit('src/player.txt')],['Try source and tests',edit('src/player.txt','tests/player.txt')],['Freeze source and tests',freeze('src','tests')],['Retry both',edit('src/player.txt','tests/player.txt')],['Read outside', {type:'read',paths:['config.txt']}]]},
+ {name:'Paths + links',text:'Containment follows physical targets. Try the link-plus-parent case on Windows and Linux: native probes found different targets. The resolver must match the actual edit tool.',steps:[['Freeze source',freeze('src')],['Try src-extra',edit('src-extra/player.txt')],['Try parent traversal',edit('src/../config.txt')],['Try link to Library',edit('src/escape/file.txt')],['Try link followed by parent traversal',edit('src/escape/../player.txt')],['Try outside alias into source',edit('source-alias/player.txt')],['Try moving source outside',edit('src/player.txt','archive/player.txt')]]},
+ {name:'Isolation',text:'The same project can have two different boundaries. Another project has its own state even with the same conversation label.',steps:[['Freeze Game conversation A',freeze('src')],['Switch to concurrent B',{type:'session',value:'two'}],['Edit outside in B',edit('config.txt')],['Freeze tests in B',freeze('tests')],['Switch to A',{type:'session',value:'one'}],['Try tests in A',edit('tests/player.txt')],['Switch to Library',{type:'project',value:'b'}],['Edit Library config',edit('config.txt')],['Return to Game',{type:'project',value:'a'}]]},
+ {name:'Pause + finish',text:'Proposed distinction: pausing preserves the boundary for resume. Explicit finish clears it and retires the old identity. A new conversation starts unrestricted.',steps:[['Freeze source',freeze('src')],['Pause',{type:'pause'}],['Resume same conversation',{type:'resume'}],['Try outside edit',edit('config.txt')],['Finish conversation',{type:'finish'}],['Start new conversation',{type:'session',value:'three'}],['Try outside in new conversation',edit('config.txt')]]},
+ {name:'Authority + gaps',text:'The model cannot unfreeze itself, but an arbitrary shell write still escapes this edit-tool boundary. A broken covered check stops.',steps:[['Freeze source',freeze('src')],['Model tries to unfreeze',{type:'unfreeze',actor:'agent'}],['Model tries to widen',{type:'freeze',paths:['.'],actor:'agent'}],['Try outside edit',edit('config.txt')],['Write outside through shell',{type:'shell',paths:['config.txt']}],['Simulate failed guard',{type:'failure'}],['Human unfreezes',unfreeze],['Edit outside now',edit('config.txt')]]},
+ {name:'Platform fixtures',text:'Windows aliases model known C-drive mappings only. Linux and macOS use distinct case-sensitive path models. These are simulations, not operating-system verification.',steps:[['Freeze source',freeze('src')],['Try alternate case',edit('SRC/player.txt')],['Try WSL path',edit('/mnt/c/work/game/src/player.txt')],['Try Git Bash path',edit('/c/work/game/src/player.txt')],['Try unknown drive-relative path',edit('C:src/player.txt')],['Try UNC path',edit('\\\\server\\share\\player.txt')]]}
+];
+function button(text,action){const b=document.createElement('button');b.textContent=text;b.onclick=()=>{state=FreezeModel.reduce(state,action);render()};return b;}
+function render(){
+ $('project').value=state.project;$('session').value=state.session;$('os').value=state.os;
+ const r=state.sessions[FreezeModel.key(state)]||{status:'active',roots:[]};
+ $('context').replaceChildren();const c=document.createElement('p');c.textContent=FreezeModel.base(state.os,state.project)+' · '+r.status;$('context').append(c);
+ const roots=document.createElement('p');roots.textContent=r.roots.length?'Writable: '+r.roots.join('; '):'No freeze boundary';$('context').append(roots);
+ $('result').replaceChildren();const v=document.createElement('strong');v.textContent=state.result.verdict;const reason=document.createElement('div');reason.textContent=state.result.reason;$('result').append(v,reason);if(state.result.paths?.length){const p=document.createElement('code');p.textContent=state.result.paths.join(' ; ');$('result').append(p)}
+ $('boundaries').replaceChildren();if(!Object.keys(state.sessions).length)$('boundaries').textContent='No conversations have a saved boundary.';
+ Object.entries(state.sessions).forEach(([k,record])=>{const [,root,id]=JSON.parse(k);const d=document.createElement('div');d.className='session';d.textContent=root+' · '+id+' · '+record.status+' · '+(record.roots.join('; ')||'unrestricted');$('boundaries').append(d)});
+ $('files').replaceChildren();if(!Object.keys(state.files).length)$('files').textContent='No files changed.';Object.entries(state.files).forEach(([p,kind])=>{const d=document.createElement('div');d.className='changed';d.textContent=p+' · '+kind;$('files').append(d)});
+ $('log').replaceChildren();state.log.forEach(item=>{const d=document.createElement('p');d.textContent=item;$('log').append(d)});
+ $('tabs').replaceChildren();scenarios.forEach((sc,i)=>{const b=document.createElement('button');b.textContent=sc.name;b.className=i===scenarioIndex?'active':'';b.setAttribute('role','tab');b.setAttribute('aria-selected',i===scenarioIndex);b.onclick=()=>{scenarioIndex=i;stepIndex=0;state=FreezeModel.initial(state.os);render()};$('tabs').append(b)});
+ $('scenario').textContent=scenarios[scenarioIndex].text;$('steps').replaceChildren();scenarios[scenarioIndex].steps.forEach(([label,action],i)=>{const b=button((i+1)+'. '+label,action);b.disabled=i!==stepIndex;b.className=i===stepIndex?'primary':'';b.onclick=()=>{state=FreezeModel.reduce(state,action);stepIndex++;render()};$('steps').append(b)});
+}
+[['Human freezes source',freeze('src')],['Human freezes source + tests',freeze('src','tests')],['Human unfreezes',unfreeze],['Edit source',edit('src/player.txt')],['Edit tests',edit('tests/player.txt')],['Edit outside',edit('config.txt')],['Pause',{type:'pause'}],['Resume',{type:'resume'}],['Finish',{type:'finish'}]].forEach(([name,action])=>$('controls').append(button(name,action)));
+['project','session'].forEach(id=>$(id).onchange=()=>{state=FreezeModel.reduce(state,{type:id,value:$(id).value});render()});
+const reset=()=>{state=FreezeModel.initial($('os').value);stepIndex=0;render()};$('os').onchange=reset;$('reset').onclick=reset;
+['edit','read','shell'].forEach(type=>$('custom-'+type).onclick=()=>{state=FreezeModel.reduce(state,{type,paths:$('path').value.split(';')});render()});
+render();
+</script></body></html>

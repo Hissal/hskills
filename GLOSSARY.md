@@ -103,3 +103,14 @@ A cluster of candidates from across ledgers that compete for or share one job, d
 
 **Blueprint**:
 The decided architecture plus the decided catalog: the destination of the wayfinder map, handed off to be built.
+
+## Command guard
+
+**Reflection pause**:
+A guard decision that asks the model to reconsider a potentially destructive action. It is not human approval.
+
+**Human-required**:
+A guard decision that reserves approval authority to the human. Model reflection and automatic approval by a harness do not count as human consent.
+
+**Freeze**:
+A temporary editing boundary chosen by the human for one session in one project.

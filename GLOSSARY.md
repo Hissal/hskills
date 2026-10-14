@@ -61,6 +61,16 @@ A guide's table from needs to the knowledge that answers them: its own reference
 **Routes**:
 A guide's table from situations to the workflows that fit them.
 
+## Delegating work
+
+**Role agent**:
+An agent started to play a part in a workflow, making judgments its caller relies on: an implementer, a Standards reviewer, a researcher. It may start helpers and run the workflows its own role calls for, but never an agent for a peer role.
+_Avoid_: persona, worker
+
+**Helper**:
+An agent started for one narrow errand that returns facts and makes no judgment, such as finding every caller of a function. It never starts an agent of its own.
+_Avoid_: search agent, sub-subagent
+
 ## Reaching a pack
 
 **Extension point**:

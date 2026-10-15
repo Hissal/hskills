@@ -22,6 +22,10 @@ _Avoid_: baseline, resident, always-active
 A skill the agent may reach for on its own (or the user may type); its description occupies context whenever it is installed.
 _Avoid_: toolkit, auto skill
 
+**Trigger**:
+The description of a model-invoked skill: when the agent should reach for it, nothing else. The skill's name says what it is.
+_Avoid_: summary, pushy description
+
 **User-invoked**:
 A skill only the human can fire by typing its name; it costs no idle context.
 _Avoid_: command, workflow skill

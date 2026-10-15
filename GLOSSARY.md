@@ -71,6 +71,16 @@ _Avoid_: persona, worker
 An agent started for one narrow errand that returns facts and makes no judgment, such as finding every caller of a function. It never starts an agent of its own.
 _Avoid_: search agent, sub-subagent
 
+## Continuity
+
+**Handoff**:
+A document that lets a fresh agent continue work another agent started. It marks each decision as the user's, the agent's or pending, and tells its reader that only the user's decisions are approved.
+_Avoid_: checkpoint, context save, session summary
+
+**Admission bar**:
+The test a learning must pass before anyone writes it down: it holds reasoning that cannot be recovered from the code, tests or docs, and losing it would cost something real. Effort and completion do not count, and asking for a record does not lower the bar.
+_Avoid_: learning store, memory
+
 ## Reaching a pack
 
 **Extension point**:

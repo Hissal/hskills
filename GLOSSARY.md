@@ -12,6 +12,9 @@ _Avoid_: global, always-active layer
 An optional add-on to core: a named list of skills, installed separately so that taking core never brings it along. A project takes the whole list or picks single skills from it. Usually installed per project (the Unity pack in a Unity project), sometimes at user scope when it serves a person (the onboarding pack). A pack can be narrower than a domain, so two people on one project may pick different packs.
 _Avoid_: domain layer, local, kit
 
+**In-progress pack**:
+The optional pack for experimental skills being tried before a decision to adopt them into core or another pack.
+
 ## How it reaches the agent
 
 **Always-on**:
@@ -75,6 +78,9 @@ _Avoid_: persona, worker
 An agent started for one narrow errand that returns facts and makes no judgment, such as finding every caller of a function. It never starts an agent of its own.
 _Avoid_: search agent, sub-subagent
 
+**Personal delegation policy**:
+An optional user-scoped policy for choosing harnesses, model families and reasoning effort when delegating work. It is an agreed exception to the collection's default against preference switches; explicit instructions for the current task take precedence.
+
 ## Continuity
 
 **Handoff**:
@@ -97,6 +103,13 @@ _Avoid_: job map, pack registry
 
 ## Building the collection
 
+**Skill identity**:
+A publisher-qualified identity for a managed skill, stable across changes to its callable name, folder, address or installation scope.
+_Avoid_: skill name, address
+
+**Skill requirement**:
+Another skill that must be available for a managed skill to work. A suggestion or optional route is not a requirement.
+
 **Source**:
 An external repository the collection may borrow skills, ideas or mechanisms from.
 _Avoid_: upstream (that is `mattpocock/skills`, the source Matt-derived skills are tracked against)
@@ -110,8 +123,20 @@ A skill copied into this repo and edited slightly, keeping its name and staying 
 _Avoid_: vendored copy, adapted copy
 
 **Project configuration**:
-Facts a project states about itself for skills to read: its tracker, label names, where files live, commands to run, what needs approval. It lives in the project, never inside an installed skill. A skill's behaviour is fixed and takes no preference switches.
+Facts a project states about itself for skills to read: its tracker, label names, where files live, commands to run, what needs approval. It lives in the project, never inside an installed skill; skill behaviour takes no preference switches by default, with exceptions explicitly decided where configuration is needed for usability.
 _Avoid_: settings, options, preferences
+
+**Play route**:
+A game project's own way for an agent to drive its live game: how to reach a state, give input and read state back. Each project writes its own; a pack ships no generic one. Part of project configuration.
+_Avoid_: harness, game harness
+
+**Style guide**:
+The one set of written coding-style guidance a project picks: a pack's light default, the owner's full kit, or the project's own. It lives in the project, and the project's style tooling configuration (`.editorconfig`, `tsconfig`, lint config) takes precedence over it; a disagreement between the two is flagged, not resolved silently. Part of project configuration.
+_Avoid_: tiers, style layers
+
+**Vendor skill**:
+A skill the maker of a framework, service or tool publishes for its own product. A project picks it per project; a pack layers on it and never duplicates it.
+_Avoid_: official skill (a source can be official without being the product's maker), baseline
 
 **Candidate**:
 A single skill or mechanism from a source, under consideration and not yet decided.

@@ -8,6 +8,18 @@ A skill that needs pack knowledge carries an **extension point**: one sentence t
 
 A pack skill adds to the core skill for the same job and never replaces it: the core skill owns the process, the pack skill holds what differs in its domain. When nothing answers an extension point, the skill carries on with its own process and says nothing.
 
+## Knowledge lookup and execution
+
+The [core review](https://github.com/Hissal/skill-collection/issues/45#issuecomment-6219205105) qualifies the original layering instruction:
+
+- When another skill reaches a pack skill for knowledge about a stated need, it supplies that knowledge within the caller's job. It does not start the core workflow it normally layers on. A reviewer asking about test idioms remains a reviewer; it does not start test authoring.
+- When performing the job itself, the pack skill uses the core process and contributes its domain layer once. Core-first and pack-first entry must not restart an active layer or duplicate execution.
+- A core workflow that is user-invoked remains gated. A pack entry requiring it returns the exact user invocation; it does not invoke it automatically. The running core workflow obtains pack knowledge through its extension points.
+
+This replaces the blanket promise that typing either skill name always starts the same workflow. Installation dependencies establish availability, not permission to invoke a workflow.
+
+The decided needs are indexed in [Core extension points](../agents/core-extension-points.md). Several caller-specific needs may reach the same pack knowledge; the index does not introduce a fixed job vocabulary.
+
 ## Considered Options
 
 - **A delta line per pack in each core skill** (the fork's "In a Unity repo, call the `unity` skill for ..."). Rejected: every core skill would have to name every pack, present and future, and a new pack would mean editing core.
@@ -18,5 +30,5 @@ A pack skill adds to the core skill for the same job and never replaces it: the 
 
 - A pack is only reachable from core once `setup-project` has listed it. A pack guide that runs and finds itself unlisted says so once.
 - Every extra hop goes through a guide, so reaching pack knowledge loads the guide's body as well as the pack skill.
-- A pack that wants to be reached needs a guide, and the manifest makes the guide required by every pack skill that adds to a core skill.
-- Packs reach other packs the same way, so one pack depending on another is optional unless the manifest records a hard requirement.
+- A pack that wants to be reached needs a guide. Every pack skill that adds to a core skill declares that guide as a requirement; the manifest's dependency portion is generated from [Agent Skills Sync metadata](0004-skill-dependencies-use-agent-skills-sync-metadata.md).
+- Packs reach other packs the same way, so one pack depending on another is optional unless its metadata declares a hard requirement. Such requirements follow ADR 0004's resolution and scope rules.

@@ -20,6 +20,10 @@ This replaces the blanket promise that typing either skill name always starts th
 
 The decided needs are indexed in [Core extension points](../agents/core-extension-points.md). Several caller-specific needs may reach the same pack knowledge; the index does not introduce a fixed job vocabulary.
 
+## Setup discovery
+
+[The project setup decision](https://github.com/Hissal/skill-collection/issues/71#issuecomment-6419435777) extends setup discovery beyond installed guides: `setup-project` uses the collection catalog alongside the installed skill listing and relevant vendor sources, and can read selected packs' `SETUP.md` material before installation. This supersedes the original installed-only setup restriction. Ordinary extension points continue to use the project's pack list; the setup sequence and recommendations are recorded in that decision.
+
 ## Considered Options
 
 - **A delta line per pack in each core skill** (the fork's "In a Unity repo, call the `unity` skill for ..."). Rejected: every core skill would have to name every pack, present and future, and a new pack would mean editing core.
@@ -28,7 +32,7 @@ The decided needs are indexed in [Core extension points](../agents/core-extensio
 
 ## Consequences
 
-- A pack is only reachable from core once `setup-project` has listed it. A pack guide that runs and finds itself unlisted says so once.
+- For ordinary extension points, a pack is only reachable from core once `setup-project` has listed it. A pack guide that runs and finds itself unlisted says so once.
 - Every extra hop goes through a guide, so reaching pack knowledge loads the guide's body as well as the pack skill.
 - A pack that wants to be reached needs a guide. Every pack skill that adds to a core skill declares that guide as a requirement; the manifest's dependency portion is generated from [Agent Skills Sync metadata](0004-skill-dependencies-use-agent-skills-sync-metadata.md).
 - Packs reach other packs the same way, so one pack depending on another is optional unless its metadata declares a hard requirement. Such requirements follow ADR 0004's resolution and scope rules.

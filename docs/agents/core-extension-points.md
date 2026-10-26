@@ -59,6 +59,6 @@ Decided in [Design and refactoring](https://github.com/Hissal/skill-collection/i
 
 ## Setup and discovery
 
-`setup-project` discovers installed guides and reads their `SETUP.md`; normal extension points consult the project's configured pack list. The core guide suggests workflows and does not execute them. These are separate entry paths, specified in [Core reaches packs](https://github.com/Hissal/skill-collection/issues/34#issuecomment-6124395889).
+`setup-project` discovers guidance through the collection catalog, the installed skill listing and relevant vendor sources; it can read selected packs' `SETUP.md` material before installation. The [project setup decision](https://github.com/Hissal/skill-collection/issues/71#issuecomment-6419435777) records the sequence, recommendations and escalation paths. Normal extension points consult the project's configured pack list under [ADR 0003](../adr/0003-core-reaches-packs-through-the-pack-list.md). The core guide suggests workflows and does not execute them.
 
 Pack-specific jobs with no core counterpart may remain standalone pack knowledge or workflows. They do not require a new core extension point solely to exist.

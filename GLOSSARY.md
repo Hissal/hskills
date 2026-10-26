@@ -84,8 +84,11 @@ An optional user-scoped policy for choosing harnesses, model families and reason
 ## Continuity
 
 **Handoff**:
-A document that lets a fresh agent continue work another agent started. It marks each decision as the user's, the agent's or pending, and tells its reader that only the user's decisions are approved.
+A transfer of work and context to another session or person, as a session-continuation document or a work brief. It marks each decision as the user's, the agent's or pending, and tells its reader that only the user's decisions are approved.
 _Avoid_: checkpoint, context save, session summary
+
+**Work brief**:
+A self-contained handoff of a piece of work for a future session or teammate, including its current state, requested outcome and unresolved questions. It can describe investigated work or new work without requiring a completed diagnosis or design.
 
 **Admission bar**:
 The test a learning must pass before anyone writes it down: it holds reasoning that cannot be recovered from the code, tests or docs, and losing it would cost something real. Effort and completion do not count, and asking for a record does not lower the bar.

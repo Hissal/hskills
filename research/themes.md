@@ -413,6 +413,8 @@ Shaping modules and public APIs: `codebase-design`, `improve-codebase-architectu
 
 Carrying state across sessions and learning from them: `handoff`, `retro`, `wait-what`, `teach`, recall, corrections.
 
+Follow-up decision: [Does handoff need a teammate-ready brief?](https://github.com/Hissal/skill-collection/issues/62) adds a work brief form to `handoff`, for a teammate or the owner's future session, with issue output and fresh-session pickup; the resolution holds the contract.
+
 **[The fork](ledgers/mattpocock-skills-unity.md)**
 
 - `retro`: Take. _(also: the fork pass)_
@@ -1111,7 +1113,7 @@ Entries whose ledger proposes a plain reject and carries no idea elsewhere. No s
 **[davidondrej/skills](ledgers/davidondrej-skills.md)**
 
 - 17. `before-building`: reject.
-- 21. `prompt-for-others`: reject.
+- 21. `prompt-for-others`: reject as a standalone skill; the work brief capability is adapted into `handoff`, with the solo-developer rejection premise corrected by [Does handoff need a teammate-ready brief?](https://github.com/Hissal/skill-collection/issues/62).
 - 22. `larp-detector`: reject for now.
 - 25. Author-stack tool wrappers: reject all seventeen.
 - 26. Personal-workflow skills: `signal-from-expert`, `domain-checker`, `fireflies-transcript`, `image-prompt`, `save-idea`: reject all five.

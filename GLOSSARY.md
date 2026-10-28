@@ -51,7 +51,7 @@ An entry skill that answers "where do I go for this?". It holds a needs table, r
 _Avoid_: router, hub, mode, dispatcher, index, map (that is the wayfinder map)
 
 **Core guide**:
-The guide to core's workflows. It holds routes only, is user-invoked, and consults a pack guide when the situation touches that pack.
+The guide to core's workflows. It holds routes and a continuation aid (continue, clear, hand off, delegate or compact), is user-invoked, and consults a pack guide when the situation touches that pack.
 
 **Automatic guide**:
 The core guide published model-invoked, so the agent can suggest a workflow unasked. Part of the onboarding pack, not of core.
@@ -63,7 +63,7 @@ A pack's model-invoked guide, named `<pack>-guide`.
 The moment an agent or a person reaches for knowledge, phrased as what they are trying to do.
 
 **Needs table**:
-A guide's table from needs to the knowledge that answers them: its own reference files, or other skills in the same pack.
+A guide's table from needs to the knowledge that answers them: its own reference files, other skills in the same pack, or vendor guidance the project selected.
 
 **Routes**:
 A guide's table from situations to the workflows that fit them.

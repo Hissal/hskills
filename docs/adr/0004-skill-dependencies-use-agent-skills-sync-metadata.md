@@ -39,6 +39,12 @@ Report differing or unverifiable personal copies as unresolved conflicts rather 
 
 Installation requirements establish availability, not invocation authority. A user-invoked workflow stays user-invoked even when installed as a dependency; [ADR 0003](0003-core-reaches-packs-through-the-pack-list.md) governs execution.
 
+## When a requirement is missing at runtime
+
+The [closing review](https://github.com/Hissal/skill-collection/issues/51) decides how a skill behaves while no installer enforces this contract. A skill that declares a hard requirement loads it before doing any work. If the required skill, or the reference file it needs from that skill, cannot be loaded, the skill stops without partial work. It names the missing skill by callable name and ID, and says that ordinary installers such as `npx skills` do not install requirements while the Unity sync resolves them from this metadata. The runtime check is loadable or not; verifying identity and content stays with the installer.
+
+The collection's check script validates hard requirements against the resolved set, not as files local to the calling skill folder.
+
 ## Considered options
 
 - Collection-specific metadata keys: rejected in favor of the reusable tooling namespace requested by the owner.

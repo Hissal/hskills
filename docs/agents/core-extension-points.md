@@ -2,7 +2,7 @@
 
 Blueprint reference for pack theme sessions. Each entry names a caller and the knowledge it asks the project's pack guides for. These are decided needs, not implemented skill files or a project job map. The convention and execution rules live in [ADR 0003](../adr/0003-core-reaches-packs-through-the-pack-list.md).
 
-Use a core skill's own need phrase. A pack may answer several needs with the same knowledge. A knowledge answer stays within the caller's job; it does not start a different workflow.
+Use a core skill's own need phrase. A pack may answer several needs with the same knowledge. A knowledge answer stays within the caller's job; it does not start a different workflow. A pack answers an extension point only where it adds stack knowledge the core process would miss; an unanswered point needs no placeholder row.
 
 ## Planning and execution
 
@@ -37,6 +37,11 @@ Added by [Theme: web pack](https://github.com/Hissal/skill-collection/issues/49#
 - `dependency-audit`: this stack's dependency ecosystem.
 - `break-ui`: where and how to check a UI against worst-case data for this stack.
 
+Added by the [closing review](https://github.com/Hissal/skill-collection/issues/51), which moves the stack-neutral security procedures from the web pack into core:
+
+- `codebase-design` threat model and `receiving-review` security-finding assessment: this stack's threats, controls and checks.
+- `dependency-audit` owns the stack-neutral adding-a-dependency rule; packs add their ecosystem's rule through the `dependency-audit` need above.
+
 ## Diagnosis and testing
 
 Decided in [Diagnosis and performance](https://github.com/Hissal/skill-collection/issues/38#issuecomment-6168634570) and [Testing](https://github.com/Hissal/skill-collection/issues/39#issuecomment-6170537610):
@@ -62,5 +67,14 @@ Decided in [Design and refactoring](https://github.com/Hissal/skill-collection/i
 `setup-project` discovers guidance through the collection catalog, the installed skill listing and relevant vendor sources; it can read selected packs' `SETUP.md` material before installation. The [project setup decision](https://github.com/Hissal/skill-collection/issues/71#issuecomment-6419435777) records the sequence, recommendations and escalation paths. Normal extension points consult the project's configured pack list under [ADR 0003](../adr/0003-core-reaches-packs-through-the-pack-list.md). The core guide suggests workflows and does not execute them.
 
 The [guide-content decision](https://github.com/Hissal/skill-collection/issues/50#issuecomment-6426359993) records the pack needs tables and caller-to-knowledge mappings. It also distinguishes direct project-guidance lookup from pack lookup: setup writes a pointer to the selected project conventions in project instructions, and ordinary work and core writing/review workflows read those project files directly. Pack style templates are setup inputs.
+
+## Trials flagged as future core
+
+Decided in [Theme: C# pack](https://github.com/Hissal/skill-collection/issues/48#issuecomment-6371179357). These in-progress trials carry extension points now so packs can answer them before promotion:
+
+- `performance-review`: this stack's performance anti-patterns and what not to flag.
+- `consumer-review`: packing, installing and running a library as a fresh consumer on this stack.
+
+## Pack-only jobs
 
 Pack-specific jobs with no core counterpart may remain standalone pack knowledge or workflows. They do not require a new core extension point solely to exist.

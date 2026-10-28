@@ -4,7 +4,7 @@ status: accepted
 
 # Core reaches packs through the pack list and the pack guides
 
-A skill that needs pack knowledge carries an **extension point**: one sentence that names the need and asks the pack guides the project lists. The project's **pack list**, written by `setup-project` into the `## Agent skills` block of its `AGENTS.md` or `CLAUDE.md`, names each pack guide and its domain. The guide's needs table picks the pack skill. No skill outside a pack ever names that pack or one of its skills.
+A skill that needs pack knowledge carries an **extension point**: one sentence that names the need and asks the pack guides the project lists. The project's **pack list**, written by `setup-project` into the `## Agent skills` block of its `AGENTS.md` or `CLAUDE.md`, names each pack guide and its domain. The guide's needs table picks the pack knowledge. Extension points and core-to-pack suggestions name the need, never the pack or one of its skills; only setup and the core guide's discovery name packs (see [Setup discovery](#setup-discovery)). A pack answers an extension point only where it adds stack knowledge the core process would miss; an unanswered extension point needs no placeholder.
 
 A pack skill adds to the core skill for the same job and never replaces it: the core skill owns the process, the pack skill holds what differs in its domain. When nothing answers an extension point, the skill carries on with its own process and says nothing.
 
@@ -28,11 +28,11 @@ The decided needs are indexed in [Core extension points](../agents/core-extensio
 
 - **A delta line per pack in each core skill** (the fork's "In a Unity repo, call the `unity` skill for ..."). Rejected: every core skill would have to name every pack, present and future, and a new pack would mean editing core.
 - **A job map in the project** (`prototyping: unity-prototyping`), read by the core skill, which then calls the pack skill directly. Rejected: it needs a fixed job vocabulary shared by core, every pack and setup, and the needs core skills actually have are too varied for one. The map would also copy each pack's needs table into every project, where it goes stale when the pack changes.
-- **Finding pack guides in the skill listing** instead of a pack list. Rejected for extension points: it is a judgement on every run, it calls a user-scope pack's guide in repos where the pack is irrelevant, and a plugin install changes the guide's name. The listing is still how `setup-project` and the core guide discover installed guides.
+- **Finding pack guides in the skill listing** instead of a pack list. Rejected for extension points: it is a judgement on every run, it calls a user-scope pack's guide in repos where the pack is irrelevant, and a plugin install changes the guide's name. The listing is still how the core guide discovers installed guides; `setup-project` also uses the collection catalog (see [Setup discovery](#setup-discovery)).
 
 ## Consequences
 
 - For ordinary extension points, a pack is only reachable from core once `setup-project` has listed it. A pack guide that runs and finds itself unlisted says so once.
-- Every extra hop goes through a guide, so reaching pack knowledge loads the guide's body as well as the pack skill.
+- Every extra hop goes through a guide, so reaching pack knowledge loads the guide's body as well as the matching target: a guide-owned reference or another pack skill.
 - A pack that wants to be reached needs a guide. Every pack skill that adds to a core skill declares that guide as a requirement; the manifest's dependency portion is generated from [Agent Skills Sync metadata](0004-skill-dependencies-use-agent-skills-sync-metadata.md).
 - Packs reach other packs the same way, so one pack depending on another is optional unless its metadata declares a hard requirement. Such requirements follow ADR 0004's resolution and scope rules.

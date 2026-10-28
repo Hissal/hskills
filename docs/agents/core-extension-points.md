@@ -52,7 +52,7 @@ Decided in [Diagnosis and performance](https://github.com/Hissal/skill-collectio
 Decided in [Design and refactoring](https://github.com/Hissal/skill-collection/issues/40#issuecomment-6177796453), [Continuity and learning](https://github.com/Hissal/skill-collection/issues/41#issuecomment-6181216467), and [Prototyping](https://github.com/Hissal/skill-collection/issues/44#issuecomment-6195116678):
 
 - `codebase-design`: this stack's seam and compatibility rules.
-- `improve-codebase-architecture`: what to leave out of the hotspot scan and this stack's sources of friction.
+- `architecture-review`: what to leave out of the hotspot scan and this stack's sources of friction. The [guide-content decision](https://github.com/Hissal/skill-collection/issues/50#issuecomment-6426359993) renames the former `improve-codebase-architecture` and makes its implementation continuation explicitly chosen.
 - `refactoring`: this stack's rename and move hazards and how to validate a refactor.
 - `retro`: environment gaps the session hit that are specific to this stack.
 - `prototype`: where a prototype lives, how it runs and is removed, and which medium fits this stack.
@@ -60,5 +60,7 @@ Decided in [Design and refactoring](https://github.com/Hissal/skill-collection/i
 ## Setup and discovery
 
 `setup-project` discovers guidance through the collection catalog, the installed skill listing and relevant vendor sources; it can read selected packs' `SETUP.md` material before installation. The [project setup decision](https://github.com/Hissal/skill-collection/issues/71#issuecomment-6419435777) records the sequence, recommendations and escalation paths. Normal extension points consult the project's configured pack list under [ADR 0003](../adr/0003-core-reaches-packs-through-the-pack-list.md). The core guide suggests workflows and does not execute them.
+
+The [guide-content decision](https://github.com/Hissal/skill-collection/issues/50#issuecomment-6426359993) records the pack needs tables and caller-to-knowledge mappings. It also distinguishes direct project-guidance lookup from pack lookup: setup writes a pointer to the selected project conventions in project instructions, and ordinary work and core writing/review workflows read those project files directly. Pack style templates are setup inputs.
 
 Pack-specific jobs with no core counterpart may remain standalone pack knowledge or workflows. They do not require a new core extension point solely to exist.

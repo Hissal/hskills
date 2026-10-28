@@ -28,7 +28,7 @@ Not a theme. One pass over the fork's skills that decides, for each, whether it 
 - `grill-with-docs`: Take, if `grilling` and `domain-modeling` are taken. _(also: planning and delegation)_
 - `implement`: Take. _(also: planning and delegation)_
 - `implement-spec`: Take. _(also: planning and delegation)_
-- `improve-codebase-architecture`: Take. _(also: design and refactoring)_
+- `improve-codebase-architecture`: Take. Collection name and continuation amended to `architecture-review` by the [guide-content decision](https://github.com/Hissal/skill-collection/issues/50#issuecomment-6426359993). _(also: design and refactoring)_
 - `pr`: Take as core model-invoked. _(also: planning and delegation)_
 - `prototype`: Take as core model-invoked. _(also: prototyping)_
 - `research`: Take; settle invocation with `code-review`. _(also: evidence and change safety)_

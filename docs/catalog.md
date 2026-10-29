@@ -188,7 +188,7 @@ The vendor table has **19 offer rows**, including grouped skill families, an ope
 
 ## Supersession list
 
-Historical resolution comments are not edited. When reading an older decision, check here whether a later one changed it. Entries for files in this repository and for the map's gists were applied by [#51 resolution](https://github.com/Hissal/skill-collection/issues/51).
+Historical resolution comments are not edited. When reading an older decision, check here whether a later one changed it. Entries for documents in this repository and for the map's gists were applied by [#51 resolution](https://github.com/Hissal/skill-collection/issues/51). S08 and S55 describe the existing guard code and are left to the guard build.
 
 Each numbered entry identifies affected earlier wording, the later deciding authority, and exact suggested replacement text. Apply replacements only to current summaries/docs; keep historical resolution comments and superseded ADRs as history with a pointer. Already-reconciled historical cases are labelled rather than presented as uncorrected live docs. Multiple occurrences of one semantic correction are grouped. Earlier proposals are not treated as accepted decisions; the explicitly labelled #63 proposal is included to prevent mistaking its “Resolution” heading for adoption. Changes are transcribed here; none were applied to the repo or tracker.
 

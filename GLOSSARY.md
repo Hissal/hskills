@@ -165,4 +165,4 @@ A guard decision that asks the model to reconsider a potentially destructive act
 A guard decision that reserves approval authority to the human. Model reflection and automatic approval by a harness do not count as human consent.
 
 **Freeze**:
-A temporary editing boundary chosen by the human for one session in one project.
+A temporary editing boundary chosen by the human for one conversation in one project. It survives closing and resuming that conversation and ends on an explicit human unfreeze or finish; a fresh conversation starts without one.

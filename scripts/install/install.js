@@ -211,8 +211,10 @@ function main() {
     }
   }
   if (command !== 'uninstall') doctor();
-  if (!failed) {
-    const result = spawnSync(process.execPath, [path.resolve(__dirname, '../../hooks/command-guard/install.js'), '--home', home, ...(command === 'install' ? [] : ['--' + command])], { encoding: 'utf8', timeout: 60000 });
+  {
+    // A skill conflict still needs guard diagnostics, without installing it.
+    const guardCommand = failed ? 'doctor' : command;
+    const result = spawnSync(process.execPath, [path.resolve(__dirname, '../../hooks/command-guard/install.js'), '--home', home, ...(guardCommand === 'install' ? [] : ['--' + guardCommand])], { encoding: 'utf8', timeout: 60000 });
     process.stdout.write(result.stdout || ''); process.stderr.write(result.stderr || '');
     if (result.status !== 0) failed = true;
   }

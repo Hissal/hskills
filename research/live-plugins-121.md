@@ -2,7 +2,9 @@
 
 Executed 2026-10-30 on Linux, base `a37ed41` plus prerequisite
 `eae39682f4d87032949736030642731ccf259e3f`, under [#78](https://github.com/Hissal/skill-collection/issues/78).
-Status: Claude plugin behavior verified; Codex plugin discovered but untrusted.
+Status at original run: Claude plugin behavior verified; Codex plugin discovered
+but untrusted. [Post-review Codex acceptance](codex-acceptance-121.md) now verifies
+trusted plugin behavior and a same-session source branch switch on Linux.
 Both tickets remain open for the remaining platform and human acceptance.
 This extends [adapter smoke evidence](live-hooks-120.md) and the
 [registration investigation](guard-plugin-install.md).
@@ -60,7 +62,8 @@ has no login, and the normal authenticated home does not load this cached plugin
 through the tested invocation overlay. See [authentication follow-up](human-review-auth-121.md)
 for historical paired host evidence and the subsequently executed normal-profile
 registration, verified ChatGPT authentication and exact normal-cache plugin path. Human review and
-Codex behavioral acceptance remain pending.
+Codex behavioral acceptance subsequently passed on Linux; see the
+[post-review evidence](codex-acceptance-121.md).
 
 ## Installed lifecycle
 

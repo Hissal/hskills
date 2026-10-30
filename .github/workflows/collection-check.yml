@@ -1,0 +1,35 @@
+name: Collection check
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+env:
+  # Bumping this pin requires re-verifying research/loading-mechanics.md.
+  CLAUDE_CODE_VERSION: '2.1.295'
+
+jobs:
+  collection-check:
+    name: Collection check (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # ID stability checks compare against the last release tag.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned Claude Code CLI
+        run: npm install --global "@anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }}"
+      - name: Run collection check fixtures
+        run: node scripts/check/test/run.js
+      - name: Run gate writer tests
+        run: node scripts/gates/test/run.js
+      - name: Check collection
+        run: node scripts/check/check.js

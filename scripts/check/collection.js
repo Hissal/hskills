@@ -8,6 +8,8 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
+const { parseMetadata, resolveSkills } = require('./metadata');
+
 const BOM = '\uFEFF';
 // Markdown files in a skill folder that are not references: the entry point,
 // and the generated licence notice (#77, owner answer 1).
@@ -84,10 +86,14 @@ function load(root) {
     return Object.assign({ dir, name: path.posix.basename(dir), skillMd, files: own }, splitFrontmatter(text(skillMd)));
   });
 
+  for (const skill of skills) skill.metadata = parseMetadata(skill.frontmatter);
+
   return {
+    resolved: resolveSkills(skills),
     root,
     files,
     skills,
+    needsTables: require('./guide-tables').needsTables,
     bytes,
     text,
     isText,

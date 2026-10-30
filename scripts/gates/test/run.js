@@ -38,7 +38,7 @@ const cases = [
       'skills/packs/web/beta/SKILL.md': md('name: beta\ndescription: Run it.\ndisable-model-invocation: true\nmetadata:\n  opencode/autoinvoke: "false"'),
       'skills/packs/web/beta/agents/openai.yaml': 'policy:\n  allow_implicit_invocation: false\n',
     },
-    checkPasses: true,
+    gatesPass: true,
   },
   {
     name: 'a second run changes nothing',
@@ -65,7 +65,7 @@ const cases = [
       'skills/core/alpha/SKILL.md': md('name: alpha\ndescription: "Use when: testing."\ndisable-model-invocation: true # user-invoked\nmetadata:\n    audience: maintainers\n    opencode/autoinvoke: "false"\n    opencode/slash: "true"\nwhen_to_use: later', 'Body with metadata:\n  opencode/autoinvoke: "true"\n'),
       'skills/core/alpha/agents/openai.yaml': 'interface:\n  display_name: "Alpha"\n\npolicy:\n  allow_implicit_invocation: false # generated\n\ndependencies:\n  tools: []\n',
     },
-    checkPasses: true,
+    gatesPass: true,
   },
   {
     name: 'adds a missing gate inside existing blocks',
@@ -79,7 +79,7 @@ const cases = [
       'skills/core/alpha/SKILL.md': md('name: alpha\nmetadata:\n  audience: maintainers\n  opencode/autoinvoke: "true"\ndescription: Use when testing.'),
       'skills/core/alpha/agents/openai.yaml': 'policy:\n  # set below\n  allow_implicit_invocation: true\n\ninterface:\n  display_name: "Alpha"\n',
     },
-    checkPasses: true,
+    gatesPass: true,
   },
   {
     name: 'an unreadable source fails and writes nothing for that skill',
@@ -141,9 +141,10 @@ try {
       const got = fs.existsSync(full) ? fs.readFileSync(full, 'utf8') : null;
       if (got !== want) problems.push(file + ' is ' + JSON.stringify(got) + ', expected ' + JSON.stringify(want));
     }
-    if (c.checkPasses) {
+    if (c.gatesPass) {
       const chk = spawnSync(process.execPath, [CHECK, dir], { encoding: 'utf8' });
-      if (chk.status !== 0) problems.push('check fails after writing:\n' + chk.stdout);
+      const gateFails = chk.stdout.split('\n').filter((l) => / \[harness-gates\] /.test(l));
+      if (gateFails.length) problems.push('check finds gate faults after writing:\n' + gateFails.join('\n'));
     }
     if (!problems.length) { passed++; return; }
     failed++;

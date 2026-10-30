@@ -14,7 +14,7 @@ function write(file, text) {
   fs.writeFileSync(path.join(root, file), text);
 }
 function skill(name, id, requires) {
-  return '---\nname: ' + name + '\ndescription: Test fixture.\nmetadata:\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/' + id + '"\n  agent-skills-sync.requires: \'' + JSON.stringify(requires) + '\'\n---\n# Work\n';
+  return '---\nname: ' + name + '\ndescription: Test fixture.\nmetadata:\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/' + id + '"\n  agent-skills-sync.requires: \'' + JSON.stringify(requires) + '\'\n---\n# Work\n' + requires.map((id) => 'Load ' + id + '.\n').join('');
 }
 try {
   assert.strictEqual(spawnSync('git', ['init', '-q', root]).status, 0);

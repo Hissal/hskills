@@ -47,7 +47,7 @@ function setGroup(config, group) {
   config.hooks = config.hooks || {};
   const rest = [];
   for (const existing of config.hooks.PreToolUse || []) {
-    const hooks = (existing.hooks || []).filter(h => !record.groups.some(g => g.hooks.some(owned => JSON.stringify(owned) === JSON.stringify(h))));
+    const hooks = (existing.hooks || []).filter(h => !record.groups.some(g => g.matcher === existing.matcher && g.hooks.some(owned => JSON.stringify(owned) === JSON.stringify(h))));
     if (hooks.length) rest.push({ ...existing, hooks });
     else if (!(existing.hooks || []).length) rest.push(existing);
   }
@@ -207,6 +207,7 @@ async function main() {
       if (config.disableAllHooks || config.enabled === false) { console.log('FAIL disabled: ' + file); ok = false; continue; }
       if (!groups.some(g => JSON.stringify(g) === JSON.stringify(group))) { console.log('FAIL missing registration or overridden: ' + file); ok = false; continue; }
       ok = doctor([adapter]) && ok;
+      if (adapter === 'codex.js') { console.log('PENDING Codex human trust: review the current hook in /hooks; trust is unverified.'); ok = false; }
       console.log('Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: ' + adapter);
     }
     if (record.files.some(f => f.path === OPENCODE_PLUGIN)) ok = (await doctorOpenCode()) && ok;

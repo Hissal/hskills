@@ -83,6 +83,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `skill-body-length` | warn | a `SKILL.md` body over 500 lines |
 | `reference-contents` | warn | a reference over 100 lines with no contents list |
 | `reference-unlinked` | warn | a reference not linked straight from `SKILL.md` (`NOTICE.md` excepted) |
+| `guard-cases` | fail | a [command guard case](../hooks/command-guard/test/run.js) fails, or the harness exits non-zero; a passing harness prints only its `guard:` summary line |
 
 Test the check with its fixture runner:
 
@@ -115,9 +116,32 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 - `history` is a list of earlier commits, `{ files, tag? }`, each a whole tree, optionally tagged. `committed` then replaces the last tree. Use it for rules that read git history.
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
+- `output` (optional) lists regexes the check's other stdout lines must match one to one, in order, for cases about what the check prints besides findings.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
 
+## Idle-cost tripwires
+
+Every check run prints estimated tokens (Unicode characters ÷ 4) for core and
+each pack present in the collection. Only model-invoked skills contribute their
+`description` and optional `when_to_use` values; `disable-model-invocation: true`
+excludes a skill. Bodies, reference files and skills outside the collection's
+core and pack tree contribute nothing. Quoting and block-scalar markers are
+syntax rather than listing text.
+
+`COLLECTION_ALWAYS_ON_PATH` is the single setting for the repository-relative
+always-on source path, **set by spec 2, #118/#114**. It is unset by default.
+When unset or when the file is absent from the checked collection, the check
+prints “not measured” with the reason and continues successfully.
+
+The `idle-cost` warning fires above 500 tokens for the always-on source,
+1,000 for core descriptions, or 1,000 for one pack's descriptions. Equality
+passes; warnings leave the exit code zero unless another rule fails.
+Review growth when a warning appears.
+
+Tripwire fixtures may set `alwaysOnPath` and assert figure text with `output`
+(an array of expected stdout substrings); the runner clears an inherited
+always-on setting for other fixtures.
 ## Skill identity and hard requirements (#95)
 
 Author identity once, in string-valued `metadata` in `SKILL.md`:

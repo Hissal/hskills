@@ -21,7 +21,7 @@ try {
   process.exit(1);
 }
 
-const findings = [];
+const findings = require('./tripwires').report(collection);
 for (const rule of rules) {
   for (const f of rule.check(collection)) findings.push(Object.assign({ rule: rule.id, level: rule.level }, f));
 }

@@ -96,3 +96,7 @@ above. This keeps test plugins outside production release stamping as well as
 real installs. Updated dependencies installed with zero audit vulnerabilities;
 Node 20 reported the release tool's Node 22 requirement, so integration checks
 and the offline release dry run use Node 22.
+After the release integration, Node 22 verification passed the collection check
+(zero failures, four warnings), all 218 collection fixtures, and the offline
+release dry run. After merging the subsequent installer integration, its updated
+32-case suite passed. The integration tip is included in this work branch.

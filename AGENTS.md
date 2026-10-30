@@ -21,4 +21,4 @@ Trigger and behavioural evals, including the required missing-requirement case: 
 Vendoring scripts (`scripts/vendor/`): run `node scripts/vendor/test/run.js` after changing them; it must pass.
 Copying a skill in from a source, or taking a source's update: [Vendoring and intake runbook](docs/vendoring.md).
 
-Releases, commit scopes and adding plugin manifests: [Release maintenance](docs/releases.md).
+Releases, commit scopes, plugin membership/version changes and adding manifests: [Release maintenance](docs/releases.md).

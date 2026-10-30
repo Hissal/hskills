@@ -1,0 +1,454 @@
+[
+  {
+    "variant": "bare",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "Obtain the issue 123 fixture token through the guide.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [
+      "reach-guide",
+      "reach-fixture:reach-token"
+    ],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/claude-1793368456188-993063.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "Use the guide to obtain the issue 123 fixture token.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [
+      "reach-guide",
+      "reach-fixture:reach-token"
+    ],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/claude-1793368463528-993600.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "Through the guide, retrieve the issue 123 fixture token.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [
+      "reach-guide",
+      "reach-fixture:reach-token"
+    ],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/claude-1793368474573-994485.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "What is two plus two?",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/claude-1793368490780-995926.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "Explain what a Git branch is.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/claude-1793368495264-996216.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "Write a greeting for a teammate.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/claude-1793368505607-996990.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "claude",
+    "control": "plugin-disabled",
+    "prompt": "Obtain the issue 123 fixture token through the guide.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": true,
+    "target_loaded": false,
+    "skill_calls": [
+      "reach-guide"
+    ],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/claude-1793368554343-1002354.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "Obtain the issue 123 fixture token through the guide.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/codex-1793368511828-997542.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "Use the guide to obtain the issue 123 fixture token.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/codex-1793368525015-998947.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "Through the guide, retrieve the issue 123 fixture token.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/codex-1793368540061-1000709.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "What is two plus two?",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/codex-1793368558230-1002594.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "Explain what a Git branch is.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/codex-1793368568932-1003701.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "codex",
+    "control": "ineffective-override",
+    "prompt": "Obtain the issue 123 fixture token through the guide.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/codex-1793368569610-1003563.stdout"
+  },
+  {
+    "variant": "bare",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "Write a greeting for a teammate.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/bare/codex-1793368579414-1005004.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "Obtain the issue 123 fixture token through the guide.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [
+      "reach-guide",
+      "reach-fixture:reach-token"
+    ],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/claude-1793368457726-993216.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "Use the guide to obtain the issue 123 fixture token.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [
+      "reach-guide",
+      "reach-fixture:reach-token"
+    ],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/claude-1793368465159-993726.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "Through the guide, retrieve the issue 123 fixture token.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [
+      "reach-guide",
+      "reach-fixture:reach-token"
+    ],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/claude-1793368475553-994565.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "What is two plus two?",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/claude-1793368484545-995285.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "Explain what a Git branch is.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/claude-1793368488677-995753.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "claude",
+    "control": "matrix",
+    "prompt": "Write a greeting for a teammate.",
+    "status": 0,
+    "completion": "success",
+    "model": [
+      "claude-opus-5-5"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/claude-1793368497465-996385.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "Obtain the issue 123 fixture token through the guide.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/codex-1793368502829-996709.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "Use the guide to obtain the issue 123 fixture token.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/codex-1793368524785-998912.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "Through the guide, retrieve the issue 123 fixture token.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": true,
+    "target_loaded": true,
+    "skill_calls": [],
+    "token_returned": true,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/codex-1793368545426-1001422.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "What is two plus two?",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/codex-1793368564457-1003177.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "Explain what a Git branch is.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/codex-1793368575254-1004528.stdout"
+  },
+  {
+    "variant": "qualified",
+    "host": "codex",
+    "control": "matrix",
+    "prompt": "Write a greeting for a teammate.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": false,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/qualified/codex-1793368586708-1005861.stdout"
+  },
+  {
+    "variant": "disabled-guide",
+    "host": "codex",
+    "control": "plugin-disabled",
+    "prompt": "Obtain the issue 123 fixture token through the guide.",
+    "status": 0,
+    "completion": "turn.completed",
+    "model": [
+      "gpt-6.1-sol"
+    ],
+    "guide_loaded": true,
+    "target_loaded": false,
+    "skill_calls": [],
+    "token_returned": false,
+    "local_transcript": "/tmp/reach-123-nNMntC/evidence/disabled-guide/codex-1793368639204-1011149.stdout"
+  }
+]

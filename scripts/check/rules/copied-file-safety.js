@@ -2,7 +2,7 @@
 const { copiedSkillOf } = require('../../vendor/lock');
 
 // Keep emoji variation selectors and ordinary non-ASCII letters usable.
-const HIDDEN = /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF\uFFF9-\uFFFB]/gu;
+const HIDDEN = /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF\uFFF9-\uFFFB\u{E0000}-\u{E007F}]/gu;
 
 // Match home roots at path boundaries, including Windows paths in JSON.
 const HOME = /(?:^|[^\p{L}\p{N}_./\\-])((?:[A-Za-z]:[\\/]+(?:Users|Documents and Settings)[\\/]+[^\\/\s"'`<>]+|\/(?:home|Users)\/[^/\s"'`<>]+|\/root)(?=$|[\\/\s"'`<>.,;:)}\]]))/iu;

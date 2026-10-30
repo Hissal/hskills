@@ -46,16 +46,18 @@ try {
     }
     write(dir, c.files || {});
 
-    const res = spawnSync(process.execPath, [CHECK, dir], { encoding: 'utf8' });
+    const res = spawnSync(process.execPath, [CHECK, dir], { encoding: 'utf8', env: Object.assign({}, process.env, { COLLECTION_ALWAYS_ON_PATH: c.alwaysOnPath || '' }) });
     const got = res.stdout.split('\n').map((l) => l.match(FINDING)).filter(Boolean).map((m) => key(m[1], m[3], m[2])).sort();
     const want = (c.expect || []).slice().sort();
     const exit = want.some((w) => w.startsWith('fail ')) ? 1 : 0;
-    const ok = res.status === exit && JSON.stringify(got) === JSON.stringify(want);
+    const outputOk = (c.output || []).every((line) => res.stdout.includes(line));
+    const ok = outputOk && res.status === exit && JSON.stringify(got) === JSON.stringify(want);
     if (ok) { passed++; return; }
     failed++;
     console.log('FAIL ' + c.name);
     console.log('     expected exit ' + exit + ': ' + JSON.stringify(want));
     console.log('     got exit ' + res.status + ': ' + JSON.stringify(got));
+    if (!outputOk) console.log('     stdout: ' + res.stdout);
     if (res.stderr) console.log('     stderr: ' + res.stderr.trim().split('\n').slice(0, 6).join('\n     '));
   });
 } finally {

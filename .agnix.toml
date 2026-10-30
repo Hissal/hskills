@@ -9,6 +9,9 @@ tools = ["claude-code", "codex"]
 # Wording-opinion rules, off for good (#77, catalog S32): every PE-*.
 prompt_engineering = false
 # Off per #77. AGM-002 and AGM-004 are wording-opinion rules, off for good.
+# CC-MEM-017 (emphasis overuse) replaced the wording-opinion rule CC-MEM-007,
+# so it is off for good too (owner, PR #178).
 # Also off per #77, but retired upstream by the pinned version, so not listed
-# (agnix warns about retired IDs): CC-MEM-005 to 009, CDX-AG-004.
-disabled_rules = ["CX-SK-001", "XP-SK-001", "AGM-002", "AGM-004"]
+# (agnix warns about retired IDs): CC-MEM-005 to 009, CDX-AG-004. Their size
+# replacements CC-MEM-014 and CDX-AG-009/010 stay on: they check the real limits.
+disabled_rules = ["CX-SK-001", "XP-SK-001", "AGM-002", "AGM-004", "CC-MEM-017"]

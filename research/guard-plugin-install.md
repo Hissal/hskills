@@ -9,6 +9,9 @@ The marketplace's sole entry is the hooks-only guard. Its Claude and Codex
 compatibility manifests select separate hook files and adapters in the same
 package. Rules and the engine remain shared. Project rules are discovered from
 the hook payload's working directory, independently of the plugin location.
+A disposable-home probe invoked both cached adapters with a project-added
+`project.no-verify` rule; both denied `git commit --no-verify -m x` and named
+that rule. This verifies adapter behavior from the snapshot, not host loading.
 
 [Claude manifest reference](https://code.claude.com/docs/en/plugins-reference)
 defines `.claude-plugin/plugin.json` and plugin-root paths.

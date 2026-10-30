@@ -29,6 +29,29 @@ const cases = [
     assert.deepEqual(fs.readdirSync(cache), versions);
     assert.equal(fs.readFileSync(settings, 'utf8'), before);
   }],
+  ['combined selections and steering survive guard uninstall', f => {
+    const project = path.join(f.home, 'project');
+    fs.mkdirSync(project, { recursive: true });
+    assert.equal(spawnSync('git', ['-C', project, 'init']).status, 0);
+    fs.mkdirSync(path.join(f.repo, 'skills/packs/study/beta'), { recursive: true });
+    f.manifest(['skills/core/alpha'], { study: ['skills/packs/study/beta'] });
+    const settings = path.join(f.home, '.claude/settings.json');
+    fs.mkdirSync(path.dirname(settings), { recursive: true });
+    fs.writeFileSync(settings, '{}');
+    f.run(1, 'install', ['--pack', 'study', '--skill', 'beta', '--project', project, '--owner-steering']);
+    const before = fs.readFileSync(f.record, 'utf8');
+    const guard = JSON.parse(fs.readFileSync(path.join(f.home, '.skill-collection/guard.json')));
+    assert.ok(guard.settings.some(s => s.path === settings && s.backup === settings + '.before-command-guard'));
+    f.run(1); f.run(1, 'doctor');
+    assert.equal(fs.readFileSync(f.record, 'utf8'), before);
+    f.run(0, 'uninstall');
+    assert.equal(fs.readFileSync(f.record, 'utf8'), before);
+    const record = JSON.parse(before);
+    for (const entry of [...record.links, ...record.steering])
+      assert.equal(fs.realpathSync(entry.path), fs.realpathSync(entry.target));
+    assert.equal(fs.readFileSync(settings + '.before-command-guard', 'utf8'), '{}');
+    assert.equal(fs.existsSync(path.join(f.home, '.agents/command-guard/adapters/codex.js')), false);
+  }],
   ...['.claude', '.agents'].map(folder => ['preserves unrecorded project entry and exclude rules in ' + folder, (f) => {
     const project = path.join(f.home, 'project');
     const dest = path.join(project, folder, 'skills/alpha');

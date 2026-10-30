@@ -17,8 +17,8 @@ Installation is complete when install and doctor both exit zero.
 
 `~/.skill-collection/install.json` records each link's absolute path, target
 and type. Preserve this record: losing it makes existing links unrecorded
-conflicts. Install reconciles the recorded set with core, removing links for
-skills that left core and adding new names. A no-change rerun leaves the
+conflicts. Install reconciles the recorded set with core and remembered personal extras,
+removing links that left the selection and adding new names. A no-change rerun leaves the
 record and links unchanged. Missing recorded links are recreated. An entry
 is removable only while it is still a link to its recorded target; a replaced
 file, directory or link is reported and preserved. Unrecorded targets,
@@ -81,8 +81,8 @@ establish actual Windows behavior.
 
 The command prints JSON strings for Claude `permissions.allow`, covering both
 installed link paths and checkout targets. Add the printed rules yourself to
-your Claude settings; the command writes hook registrations but no permission rules. Absolute
-rules start with `Read(//...)`; Windows drive paths use `//c/...` form.
+your Claude settings; the command writes hook registrations but no permission
+rules. Absolute rules start with `Read(//...)`; Windows drive paths use `//c/...` form.
 Claude checks both the requested link and resolved target, so allowing only
 the installed folder can still deny reading skill references. See the
 [Claude permission rules](https://code.claude.com/docs/en/permissions#read-and-edit).
@@ -173,7 +173,8 @@ For human recovery, stop sessions, repair and reinstall, or run:
 node scripts/install/install.js uninstall
 ```
 
-This removes the recorded guard only; core skill links remain. Restart sessions.
+This removes the recorded guard; core, pack and project skill links and owner
+steering remain installed. Restart sessions.
 After uninstall there is no guard protection. Removal approves no individual
 command. Agents must report failures, not disable or bypass the guard.
 

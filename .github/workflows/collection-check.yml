@@ -5,10 +5,6 @@ on: [push, pull_request]
 permissions:
   contents: read
 
-env:
-  # Bumping this pin requires re-verifying research/loading-mechanics.md.
-  CLAUDE_CODE_VERSION: '2.1.295'
-
 jobs:
   collection-check:
     name: Collection check (${{ matrix.os }})
@@ -25,8 +21,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install pinned Claude Code CLI
-        run: npm install --global "@anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }}"
       - name: Install pinned agnix
         run: npm ci
       - name: Run collection check fixtures

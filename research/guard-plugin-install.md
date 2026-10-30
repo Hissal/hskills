@@ -22,7 +22,8 @@ The doctor therefore reports Codex as pending human trust with a failing exit.
 
 ## Executed evidence and limits
 
-Claude Code 2.1.312 validated the manifest, registered this local marketplace,
+The installed `/home/agent/.local/bin/claude` (Claude Code 2.1.312 at the
+time of the probe) validated the manifest, registered this local marketplace,
 and installed `command-guard@skill-collection` at user scope in a disposable
 home (`HOME` and `CLAUDE_CONFIG_DIR` overridden). Listing reported enabled,
 version 0.1.0, a versioned cache install path, **and** `readFromFolder` pointing
@@ -39,8 +40,10 @@ Listing still identified the checkout as the local source; this is not live
 branch-switch or hook-trust evidence. The CLI warned that PATH helper aliases
 cannot be created under `/tmp`; registration itself succeeded.
 The installed API uses `plugin add`, not `plugin install` (the latter exited 2).
-No real-home files were edited. OpenCode evaluation belongs to the separate
-#125 recheck and was not repeated here.
+No real-home files were edited. OpenCode is installed at `/home/agent/.opencode/bin/opencode` (v2.2.2 in
+the #125 recheck). Its discovery activation and HTTP 402 quota failures leave
+#125 inconclusive; see [the corrected evidence](../docs/user-install.md#opencode-evidence-status-125).
+OpenCode evaluation was not repeated here.
 Claude `auth status --json` in another disposable home reported
 `loggedIn: false` and `authMethod: none` (exit 1). No login or credential copy
 was attempted. No model sessions were launched. Registration/listing is not hook

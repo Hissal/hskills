@@ -17,3 +17,4 @@ Single-context: one root `GLOSSARY.md` plus `docs/adr/`. See `docs/agents/domain
 Skill folders, frontmatter, references and the collection check: [Skill format](docs/skill-format.md). Run `node scripts/check/check.js` and `node scripts/check/test/run.js`; both must pass.
 Hook structure, failure policy and verification: [Hook house style](docs/agents/hook-house-style.md).
 Research notes, citations and source ledgers: [Research area rules](docs/agents/research-rules.md).
+Trigger and behavioural evals, including the required missing-requirement case: [Trigger evals](docs/trigger-evals.md), [Behavioural evals](docs/behavioural-evals.md).

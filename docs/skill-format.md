@@ -116,3 +116,83 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
+
+## Guide format
+
+Guides recommend workflows; they never run them. A recommendation returns the
+exact user invocation and leaves starting a user-invoked workflow to the human.
+A small guide is primarily routes and has a needs table only when it supplies
+knowledge. These rules follow [ADR 0003](adr/0003-core-reaches-packs-through-the-pack-list.md)
+and [#100](https://github.com/Hissal/skill-collection/issues/100).
+
+### Pack guides and needs tables
+
+A pack has at most one guide, named `<pack>-guide`, model-invoked. Put its needs
+table in the `SKILL.md` body, so knowledge lookups see it immediately. Each row
+maps a specific need to concrete knowledge: a reference file in the guide's own
+folder, another skill in the same pack, or vendor guidance selected by the
+project. A row never ends at generic advice.
+
+Use a two-column Markdown table headed `Need` and `Target` (case-insensitive).
+Tables in fenced examples are ignored. The target forms are:
+
+- A relative Markdown link to a file in this guide's folder, including nested
+  references; anchors may select a section. Directories do not count.
+- `skill: <callable-name>` (optionally in backticks), resolved to a skill in the
+  same pack. This is an installed-skill lookup, not a sibling filesystem path.
+- `vendor-guidance: <project-selected guidance>` (optionally in backticks).
+  Describe the specific selected source or project pointer. The check recognises
+  this marker and does not resolve it: the consuming project's choice is outside
+  the collection tree. An arbitrary external URL alone is not this declaration.
+
+Minimal needs table for a hypothetical `web-guide`:
+
+```md
+| Need | Target |
+|---|---|
+| Test idioms for this stack | [Test idioms](references/TESTING.md) |
+| Web review checks | `skill: web-review` |
+| Framework API contracts | vendor-guidance: framework documentation selected in project instructions |
+```
+
+The check recognises guides named `guide` or ending in `-guide`. It fails a
+needs-table row whose target does not resolve by the above rules, including a
+skill from another pack. General missing-file checks still apply to links.
+
+### Routes
+
+Pack workflow routes live in `ROUTES.md` beside `SKILL.md`. Link it directly
+from `SKILL.md` with an instruction to load it **only when routes are requested**;
+knowledge lookups must not load routes. A pack with no user-invoked workflows
+ships no `ROUTES.md`. A pack guide with routes must never use `paths:`, because
+core guide discovery needs it visible in the installed listing.
+
+Every route pairs a distinguishing situation with the exact invocation the
+human can type, including arguments when needed. For example:
+
+```md
+| Situation | Invocation |
+|---|---|
+| Review a web change before merging | `/web-review` |
+| Diagnose a failing browser test | `/web-debug <failing test>` |
+```
+
+The core guide is user-invoked. Its main workflow routes stay in its `SKILL.md`
+body; supporting routes live in a directly disclosed reference grouped by need.
+The automatic guide uses the same body format; its comparison rule is defined
+separately. Route content belongs to the guide's own skill spec.
+
+### Extension points
+
+An extension point is one sentence naming the need and asking the project's
+listed pack guides; it never names a particular pack or pack skill. Example:
+“Ask the project's listed pack guides for this stack's test idioms and fixtures.”
+The caller keeps its current job while obtaining that knowledge; a lookup never
+starts another workflow. See [core extension points](agents/core-extension-points.md).
+
+### Guide check rules
+
+| Rule | Level | Finding |
+|---|---|---|
+| `guide-needs-target` | fail | a guide needs-table target is not its own file, a same-pack skill, or explicitly project-selected vendor guidance |
+| `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |

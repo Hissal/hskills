@@ -11,4 +11,6 @@ module.exports = [
   require('./skill-body-length'),
   require('./reference-contents'),
   require('./reference-unlinked'),
+  require('./guide-needs-target'),
+  require('./guide-routes-paths'),
 ];

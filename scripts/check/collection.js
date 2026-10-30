@@ -88,6 +88,7 @@ function load(root) {
     root,
     files,
     skills,
+    needsTables: require('./guide-tables').needsTables,
     bytes,
     text,
     isText,

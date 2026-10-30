@@ -1,7 +1,8 @@
 # Disposable plugin reach fixture (#123)
 
 Use this fixture only for the [plugin gate](https://github.com/Hissal/skill-collection/issues/123).
-Its separate test marketplace is outside the release marketplace, collection
+Plugin manifests are templates materialized only in the scratch copy, outside
+release stamping. Its separate test marketplace is outside the release marketplace, collection
 manifest, catalog and install selection. The one-skill pack is test data;
 production skill plugins remain gated on #123. It carries no hooks.
 

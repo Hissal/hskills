@@ -7,6 +7,10 @@ const path = require('node:path');
 const {spawnSync} = require('node:child_process');
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'reach-123-'));
 fs.cpSync(__dirname, path.join(root, 'marketplace'), {recursive:true});
+for (const host of ['.claude-plugin','.codex-plugin']) {
+ const manifest = path.join(root,'marketplace/pack',host,'plugin.json');
+ fs.renameSync(manifest+'.fixture',manifest);
+}
 for (const variant of ['bare','qualified']) {
  const project = path.join(root, variant);
  const target = variant === 'bare' ? 'reach-token' : 'reach-fixture:reach-token';

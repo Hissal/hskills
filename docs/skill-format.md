@@ -112,6 +112,8 @@ Scripts read the lock through `scripts/vendor/lock.js`, never by parsing it them
 
 **Drift**: `node scripts/vendor/drift.js` classifies every lock entry against its baseline and its source's default branch, one `<skill>: <class>` line each; `--merge <skill>` takes a source update by three-way merge. Run it with `--help` first. Its fixture triples are in `scripts/vendor/test/cases.js`, run by `node scripts/vendor/test/run.js`.
 
+**Runbook**: copying a skill in and taking an update follow [Vendoring and intake runbook](vendoring.md).
+
 ## The collection check
 
 ```

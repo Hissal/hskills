@@ -29,4 +29,5 @@ module.exports = [
   require('./harness-gates'),
 
   require('./id-stability'),
+  require('./agnix'),
 ];

@@ -12,6 +12,7 @@ What a skill folder in this collection holds, and the check that keeps the tree 
 - [Line endings](#line-endings)
 - [Copied skills](#copied-skills)
 - [The collection check](#the-collection-check)
+- [agnix (on trial)](#agnix-on-trial)
 - [Adding a rule](#adding-a-rule)
 - [Adding a fixture](#adding-a-fixture)
 
@@ -139,6 +140,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `vendor-baseline` | fail | a lock entry has no baseline `SKILL.md`, or a file under `vendor/` is in no entry's baseline |
 | `vendor-licence` | fail | a lock entry's source has no licence file |
 | `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` sits in a skill with no lock entry |
+| `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
 
 Test the check with its fixture runner:
 
@@ -153,6 +155,17 @@ node scripts/gates/test/run.js
 ```
 
 Every change to the check keeps both green: the runner, and the check on the real tree.
+
+## agnix (on trial)
+
+[agnix](https://github.com/agent-sh/agnix) lints harness format mechanics beside the collection's own rules ([#93](https://github.com/Hissal/skill-collection/issues/93)). Install it once with `npm ci`, which installs the version pinned in `package.json`; the check runs it as its `agnix` rule.
+
+- **Scope and rules off**: [`.agnix.toml`](../.agnix.toml) scopes it to Claude Code and Codex. It turns off `CX-SK-001`, `XP-SK-001`, and for good the wording-opinion rules: every `PE-*`, `AGM-002` and `AGM-004`. `CC-MEM-005` to `009` and `CDX-AG-004` are off too: the pinned version has retired them, so they are not listed.
+- **Autofix**: never run. The check passes no fix flag, and its fixture runner fails any case where the check changed a file.
+- **Output**: agnix errors and warnings print as `WARN <file>:<line> [agnix] <agnix rule> ...`; its info-level advice is not printed. A missing agnix, a version other than the pin, or a failed run is one warning on `package.json`. Nothing agnix reports fails the run.
+- **Trial**: decided in [#77, owner answer 10](https://github.com/Hissal/skill-collection/issues/77#issuecomment-6509966712). The owner judges agnix after its first run over the first real batch of skills, then promotes it to failing (the rule's level becomes `fail`) or drops it (the rule, `.agnix.toml` and the pin go). The collection's own rules stay either way.
+- **Decision**: pending. Record the owner's promote-or-drop decision here, with its date and issue link.
+- **Bumping the pin**: change `package.json`, run `npm install`, and re-check `.agnix.toml` against agnix's changelog, since releases retire and rename rules.
 
 ## Adding a rule
 
@@ -294,6 +307,8 @@ setup error. Run the scan's fixtures with `node scripts/security-scan/test/run.j
   `scripts/*.{py,sh,js,ts}`) get its per-file checks: prompt injection,
   obfuscation, secrets, and dangerous code for code files. Untrusted URLs and the
   description overlap figure are scanner output, not findings.
+CI runs `npm ci` before both commands, so the check runs the pinned agnix and
+the real-agnix fixture cases run rather than skip.
 
 ## Guide format
 

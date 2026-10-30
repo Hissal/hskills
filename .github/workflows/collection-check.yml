@@ -1,6 +1,12 @@
 name: Collection check
 
-on: [push, pull_request]
+# Pull requests are checked once per push; main is checked after each merge;
+# any other branch runs by hand (Actions tab, or `gh workflow run`).
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -59,7 +65,7 @@ jobs:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           base="${PR_BASE:-$PUSH_BEFORE}"
-          # A new branch has no before commit; a force push may drop it.
+          # A manual run has no base; a force push to main may drop its before commit.
           if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
             base="origin/$DEFAULT_BRANCH"
           fi

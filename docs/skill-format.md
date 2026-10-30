@@ -274,9 +274,10 @@ such as numbers or booleans that YAML would otherwise interpret as non-strings.
 ## Continuous integration
 
 [Collection check](../.github/workflows/collection-check.yml) runs the fixture runner
-and the same collection check command on every push and pull request, on Windows
-and Linux. Either command failing fails its job; both platforms run even if one
-fails. Checkout includes history and tags for checks against the last release.
+and the same collection check command on Windows and Linux: once per push to a
+pull request, after each merge to `main`, and by hand on any other branch
+(`gh workflow run collection-check.yml --ref <branch>`). Either command failing
+fails its job; both platforms run even if one fails. Checkout includes history and tags for checks against the last release.
 There is no pre-commit hook.
 
 ### Security scan

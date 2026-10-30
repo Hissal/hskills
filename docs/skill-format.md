@@ -117,7 +117,6 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
 
-<<<<<<< HEAD
 ## Skill identity and hard requirements (#95)
 
 Author identity once, in string-valued `metadata` in `SKILL.md`:
@@ -162,7 +161,7 @@ Additional fail rules:
 | `skill-metadata` | fail | missing or invalid schema/ID, malformed requirements or duplicate ID |
 | `skill-requirements` | fail | a requirement outside the resolved set or a requirement cycle |
 | `requirement-reference` | fail | a Markdown link names a missing file in a required skill's folder |
-=======
+
 ## Continuous integration
 
 [Collection check](../.github/workflows/collection-check.yml) runs the fixture runner
@@ -175,4 +174,3 @@ The workflow's `CLAUDE_CODE_VERSION` is the single Claude Code CLI pin, matching
 the version inspected in [loading-mechanics research](../research/loading-mechanics.md).
 Bumping it requires re-verifying that research. CI installs the CLI but does not
 run the hand-run trigger evals or authenticate a model session.
->>>>>>> origin/ci/run-collection-check

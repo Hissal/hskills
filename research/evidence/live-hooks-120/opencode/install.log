@@ -1,0 +1,14 @@
+Snapshot copied to /tmp/opencode-120-final-wm8utogd/home/.agents/command-guard
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Claude Code: PreToolUse hook registered in /tmp/opencode-120-final-wm8utogd/home/.claude/settings.json
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status
+OpenCode: plugin installed at /tmp/opencode-120-final-wm8utogd/home/.config/opencode/plugins/command-guard.js. Running OpenCode servers pick it up on restart.
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status

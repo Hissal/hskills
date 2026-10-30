@@ -17,6 +17,7 @@ function prepare(home, source = path.resolve(__dirname, '../../hooks/command-gua
   const version = JSON.parse(fs.readFileSync(path.join(source, '.claude-plugin/plugin.json'))).version;
   const dest = path.join(home, '.skill-collection/plugin-cache', version + '-' + hash.digest('hex'));
   if (fs.existsSync(dest)) {
+    if (!fs.lstatSync(dest).isDirectory() || fs.lstatSync(dest).isSymbolicLink()) throw new Error('CONFLICT plugin snapshot entry: ' + dest);
     for (const [name, content] of files) {
       if (!fs.lstatSync(path.join(dest, name)).isFile() || fs.lstatSync(path.join(dest, name)).isSymbolicLink() || !fs.readFileSync(path.join(dest, name)).equals(content)) throw new Error('CONFLICT modified plugin snapshot: ' + dest);
     }
@@ -40,6 +41,7 @@ module.exports = { prepare };
 const { spawnSync } = require('child_process');
 function registration(home, source, action = 'install') {
   const file = path.join(home, '.skill-collection/plugins.json');
+  if (fs.existsSync(file) && (!fs.lstatSync(file).isFile() || fs.lstatSync(file).isSymbolicLink())) throw new Error('CONFLICT plugin ownership record');
   const data = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file)) : { hosts: [], writes: [] };
   const save = () => { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n'); };
   const roots = ['.claude/plugins', '.codex/plugins', '.claude/settings.json', '.codex/config.toml'];
@@ -55,10 +57,15 @@ function registration(home, source, action = 'install') {
     roots.forEach(p => visit(path.join(home, p)));
     return entries;
   }
+  function currentBytes(p) {
+    let info;
+    try { info = fs.lstatSync(p); } catch (e) { if (e.code === 'ENOENT') return null; throw e; }
+    return info.isFile() && !info.isSymbolicLink() ? fs.readFileSync(p, 'base64') : undefined;
+  }
   function restore(writes) {
     let ok = true;
     for (const w of [...writes].reverse()) {
-      const current = fs.existsSync(w.path) && fs.lstatSync(w.path).isFile() && !fs.lstatSync(w.path).isSymbolicLink() ? fs.readFileSync(w.path, 'base64') : null;
+      const current = currentBytes(w.path);
       if (current !== w.after) { console.log('CONFLICT changed registration preserved: ' + w.path); ok = false; continue; }
       if (w.before === null) fs.unlinkSync(w.path);
       else fs.writeFileSync(w.path, Buffer.from(w.before, 'base64'));
@@ -68,8 +75,7 @@ function registration(home, source, action = 'install') {
   }
   if (action === 'uninstall') {
     for (const w of data.writes) {
-      const info = fs.existsSync(w.path) ? fs.lstatSync(w.path) : null;
-      const current = info && info.isFile() && !info.isSymbolicLink() ? fs.readFileSync(w.path, 'base64') : null;
+      const current = currentBytes(w.path);
       if (current !== w.after) { console.log('CONFLICT changed registration preserved: ' + w.path); return false; }
     }
     const ok = restore(data.writes); if (ok) data.hosts = []; save(); return ok;
@@ -77,11 +83,13 @@ function registration(home, source, action = 'install') {
   const env = { ...process.env, HOME: home, USERPROFILE: home, CLAUDE_CONFIG_DIR: path.join(home, '.claude'), CODEX_HOME: path.join(home, '.codex'), XDG_CONFIG_HOME: path.join(home, '.config') };
   function call(host, args) {
     const binary = process.env['COMMAND_GUARD_' + host.toUpperCase()] || host;
-    const r = spawnSync(binary, args, { env, cwd: home, encoding: 'utf8', timeout: 60000 });
+    const r = spawnSync(binary.endsWith('.cjs') ? process.execPath : binary, binary.endsWith('.cjs') ? [binary, ...args] : args, { env, cwd: home, encoding: 'utf8', timeout: 60000 });
     if (r.status !== 0) throw new Error(binary + ' ' + args.join(' ') + '\n' + (r.error || '') + r.stdout + r.stderr);
     return JSON.parse(r.stdout);
   }
   function inspect(host, snapshot) {
+    const settings = path.join(home, '.claude/settings.json');
+    if (host === 'claude' && fs.existsSync(settings) && JSON.parse(fs.readFileSync(settings)).disableAllHooks) throw new Error('disabled Claude hooks');
     const list = call(host, ['plugin', 'list', '--json']);
     const entry = (Array.isArray(list) ? list : list.installed).find(p => (p.id || p.pluginId) === 'command-guard@skill-collection-guard');
     const effective = entry && (entry.readFromFolder || entry.source?.path || entry.installPath);
@@ -110,7 +118,6 @@ function registration(home, source, action = 'install') {
     return false;
   }
   const snapshot = prepare(home, source);
-  probeSnapshot(snapshot);
   for (const dir of ['.claude-plugin', '.codex-plugin', 'hooks', 'engine', 'rules', 'adapters']) {
     for (const name of fs.readdirSync(path.join(snapshot, dir))) {
       const p = path.join(snapshot, dir, name);
@@ -118,9 +125,11 @@ function registration(home, source, action = 'install') {
     }
   }
   save();
+  probeSnapshot(snapshot);
   const market = snapshot;
   const manifest = path.join(market, '.claude-plugin/marketplace.json');
   const content = JSON.stringify({ name: 'skill-collection-guard', owner: { name: 'Hissal' }, plugins: [{ name: 'command-guard', source: './', policy: { installation: 'AVAILABLE', authentication: 'ON_INSTALL' } }] }, null, 2) + '\n';
+  if (fs.existsSync(manifest) && (!fs.lstatSync(manifest).isFile() || fs.lstatSync(manifest).isSymbolicLink())) throw new Error('CONFLICT marketplace snapshot entry');
   if (fs.existsSync(manifest) && fs.readFileSync(manifest, 'utf8') !== content) throw new Error('CONFLICT marketplace snapshot');
   if (!fs.existsSync(manifest)) { fs.mkdirSync(path.dirname(manifest), { recursive: true }); fs.writeFileSync(manifest, content); data.writes.push({ path: manifest, before: null, after: Buffer.from(content).toString('base64') }); save(); }
   for (const host of ['claude', ...(fs.existsSync(path.join(home, '.codex')) ? ['codex'] : [])]) {

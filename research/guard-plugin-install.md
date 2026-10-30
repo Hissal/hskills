@@ -67,8 +67,9 @@ a failed host registration rolls back configuration changes and retains its hook
 The write journal preserves before/after bytes and refuses uninstall of changed
 files. No credentials are copied and no trust is granted.
 
-Disposable-home real CLI cases cover registration failure, selective migration,
-rerun, source update and uninstall. Source overrides select the guard package as
+Disposable-home real CLI cases cover registration failure with rollback, selective
+migration, rerun, source update, normal install and uninstall. Changed owned
+configuration makes uninstall refuse all removal and preserve the change. Source overrides select the guard package as
 well as skill links. These cases establish registration, not live loading.
 
 ## Remaining acceptance
@@ -107,3 +108,14 @@ The [OpenAI marketplace contract](https://developers.openai.com/plugins/build/pl
 requires `policy.installation` and `policy.authentication` on each entry, so
 retain those fields for Codex. The Claude warning describes a real difference
 between hosts, not failed registration or evidence of effective hook loading.
+
+### Registration implementation verification (2026-10-30)
+
+`node scripts/install/test/plugin.js --real` passed against the installed Claude
+and Codex CLIs with fresh temporary HOME, CLAUDE_CONFIG_DIR and CODEX_HOME.
+No credentials or trust state were copied. Enabled listings reported the prepared
+snapshot as effective source. The deterministic CLI boundary double runs the same
+migration and ownership cases inside the collection check; it supplies host
+responses while the installer uses real temporary files. The 36 pre-existing
+installer cases and 218 check fixtures also passed. Live plugin session loading,
+branch-switch behavior and non-Linux hosts still require their separate evidence.

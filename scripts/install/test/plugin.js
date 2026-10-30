@@ -9,9 +9,9 @@ const home = fs.mkdtempSync(path.join(os.tmpdir(), 'guard-plugin-test-'));
 try {
   fs.mkdirSync(path.join(home, '.codex'));
   const real = process.argv.includes('--real');
-  for (const host of ['claude', 'codex']) { fs.copyFileSync(path.join(__dirname, 'host.cjs'), path.join(home, host)); fs.chmodSync(path.join(home, host), 0o755); }
-  const claude = real ? '/home/agent/.local/bin/claude' : path.join(home, 'claude');
-  const codex = real ? '/home/agent/.npm-global/bin/codex' : path.join(home, 'codex');
+  for (const host of ['claude', 'codex']) { fs.copyFileSync(path.join(__dirname, 'host.cjs'), path.join(home, host + '.cjs')); fs.chmodSync(path.join(home, host + '.cjs'), 0o755); }
+  const claude = real ? '/home/agent/.local/bin/claude' : path.join(home, 'claude.cjs');
+  const codex = real ? '/home/agent/.npm-global/bin/codex' : path.join(home, 'codex.cjs');
   const cli = path.resolve(__dirname, '../install.js');
   const source = path.join(home, 'source');
   fs.cpSync(path.resolve(__dirname, '../../../hooks/command-guard'), path.join(source, 'hooks/command-guard'), { recursive: true });
@@ -23,8 +23,8 @@ try {
   old.hooks.PreToolUse[0].hooks.push({ type: 'command', command: 'echo personal' });
   fs.writeFileSync(settings, JSON.stringify(old));
   const before = fs.readFileSync(settings, 'utf8');
-  const broken = path.join(home, 'broken-claude');
-  fs.writeFileSync(broken, '#!/usr/bin/env node\nconst {spawnSync}=require("child_process"); const args=process.argv.slice(2); if(args[1]==="install")process.exit(9); const r=spawnSync(' + JSON.stringify(claude) + ',args,{stdio:"inherit"});process.exit(r.status);\n', { mode: 0o755 });
+  const broken = path.join(home, 'broken-claude.cjs');
+  fs.writeFileSync(broken, '#!/usr/bin/env node\nconst {spawnSync}=require("child_process"); const args=process.argv.slice(2); if(args[1]==="install")process.exit(9); const bin=' + JSON.stringify(claude) + '; const r=spawnSync(bin.endsWith(".cjs")?process.execPath:bin,bin.endsWith(".cjs")?[bin,...args]:args,{stdio:"inherit"});process.exit(r.status);\n', { mode: 0o755 });
   const fail = spawnSync(process.execPath, [cli, 'prepare-plugin', '--home', home, '--source', source], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: broken } });
   assert.equal(fail.status, 1);
   assert.equal(fs.readFileSync(settings, 'utf8'), before);
@@ -57,5 +57,5 @@ try {
   const uninstall = spawnSync(process.execPath, [cli, 'uninstall', '--home', home], { encoding: 'utf8' });
   assert.equal(uninstall.status, 0, uninstall.stdout + uninstall.stderr);
   assert.ok(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse.every(g => g.hooks.every(h => h.command === 'echo personal')));
-  console.log('plugin real CLI registration, migration, rerun and uninstall passed');
+  console.log('plugin ' + (real ? 'real CLI' : 'CLI boundary') + ' registration, rollback, migration, update and uninstall passed');
 } finally { fs.rmSync(home, { recursive: true, force: true }); }

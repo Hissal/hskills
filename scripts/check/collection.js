@@ -97,10 +97,15 @@ function load(root) {
     return vendor;
   };
 
+  let release;
+  let releaseLoaded = false;
   return {
     resolved: resolveSkills(skills),
     root,
-    get release() { return require('./release').lastRelease(root); },
+    get release() {
+      if (!releaseLoaded) { release = require('./release').lastRelease(root); releaseLoaded = true; }
+      return release;
+    },
     files,
     skills,
     needsTables: require('./guide-tables').needsTables,

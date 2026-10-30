@@ -5,8 +5,24 @@ const os = require('node:os');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
+// --junction (Windows only): inject EPERM for directory symlinks so the real
+// installer takes its junction fallback. This is not an actual OS refusal.
+const junction = process.argv.includes('--junction');
+if (junction && process.platform !== 'win32') throw new Error('--junction requires Windows');
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'skill-scope-127-'));
 const cli = path.resolve(__dirname, '../install.js');
+const nodeArgs = [];
+if (junction) {
+  const preload = path.join(root, 'deny-directory-links.cjs');
+  fs.writeFileSync(preload, `const fs = require('fs');
+const original = fs.symlinkSync;
+fs.symlinkSync = function(target, dest, type) {
+  if (type === 'dir') throw Object.assign(new Error('fixture-injected permission denied'), { code: 'EPERM' });
+  return original.apply(this, arguments);
+};
+`);
+  nodeArgs.push('--require', preload);
+}
 const id = name => `hissal.skill-collection/eval-scope-${name}`;
 function skill(source, name, marker, requires = []) {
   const dir = path.join(source, 'skills', 'packs', 'fixture', name);
@@ -38,7 +54,7 @@ for (const scenario of ['duplicate', 'project-to-user', 'user-to-project']) {
   skill(source, 'scope-rules', 'RULES');
   fs.writeFileSync(path.join(source, 'collection.json'), JSON.stringify({ core: [], packs: { fixture: [`skills/packs/fixture/${userName}`], project: [`skills/packs/fixture/${projectName}`] }, expensive: [] }));
   const run = (...args) => {
-    const r = spawnSync(process.execPath, [cli, 'install', '--home', home, '--source', source, ...args], { encoding: 'utf8' });
+    const r = spawnSync(process.execPath, [...nodeArgs, cli, 'install', '--home', home, '--source', source, ...args], { encoding: 'utf8' });
     fs.appendFileSync(path.join(base, 'install.log'), r.stdout + r.stderr);
     assert.equal(r.status, 0, r.stdout + r.stderr);
   };
@@ -48,8 +64,8 @@ for (const scenario of ['duplicate', 'project-to-user', 'user-to-project']) {
     // Same identity/name, deliberately different content to expose selection.
     const personal = path.join(source, 'personal');
     skill(personal, 'scope-caller', 'USER-CALLER', [id('scope-rules')]);
-    for (const folder of ['.claude', '.agents']) fs.symlinkSync(path.join(personal, 'skills/packs/fixture/scope-caller'), path.join(home, folder, 'skills/scope-caller'), 'dir');
-    fs.appendFileSync(path.join(base, 'install.log'), 'Duplicate user caller: manually created symlinks (not installer-owned).\n');
+    for (const folder of ['.claude', '.agents']) fs.symlinkSync(path.join(personal, 'skills/packs/fixture/scope-caller'), path.join(home, folder, 'skills/scope-caller'), junction ? 'junction' : 'dir');
+    fs.appendFileSync(path.join(base, 'install.log'), `Duplicate user caller: manually created ${junction ? 'junctions' : 'symlinks'} (not installer-owned).\n`);
   }
   for (const [scope, name] of [[home, userName], [project, projectName]]) {
     for (const folder of ['.claude', '.agents']) {
@@ -69,6 +85,10 @@ for (const scenario of ['duplicate', 'project-to-user', 'user-to-project']) {
     }
   }
   assert.equal(spawnSync('git', ['-C', project, 'status', '--porcelain'], { encoding: 'utf8' }).stdout, '');
+  if (junction) {
+    const types = JSON.parse(fs.readFileSync(path.join(home, '.skill-collection/install.json'), 'utf8')).links.map(l => l.type);
+    assert.ok(types.length && types.every(t => t === 'junction'), types.join());
+  }
   console.log(`${scenario}: ${base} (installer exit 0; links resolve; clean baseline)`);
 }
 console.log(`ROOT: ${root}`);

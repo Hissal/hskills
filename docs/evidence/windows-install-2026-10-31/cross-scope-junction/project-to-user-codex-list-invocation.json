@@ -1,0 +1,12 @@
+{
+  "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\project-to-user\\project",
+  "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\evidence\\live-cross-scope-windows.js",
+    "--list",
+    "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+  ],
+  "env": {
+    "CODEX_HOME": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\project-to-user\\home\\.agents"
+  }
+}

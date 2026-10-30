@@ -1,0 +1,36 @@
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/home/.claude/skills/scope-caller/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/source/skills/packs/fixture/scope-caller/**)"
+LINK junction: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\home\.claude\skills\scope-caller -> C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\source\skills\packs\fixture\scope-caller
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/home/.agents/skills/scope-caller/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/source/skills/packs/fixture/scope-caller/**)"
+LINK junction: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\home\.agents\skills\scope-caller -> C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\source\skills\packs\fixture\scope-caller
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\home\.claude\skills\scope-caller (junction)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\home\.agents\skills\scope-caller (junction)
+Snapshot copied to C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\home\.agents\command-guard
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Claude Code: PreToolUse hook registered in C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\home\.claude\settings.json
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/home/.claude/skills/scope-caller/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/source/skills/packs/fixture/scope-caller/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/home/.agents/skills/scope-caller/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/source/skills/packs/fixture/scope-caller/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/project/.claude/skills/scope-rules/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/source/skills/packs/fixture/scope-rules/**)"
+LINK junction: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\project\.claude\skills\scope-rules -> C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\source\skills\packs\fixture\scope-rules
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/project/.agents/skills/scope-rules/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/user-to-project/source/skills/packs/fixture/scope-rules/**)"
+LINK junction: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\project\.agents\skills\scope-rules -> C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\source\skills\packs\fixture\scope-rules
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\home\.claude\skills\scope-caller (junction)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\home\.agents\skills\scope-caller (junction)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\project\.claude\skills\scope-rules (junction)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\project\.agents\skills\scope-rules (junction)
+Snapshot copied to C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\home\.agents\command-guard
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Claude Code: PreToolUse hook registered in C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\user-to-project\home\.claude\settings.json
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js

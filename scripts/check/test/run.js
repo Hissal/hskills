@@ -60,7 +60,7 @@ try {
     }
     write(dir, c.files || {});
 
-    const env = Object.assign({}, process.env, { COLLECTION_CHECK_AGNIX: STUB, AGNIX_STUB: '' });
+    const env = Object.assign({}, process.env, { COLLECTION_ALWAYS_ON_PATH: c.alwaysOnPath || '', COLLECTION_CHECK_AGNIX: STUB, AGNIX_STUB: '' });
     if (c.agnix === 'real') delete env.COLLECTION_CHECK_AGNIX;
     else if (c.agnix === 'missing') env.COLLECTION_CHECK_AGNIX = path.join(dir, 'no-agnix-here.js');
     else if (c.agnix) env.AGNIX_STUB = JSON.stringify(c.agnix);
@@ -69,14 +69,20 @@ try {
     const got = res.stdout.split('\n').map((l) => l.match(FINDING)).filter(Boolean).map((m) => key(m[1], m[3], m[2])).sort();
     const want = (c.expect || []).slice().sort();
     const exit = want.some((w) => w.startsWith('fail ')) ? 1 : 0;
+    const other = res.stdout.split('\n').filter((l) => l && !FINDING.test(l) && !l.startsWith('TRIPWIRE '));
+    const outputOk = (c.output || []).every((expected) => typeof expected === 'string'
+      ? res.stdout.includes(expected)
+      : other.some((line) => expected.test(line))) &&
+      (!(c.output || []).some((expected) => expected instanceof RegExp) || other.length === c.output.length);
     const written = Object.assign({}, c.committed, c.files);
     const changed = Object.keys(written).filter((f) => !fs.readFileSync(path.join(dir, ...f.split('/'))).equals(Buffer.from(written[f])));
-    const ok = res.status === exit && JSON.stringify(got) === JSON.stringify(want) && !changed.length;
+    const ok = outputOk && res.status === exit && JSON.stringify(got) === JSON.stringify(want) && !changed.length;
     if (ok) { passed++; return; }
     failed++;
     console.log('FAIL ' + c.name);
     console.log('     expected exit ' + exit + ': ' + JSON.stringify(want));
     console.log('     got exit ' + res.status + ': ' + JSON.stringify(got));
+    if (!outputOk) console.log('     stdout: ' + res.stdout);
     if (changed.length) console.log('     the check changed: ' + changed.join(', '));
     if (res.stderr) console.log('     stderr: ' + res.stderr.trim().split('\n').slice(0, 6).join('\n     '));
   });

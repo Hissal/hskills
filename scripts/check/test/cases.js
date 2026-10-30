@@ -17,7 +17,7 @@ const lines = (n, prefix) => Array.from({ length: n }, (_, i) => (prefix || 'lin
 // (key -> raw text after "key:"), `body` replaces the body.
 function skillMd(name, o) {
   o = o || {};
-  const fm = Object.assign({ name: ' ' + name, description: ' Use when testing the collection check.' }, o.fm || {});
+  const fm = Object.assign({ name: ' ' + name, description: ' Use when testing the collection check.', metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/' + name + '"' }, o.fm || {});
   const head = Object.entries(fm).map(([k, v]) => k + ':' + v).join('\n');
   return '---\n' + head + '\n---\n\n' + (o.body !== undefined ? o.body : '# ' + name + '\n\nDo the work.\n');
 }
@@ -82,3 +82,36 @@ module.exports = [
   { name: 'NOTICE.md needs no link', files: skill('skills/core/alpha', { files: { 'NOTICE.md': '# Notice\n' } }), expect: [] },
   { name: 'warnings alone exit zero', files: tree(skill('skills/core/alpha', { body: lines(501) }), skill('skills/core/beta', { files: { 'X.md': '# X\n' } })), expect: ['warn skill-body-length skills/core/alpha/SKILL.md', 'warn reference-unlinked skills/core/beta/X.md'] },
 ];
+
+// #95: identity metadata, exercised through the collection CLI.
+module.exports.push({ name: 'missing schema fails', files: skill('skills/core/alpha', { fm: { metadata: '\n  agent-skills-sync.id: "hissal.skill-collection/alpha"' } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'] });
+
+// #95: metadata validation neighbours.
+const metadata = (id, requires, schema) => '\n  agent-skills-sync.schema: ' + (schema === undefined ? '"1"' : schema) + '\n  agent-skills-sync.id: "' + id + '"' + (requires === undefined ? '' : '\n  agent-skills-sync.requires: ' + requires);
+for (const [name, value] of [
+  ['numeric schema', metadata('hissal.skill-collection/alpha', undefined, '1')],
+  ['wrong schema', metadata('hissal.skill-collection/alpha', undefined, '"2"')],
+  ['missing ID', '\n  agent-skills-sync.schema: "1"'],
+  ['external ID', metadata('other/alpha')],
+  ['non JSON requirements', metadata('hissal.skill-collection/alpha', "'broken'")],
+  ['object requirements', metadata('hissal.skill-collection/alpha', "'{}'")],
+  ['non string requirement', metadata('hissal.skill-collection/alpha', "'[1]'")],
+  ['external requirement', metadata('hissal.skill-collection/alpha', "'[\"other/beta\"]'")],
+  ['raw array requirements', metadata('hissal.skill-collection/alpha', '["hissal.skill-collection/beta"]')],
+]) module.exports.push({ name: name + ' fails', files: skill('skills/core/alpha', { fm: { metadata: value } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'] });
+module.exports.push(
+  { name: 'duplicate ID fails', files: tree(skill('skills/core/alpha'), skill('skills/core/beta', { fm: { metadata: metadata('hissal.skill-collection/alpha') } })), expect: ['fail skill-metadata skills/core/beta/SKILL.md'] },
+  { name: 'renamed folder retains identity', files: skill('skills/packs/web/renamed', { fm: { metadata: metadata('hissal.skill-collection/original', "'[]'") } }), expect: [] },
+  { name: 'empty requirement string passes', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "''") } }), expect: [] },
+  { name: 'unresolved requirement fails', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "'[\"hissal.skill-collection/beta\"]'") } }), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
+  { name: 'requirements cross scope', files: tree(skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "'[\"hissal.skill-collection/beta\"]'") } }), skill('skills/packs/web/beta')), expect: [] }
+);
+
+const needing = (dir, id, requirements, body) => skill(dir, { fm: { metadata: metadata('hissal.skill-collection/' + id, "'" + JSON.stringify(requirements.map((r) => 'hissal.skill-collection/' + r)) + "'") }, ...(body === undefined ? {} : { body }) });
+module.exports.push(
+  { name: 'self cycle fails', files: needing('skills/core/alpha', 'alpha', ['alpha']), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
+  { name: 'multi skill cycle fails', files: tree(needing('skills/core/alpha', 'alpha', ['beta']), needing('skills/packs/web/beta', 'beta', ['alpha'])), expect: ['fail skill-requirements skills/packs/web/beta/SKILL.md'] },
+  { name: 'diamond requirements pass', files: tree(needing('skills/core/alpha', 'alpha', ['beta', 'gamma']), needing('skills/core/beta', 'beta', ['delta']), needing('skills/core/gamma', 'gamma', ['delta']), skill('skills/core/delta')), expect: [] },
+  { name: 'missing required reference fails', files: tree(needing('skills/core/alpha', 'alpha', ['beta'], 'Read [reference](../../packs/web/beta/REF.md).\n'), skill('skills/packs/web/beta')), expect: ['fail requirement-reference skills/core/alpha/SKILL.md'] },
+  { name: 'existing required reference passes', files: tree(needing('skills/core/alpha', 'alpha', ['beta'], 'Read [reference](../../packs/web/beta/REF.md).\n'), skill('skills/packs/web/beta', { body: 'Read [reference](REF.md).\n', files: { 'REF.md': '# Reference\n' } })), expect: [] }
+);

@@ -120,3 +120,11 @@ migration and ownership cases inside the collection check; it supplies host
 responses while the installer uses real temporary files. The 36 pre-existing
 installer cases and 218 check fixtures also passed. Live plugin session loading,
 branch-switch behavior and non-Linux hosts still require their separate evidence.
+
+## Later live plugin acceptance
+
+The [live plugin and lifecycle report](live-plugins-121.md) extends this evidence:
+Claude loads the installed snapshot and fires hooks across a disposable source
+branch switch; Codex host discovery identifies its cached plugin hook as
+untrusted. The real temporary-home CLI lifecycle removes all newly owned files.
+See that report for exact commands, evidence and remaining human acceptance.

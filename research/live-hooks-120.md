@@ -75,3 +75,11 @@ write, login or approval bypass was performed by the fixture. The CLI may write
 its own ordinary runtime metadata. No human authentication/trust action was
 needed for these probes. #121 plugin migration remains unverified; #120's full
 install/doctor/uninstall acceptance is not claimed by these smoke results.
+
+## Later live plugin acceptance
+
+The [live plugin and lifecycle report](live-plugins-121.md) extends this evidence:
+Claude loads the installed snapshot and fires hooks across a disposable source
+branch switch; Codex host discovery identifies its cached plugin hook as
+untrusted. The real temporary-home CLI lifecycle removes all newly owned files.
+See that report for exact commands, evidence and remaining human acceptance.

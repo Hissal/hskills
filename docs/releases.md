@@ -64,3 +64,13 @@ Implementation evidence: [#122 offline dry run](../research/release-122.md).
 Configuration semantics: [release-please manifest documentation](https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md)
 and [action token behavior](https://github.com/googleapis/release-please-action#other-actions-on-release-please-prs)
 (read 2026-10-30).
+
+Skill plugin manifests under `skills/core` and `skills/packs/<pack>` are generated
+with the current `version.txt`. The plugin generator also maintains their typed
+JSON `extra-files` entries, preserving guard stamps. After changing membership,
+run `node scripts/plugins/generate.js` and commit all outputs together. Release
+PRs stamp those manifests with the same next version as `version.txt`; regeneration
+at that version must stay byte-identical. Empty groups have no versioned manifest.
+The offline dry run accepts an optional collection root for temporary fixture
+verification; the plugin CLI fixture exercises actual release-please updaters on
+its generated core, pack and onboarding manifests through that seam.

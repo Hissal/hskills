@@ -29,6 +29,7 @@ module.exports = [
   require('./dependency-catalog'),
   require('./release-catalog'),
   require('./release-config'),
+  require('./plugin-output'),
 
   require('./harness-gates'),
 

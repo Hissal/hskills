@@ -87,7 +87,10 @@ for (const h of hostile) {
 }
 
 // ---- 2. real filesystem ---------------------------------------------------
-const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'command-guard-test-'));
+// On posix the engine always counts /tmp, /var/tmp and /private/tmp as temp,
+// whatever tmp it is given, so the scratch directory sits in home there:
+// under the real temp the whole tree would be a throwaway clone.
+const scratch = fs.mkdtempSync(path.join(process.platform === 'win32' ? os.tmpdir() : os.homedir(), 'command-guard-test-'));
 const native = process.platform === 'win32' ? 'powershell' : 'bash';
 const rmrf = (p) => (native === 'powershell' ? 'Remove-Item -Recurse -Force "' + p + '"' : 'rm -rf "' + p + '"');
 try {
@@ -96,7 +99,7 @@ try {
   fs.mkdirSync(path.join(repo, '.git'), { recursive: true });
   fs.mkdirSync(path.join(repo, 'src', 'gen'), { recursive: true });
   fs.mkdirSync(plain);
-  // the scratch directory is under the real temp directory, so point the engine
+  // the scratch directory may be under the real temp directory, so point the engine
   // at a stand-in temp: repositories outside it are protected as anywhere else
   const fakeTemp = path.join(scratch, 'os-temp');
   const tempClone = path.join(fakeTemp, 'clone');

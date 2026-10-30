@@ -8,6 +8,8 @@
 //              the exit code must be 1 when any 'fail' is expected, else 0.
 //              Findings not listed fail the case, so a passing neighbour
 //              proves the tree is clean.
+//   output:    regexes the check's other stdout lines (not findings) must
+//              match one to one, in order (optional)
 // Build skills with skill() so every fixture starts from a skill that passes
 // every rule; a ticket that adds a required field adds it there once.
 
@@ -32,6 +34,9 @@ function skill(dir, o) {
 }
 
 const tree = (...parts) => Object.assign({}, ...parts);
+
+// A stand-in guard harness that prints `out` and exits with `code`.
+const guard = (out, code) => ({ 'hooks/command-guard/test/run.js': 'console.log(' + JSON.stringify(out.join('\n')) + ');\nprocess.exit(' + code + ');\n' });
 
 module.exports = [
   // ---- the check itself ------------------------------------------------------
@@ -91,8 +96,62 @@ module.exports = [
   { name: 'generic advice is not a guide target', files: skill('skills/packs/web/web-guide', { body: '| Need | Target |\n|---|---|\n| Tests | Follow good practices |\n' }), expect: ['fail guide-needs-target skills/packs/web/web-guide/SKILL.md'] },
   { name: 'a directory is not a guide reference target', files: skill('skills/packs/web/web-guide', { body: '| Need | Target |\n|---|---|\n| Tests | [Tests](refs/) |\n\nRead [tests](refs/TESTS.md).\n', files: { 'refs/TESTS.md': '# Tests\n' } }), expect: ['fail guide-needs-target skills/packs/web/web-guide/SKILL.md'] },
   { name: 'a fenced needs table is only an example', files: skill('skills/packs/web/web-guide', { body: '```md\n| Need | Target |\n|---|---|\n| Tests | missing |\n```\n' }), expect: [] },
+
+  // ---- the command guard harness (#91) ---------------------------------------
+  // A fixture stands in for hooks/command-guard/test/run.js: a script that
+  // prints the real harness's FAIL lines and summary and exits the same way.
+  { name: 'a failing guard case fails the check', files: guard(['FAIL [bash/linux] expected allow, got reflection: "ls"', '     detail', 'FAIL fs: a second case', 'FAILED: 1 passed, 2 failed'], 1), expect: ['fail guard-cases hooks/command-guard/test/run.js', 'fail guard-cases hooks/command-guard/test/run.js'] },
+  { name: 'a guard harness that exits non-zero without a FAIL line fails the check', files: guard(['TypeError: boom'], 1), expect: ['fail guard-cases hooks/command-guard/test/run.js'] },
+  { name: 'a passing guard harness adds only a summary line', files: guard(['note: could not create a directory link; link cases skipped (EPERM)', 'ok: 2 passed, 0 failed'], 0), expect: [], output: [/^guard: ok: 2 passed, 0 failed$/, /^ok: /] },
+  { name: 'a tree without the guard runs no harness', files: { 'README.md': '# x\n' }, expect: [], output: [/^ok: /] },
 ];
 
+// ---- idle-cost tripwires (#92) ----------------------------------------------
+module.exports.push({
+  name: 'tripwire figures print even for an empty collection',
+  files: {}, expect: [],
+  output: ['TRIPWIRE core: 0 tokens', 'TRIPWIRE always-on: not measured (COLLECTION_ALWAYS_ON_PATH unset)'],
+});
+module.exports.push({
+  name: 'core description and when_to_use cross 1000 tokens and only warn',
+  files: skill('skills/core/alpha', { fm: { description: ' ' + 'x'.repeat(4000), when_to_use: ' yyyy' } }),
+  expect: ['warn idle-cost skills/core'],
+  output: ['TRIPWIRE core: 1001 tokens'],
+});
+module.exports.push({
+  name: 'always-on text crossing 500 tokens warns and exits zero',
+  alwaysOnPath: 'fixture-steering.txt',
+  files: { 'fixture-steering.txt': 'x'.repeat(2001) },
+  expect: ['warn idle-cost fixture-steering.txt'],
+  output: ['TRIPWIRE always-on: 500.25 tokens'],
+});
+module.exports.push({
+  name: 'pack costs aggregate within each pack and warn independently',
+  files: tree(
+    skill('skills/packs/web/alpha', { fm: { description: ' ' + 'x'.repeat(2000) } }),
+    skill('skills/packs/web/beta', { fm: { description: ' ' + 'x'.repeat(2004) } }),
+    skill('skills/packs/unity/gamma', { fm: { description: ' xxxx' } })),
+  expect: ['warn idle-cost skills/packs/web'],
+  output: ['TRIPWIRE pack/web: 1001 tokens', 'TRIPWIRE pack/unity: 1 tokens'],
+});
+module.exports.push({
+  name: 'exact thresholds pass and user-invoked and external skills do not count',
+  alwaysOnPath: 'fixture-steering.txt',
+  files: tree(
+    { 'fixture-steering.txt': 'x'.repeat(2000) },
+    skill('skills/core/alpha', { fm: { description: ' "' + 'x'.repeat(3996) + '"', when_to_use: " 'yyyy'" } }),
+    skill('skills/core/beta', { fm: { description: ' ' + 'x'.repeat(8000), 'disable-model-invocation': ' true # explicit gate' } }),
+    skill('skills/packs/web/gamma', { fm: { description: ' >-\n  ' + 'x'.repeat(4000), 'disable-model-invocation': ' false' } }),
+    skill('vendor/skills/core/external', { fm: { description: ' ' + 'x'.repeat(8000) } }),
+    skill('skills/packs/empty/delta', { fm: { description: ' ' + 'x'.repeat(8000), 'disable-model-invocation': ' true' } })),
+  expect: [],
+  output: ['TRIPWIRE core: 1000 tokens', 'TRIPWIRE pack/web: 1000 tokens', 'TRIPWIRE pack/empty: 0 tokens', 'TRIPWIRE always-on: 500 tokens'],
+});
+module.exports.push({
+  name: 'an absent configured always-on source is not measured and passes',
+  alwaysOnPath: 'missing-steering.txt', files: {}, expect: [],
+  output: ['TRIPWIRE always-on: not measured (file absent from collection: missing-steering.txt)'],
+});
 // #95: identity metadata, exercised through the collection CLI.
 module.exports.push({ name: 'missing schema fails', files: skill('skills/core/alpha', { fm: { metadata: '\n  agent-skills-sync.id: "hissal.skill-collection/alpha"' } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'] });
 

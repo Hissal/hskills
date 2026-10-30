@@ -139,6 +139,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `vendor-lock` | fail | `vendor.lock.json` is not valid against [Copied skills](#copied-skills), or an entry names no skill folder; the other `vendor-*` rules wait until the lock is valid |
 | `vendor-baseline` | fail | a lock entry has no baseline `SKILL.md`, or a file under `vendor/` is in no entry's baseline |
 | `vendor-licence` | fail | a lock entry's source has no licence file |
+| `copied-file-safety` | fail | a text file in a lock-listed copied skill contains hidden Unicode controls or a Windows, macOS or Linux personal home path; reports the line and, for Unicode, the code point |
 | `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` sits in a skill with no lock entry |
 | `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
 
@@ -475,3 +476,21 @@ too, so CI fetches them.
 
 Deleting or re-identifying a skill on purpose is legitimate: read the warning,
 confirm the change is intended, and leave it.
+
+## Copied file safety
+
+Remove hidden controls from copied skill text, including scripts and generated
+notices. The check rejects U+00AD, U+034F, U+061C, U+180E, U+200B–U+200F,
+U+202A–U+202E, U+2060–U+206F, U+FEFF and U+FFF9–U+FFFB. Ordinary non-ASCII
+letters, emoji and variation selectors pass.
+
+Replace personal absolute paths under Windows drive-letter `Users` or
+`Documents and Settings`, macOS `/Users/<user>`, Linux `/home/<user>` or
+`/root` with portable paths or environment variables. Both Windows slash
+forms are checked, including doubled backslashes in string literals.
+
+This rule uses the lock module's copied-folder lookup. It scans non-ignored
+text files in those folders, including nested files; baselines and files
+outside copied skill folders are outside its scope. Binary files use the
+collection's existing NUL-byte exclusion. An invalid lock is reported by
+`vendor-lock` before copied-file safety runs.

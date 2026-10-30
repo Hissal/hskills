@@ -271,3 +271,5 @@ module.exports.push(
   { name: 'the latest release tag is the baseline', history: [{ files: released, tag: 'v1.0.0' }, { files: skill('skills/core/alpha'), tag: 'v1.1.0' }], committed: skill('skills/core/alpha'), expect: [] },
   { name: 'an ID warning alone exits zero', history: [{ files: released, tag: 'v1.0.0' }], committed: tree(withId('skills/core/alpha', 'beta'), withId('skills/core/beta', 'alpha')), expect: ['warn id-stability skills/core/alpha/SKILL.md', 'warn id-stability skills/core/beta/SKILL.md'] }
 );
+// ---- copied file safety (#103) ----------------------------------------------
+module.exports.push(...require('./copied-safety-cases')({ skill, skillMd }));

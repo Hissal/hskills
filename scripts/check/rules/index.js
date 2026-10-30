@@ -30,4 +30,5 @@ module.exports = [
 
   require('./id-stability'),
   require('./agnix'),
+  require('./copied-file-safety'),
 ];

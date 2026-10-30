@@ -90,7 +90,9 @@ for (const h of hostile) {
 // On posix the engine always counts /tmp, /var/tmp and /private/tmp as temp,
 // whatever tmp it is given, so the scratch directory sits in home there:
 // under the real temp the whole tree would be a throwaway clone.
-const scratch = fs.mkdtempSync(path.join(process.platform === 'win32' ? os.tmpdir() : os.homedir(), 'command-guard-test-'));
+// Windows temp may use an 8.3 alias; build the stand-in temp and targets from
+// the physical scratch path so both match the engine's physical candidates.
+const scratch = fs.realpathSync.native(fs.mkdtempSync(path.join(process.platform === 'win32' ? os.tmpdir() : os.homedir(), 'command-guard-test-')));
 const native = process.platform === 'win32' ? 'powershell' : 'bash';
 const rmrf = (p) => (native === 'powershell' ? 'Remove-Item -Recurse -Force "' + p + '"' : 'rm -rf "' + p + '"');
 try {
@@ -104,13 +106,6 @@ try {
   const fakeTemp = path.join(scratch, 'os-temp');
   const tempClone = path.join(fakeTemp, 'clone');
   fs.mkdirSync(path.join(tempClone, '.git'), { recursive: true });
-  if (process.platform === 'win32') {
-    check(false, '[DEBUG-win-temp] ' + JSON.stringify({
-      tmp: os.tmpdir(), fakeTemp, realTemp: fs.realpathSync.native(fakeTemp),
-      clone: tempClone, realClone: fs.realpathSync.native(tempClone),
-      decision: classify(rmrf(tempClone), { shell: native, cwd: scratch, tmp: fakeTemp }),
-    }));
-  }
   const at = (cwd, command, shell) => classify(command, { shell: shell || native, cwd, tmp: fakeTemp }).verdict;
 
   check(at(scratch, rmrf(tempClone)) === 'allow', 'fs: a repository root inside the temp directory is a throwaway clone');

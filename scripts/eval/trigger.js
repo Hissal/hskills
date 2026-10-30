@@ -31,12 +31,24 @@ function observe(run, harness, skill) {
         if (e.part.state?.status === 'completed' && e.part.state.metadata?.metadata?.name === skill.name) fired = true;
       }
     } else {
-      // Codex has no documented dedicated skill event. A command mentioning a
-      // SKILL.md is not proof it was read; never turn that guess into a verdict.
       if (e.type === 'turn.completed') complete = true;
+      const item = e.item;
+      if (e.type === 'item.completed' && item?.type === 'command_execution') {
+        if (item.status !== 'completed' || item.exit_code !== 0) return 'inconclusive';
+        // Only a simple successful cat of the installed entry point counts.
+        // Prose, filename searches and commands merely mentioning it do not.
+        let command = item.command || '';
+        const shell = command.match(/^\S*(?:bash|sh) -[lc]+ '([^']*)'$/);
+        if (shell) command = shell[1];
+        const read = command.match(/^cat\s+['"]?([^'"\s;&|]+)['"]?$/);
+        if (read && read[1].replace(/\\/g, '/').endsWith('/skills/' + skill.name + '/SKILL.md') &&
+            /^---\r?\n/.test(item.aggregated_output || '') &&
+            (item.aggregated_output || '').split(/\r?\n/).some(line => line === 'name: ' + skill.name)) fired = true;
+        else if ((item.command || '').includes('/skills/' + skill.name + '/SKILL.md')) return 'inconclusive';
+      }
     }
   }
-  if (!complete || harness === 'codex') return 'inconclusive';
+  if (!complete) return 'inconclusive';
   return fired ? 'fired' : 'not fired';
 }
 function main() {

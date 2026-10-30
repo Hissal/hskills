@@ -64,7 +64,7 @@ It writes only those two values, leaving every other line of `SKILL.md` and `age
 - Mutually exclusive modes get one reference each, and `SKILL.md` says to read exactly one.
 - A reference over 100 lines opens with a contents list: a list of in-page links (`- [Setup](#setup)`), or a list under a `Contents` heading, before its first section.
 - Keep the `SKILL.md` body within 500 lines; past that, disclose.
-- Name a bundled file with a relative Markdown link from the file that mentions it: `[FORMS.md](FORMS.md)`, `[detect](scripts/detect.js)`. A link is what the agent follows and what the check resolves; a path in a code span is neither.
+- Name a bundled file with a relative Markdown link from the file that mentions it: `[FORMS.md](FORMS.md)`, `[detect](scripts/detect.js)`. The check also resolves code-span paths starting with `./` or a directory present in the skill folder (such as `references/x.md`). Other code spans may name project files and are left alone.
 
 ## Scripts
 
@@ -134,18 +134,27 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `utf8-bom` | fail | a text file starts with a UTF-8 BOM |
 | `crlf-line-ending` | fail | a text file has a CRLF line ending |
 | `description-colon` | fail | an unquoted `description` contains `: ` |
-| `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
-| `missing-file` | fail | a Markdown file in a skill links a path inside the skill folder that is not in the collection |
+| `missing-file` | fail | a Markdown link or clearly bundled code-span path names a missing file inside the skill folder |
 | `skill-body-length` | warn | a `SKILL.md` body over 500 lines |
 | `reference-contents` | warn | a reference over 100 lines with no contents list |
 | `reference-unlinked` | warn | a reference not linked straight from `SKILL.md` (`NOTICE.md` excepted) |
+| `skill-metadata` | fail | missing or invalid schema/ID, malformed requirements or duplicate ID |
+| `skill-requirements` | fail | a requirement outside the resolved set or a requirement cycle |
+| `requirement-reference` | fail | a Markdown link names a missing file in a required skill's folder |
+| `guide-needs-target` | fail | a guide needs-table target is not its own file, a skill in the same pack (core for core guides), or explicitly project-selected vendor guidance |
+| `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
 | `guard-cases` | fail | a [command guard case](../hooks/command-guard/test/run.js) fails, or the harness exits non-zero; a passing harness prints only its `guard:` summary line |
+| `requirement-body-id` | fail | a required ID is absent from the requiring skill's body |
 | `vendor-lock` | fail | `vendor.lock.json` is not valid against [Copied skills](#copied-skills), or an entry names no skill folder; the other `vendor-*` rules wait until the lock is valid |
 | `vendor-baseline` | fail | a lock entry has no baseline `SKILL.md`, or a file under `vendor/` is in no entry's baseline |
 | `vendor-licence` | fail | a lock entry's source has no licence file |
-| `copied-file-safety` | fail | a text file in a lock-listed copied skill contains hidden Unicode controls or a Windows, macOS or Linux personal home path; reports the line and, for Unicode, the code point |
 | `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` sits in a skill with no lock entry |
+| `dependency-catalog` | fail | the catalog's marked dependency section differs from fresh metadata output; names the regenerate command |
+| `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
+| `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
 | `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
+| `copied-file-safety` | fail | a text file in a lock-listed copied skill contains hidden Unicode controls or a Windows, macOS or Linux personal home path; reports the line and, for Unicode, the code point |
+| `automatic-guide-sync` | fail | the automatic guide's `SKILL.md` body, or a bundled file other than the Codex gate file, differs from the core guide's, or one guide bundles a file the other lacks; silent until both guides exist |
 
 Test the check with its fixture runner:
 
@@ -161,9 +170,11 @@ node scripts/gates/test/run.js
 
 Every change to the check keeps both green: the runner, and the check on the real tree.
 
+Run `npm ci` before the check and its fixtures to install pinned agnix; real-agnix cases then run rather than skip.
+
 ## agnix (on trial)
 
-[agnix](https://github.com/agent-sh/agnix) lints harness format mechanics beside the collection's own rules ([#93](https://github.com/Hissal/skill-collection/issues/93)). Install it once with `npm ci`, which installs the version pinned in `package.json`; the check runs it as its `agnix` rule.
+[agnix](https://github.com/agent-sh/agnix) lints harness format mechanics beside the collection's own rules ([#93](https://github.com/Hissal/skill-collection/issues/93)). The check runs the version pinned in `package.json` as its `agnix` rule.
 
 - **Scope and rules off**: [`.agnix.toml`](../.agnix.toml) scopes it to Claude Code and Codex. It turns off `CX-SK-001`, `XP-SK-001`, and for good the wording-opinion rules: every `PE-*`, `AGM-002` and `AGM-004`. `CC-MEM-005` to `009` and `CDX-AG-004` are off too: the pinned version has retired them, so they are not listed.
 - **Autofix**: never run. The check passes no fix flag, and its fixture runner fails any case where the check changed a file.
@@ -199,7 +210,7 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 - `output` (optional) lists regexes the check's other stdout lines must match one to one, in order, for cases about what the check prints besides findings.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
 - `skill()` also writes matching harness gates: the OpenCode gate appended to `skillMd()`'s `metadata` (the `gate` option replaces it; `null` leaves it out) and `agents/openai.yaml` (the `openai` option replaces it; `null` leaves it out).
-- Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
+- Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'\uFEFF'`), so the repository itself stays LF and BOM-free.
 
 ## Idle-cost tripwires
 
@@ -223,7 +234,7 @@ Review growth when a warning appears.
 Tripwire fixtures may set `alwaysOnPath` and assert figure text with `output`
 (an array of expected stdout substrings); the runner clears an inherited
 always-on setting for other fixtures.
-## Skill identity and hard requirements (#95)
+## Skill identity and hard requirements
 
 Author identity once, in string-valued `metadata` in `SKILL.md`:
 
@@ -260,14 +271,6 @@ double-quoted and literal/folded block strings are supported; structured YAML
 values, aliases and duplicate keys are rejected. Use quoted scalars for values
 such as numbers or booleans that YAML would otherwise interpret as non-strings.
 
-Additional fail rules:
-
-| Rule | Level | Finding |
-|---|---|---|
-| `skill-metadata` | fail | missing or invalid schema/ID, malformed requirements or duplicate ID |
-| `skill-requirements` | fail | a requirement outside the resolved set or a requirement cycle |
-| `requirement-reference` | fail | a Markdown link names a missing file in a required skill's folder |
-
 ## Continuous integration
 
 [Collection check](../.github/workflows/collection-check.yml) runs the fixture runner
@@ -281,7 +284,7 @@ the version inspected in [loading-mechanics research](../research/loading-mechan
 Bumping it requires re-verifying that research. CI installs the CLI but does not
 run the hand-run trigger evals or authenticate a model session.
 
-### Security scan (#94)
+### Security scan
 
 The workflow's `security-scan` job runs the deterministic part of Sentry's
 [`skill-scanner`](https://github.com/getsentry/skills/tree/d12f250460ffd961f549dbebf7eeb0cf4afd4c2e/skills/skill-scanner)
@@ -312,8 +315,6 @@ setup error. Run the scan's fixtures with `node scripts/security-scan/test/run.j
   `scripts/*.{py,sh,js,ts}`) get its per-file checks: prompt injection,
   obfuscation, secrets, and dangerous code for code files. Untrusted URLs and the
   description overlap figure are scanner output, not findings.
-CI runs `npm ci` before both commands, so the check runs the pinned agnix and
-the real-agnix fixture cases run rather than skip.
 
 ## Guide format
 
@@ -337,7 +338,7 @@ Tables in fenced examples are ignored. The target forms are:
 - A relative Markdown link to a file in this guide's folder, including nested
   references; anchors may select a section. Directories do not count.
 - `skill: <callable-name>` (optionally in backticks), resolved to a skill in the
-  same pack. This is an installed-skill lookup, not a sibling filesystem path.
+  same pack, or core skills when the guide lives in core. This is an installed-skill lookup, not a sibling filesystem path.
 - `vendor-guidance: <project-selected guidance>` (optionally in backticks).
   Describe the specific selected source or project pointer. The check recognises
   this marker and does not resolve it: the consuming project's choice is outside
@@ -388,14 +389,7 @@ listed pack guides; it never names a particular pack or pack skill. Example:
 The caller keeps its current job while obtaining that knowledge; a lookup never
 starts another workflow. See [core extension points](agents/core-extension-points.md).
 
-### Guide check rules
-
-| Rule | Level | Finding |
-|---|---|---|
-| `guide-needs-target` | fail | a guide needs-table target is not its own file, a same-pack skill, or explicitly project-selected vendor guidance |
-| `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
-
-## Hard requirements at runtime (#98)
+## Hard requirements at runtime
 
 Before doing any work, load every skill declared in `requires` and the
 reference files needed from those skills. Resolve them through the installed
@@ -438,10 +432,7 @@ ID in its non-empty `requires`. Frontmatter alone does not satisfy it. This is
 a presence check, never a wording check; behavioural evals validate the runtime
 stop behaviour.
 
-| Rule | Level | Finding |
-|---|---|---|
-| `requirement-body-id` | fail | a required ID is absent from the requiring skill's body |
-## Generated dependency catalog (#96)
+## Generated dependency catalog
 
 After changing skill identity, callable name, folder or hard requirements, run:
 
@@ -458,25 +449,17 @@ LF; the table includes skills without requirements. Targets show the current
 callable name and source path resolved by ID. Invalid metadata, duplicate IDs
 and unresolved requirements stop generation before any write.
 
-| Rule | Level | Finding |
-|---|---|---|
-| `dependency-catalog` | fail | the catalog's marked dependency section differs from fresh metadata output; names the regenerate command |
-
 The rule checks trees containing `docs/catalog.md`; fixture or subset trees
 without that artifact skip it. Malformed or duplicate markers fail. Text outside
 the markers remains byte-for-byte unchanged. The fixture runner also exercises
 the writer CLI, idempotence, renamed identities and the failure message.
-## Skill ID stability (#97)
+## Skill ID stability
 
 A skill keeps its `agent-skills-sync.id` across renames and moves. The check
 compares the working tree with the last release tag: the nearest `v<version>`
 tag (release-please's form) reachable from `HEAD`. Before the first release
 there is no such tag and the rule is silent; a checkout without tags is silent
 too, so CI fetches them.
-
-| Rule | Level | Finding |
-|---|---|---|
-| `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
 
 Deleting or re-identifying a skill on purpose is legitimate: read the warning,
 confirm the change is intended, and leave it.
@@ -485,7 +468,7 @@ confirm the change is intended, and leave it.
 
 Remove hidden controls from copied skill text, including scripts and generated
 notices. The check rejects U+00AD, U+034F, U+061C, U+180E, U+200B–U+200F,
-U+202A–U+202E, U+2060–U+206F, U+FEFF and U+FFF9–U+FFFB. Ordinary non-ASCII
+U+202A–U+202E, U+2060–U+206F, U+FEFF, U+FFF9–U+FFFB and U+E0000–U+E007F. Ordinary non-ASCII
 letters, emoji and variation selectors pass.
 
 Replace personal absolute paths under Windows drive-letter `Users` or
@@ -499,7 +482,7 @@ outside copied skill folders are outside its scope. Binary files use the
 collection's existing NUL-byte exclusion. An invalid lock is reported by
 `vendor-lock` before copied-file safety runs.
 
-## Automatic guide (#101)
+## Automatic guide
 
 The automatic guide is the core guide (`skills/core/guide/`) published
 model-invoked. It is the onboarding pack's one skill
@@ -511,7 +494,3 @@ regenerate: only frontmatter (the gate and the description) may differ.
 The Codex gate file (`agents/openai.yaml`) is generated from frontmatter, so it
 differs with the gate and the sync skips it; `harness-gates` checks it against
 `disable-model-invocation`. Every other bundled file must match byte for byte.
-
-| Rule | Level | Finding |
-|---|---|---|
-| `automatic-guide-sync` | fail | the automatic guide's `SKILL.md` body, or a bundled file other than the Codex gate file, differs from the core guide's, or one guide bundles a file the other lacks; silent until both guides exist |

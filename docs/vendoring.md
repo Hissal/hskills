@@ -59,7 +59,7 @@ Every step lands in one commit; the intake is done when that commit passes the c
 
    A `crlf-line-ending` or `utf8-bom` failure in the baseline means the source committed CRLF or a BOM: convert those files to LF without a BOM, and change nothing else in the baseline. The drift script compares with line endings and BOM normalised, so this edit stays `current`; any other edit to the baseline reads as `baseline-corrupt`.
 9. **Commit** copy, baseline, licence, lock and `NOTICE.md` together.
-10. **Scan**, the deterministic half of the security read ([Security scan](skill-format.md#security-scan-94)). It reads committed changes, so it runs after step 9:
+10. **Scan**, the deterministic half of the security read ([Security scan](skill-format.md#security-scan)). It reads committed changes, so it runs after step 9:
 
     ```sh
     uv run scripts/security-scan/scan.py --base origin/main

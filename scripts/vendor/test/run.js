@@ -12,28 +12,18 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const cases = require('./cases');
+const { git, write } = require('../../test-util');
 
 const DRIFT = path.join(__dirname, '..', 'drift.js');
 const { SOURCE, SKILL, PATH } = cases;
 let failed = 0;
 let passed = 0;
 
-function git(dir, args) {
-  const res = spawnSync('git', ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', '-c', 'core.autocrlf=false', '-c', 'init.defaultBranch=trunk', ...args], { cwd: dir, encoding: 'utf8' });
-  if (res.status !== 0) throw new Error('git ' + args.join(' ') + ' failed: ' + res.stderr);
-  return res.stdout.trim();
-}
 
 // Trees compare by content, not by key order.
 const canon = (t) => JSON.stringify(t && Object.keys(t).sort().map((k) => [k, t[k]]));
 const join = (dir, file) => path.join(dir, ...file.split('/'));
 
-function write(dir, files) {
-  for (const [file, content] of Object.entries(files || {})) {
-    fs.mkdirSync(path.dirname(join(dir, file)), { recursive: true });
-    fs.writeFileSync(join(dir, file), content);
-  }
-}
 
 // Every file under `dir` as { relative/path: text }, or null when absent.
 function readTree(dir) {

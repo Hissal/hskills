@@ -107,7 +107,7 @@ anything unexpected in the transcripts.
 
 ## Required case: missing hard requirement
 
-This case proves the [runtime stop rule](skill-format.md#hard-requirements-at-runtime-98)
+This case proves the [runtime stop rule](skill-format.md#hard-requirements-at-runtime)
 on a real harness. Rerun it when the shared stop template changes, when a
 harness pin is bumped, and when a new frontier model ships.
 

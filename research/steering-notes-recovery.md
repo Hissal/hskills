@@ -1,5 +1,7 @@
 # Recovery search: the two personal tooling notes
 
+Recovery investigation for [#118](https://github.com/Hissal/skill-collection/issues/118)
+under [spec 2 (#78)](https://github.com/Hissal/skill-collection/issues/78).
 Researched 2026-10-30. Result: **the wording of neither note was recovered**. No policy is inferred from generic tool instructions or unrelated project rules.
 
 ## What the primary record establishes
@@ -45,7 +47,11 @@ https://github.com/Hissal/skill-collection/issues/1
 
 Since #14 identifies the missing material as user-scope files on October 10, a backup or file-version history of that machine's user-profile `.claude\CLAUDE.md` or `.codex\AGENTS.md` from **on or before 2026-10-10** is the most plausible authoritative recovery source. This location is an inference from the record, not a verified surviving backup. The October 10 grilling session's captured initial instruction context is a secondary recovery lead, if retained and inspected narrowly with secret handling. No such archive was inspected here.
 
-## Reproducible evidence captures outside the repository
+## Temporary evidence captures from this run
+
+These run-local files are an inspection inventory, not durable sources or a
+prerequisite for reading this report. Use the linked primary records above to
+repeat the investigation; the temporary files may no longer exist.
 
 - /tmp/steering-issues.jsonl — paginated issue/PR bodies
 - /tmp/steering-comments.jsonl — paginated issue comments with exact comment URLs
@@ -53,4 +59,8 @@ Since #14 identifies the missing material as user-scope files on October 10, a b
 - /tmp/steering-collection-history.txt — collection steering-file patch history
 - /tmp/steering-fork-history.txt — fork AGENTS.md / CLAUDE.md patch history
 
-Conclusion: existence, count, date and original storage locations are supported; exact tooling-note wording remains missing. No guessed replacement is justified.
+Recovery is complete only when an authoritative owner source supplies both
+notes verbatim with its date and location recorded. Until then, #118's source
+content criterion remains partial. For the implemented naming source, line
+admission and historical size/check results, read
+[#118 implementation evidence](steering-source-118.md).

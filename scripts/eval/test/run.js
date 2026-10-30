@@ -11,7 +11,14 @@ fs.writeFileSync(fake, `const prompt = process.argv.at(-1);
 const mode = process.argv[2];
 if (mode === 'broken') { console.log('bad json'); process.exit(0); }
 if (mode === 'error') process.exit(1);
-if (mode === 'codex') { console.log(JSON.stringify({type:'turn.completed'})); process.exit(0); }
+if (mode === 'codex-ambiguous' || mode === 'codex-failed') {
+ console.log(JSON.stringify({type:'item.completed',item:{type:'command_execution',command:'echo /tmp/project/.agents/skills/fixture/SKILL.md',aggregated_output:'fixture',exit_code:mode === 'codex-failed'?1:0,status:mode === 'codex-failed'?'failed':'completed'}}));
+ console.log(JSON.stringify({type:'turn.completed'})); process.exit(0);
+}
+if (mode === 'codex') {
+ if (prompt.startsWith('yes')) console.log(JSON.stringify({type:'item.completed',item:{type:'command_execution',command:"cat /tmp/project/.agents/skills/fixture/SKILL.md",aggregated_output:'---\\nname: fixture\\n---\\nCount vowels.',exit_code:0,status:'completed'}}));
+ console.log(JSON.stringify({type:'turn.completed'})); process.exit(0);
+}
 if (mode === 'opencode') {
  if (prompt.startsWith('yes')) console.log(JSON.stringify({type:'tool_use',part:{tool:'skill',state:{status:'completed',input:{id:'fixture-id'},metadata:{metadata:{name:'fixture'}}}}}));
  console.log(JSON.stringify({type:'step_finish'})); process.exit(0);
@@ -46,9 +53,16 @@ try {
  const noise = run(['--repeat','2']);
  assert.equal(noise.status,2);
  assert.match(noise.stdout,/RESULT: fixture Opus q1 inconclusive/);
- for (const mode of ['broken','error','codex']) {
+ for (const mode of ['broken','error']) {
    config.models[0].command = [process.execPath,fake,mode];
    config.models[0].harness = mode === 'codex' ? 'codex' : 'claude';
+   assert.equal(run().status,2,mode);
+ }
+ config.models[0].harness = 'codex';
+ config.models[0].command = [process.execPath,fake,'codex'];
+ assert.equal(run().status,0);
+ for (const mode of ['codex-ambiguous','codex-failed']) {
+   config.models[0].command = [process.execPath,fake,mode];
    assert.equal(run().status,2,mode);
  }
  config.models[0].harness = 'opencode';

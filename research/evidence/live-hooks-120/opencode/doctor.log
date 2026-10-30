@@ -1,0 +1,6 @@
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status

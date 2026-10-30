@@ -1,0 +1,35 @@
+{
+  "version": "opencode v2.2.3",
+  "model": "opencode-go/claude-haiku-5-5",
+  "variant": null,
+  "platform": "Linux",
+  "base": "e0aa7ee",
+  "node": "v22.23.4",
+  "scratch": "/tmp/opencode-120-final-wm8utogd",
+  "install": 0,
+  "doctor": 0,
+  "host": 0,
+  "uninstall": 0,
+  "owned_files": 10,
+  "owned_files_remaining": 0,
+  "snapshot_adapter_sha256": "70c2279e509f856a06978802f5e4360670bfa931e0873be73f6e68492d0b592e",
+  "outcomes": [
+    {
+      "command": "git push --force origin main",
+      "status": "error",
+      "marker": "git.force-push-default"
+    },
+    {
+      "command": "printf ALLOW_120",
+      "status": "completed",
+      "marker": "ALLOW_120"
+    },
+    {
+      "command": "printf PROJECT_BLOCK_120",
+      "status": "error",
+      "marker": "project.smoke"
+    }
+  ],
+  "shell_calls": 3,
+  "normal_config_files_present": []
+}

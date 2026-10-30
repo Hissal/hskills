@@ -1,0 +1,72 @@
+name: Collection check
+
+# Pull requests are checked once per push; main is checked after each merge;
+# any other branch runs by hand (Actions tab, or `gh workflow run`).
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  collection-check:
+    name: Collection check (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # ID stability checks compare against the last release tag.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned agnix
+        run: npm ci
+      - name: Run collection check fixtures
+        run: node scripts/check/test/run.js
+      - name: Run gate writer tests
+        run: node scripts/gates/test/run.js
+      - name: Run drift script fixtures
+        run: node scripts/vendor/test/run.js
+      - name: Check collection
+        run: node scripts/check/check.js
+
+  security-scan:
+    name: Security scan (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The scan diffs against the push's or pull request's base commit.
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: '0.13.6'
+      - name: Run security scan fixtures
+        run: node scripts/security-scan/test/run.js
+      - name: Scan changed skill and hook files
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          base="${PR_BASE:-$PUSH_BEFORE}"
+          # A manual run has no base; a force push to main may drop its before commit.
+          if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            base="origin/$DEFAULT_BRANCH"
+          fi
+          uv run scripts/security-scan/scan.py --base "$base"

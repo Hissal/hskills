@@ -1,0 +1,4 @@
+# The collection is LF everywhere, Windows checkouts included: a CRLF or a
+# UTF-8 BOM breaks frontmatter and shebang detection on some Linux tools.
+# The collection check (scripts/check) fails on either.
+* text=auto eol=lf

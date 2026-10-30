@@ -121,5 +121,12 @@ function normalised(files) {
   return Object.fromEntries(Object.entries(files).map(([f, t]) => [f, t.replace(/^﻿/, '').replace(/\r\n/g, '\n')]));
 }
 
+const monthly = spawnSync(process.execPath, [path.join(__dirname, 'monthly-report.js')], { encoding: 'utf8' });
+process.stdout.write(monthly.stdout);
+if (monthly.status !== 0) {
+  process.stderr.write(monthly.stderr);
+  failed++;
+} else passed++;
+
 console.log((failed ? 'FAILED: ' : 'ok: ') + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

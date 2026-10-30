@@ -632,3 +632,16 @@ Read-only GitHub access used gh on Hissal/skill-collection: issue #1 body; resol
 Current GLOSSARY definitions for Handoff, Project configuration and Personal delegation policy already reflect later decisions; ADR 0003 already reflects lookup/execution, setup discovery and generated dependencies; core-extension-points.md already uses architecture-review and the three web-added core needs. They need no fictitious reversal. The narrowed glossary Needs table definition and unqualified ADR sentences are listed above. research/themes.md explicitly labels its candidate entries as proposals, so its unresolved-looking candidate bullets are not recounted as adopted skills or an additional decision frontier.
 
 Provenance shorthand in pack rows follows the deciding comments and pinned ledgers: Unity ledger A = tipoLi5890/unity-dev-skills, D = tea-x-random/unity-game-skills; gamedev ledger A = abagames/agentic-gamedev-skills, J = jammyfu/open-game-skills, W = gamedev-skills/awesome-gamedev-agent-skills; G3 = game-studio game-screen material in the ideas skim. Source pinning/licence records remain the ledgers’ and later vendor.lock’s job; this transcription does not invent new SHA pins or claim that an adapted skill was copied wholesale. Fork-pass seed is d5c5c97, tracked against mattpocock/skills 49dd158; the Unity resolution additionally inspected fork lifecycle material at 4f30320d4ac1c5d747eea1c02b97017529ed578b.
+
+## Built-skill dependencies
+
+The marked table below is generated from the current skill metadata; it covers
+implemented skills only. The blueprint tables above record decisions awaiting
+implementation, including optional routes and pack membership. Regenerate after
+changing skill identity or requirements with
+`node scripts/catalog/generate.js`.
+
+<!-- BEGIN GENERATED DEPENDENCIES -->
+| Skill ID | Callable / source | Hard requirements |
+|---|---|---|
+<!-- END GENERATED DEPENDENCIES -->

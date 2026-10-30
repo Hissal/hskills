@@ -17,4 +17,5 @@ module.exports = [
 
   require('./guide-needs-target'),
   require('./guide-routes-paths'),
+  require('./dependency-catalog'),
 ];

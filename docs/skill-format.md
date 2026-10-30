@@ -254,3 +254,29 @@ starts another workflow. See [core extension points](agents/core-extension-point
 |---|---|---|
 | `guide-needs-target` | fail | a guide needs-table target is not its own file, a same-pack skill, or explicitly project-selected vendor guidance |
 | `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
+
+## Generated dependency catalog (#96)
+
+After changing skill identity, callable name, folder or hard requirements, run:
+
+```
+node scripts/catalog/generate.js
+node scripts/check/check.js
+```
+
+The writer replaces only the section between `BEGIN GENERATED DEPENDENCIES`
+and `END GENERATED DEPENDENCIES` HTML comments in `docs/catalog.md`. On first
+use it appends the marked section. Keep pack membership and optional guide
+routes outside those markers. Rows and requirements sort by stable ID and use
+LF; the table includes skills without requirements. Targets show the current
+callable name and source path resolved by ID. Invalid metadata, duplicate IDs
+and unresolved requirements stop generation before any write.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `dependency-catalog` | fail | the catalog's marked dependency section differs from fresh metadata output; names the regenerate command |
+
+The rule checks trees containing `docs/catalog.md`; fixture or subset trees
+without that artifact skip it. Malformed or duplicate markers fail. Text outside
+the markers remains byte-for-byte unchanged. The fixture runner also exercises
+the writer CLI, idempotence, renamed identities and the failure message.

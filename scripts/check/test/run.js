@@ -10,6 +10,7 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const cases = require('./cases');
+require('./catalog');
 
 const CHECK = path.join(__dirname, '..', 'check.js');
 const FINDING = /^(FAIL|WARN) (.+?)(?::\d+)? \[([\w-]+)\] /;

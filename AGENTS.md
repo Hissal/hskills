@@ -12,6 +12,8 @@ Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-
 
 Single-context: one root `GLOSSARY.md` plus `docs/adr/`. See `docs/agents/domain.md`.
 
-### Skill format and collection check
+### Collection maintenance
 
-Before writing a skill or changing the check, read `docs/skill-format.md`. Run `node scripts/check/check.js` and `node scripts/check/test/run.js`; both must pass.
+Skill folders, frontmatter, references and the collection check: [Skill format](docs/skill-format.md). Run `node scripts/check/check.js` and `node scripts/check/test/run.js`; both must pass.
+Hook structure, failure policy and verification: [Hook house style](docs/agents/hook-house-style.md).
+Research notes, citations and source ledgers: [Research area rules](docs/agents/research-rules.md).

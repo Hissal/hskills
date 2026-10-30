@@ -82,3 +82,50 @@ module.exports = [
   { name: 'NOTICE.md needs no link', files: skill('skills/core/alpha', { files: { 'NOTICE.md': '# Notice\n' } }), expect: [] },
   { name: 'warnings alone exit zero', files: tree(skill('skills/core/alpha', { body: lines(501) }), skill('skills/core/beta', { files: { 'X.md': '# X\n' } })), expect: ['warn skill-body-length skills/core/alpha/SKILL.md', 'warn reference-unlinked skills/core/beta/X.md'] },
 ];
+
+// ---- idle-cost tripwires (#92) ----------------------------------------------
+module.exports.push({
+  name: 'tripwire figures print even for an empty collection',
+  files: {}, expect: [],
+  output: ['TRIPWIRE core: 0 tokens', 'TRIPWIRE always-on: not measured (COLLECTION_ALWAYS_ON_PATH unset)'],
+});
+module.exports.push({
+  name: 'core description and when_to_use cross 1000 tokens and only warn',
+  files: skill('skills/core/alpha', { fm: { description: ' ' + 'x'.repeat(4000), when_to_use: ' yyyy' } }),
+  expect: ['warn idle-cost skills/core'],
+  output: ['TRIPWIRE core: 1001 tokens'],
+});
+module.exports.push({
+  name: 'always-on text crossing 500 tokens warns and exits zero',
+  alwaysOnPath: 'fixture-steering.txt',
+  files: { 'fixture-steering.txt': 'x'.repeat(2001) },
+  expect: ['warn idle-cost fixture-steering.txt'],
+  output: ['TRIPWIRE always-on: 500.25 tokens'],
+});
+module.exports.push({
+  name: 'pack costs aggregate within each pack and warn independently',
+  files: tree(
+    skill('skills/packs/web/alpha', { fm: { description: ' ' + 'x'.repeat(2000) } }),
+    skill('skills/packs/web/beta', { fm: { description: ' ' + 'x'.repeat(2004) } }),
+    skill('skills/packs/unity/alpha', { fm: { description: ' xxxx' } })),
+  expect: ['warn idle-cost skills/packs/web'],
+  output: ['TRIPWIRE pack/web: 1001 tokens', 'TRIPWIRE pack/unity: 1 tokens'],
+});
+module.exports.push({
+  name: 'exact thresholds pass and user-invoked and external skills do not count',
+  alwaysOnPath: 'fixture-steering.txt',
+  files: tree(
+    { 'fixture-steering.txt': 'x'.repeat(2000) },
+    skill('skills/core/alpha', { fm: { description: ' "' + 'x'.repeat(3996) + '"', when_to_use: " 'yyyy'" } }),
+    skill('skills/core/beta', { fm: { description: ' ' + 'x'.repeat(8000), 'disable-model-invocation': ' true # explicit gate' } }),
+    skill('skills/packs/web/alpha', { fm: { description: ' >-\n  ' + 'x'.repeat(4000), 'disable-model-invocation': ' false' } }),
+    skill('vendor/skills/core/external', { fm: { description: ' ' + 'x'.repeat(8000) } }),
+    skill('skills/packs/empty/alpha', { fm: { description: ' ' + 'x'.repeat(8000), 'disable-model-invocation': ' true' } })),
+  expect: [],
+  output: ['TRIPWIRE core: 1000 tokens', 'TRIPWIRE pack/web: 1000 tokens', 'TRIPWIRE pack/empty: 0 tokens', 'TRIPWIRE always-on: 500 tokens'],
+});
+module.exports.push({
+  name: 'an absent configured always-on source is not measured and passes',
+  alwaysOnPath: 'missing-steering.txt', files: {}, expect: [],
+  output: ['TRIPWIRE always-on: not measured (file absent from collection: missing-steering.txt)'],
+});

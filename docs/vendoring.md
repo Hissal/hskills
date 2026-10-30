@@ -24,7 +24,7 @@ Every step lands in one commit; the intake is done when that commit passes the c
    ```
 
    The pin is normally the default branch's head, the `rev-parse` output. Matt-derived skills differ: see [Matt-derived skills](#matt-derived-skills).
-2. **Security read** of `<tmp>/src/<path>`, model-judged, before anything enters the tree. Follow the procedure in Sentry's [`skill-scanner` SKILL.md](https://github.com/getsentry/skills/blob/d12f250460ffd961f549dbebf7eeb0cf4afd4c2e/skills/skill-scanner/SKILL.md) (the commit the CI scan pins) over every file in the folder, scripts included. Any finding stops the intake: report it to the owner with the file and line. How to accept a finding judged a false positive is an open owner decision; no procedure exists yet, so a finding is never waved through.
+2. **Security read** of `<tmp>/src/<path>`, model-judged, before anything enters the tree. Follow the procedure in Sentry's [`skill-scanner` SKILL.md](https://github.com/getsentry/skills/blob/d12f250460ffd961f549dbebf7eeb0cf4afd4c2e/skills/skill-scanner/SKILL.md) (the commit the CI scan pins) over every file in the folder, scripts included. Any finding stops the intake: report it to the owner with the file and line. A finding the owner judges a false positive and the CI scan also flags is accepted with an entry in `scripts/security-scan/accepted.json`, reason included, so it shows in the pull request diff for review: see [Accepted findings](skill-format.md#security-scan).
 3. **Baseline**: the source folder at the pin, every file, unedited:
 
    ```sh

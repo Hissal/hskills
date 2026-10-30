@@ -9,12 +9,16 @@ Usage:
     uv run scripts/security-scan/scan.py --base <rev>   files changed in <rev>...HEAD
     uv run scripts/security-scan/scan.py <path>...      the named files
 
-Exit 0: no findings. Exit 1: findings, one FAIL line each. Exit 2: usage or setup error.
+Exit 0: no findings but accepted ones. Exit 1: findings, one FAIL line each. Exit 2: usage or setup error.
+
+A finding listed in scripts/security-scan/accepted.json (matched by file, finding
+type and the flagged line's trimmed text) prints ACCEPTED and does not fail.
 """
 from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 import os
 import subprocess
 import sys
@@ -29,6 +33,8 @@ SCANNER_URL = (
     f"{SCANNER_COMMIT}/skills/skill-scanner/scripts/scan_skill.py"
 )
 CODE_SUFFIXES = (".py", ".sh", ".js", ".ts")
+ACCEPTED = "scripts/security-scan/accepted.json"
+ACCEPTED_FIELDS = ("file", "finding", "line", "reason")
 
 
 class SetupError(Exception):
@@ -132,6 +138,44 @@ def scan(scanner, root: Path, changed: list[str]) -> list[tuple[str, int | None,
     return results
 
 
+def load_accepted(root: Path) -> list[dict]:
+    """The reviewed accepted findings; a missing file is an empty list."""
+    path = root / ACCEPTED
+    if not path.is_file():
+        return []
+    try:
+        entries = json.loads(path.read_text(encoding="utf-8"))
+    except (ValueError, UnicodeDecodeError) as e:
+        raise SetupError(f"{ACCEPTED}: not valid JSON: {e}")
+    if not isinstance(entries, list):
+        raise SetupError(f"{ACCEPTED}: must be a JSON array of entries")
+    for i, e in enumerate(entries, 1):
+        where = f"{ACCEPTED}: entry {i}"
+        if not isinstance(e, dict):
+            raise SetupError(f"{where}: must be an object with {', '.join(ACCEPTED_FIELDS)}")
+        for key in e:
+            if key not in ACCEPTED_FIELDS:
+                raise SetupError(f'{where}: unknown field "{key}"')
+        for key in ACCEPTED_FIELDS:
+            if key not in e:
+                raise SetupError(f'{where}: missing field "{key}"')
+            if not isinstance(e[key], str) or not e[key].strip():
+                raise SetupError(f'{where}: "{key}" must be a non-empty string')
+            if "\n" in e[key] or "\r" in e[key]:
+                raise SetupError(f'{where}: "{key}" must be one line')
+        if e["line"] != e["line"].strip():
+            raise SetupError(f'{where}: "line" must be trimmed')
+    return entries
+
+
+def line_text(root: Path, rel: str, line: int | None) -> str | None:
+    """The flagged line's trimmed text, split the way the scanner splits it."""
+    if line is None:
+        return None
+    lines = (root / rel).read_bytes().decode("utf-8", errors="replace").split("\n")
+    return lines[line - 1].strip() if line <= len(lines) else None
+
+
 def changed_files(root: Path, args: list[str]) -> list[str]:
     if args[:1] == ["--base"] and len(args) == 2:
         out = git(root, "diff", "--name-only", "--diff-filter=d", "--no-renames", "-z", f"{args[1]}...HEAD")
@@ -145,20 +189,45 @@ def main(argv: list[str]) -> int:
     try:
         root = Path(git(Path.cwd(), "rev-parse", "--show-toplevel").strip())
         changed = changed_files(root, argv)
+        accepted = load_accepted(root)
         scanner = load_scanner()
         results = scan(scanner, root, changed)
     except SetupError as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
+    used: set[int] = set()
+    failed: set[str] = set()
+    fails = accepts = 0
     for rel, line, f in results:
         where = f"{rel}:{line}" if line else rel
-        print(f"FAIL {where} [skill-scanner] {f['severity']} {f['type']}: {f['description']}")
+        text = line_text(root, rel, line)
+        match = [i for i, e in enumerate(accepted)
+                 if e["file"] == rel and e["finding"] == f["description"] and e["line"] == text]
+        if match:
+            used.update(match)
+            accepts += 1
+            print(f"ACCEPTED {where} [skill-scanner] {f['severity']} {f['description']}: {accepted[match[0]]['reason']}")
+        else:
+            fails += 1
+            failed.add(rel)
+            print(f"FAIL {where} [skill-scanner] {f['severity']} {f['type']}: {f['description']}")
+    # Staleness is judged only for files this run scanned.
+    scanned_files = {rel for rel in changed if in_scope(rel) and (root / rel).is_file()}
+    for i, e in enumerate(accepted):
+        if i not in used and e["file"] in scanned_files:
+            fails += 1
+            failed.add(ACCEPTED)
+            print(f'FAIL {ACCEPTED} [stale-accepted] {e["file"]}: {e["finding"]}: '
+                  f'"{e["line"]}" matches no current finding; remove the entry')
     scanned = sum(1 for rel in changed if in_scope(rel))
-    if results:
-        files = len({rel for rel, _, _ in results})
-        print(f"FAILED: {len(results)} finding(s) in {files} file(s); {scanned} changed skill and hook file(s) scanned")
+    if fails:
+        also = f"; {accepts} accepted" if accepts else ""
+        print(f"FAILED: {fails} finding(s) in {len(failed)} file(s){also}; {scanned} changed skill and hook file(s) scanned")
         return 1
-    print(f"ok: {scanned} changed skill and hook file(s) scanned, no findings")
+    if accepts:
+        print(f"ok: {scanned} changed skill and hook file(s) scanned, {accepts} accepted finding(s), no others")
+    else:
+        print(f"ok: {scanned} changed skill and hook file(s) scanned, no findings")
     return 0
 
 

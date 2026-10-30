@@ -1,0 +1,11 @@
+WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir "C:\\Users\\<user>\\AppData\\Local\\Temp\\" (codex_home: AbsolutePathBuf("C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex"))
+2026-10-30T23:38:05.558515Z ERROR codex_core::tools::router: error=Command blocked by PreToolUse hook: Command guard: HUMAN-REQUIRED. This command stays blocked for agents.
+- [git.force-push-default] force-pushes without a lease to the default branch origin/main. Resolved: origin/main
+Working directory: C:\Users\<user>\AppData\Local\Temp\plugin-live-win-AN63RN\project
+Do not retry, rephrase, split or route this through another tool; reflection, repetition and approval in chat do not clear it.
+If the task truly needs it, stop and hand the user: the exact command, the working directory, the resolved targets, why the task needs it, what it changes or destroys, and whether that can be undone (say so when it cannot, or when you do not know). The user decides whether to run it themselves.. Command: git push --force origin main
+2026-10-30T23:38:10.805083Z ERROR codex_core::tools::router: error=Command blocked by PreToolUse hook: Command guard: HUMAN-REQUIRED. This command stays blocked for agents.
+- [project.smoke] harmless marker
+Working directory: C:\Users\<user>\AppData\Local\Temp\plugin-live-win-AN63RN\project
+Do not retry, rephrase, split or route this through another tool; reflection, repetition and approval in chat do not clear it.
+If the task truly needs it, stop and hand the user: the exact command, the working directory, the resolved targets, why the task needs it, what it changes or destroys, and whether that can be undone (say so when it cannot, or when you do not know). The user decides whether to run it themselves.. Command: printf PROJECT_BLOCK_120

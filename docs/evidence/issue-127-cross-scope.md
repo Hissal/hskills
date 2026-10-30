@@ -2,7 +2,8 @@
 
 Authenticated Linux evidence, 2026-10-30, for [#127](https://github.com/Hissal/skill-collection/issues/127)
 under [#78](https://github.com/Hissal/skill-collection/issues/78).
-Keep #127 open until actual Windows harness runs cover both link types.
+Native Windows runs of both link types on both harnesses are in
+[Windows install acceptance](windows-install-2026-10-31.md).
 
 ## Method
 
@@ -74,8 +75,10 @@ they do not establish deterministic Codex selection across versions or prompts.
 
 ## Windows boundary and automated checks
 
-No Windows executor was available for actual Claude/Codex runs. Linux namespace
-or filesystem results cannot establish Windows harness behavior.
+This Linux run had no Windows executor; Linux namespace or filesystem results
+cannot establish Windows harness behavior. The later native Windows matrix
+(12 authenticated cells, actual symlinks and fixture-injected junction fallback)
+is in [Windows install acceptance](windows-install-2026-10-31.md).
 
 The installer test runner now includes Windows-only cases for directory symlinks
 and junction fallback after simulated `EPERM` on directory symlink creation.
@@ -86,9 +89,9 @@ checks copied bytes and detects drift. These checks run in the existing Windows
 collection CI job without authentication. They are filesystem evidence only;
 CI requires a later authorized push; this local-only task does not launch it. They were not executed on Windows here.
 
-Full acceptance still requires each installed Windows harness to follow both
-installer-created link types and load the required body and reference. Do not
-close #127 on CI filesystem results alone. Plugin reachability remains separate.
+CI filesystem results alone never close #127; the harness reads are in the
+Windows report above. An actual OS refusal (rather than injected) remains
+open there. Plugin reachability remains separate.
 
 ## Recovery validation
 

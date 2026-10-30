@@ -1,0 +1,29 @@
+{
+  "mode": "symlink",
+  "links": [
+    {
+      "path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\home\\.claude\\skills\\scope-caller",
+      "LinkType": "SymbolicLink",
+      "Target": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\source\\skills\\packs\\fixture\\scope-caller",
+      "realpath": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\source\\skills\\packs\\fixture\\scope-caller"
+    },
+    {
+      "path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\home\\.agents\\skills\\scope-caller",
+      "LinkType": "SymbolicLink",
+      "Target": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\source\\skills\\packs\\fixture\\scope-caller",
+      "realpath": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\source\\skills\\packs\\fixture\\scope-caller"
+    },
+    {
+      "path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\project\\.claude\\skills\\scope-rules",
+      "LinkType": "SymbolicLink",
+      "Target": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\source\\skills\\packs\\fixture\\scope-rules",
+      "realpath": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\source\\skills\\packs\\fixture\\scope-rules"
+    },
+    {
+      "path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\project\\.agents\\skills\\scope-rules",
+      "LinkType": "SymbolicLink",
+      "Target": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\source\\skills\\packs\\fixture\\scope-rules",
+      "realpath": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\source\\skills\\packs\\fixture\\scope-rules"
+    }
+  ]
+}

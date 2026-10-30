@@ -1,0 +1,10 @@
+{
+  "base": "3a50d5090ad2241a4a4a8de7db18b6e98a34b331",
+  "baseline": {
+    "C:\\Users\\<user>\\.claude\\settings.json": "2d470f6fbb55d42c485f7598f5ff858a24bb86b68484041115057a5ca8a54335",
+    "C:\\Users\\<user>\\.claude\\plugins\\installed_plugins.json": "37d271bccbdb6aab6bd97ebb444fe724df13fd594fdb8a42ef1f362c32a52cd1",
+    "C:\\Users\\<user>\\.claude\\plugins\\known_marketplaces.json": "b027d31f3d68f6cc94965e2efeb84d8a8f6a436c4e45c851aa5e6da5836ed35b",
+    "C:\\Users\\<user>\\.codex\\config.toml": "ff78038ebdb78dc52e19417fd8b8686ff58284cdec2cdd685999925f0f705d88",
+    "C:\\Users\\<user>\\.codex\\hooks.json": "39b893057c1090defaccbffa8c9c8bd73cfcd5b9c800ab84ab1e3c5d7f6d02a9"
+  }
+}

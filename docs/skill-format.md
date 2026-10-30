@@ -175,6 +175,38 @@ the version inspected in [loading-mechanics research](../research/loading-mechan
 Bumping it requires re-verifying that research. CI installs the CLI but does not
 run the hand-run trigger evals or authenticate a model session.
 
+### Security scan (#94)
+
+The workflow's `security-scan` job runs the deterministic part of Sentry's
+[`skill-scanner`](https://github.com/getsentry/skills/tree/d12f250460ffd961f549dbebf7eeb0cf4afd4c2e/skills/skill-scanner)
+(its `scan_skill.py`) on the `skills/` and `hooks/` files a push or pull request
+changes. Any finding fails the job with one `FAIL <file>[:line] [skill-scanner]
+<severity> <type>: <description>` line. Own, copied and contributed skills are
+scanned alike; there is no allowlist. The model-judged half of `skill-scanner`
+belongs to code review and skill intake.
+
+Run it locally on demand (needs [uv](https://docs.astral.sh/uv/)); the collection
+check does not run it:
+
+```sh
+uv run scripts/security-scan/scan.py --base origin/main
+```
+
+`--base <rev>` scans the files changed in `<rev>...HEAD`; paths instead of
+`--base` scan the named files. Exit 0 is clean, 1 is findings, 2 is a usage or
+setup error. Run the scan's fixtures with `node scripts/security-scan/test/run.js`.
+
+- **Pin**: [`scan.py`](../scripts/security-scan/scan.py) holds the getsentry/skills
+  commit and the sha256 of `scan_skill.py`; it downloads that file once into
+  `~/.cache/skill-collection/skill-scanner/` (`SKILL_SCANNER_CACHE` overrides)
+  and stops on a hash mismatch. Bump both together. The workflow pins uv.
+- **Coverage**: a changed file inside a skill folder gets the scanner's whole-skill
+  scan, reported only for the changed files. Changed files the scanner's walk
+  skips (hook files, skill files outside `SKILL.md`, `references/*.md` and
+  `scripts/*.{py,sh,js,ts}`) get its per-file checks: prompt injection,
+  obfuscation, secrets, and dangerous code for code files. Untrusted URLs and the
+  description overlap figure are scanner output, not findings.
+
 ## Guide format
 
 Guides recommend workflows; they never run them. A recommendation returns the

@@ -31,3 +31,36 @@ jobs:
         run: node scripts/check/test/run.js
       - name: Check collection
         run: node scripts/check/check.js
+
+  security-scan:
+    name: Security scan (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The scan diffs against the push's or pull request's base commit.
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: '0.13.6'
+      - name: Run security scan fixtures
+        run: node scripts/security-scan/test/run.js
+      - name: Scan changed skill and hook files
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          base="${PR_BASE:-$PUSH_BEFORE}"
+          # A new branch has no before commit; a force push may drop it.
+          if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            base="origin/$DEFAULT_BRANCH"
+          fi
+          uv run scripts/security-scan/scan.py --base "$base"

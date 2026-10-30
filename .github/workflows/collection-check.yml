@@ -29,5 +29,7 @@ jobs:
         run: npm install --global "@anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }}"
       - name: Run collection check fixtures
         run: node scripts/check/test/run.js
+      - name: Run gate writer tests
+        run: node scripts/gates/test/run.js
       - name: Check collection
         run: node scripts/check/check.js

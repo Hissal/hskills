@@ -1,10 +1,14 @@
 'use strict';
 // The automatic guide is the core guide published model-invoked (#77, #101).
 // It is generated from the core guide and committed, and may differ only in
-// frontmatter (the gate and the description). The core guide is
+// frontmatter (the gate and the description). The generated Codex gate file
+// is frontmatter-derived, so it is skipped like frontmatter; harness-gates
+// checks it against its source. The core guide is
 // skills/core/guide; the automatic guide's callable name is not decided, so it
 // is the onboarding pack's skill, which ships nothing else. Silent until both
 // exist.
+
+const gates = require('../../gates/gates');
 
 const CORE = 'skills/core/guide';
 const AUTOMATIC = /^skills\/packs\/onboarding\/[^/]+$/;
@@ -32,9 +36,10 @@ module.exports = {
   },
 };
 
-// a skill's files other than SKILL.md, keyed by path inside its folder
+// a skill's files other than SKILL.md and its generated gate file, keyed by
+// path inside its folder
 function bundled(s) {
-  return new Map(s.files.filter((f) => f !== s.skillMd).map((f) => [f.slice(s.dir.length + 1), f]));
+  return new Map(s.files.filter((f) => f !== s.skillMd).map((f) => [f.slice(s.dir.length + 1), f]).filter(([rel]) => rel !== gates.CODEX_FILE));
 }
 
 function firstDifference(a, b) {

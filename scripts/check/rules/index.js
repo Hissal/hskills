@@ -14,4 +14,7 @@ module.exports = [
   require('./skill-metadata'),
   require('./skill-requirements'),
   require('./requirement-reference'),
+
+  require('./guide-needs-target'),
+  require('./guide-routes-paths'),
 ];

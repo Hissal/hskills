@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const crypto = require('crypto');
 const path = require('path');
-const { execFileSync } = require('child_process');
+const { execFileSync, spawnSync } = require('child_process');
 const { parse } = require('../check/manifest');
 
 function stat(file) {
@@ -21,11 +21,11 @@ function readRule(file, directory = true) {
 function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help')) {
-    console.log('Usage: node scripts/install/install.js [install|doctor] [--owner-steering] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR] [--pack NAME] [--skill NAME [--project DIR]]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.skill-collection/install.json. Prints Claude Read rules; writes no permissions.');
+    console.log('Usage: node scripts/install/install.js [install|doctor|uninstall] [--owner-steering] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR] [--pack NAME] [--skill NAME [--project DIR]]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.skill-collection/install.json. Prints Claude Read rules; writes no permissions.');
     return;
   }
   const command = args[0] && !args[0].startsWith('--') ? args.shift() : 'install';
-  if (!['install', 'doctor'].includes(command)) throw new Error('unknown command: ' + command);
+  if (!['install', 'doctor', 'uninstall'].includes(command)) throw new Error('unknown command: ' + command);
   const options = {};
   while (args.length) {
     const key = args.shift();
@@ -200,7 +200,12 @@ function main() {
       }
     }
   }
-  doctor();
+  if (command !== 'uninstall') doctor();
+  if (!failed) {
+    const result = spawnSync(process.execPath, [path.resolve(__dirname, '../../hooks/command-guard/install.js'), '--home', home, ...(command === 'install' ? [] : ['--' + command])], { encoding: 'utf8', timeout: 60000 });
+    process.stdout.write(result.stdout || ''); process.stderr.write(result.stderr || '');
+    if (result.status !== 0) failed = true;
+  }
   if (failed) process.exitCode = 1;
 }
 try { main(); } catch (e) { console.error('FAIL install: ' + e.message); process.exitCode = 1; }

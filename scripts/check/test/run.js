@@ -17,6 +17,7 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const cases = require('./cases');
+const { git, write } = require('../../test-util');
 require('./catalog');
 
 const CHECK = path.join(__dirname, '..', 'check.js');
@@ -28,18 +29,7 @@ let failed = 0;
 let passed = 0;
 let skipped = 0;
 
-function git(dir, args) {
-  const res = spawnSync('git', ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', '-c', 'core.autocrlf=false', ...args], { cwd: dir, encoding: 'utf8' });
-  if (res.status !== 0) throw new Error('git ' + args.join(' ') + ' failed: ' + res.stderr);
-}
 
-function write(dir, files) {
-  for (const [file, content] of Object.entries(files)) {
-    const full = path.join(dir, ...file.split('/'));
-    fs.mkdirSync(path.dirname(full), { recursive: true });
-    fs.writeFileSync(full, content);
-  }
-}
 
 // An expectation line is "<fail|warn> <rule> <file>".
 const key = (level, rule, file) => level.toLowerCase() + ' ' + rule + ' ' + file;

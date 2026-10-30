@@ -36,8 +36,8 @@ node scripts/install/install.js install
 
 This copies a snapshot to `~/.agents/command-guard`, fires each adapter once, and registers the hooks only when that check passes:
 
-- **Claude Code**: `~/.claude/settings.json`, `PreToolUse` on `Bash|PowerShell|Monitor` with `onFailure: "block"` (needs v2.1.295 or later).
-- **Codex**: `~/.codex/hooks.json`, `PreToolUse` on `Bash`. Codex skips a new or changed hook until you trust it in `/hooks`.
+- **Claude Code**: hooks-only plugin registered from a content-addressed snapshot.
+- **Codex**: the same snapshot through its plugin API. Review new or changed hooks in `/hooks`; installation grants no trust.
 - **OpenCode**: `~/.config/opencode/plugins/command-guard.js`, a v2 plugin that rejects the call in `tool.execute.before` and, for human-required commands, also denies the `shell` permission in `permission.evaluate`. A running OpenCode server picks it up on restart.
 
 The installed guard is a copy, so switching branches here cannot break running sessions. Rerun the installer after changing the guard. The first write to each settings file leaves a `.before-command-guard` copy beside it.
@@ -73,4 +73,4 @@ The hooks-only guard is listed in this repository's marketplace. For snapshot
 preparation, use [the install command](../../docs/user-install.md#prepare-the-guard-plugin).
 When implementing registration, migration, or live acceptance, read
 [guard plugin evidence and completion criteria](../../research/guard-plugin-install.md).
-Current normal installs retain adapter registration pending verified migration.
+Normal installs register against the prepared snapshot, then remove only recorded legacy handlers for each successfully registered host. Registration and direct probes leave live host invocation pending validation.

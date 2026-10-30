@@ -183,8 +183,8 @@ configuration directories exist under that home. For plugin preparation or migra
 
 | Harness | Delivery | Registration | Doctor |
 | --- | --- | --- | --- |
-| Claude Code | snapshot in `.agents/command-guard` | `.claude/settings.json` PreToolUse | installed adapter block + silent allow |
-| Codex | same snapshot | `.codex/hooks.json` PreToolUse; human trust in `/hooks` | installed adapter block + silent allow |
+| Claude Code | content-addressed plugin snapshot | user plugin API | enabled effective source; snapshot block + allow |
+| Codex | same plugin snapshot | user plugin API; human trust in `/hooks` | enabled effective source; pending trust |
 | OpenCode | snapshot and copied adapter | `.config/opencode/plugins/command-guard.js` | tool block + allow and permission denial |
 
 `HOME/.skill-collection/guard.json` records copied files and exact hook entries.
@@ -217,10 +217,25 @@ with all three harness directories. Live per-harness hand runs are still missing
 for #120, including trust, bypass, overrides and actual host invocation. The CLI
 probes are not that evidence; #120 is not fully accepted until it is recorded.
 
-## Prepare the guard plugin
+## Register the guard plugin
 
-Run `node scripts/install/install.js prepare-plugin --home /temporary/home` to
-prepare a versioned snapshot. Completion is a printed snapshot path with verified
-bytes on rerun. The command exits with an unsupported-registration error and
-preserves working guard registration. For host support evidence and the remaining
-migration criteria, read [guard plugin delivery](../research/guard-plugin-install.md).
+Normal installs register the guard with the installed `claude` and `codex` CLIs.
+`prepare-plugin` runs that registration independently of skill links. Both use
+`--source` for the guard as well as skills. CLI binaries can be selected with
+`COMMAND_GUARD_CLAUDE` and `COMMAND_GUARD_CODEX` when absent from PATH.
+Registration uses a dedicated `skill-collection-guard` marketplace rooted in the
+prepared snapshot. Enabled listings must report that snapshot as effective source.
+
+`HOME/.skill-collection/plugins.json` journals snapshot files and host configuration
+writes. Failed host registration rolls back its writes and retains legacy hooks.
+After each successful registration, only exact recorded legacy handlers with the
+adapter marker are removed from that host's settings; unrelated handlers survive.
+Settings keep their first-write backup. Uninstall restores recorded configuration
+only while its bytes still match; changed files are conflicts and remain owned
+for recovery. Resolve conflicts manually before retrying uninstall.
+
+Registration is implemented; live loading remains pending validation. The command
+returns failure for pending host validation and Codex trust, even after successful
+registration. It grants no trust. Review Codex `/hooks` yourself. Direct snapshot
+probes establish adapter behavior only. For live acceptance, read
+[the remaining evidence criteria](../research/guard-plugin-install.md).

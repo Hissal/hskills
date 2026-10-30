@@ -10,7 +10,8 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { pathToFileURL } = require('url');
 
-const SRC = __dirname;
+const sourceIndex = process.argv.indexOf('--source');
+const SRC = sourceIndex < 0 ? __dirname : path.resolve(process.argv[sourceIndex + 1]);
 const homeIndex = process.argv.indexOf('--home');
 const HOME = homeIndex < 0 ? os.homedir() : path.resolve(process.argv[homeIndex + 1]);
 process.env.COMMAND_GUARD_HOME = process.env.COMMAND_GUARD_HOME || path.join(HOME, '.agents', 'command-guard');
@@ -177,6 +178,7 @@ async function install() {
     console.log('Doctor failed: hooks were NOT registered.');
     process.exit(1);
   }
+  if (!args.has('--plugin-mode')) {
   const claude = readJson(CLAUDE_SETTINGS, {});
   setGroup(claude, claudeGroup());
   record.groups = record.groups.filter(g => JSON.stringify(g) !== JSON.stringify(claudeGroup()));
@@ -190,6 +192,7 @@ async function install() {
     record.groups.push(codexGroup()); save();
     writeJson(CODEX_HOOKS, codex);
     console.log('Codex: PreToolUse hook written to ' + CODEX_HOOKS + '. It does not run until you trust it: open Codex and run /hooks.');
+  }
   }
   if (withOpenCode) {
     fs.mkdirSync(path.dirname(OPENCODE_PLUGIN), { recursive: true });
@@ -208,12 +211,14 @@ async function main() {
   if (args.has('--doctor')) {
     let ok = true;
     for (const [file, group, adapter] of [[CLAUDE_SETTINGS, claudeGroup(), 'claude-code.js'], [CODEX_HOOKS, codexGroup(), 'codex.js']]) {
+      if (args.has('--plugin-mode')) continue;
       if (adapter === 'codex.js' && !record.groups.some(g => JSON.stringify(g) === JSON.stringify(group))) continue;
       const config = readJson(file, {});
       const groups = (config.hooks || {}).PreToolUse || [];
       if (config.disableAllHooks || config.enabled === false) { console.log('FAIL disabled: ' + file); ok = false; continue; }
       if (!groups.some(g => JSON.stringify(g) === JSON.stringify(group))) { console.log('FAIL missing registration or overridden: ' + file); ok = false; continue; }
       ok = doctor([adapter]) && ok;
+      if (args.has('--plugin-mode')) continue;
       if (adapter === 'codex.js') { console.log('PENDING Codex human trust: review the current hook in /hooks; trust is unverified.'); ok = false; }
       console.log('Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: ' + adapter);
     }

@@ -206,3 +206,5 @@ module.exports.push(
   { name: 'stale dependency catalog fails', files: { 'docs/catalog.md': '# Catalog\n' }, expect: ['fail dependency-catalog docs/catalog.md'] },
   { name: 'fresh empty dependency catalog passes', files: { 'docs/catalog.md': '# Catalog\n\n<!-- BEGIN GENERATED DEPENDENCIES -->\n| Skill ID | Callable / source | Hard requirements |\n|---|---|---|\n<!-- END GENERATED DEPENDENCIES -->\n' }, expect: [] }
 );
+// ---- copied file safety (#103) ----------------------------------------------
+module.exports.push(...require('./copied-safety-cases')({ skill, skillMd }));

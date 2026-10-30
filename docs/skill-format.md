@@ -110,8 +110,6 @@ A skill copied from a source keeps its provenance in plain files (ADR 0002, [#17
 
 Scripts read the lock through `scripts/vendor/lock.js`, never by parsing it themselves.
 
-**Drift**: `node scripts/vendor/drift.js` classifies every lock entry against its baseline and its source's default branch, one `<skill>: <class>` line each; `--merge <skill>` takes a source update by three-way merge. Run it with `--help` first. Its fixture triples are in `scripts/vendor/test/cases.js`, run by `node scripts/vendor/test/run.js`.
-
 ## The collection check
 
 ```
@@ -496,3 +494,20 @@ text files in those folders, including nested files; baselines and files
 outside copied skill folders are outside its scope. Binary files use the
 collection's existing NUL-byte exclusion. An invalid lock is reported by
 `vendor-lock` before copied-file safety runs.
+
+## Automatic guide (#101)
+
+The automatic guide is the core guide (`skills/core/guide/`) published
+model-invoked. It is the onboarding pack's one skill
+(`skills/packs/onboarding/<name>/`); its callable name is not yet decided, so
+the check finds it by that folder. Generate it from the core guide and commit
+the output; the generator belongs to spec 12. Edit the core guide, then
+regenerate: only frontmatter (the gate and the description) may differ.
+
+The Codex gate file (`agents/openai.yaml`) is generated from frontmatter, so it
+differs with the gate and the sync skips it; `harness-gates` checks it against
+`disable-model-invocation`. Every other bundled file must match byte for byte.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `automatic-guide-sync` | fail | the automatic guide's `SKILL.md` body, or a bundled file other than the Codex gate file, differs from the core guide's, or one guide bundles a file the other lacks; silent until both guides exist |

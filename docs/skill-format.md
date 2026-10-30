@@ -112,6 +112,7 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 ```
 
 - `files` is written untracked into a scratch git repository; `committed` (same shape) is committed first.
+- `history` is a list of earlier commits, `{ files, tag? }`, each a whole tree, optionally tagged. `committed` then replaces the last tree. Use it for rules that read git history.
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
@@ -254,3 +255,18 @@ starts another workflow. See [core extension points](agents/core-extension-point
 |---|---|---|
 | `guide-needs-target` | fail | a guide needs-table target is not its own file, a same-pack skill, or explicitly project-selected vendor guidance |
 | `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
+
+## Skill ID stability (#97)
+
+A skill keeps its `agent-skills-sync.id` across renames and moves. The check
+compares the working tree with the last release tag: the nearest `v<version>`
+tag (release-please's form) reachable from `HEAD`. Before the first release
+there is no such tag and the rule is silent; a checkout without tags is silent
+too, so CI fetches them.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
+
+Deleting or re-identifying a skill on purpose is legitimate: read the warning,
+confirm the change is intended, and leave it.

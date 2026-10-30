@@ -119,13 +119,18 @@ function main() {
       const project = projectLinks.get(dest);
       if (!project) return true;
       const git = (...args) => execFileSync('git', ['-C', project, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
-      const top = git('rev-parse', '--show-toplevel');
-      const relative = path.relative(top, dest).split(path.sep).join('/');
-      if (git('ls-files', '--', relative)) {
+      // Git supplies the repository prefix in its own spelling. Comparing its
+      // absolute root with a caller path mixes short names or directory aliases.
+      // Keep the final component lexical: an installed link points outside Git.
+      const local = path.relative(project, dest);
+      if (path.isAbsolute(local) || local === '..' || local.startsWith('..' + path.sep))
+        throw new Error('project target is outside project: ' + dest);
+      const relative = git('rev-parse', '--show-prefix') + local.split(path.sep).join('/');
+      if (git('ls-files', '--', ':(top,literal)' + relative)) {
         problem('CONFLICT tracked project target: ' + dest);
         return false;
       }
-      const file = path.resolve(project, git('rev-parse', '--git-path', 'info/exclude'));
+      const file = git('rev-parse', '--path-format=absolute', '--git-path', 'info/exclude');
       if (stat(file) && !stat(file).isFile()) throw new Error('git exclude must be a regular file');
       const before = stat(file) ? fs.readFileSync(file, 'utf8') : '';
       // Exact literal pattern: never hide siblings or take ownership of existing rules.

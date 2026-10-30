@@ -7,7 +7,15 @@
     {
       "name": "command-guard",
       "source": "./hooks/command-guard",
-      "description": "Local accident prevention for covered shell commands; hooks only."
+      "description": "Local accident prevention for covered shell commands; hooks only.",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     }
-  ]
+  ],
+  "metadata": {
+    "description": "Hooks-only command guard for local accident prevention."
+  }
 }

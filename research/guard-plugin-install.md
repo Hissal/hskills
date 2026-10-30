@@ -33,7 +33,12 @@ and icon metadata. No public-directory submission was attempted.
 Codex is absent from PATH; no installed Codex registration/trust API was
 available for execution. Local Codex configuration was inspected for topic
 pointers before fetching official documentation. No real-home files were edited.
-No model sessions were launched. Registration/listing is not hook invocation.
+Claude `auth status --json` in another disposable home reported
+`loggedIn: false` and `authMethod: none` (exit 1). No login or credential copy
+was attempted. No model sessions were launched. Registration/listing is not hook
+invocation. Claude registration APIs exist; effective loaded-hook behavior remains
+unverified. The unsupported automatic switch is an implementation limit, not a
+claim that Claude has no plugin API.
 
 `prepare-plugin` creates a content-addressed version snapshot under the selected
 home and verifies existing snapshot bytes on rerun. It exits unsuccessfully with

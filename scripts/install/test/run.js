@@ -6,6 +6,29 @@ const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
 const cli = path.resolve(__dirname, '../install.js');
 const cases = [
+  ['plugin preparation preserves working registration and snapshots', (f) => {
+    f.run(0);
+    const settings = path.join(f.home, '.claude/settings.json');
+    const before = fs.readFileSync(settings, 'utf8');
+    f.run(1, 'prepare-plugin');
+    assert.match(f.last.stdout, /UNSUPPORTED.*registration/);
+    assert.equal(fs.readFileSync(settings, 'utf8'), before);
+    const cache = path.join(f.home, '.skill-collection/plugin-cache');
+    const versions = fs.readdirSync(cache);
+    assert.equal(versions.length, 1);
+    const snapshot = path.join(cache, versions[0]);
+    assert.ok(fs.existsSync(path.join(snapshot, 'adapters/codex.js')));
+    const adapter = path.join(snapshot, 'adapters/claude-code.js');
+    const probe = command => spawnSync(process.execPath, [adapter], {
+      input: JSON.stringify({cwd: f.home, tool_name: 'Bash', tool_input: {command}}),
+      env: {...process.env, COMMAND_GUARD_STATE: path.join(f.home, 'state')}, encoding: 'utf8'
+    });
+    assert.match(probe('git push --force origin main').stdout, /HUMAN-REQUIRED/);
+    assert.equal(probe('git status').stdout, '');
+    f.run(1, 'prepare-plugin');
+    assert.deepEqual(fs.readdirSync(cache), versions);
+    assert.equal(fs.readFileSync(settings, 'utf8'), before);
+  }],
   ['combined selections and steering survive guard uninstall', f => {
     const project = path.join(f.home, 'project');
     fs.mkdirSync(project, { recursive: true });
@@ -15,11 +38,11 @@ const cases = [
     const settings = path.join(f.home, '.claude/settings.json');
     fs.mkdirSync(path.dirname(settings), { recursive: true });
     fs.writeFileSync(settings, '{}');
-    f.run(0, 'install', ['--pack', 'study', '--skill', 'beta', '--project', project, '--owner-steering']);
+    f.run(1, 'install', ['--pack', 'study', '--skill', 'beta', '--project', project, '--owner-steering']);
     const before = fs.readFileSync(f.record, 'utf8');
     const guard = JSON.parse(fs.readFileSync(path.join(f.home, '.skill-collection/guard.json')));
     assert.ok(guard.settings.some(s => s.path === settings && s.backup === settings + '.before-command-guard'));
-    f.run(0); f.run(0, 'doctor');
+    f.run(1); f.run(1, 'doctor');
     assert.equal(fs.readFileSync(f.record, 'utf8'), before);
     f.run(0, 'uninstall');
     assert.equal(fs.readFileSync(f.record, 'utf8'), before);
@@ -120,6 +143,39 @@ const cases = [
     for (const root of f.targets) assert.deepEqual(fs.readdirSync(root).sort(), ['alpha', 'gamma']);
   }],
 
+  ['installs guard and detects missing registration', (f) => {
+    f.run(0);
+    const settings = path.join(f.home, '.claude/settings.json');
+    assert.ok(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse.length);
+    fs.writeFileSync(settings, '{}');
+    f.run(1, 'doctor');
+    assert.match(f.last.stdout, /missing registration/);
+  }],
+  ['uninstall preserves unrelated hooks and first-write backups', (f) => {
+    for (const dir of ['.claude', '.codex', '.config/opencode']) fs.mkdirSync(path.join(f.home, dir), { recursive: true });
+    const settings = path.join(f.home, '.claude/settings.json');
+    const other = { type: 'command', command: 'echo personal' };
+    const original = JSON.stringify({ hooks: { PreToolUse: [{ hooks: [other] }] } });
+    fs.writeFileSync(settings, original);
+    f.run(1); assert.match(f.last.stdout, /PENDING Codex human trust/); f.run(1, 'doctor'); f.run(1);
+    assert.equal(fs.readFileSync(settings + '.before-command-guard', 'utf8'), original);
+    const config = JSON.parse(fs.readFileSync(settings));
+    config.hooks.PreToolUse.at(-1).hooks.push(other);
+    fs.writeFileSync(settings, JSON.stringify(config));
+    f.run(0, 'uninstall');
+    assert.ok(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse.every(g => g.hooks.every(h => h.command === 'echo personal')));
+    assert.equal(fs.existsSync(path.join(f.home, '.config/opencode/plugins/command-guard.js')), false);
+  }],
+  ['doctor rejects a silent block probe and disabled registration', (f) => {
+    f.run(0);
+    const settings = path.join(f.home, '.claude/settings.json');
+    const config = JSON.parse(fs.readFileSync(settings));
+    config.disableAllHooks = true; fs.writeFileSync(settings, JSON.stringify(config));
+    f.run(1, 'doctor'); assert.match(f.last.stdout, /disabled/);
+    delete config.disableAllHooks; fs.writeFileSync(settings, JSON.stringify(config));
+    fs.writeFileSync(path.join(f.home, '.agents/command-guard/adapters/claude-code.js'), '');
+    f.run(1, 'doctor'); assert.match(f.last.stdout, /FAIL.*denies/);
+  }],
   ...['file', 'directory', 'link', 'dangling link'].map(kind => ['preserves unrecorded steering ' + kind, f => {
     const dest = path.join(f.home, '.claude/CLAUDE.md');
     fs.mkdirSync(path.dirname(dest), { recursive: true });
@@ -145,12 +201,12 @@ fs.symlinkSync = function(target, dest, type) {
 };
 `);
     f.nodeArgs = ['--require', preload];
-    f.run(0, 'install', ['--owner-steering']);
+    f.run(1, 'install', ['--owner-steering']);
     const record = fs.readFileSync(f.record, 'utf8');
     const entries = JSON.parse(record).steering;
     assert.deepEqual(entries.map(e => e.type), ['copy', 'copy']);
     for (const e of entries) assert.equal(fs.readFileSync(e.path, 'utf8'), 'personal steering\n');
-    f.run(0);
+    f.run(1);
     assert.equal(fs.readFileSync(f.record, 'utf8'), record);
     fs.writeFileSync(path.join(f.repo, 'steering.md'), 'updated source');
     f.run(1, 'doctor');
@@ -175,50 +231,17 @@ fs.symlinkSync = function(target, dest, type) {
     assert.equal(fs.existsSync(path.join(f.home, '.codex/AGENTS.md')), false);
   }],
   ['steering opt-in links both targets and survives a no-flag rerun', f => {
-    f.run(0, 'install', ['--owner-steering']);
+    f.run(1, 'install', ['--owner-steering']);
     for (const name of ['.claude/CLAUDE.md', '.codex/AGENTS.md'])
       assert.equal(fs.realpathSync(path.join(f.home, name)), path.join(f.repo, 'steering.md'));
     assert.match(f.last.stdout, /ALLOW: .*CLAUDE\.md/);
     assert.match(f.last.stdout, /ALLOW: .*steering\.md/);
     const before = fs.readFileSync(f.record, 'utf8');
     assert.equal(JSON.parse(before).ownerSteering, true);
-    f.run(0);
+    f.run(1);
     assert.equal(fs.readFileSync(f.record, 'utf8'), before);
   }],
 
-  ['installs guard and detects missing registration', (f) => {
-    f.run(0);
-    const settings = path.join(f.home, '.claude/settings.json');
-    assert.ok(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse.length);
-    fs.writeFileSync(settings, '{}');
-    f.run(1, 'doctor');
-    assert.match(f.last.stdout, /missing registration/);
-  }],
-  ['uninstall preserves unrelated hooks and first-write backups', (f) => {
-    for (const dir of ['.claude', '.codex', '.config/opencode']) fs.mkdirSync(path.join(f.home, dir), { recursive: true });
-    const settings = path.join(f.home, '.claude/settings.json');
-    const other = { type: 'command', command: 'echo personal' };
-    const original = JSON.stringify({ hooks: { PreToolUse: [{ hooks: [other] }] } });
-    fs.writeFileSync(settings, original);
-    f.run(0); f.run(0, 'doctor'); f.run(0);
-    assert.equal(fs.readFileSync(settings + '.before-command-guard', 'utf8'), original);
-    const config = JSON.parse(fs.readFileSync(settings));
-    config.hooks.PreToolUse.at(-1).hooks.push(other);
-    fs.writeFileSync(settings, JSON.stringify(config));
-    f.run(0, 'uninstall');
-    assert.ok(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse.every(g => g.hooks.every(h => h.command === 'echo personal')));
-    assert.equal(fs.existsSync(path.join(f.home, '.config/opencode/plugins/command-guard.js')), false);
-  }],
-  ['doctor rejects a silent block probe and disabled registration', (f) => {
-    f.run(0);
-    const settings = path.join(f.home, '.claude/settings.json');
-    const config = JSON.parse(fs.readFileSync(settings));
-    config.disableAllHooks = true; fs.writeFileSync(settings, JSON.stringify(config));
-    f.run(1, 'doctor'); assert.match(f.last.stdout, /disabled/);
-    delete config.disableAllHooks; fs.writeFileSync(settings, JSON.stringify(config));
-    fs.writeFileSync(path.join(f.home, '.agents/command-guard/adapters/claude-code.js'), '');
-    f.run(1, 'doctor'); assert.match(f.last.stdout, /FAIL.*denies/);
-  }],
   ['refuses an empty ownership record without installing', (f) => {
     fs.mkdirSync(path.dirname(f.record), { recursive: true });
     fs.writeFileSync(f.record, '');

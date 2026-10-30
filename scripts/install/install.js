@@ -21,11 +21,11 @@ function readRule(file, directory = true) {
 function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help')) {
-    console.log('Usage: node scripts/install/install.js [install|doctor|uninstall] [--owner-steering] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR] [--pack NAME] [--skill NAME [--project DIR]]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.skill-collection/install.json. Prints Claude Read rules; writes no permissions.');
+    console.log('Usage: node scripts/install/install.js [install|doctor|uninstall|prepare-plugin] [--owner-steering] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR] [--pack NAME] [--skill NAME [--project DIR]]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.skill-collection/install.json. Prints Claude Read rules; writes no permissions.');
     return;
   }
   const command = args[0] && !args[0].startsWith('--') ? args.shift() : 'install';
-  if (!['install', 'doctor', 'uninstall'].includes(command)) throw new Error('unknown command: ' + command);
+  if (!['install', 'doctor', 'uninstall', 'prepare-plugin'].includes(command)) throw new Error('unknown command: ' + command);
   const options = {};
   while (args.length) {
     const key = args.shift();
@@ -34,6 +34,11 @@ function main() {
     options[key] = ['--pack', '--skill'].includes(key) ? args.shift() : path.resolve(args.shift());
   }
   const home = options['--home'] || os.homedir();
+  if (command === 'prepare-plugin') {
+    require('./plugin').prepare(home);
+    process.exitCode = 1;
+    return;
+  }
   const source = options['--source'] || path.resolve(__dirname, '../..');
   const roots = [...new Set([options['--claude-root'] || path.join(home, '.claude/skills'), options['--agents-root'] || path.join(home, '.agents/skills')])];
   const record = path.join(home, '.skill-collection/install.json');

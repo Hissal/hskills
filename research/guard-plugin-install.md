@@ -30,15 +30,23 @@ to the checkout. This does not prove branch-switch isolation. Validation passed
 with warnings; public-directory submission additionally reported missing licence
 and icon metadata. No public-directory submission was attempted.
 
-Codex is absent from PATH; no installed Codex registration/trust API was
-available for execution. Local Codex configuration was inspected for topic
-pointers before fetching official documentation. No real-home files were edited.
+The noninteractive PATH omitted Codex. Rechecking the explicit installed binary
+`/home/agent/.npm-global/bin/codex` found codex-cli 0.166.0. In a disposable
+home (`HOME` and `CODEX_HOME` overridden), `plugin marketplace add`, `plugin add
+command-guard@skill-collection --json`, and `plugin list --json` all exited zero.
+The result reported version 0.1.0, a versioned cache path, and enabled true.
+Listing still identified the checkout as the local source; this is not live
+branch-switch or hook-trust evidence. The CLI warned that PATH helper aliases
+cannot be created under `/tmp`; registration itself succeeded.
+The installed API uses `plugin add`, not `plugin install` (the latter exited 2).
+No real-home files were edited. OpenCode evaluation belongs to the separate
+#125 recheck and was not repeated here.
 Claude `auth status --json` in another disposable home reported
 `loggedIn: false` and `authMethod: none` (exit 1). No login or credential copy
 was attempted. No model sessions were launched. Registration/listing is not hook
-invocation. Claude registration APIs exist; effective loaded-hook behavior remains
+invocation. Both installed hosts provide registration APIs; effective loaded-hook behavior remains
 unverified. The unsupported automatic switch is an implementation limit, not a
-claim that Claude has no plugin API.
+claim that either host has no plugin API.
 
 `prepare-plugin` creates a content-addressed version snapshot under the selected
 home and verifies existing snapshot bytes on rerun. It exits unsuccessfully with

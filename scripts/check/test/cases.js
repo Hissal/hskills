@@ -341,3 +341,18 @@ module.exports.push({
   }),
   expect: [],
 });
+
+for (const [name, body, expect] of [
+  ['passing', 'console.log("1 install cases, 0 failures");', []],
+  ['case failure', 'console.log("FAIL fixture"); process.exitCode = 1;', ['fail install-cases scripts/install/test/run.js']],
+  ['crash', 'throw new Error("fixture");', ['fail install-cases scripts/install/test/run.js']],
+]) module.exports.push({
+  name: 'collection check runs install harness: ' + name,
+  files: { 'scripts/install/test/run.js': body },
+  expect,
+});
+module.exports.push({
+  name: 'an installer without its case harness fails the collection check',
+  files: { 'scripts/install/install.js': '// fixture installer' },
+  expect: ['fail install-cases scripts/install/test/run.js'],
+});

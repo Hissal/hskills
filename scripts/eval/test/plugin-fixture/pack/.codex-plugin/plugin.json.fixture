@@ -1,0 +1,6 @@
+{
+  "name": "reach-fixture",
+  "version": "0.1.0",
+  "description": "Disposable issue 123 reach fixture; never install in a real home.",
+  "skills": "./skills/"
+}

@@ -88,3 +88,9 @@ Primary sources inspected 2026-10-30; source reading, not a live runtime proof:
 Offline tests prove stream classification, not model trigger quality. Record
 live eval dates, CLI versions, installation scope, model selectors, per-query
 outcomes and spend separately; a single pass does not establish reliability.
+
+For the isolated plugin guide gate, use the
+[test-only marketplace and guide](../scripts/eval/test/plugin-fixture/README.md).
+An optional skill `readName` specifies the bare Codex entry-point directory and
+frontmatter name when `name` is plugin-qualified. Claude still matches the exact
+`name` Skill input. This option does not resolve aliases or certify guide loads.

@@ -33,6 +33,7 @@ function observe(run, harness, skill) {
     } else {
       if (e.type === 'turn.completed') complete = true;
       const item = e.item;
+      const readName = skill.readName || skill.name;
       if (e.type === 'item.completed' && item?.type === 'command_execution') {
         if (item.status !== 'completed' || item.exit_code !== 0) return 'inconclusive';
         // Only a simple successful cat of the installed entry point counts.
@@ -41,10 +42,10 @@ function observe(run, harness, skill) {
         const shell = command.match(/^\S*(?:bash|sh) -[lc]+ '([^']*)'$/);
         if (shell) command = shell[1];
         const read = command.match(/^cat\s+['"]?([^'"\s;&|]+)['"]?$/);
-        if (read && read[1].replace(/\\/g, '/').endsWith('/skills/' + skill.name + '/SKILL.md') &&
+        if (read && read[1].replace(/\\/g, '/').endsWith('/skills/' + readName + '/SKILL.md') &&
             /^---\r?\n/.test(item.aggregated_output || '') &&
-            (item.aggregated_output || '').split(/\r?\n/).some(line => line === 'name: ' + skill.name)) fired = true;
-        else if ((item.command || '').includes('/skills/' + skill.name + '/SKILL.md')) return 'inconclusive';
+            (item.aggregated_output || '').split(/\r?\n/).some(line => line === 'name: ' + readName)) fired = true;
+        else if ((item.command || '').includes('/skills/' + readName + '/SKILL.md')) return 'inconclusive';
       }
     }
   }
@@ -77,6 +78,7 @@ function main() {
   }
   for (const label of ['Opus','Sol']) if (!config.models.some(m=>m.label === label && m.tier === 'frontier')) throw new Error(`frontier ${label} required`);
   for (const s of config.skills) {
+    if (s.readName !== undefined && (typeof s.readName !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s.readName))) throw new Error('readName must be a bare skill name');
     if (typeof s.name !== 'string' || !s.name || !Array.isArray(s.queries) || !s.queries.length || s.queries.length > 6 || s.queries.some(q=>typeof q.prompt !== 'string' || !q.prompt.trim() || typeof q.fire !== 'boolean') || [true,false].some(f=>s.queries.filter(q=>q.fire === f).length > 3)) throw new Error('each skill needs 1..6 queries, at most three per expected outcome');
   }
   let failed = false;

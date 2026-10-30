@@ -2,7 +2,8 @@
 
 A project's committed skills lock is its opt-in to this collection. Use this
 route when selecting project skills, reproducing them on another machine or
-pinning a release. Resolver implementers use the seven-step contract below.
+pinning a release. Resolver implementers use the [seven-step contract](#seven-step-resolver-contract).
+For personal live links, use [Personal skill links](user-install.md).
 This implements [#126](https://github.com/Hissal/skill-collection/issues/126)
 under [#78](https://github.com/Hissal/skill-collection/issues/78), following
 [ADR 0004](adr/0004-skill-dependencies-use-agent-skills-sync-metadata.md) and the
@@ -23,6 +24,9 @@ On another machine, clone the project and use its sync tool to reproduce the
 locked set. To pin stability, request a collection release tag and retain the
 immutable commit it resolves to. Ordinary sync reproduces that commit and set;
 changing the pin or selections is a separate resolution/update operation.
+The route is complete when a clean clone reproduces every locked entry in both
+destinations at the recorded commit with integrity verified; record any
+unresolved conflicts instead of claiming completion.
 Edit skills in this collection and resolve a new revision to adopt the change;
 project copies are never edited in place. Personal extras belong at user scope
 or in untracked local links, with one committed project lock and no per-person
@@ -121,20 +125,15 @@ harness during build verification and record the results separately.
 
 Resolve required skills and their bundled references through installed identity
 and visibility, wherever installed, rather than assuming sibling folders or a
-collection checkout. On Claude, files outside the working directory need read
-permission; for linked skills, allow both the link and its target. The
-collection install command does not write those permissions.
+collection checkout. For Claude reads outside the working directory, including linked skills,
+follow [Read permissions](user-install.md#read-permissions).
 
 ## Runtime fallback and the spec 3 fixture
 
-The [runtime stop rule](skill-format.md#hard-requirements-at-runtime) applies
-when an installer leaves out a requirement. Before doing work, a requiring
-skill loads its required skill and needed references. If any cannot load, it
-stops without partial work, naming the missing callable name and ID and
-explaining that ordinary installers such as `npx skills` do not install
-requirements. The Unity resolver is the intended metadata-aware route; its
-integration is separate work. Runtime checks test loadability; identity and
-content verification remain the installer's responsibility.
+When an installer omits a requirement, follow the
+[runtime stop rule](skill-format.md#hard-requirements-at-runtime), including
+its loadability check and installer explanation. Runtime loadability and
+installer identity/content verification are separate checks.
 
 For spec 3's missing-requirement case, prepare a scratch project through the
 `npx skills` route with `code-review` installed in the two project destinations

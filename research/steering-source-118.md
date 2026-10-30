@@ -2,7 +2,9 @@
 
 Read and implemented 2026-10-30 for [#118](https://github.com/Hissal/skill-collection/issues/118)
 under [spec 2 (#78)](https://github.com/Hissal/skill-collection/issues/78).
-Status: evidenced naming policy implemented; tooling-note requirement unresolved.
+Status at this implementation snapshot: evidenced naming policy implemented;
+tooling-note requirement unresolved. For the subsequent search and recovery
+lead, read [Recovery search](steering-notes-recovery.md).
 This is implementation evidence for a later issue comment, not a new owner policy.
 No issue comment was posted.
 
@@ -57,7 +59,7 @@ Conditional syntax clauses belong to the admitted convention; they are not
 claims that every session creates a branch, breaking change or commit body.
 No tooling-note admission reasons can be supplied without the notes themselves.
 
-## Size and verification
+## Historical size and verification
 
 The exact source is **985 Unicode characters / 4 = 246.25 estimated tokens**,
 including Markdown and final newline, below the 500-token tripwire. This is
@@ -68,7 +70,7 @@ node -e "const s=require('fs').readFileSync('steering.md','utf8'); console.log(A
 COLLECTION_ALWAYS_ON_PATH=steering.md node scripts/check/check.js
 ```
 
-No new tests are warranted for this prose-only change. Verification passed: `npm ci` (0 vulnerabilities),
+At the implementation snapshot, verification passed: `npm ci` (0 vulnerabilities),
 `node scripts/check/check.js` (0 failures, 0 warnings; guard 611 passed),
 and `node scripts/check/test/run.js` (195 passed, 0 failed). The explicit
 steering-path check above also passed with the 246.25-token figure.
@@ -78,5 +80,5 @@ to separate install work. No owner user-scope file was changed.
 Starting branch: `feat/implement-issue-118`. Starting HEAD and integration
 `feat/implement-issue-78` both resolved to
 `930e499709682b97228a3d8a142e3997f515ff3c`; ancestry was confirmed with
-`git merge-base --is-ancestor 930e499 HEAD`. Merge the current integration tip
-before handback and report the final branch and commit separately.
+`git merge-base --is-ancestor 930e499 HEAD`. These revisions identify the historical implementation baseline; they are not
+instructions for later branches.

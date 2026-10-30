@@ -92,3 +92,15 @@ The check fixture suite previously passed all 216 cases; its code was unchanged
 by subsequent integration merges. A redundant repeat was stopped after confirming
 that unchanged scope. The later integration merge brought documentation and
 evidence corrections; `git diff --check` passed and the working tree was clean.
+
+### Integration warning recheck
+
+The installed `/home/agent/.local/bin/claude` validator was rerun against the
+merged marketplace. It passed with two warnings: `plugins[0].policy` is ignored
+by Claude, and the plugin manifest lacks author information. The README install
+suggestion is advice, not a validation warning; automatic migration remains
+unsupported. The collection's pinned agnix reports only the policy warning.
+The [OpenAI marketplace contract](https://developers.openai.com/plugins/build/plugins)
+requires `policy.installation` and `policy.authentication` on each entry, so
+retain those fields for Codex. The Claude warning describes a real difference
+between hosts, not failed registration or evidence of effective hook loading.

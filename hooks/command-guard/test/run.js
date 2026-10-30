@@ -104,6 +104,13 @@ try {
   const fakeTemp = path.join(scratch, 'os-temp');
   const tempClone = path.join(fakeTemp, 'clone');
   fs.mkdirSync(path.join(tempClone, '.git'), { recursive: true });
+  if (process.platform === 'win32') {
+    check(false, '[DEBUG-win-temp] ' + JSON.stringify({
+      tmp: os.tmpdir(), fakeTemp, realTemp: fs.realpathSync.native(fakeTemp),
+      clone: tempClone, realClone: fs.realpathSync.native(tempClone),
+      decision: classify(rmrf(tempClone), { shell: native, cwd: scratch, tmp: fakeTemp }),
+    }));
+  }
   const at = (cwd, command, shell) => classify(command, { shell: shell || native, cwd, tmp: fakeTemp }).verdict;
 
   check(at(scratch, rmrf(tempClone)) === 'allow', 'fs: a repository root inside the temp directory is a throwaway clone');

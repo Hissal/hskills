@@ -55,6 +55,12 @@ const guard = (out, code) => ({ 'hooks/command-guard/test/run.js': 'console.log(
 
 module.exports = [
   // ---- the check itself ------------------------------------------------------
+  ...[['bare', 'ID is not publisher-qualified'], ['another.publisher/alpha', "another publisher's ID"]].map(([id, message]) => ({ name: 'invalid ID diagnostic ' + id, files: skill('skills/core/alpha', { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "' + id + '"' } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'], output: [message] })),
+  { name: 'core guide resolves core skills', files: tree(skill('skills/core/guide', { body: '| Need | Target |\n|---|---|\n| Tests | `skill: alpha` |\n' }), skill('skills/core/alpha')), expect: [] },
+  { name: 'core guide cannot resolve pack skills', files: tree(skill('skills/core/guide', { body: '| Need | Target |\n|---|---|\n| Tests | `skill: alpha` |\n' }), skill('skills/packs/web/alpha')), expect: ['fail guide-needs-target skills/core/guide/SKILL.md'] },
+  { name: 'missing explicit own code path fails', files: skill('skills/core/alpha', { body: 'Read `./missing.md`.\n' }), expect: ['fail missing-file skills/core/alpha/SKILL.md'] },
+  { name: 'missing path in bundled directory fails', files: skill('skills/core/alpha', { body: 'Read `scripts/missing.js`.\n', files: { 'scripts/present.js': '// present\n' } }), expect: ['fail missing-file skills/core/alpha/SKILL.md'] },
+  { name: 'project code paths pass', files: skill('skills/core/alpha', { body: 'Edit `package.json`.\n' }), expect: [] },
   { name: 'an empty tree passes', files: { 'README.md': '# x\n' }, expect: [] },
   { name: 'a new, unstaged skill is checked beside committed ones', committed: skill('skills/core/alpha'), files: skill('skills/core/beta', { body: 'Read [x](X.md).\n' }), expect: ['fail missing-file skills/core/beta/SKILL.md'] },
   { name: 'a committed skill is checked', committed: skill('skills/core/alpha', { body: 'Read [x](X.md).\n' }), expect: ['fail missing-file skills/core/alpha/SKILL.md'] },

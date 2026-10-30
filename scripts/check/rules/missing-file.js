@@ -13,7 +13,7 @@ module.exports = {
     const out = [];
     for (const s of c.skills) {
       for (const file of s.files.filter((f) => f.endsWith('.md'))) {
-        for (const l of c.links(file)) {
+        for (const l of [...c.links(file), ...c.ownPaths(file, s)]) {
           if (isInside(s.dir, l.path) && !c.exists(l.path)) {
             out.push({ file, line: l.line, message: 'links ' + l.target + ', which is not in the skill folder' });
           }

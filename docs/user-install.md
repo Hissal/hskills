@@ -1,19 +1,84 @@
 # Personal skill links
 
-Run from a local checkout with Node.js installed:
+Use this route for live checkout links: core at user scope, optional packs, or
+personal project extras. For a team's committed selection and release pinning,
+read [Project skills and the resolver contract](project-install.md).
+
+## Install core
+
+From a local checkout with Node.js installed, run:
 
 ```sh
-node scripts/install/install.js --help
 node scripts/install/install.js install
-node scripts/install/install.js doctor
 ```
 
 Install links the manifest's core list into `~/.claude/skills` and
-`~/.agents/skills`. Checkout edits are live. For optional packs or project links,
-see [Personal extras](#personal-extras). To install the owner's personal steering,
-see [Owner-only personal steering](#owner-only-personal-steering). The default install manages core skills and the command guard. Plugin
-registration remains pending; see [plugin preparation](#prepare-the-guard-plugin).
-Installation is complete when install and doctor both exit zero.
+`~/.agents/skills`. Checkout edits are live. Membership comes from
+[`collection.json`](../collection.json); an empty selection creates no skill links.
+For optional packs or project links, see [Personal extras](#personal-extras).
+For personal steering, see [Owner-only personal steering](#owner-only-personal-steering).
+The default install manages core skills and the command guard; skill plugins
+remain separate. See [Command guard and recovery](#command-guard-and-recovery)
+for registration, ownership and recovery.
+
+Add the printed Claude allow rules as described under [Read permissions](#read-permissions).
+Run `node scripts/install/install.js doctor`. Installation is complete when
+install and doctor exit zero and Claude can read an installed skill and its
+needed references. An empty selection verifies only the command and record,
+not skill availability. Resolve any reported conflicts using
+[Ownership and repair](#ownership-and-repair), then rerun.
+
+## Read permissions
+
+The command prints JSON strings for Claude `permissions.allow`, covering both
+installed link paths and checkout targets. Add the printed rules yourself to
+your Claude settings; the command writes hook registrations but no permission
+rules. Absolute rules start with `Read(//...)`; Windows drive paths use `//c/...` form.
+Claude checks both the requested link and resolved target, so allowing only
+the installed folder can still deny reading skill references. See the
+[Claude permission rules](https://code.claude.com/docs/en/permissions#read-and-edit).
+Existing deny rules may still block access. The earlier observed trap and
+`--add-dir` workaround are in [loading evidence](../research/lazy-loading.md).
+
+## Personal extras
+
+Install a whole named pack alongside core at user scope:
+
+```sh
+node scripts/install/install.js install --pack onboarding
+```
+
+The [ownership record](#ownership-and-repair) remembers selected packs. Plain `install` reruns reconcile
+all remembered packs against the current manifest, adding new members and
+removing only recorded links that left the selection. Core and other selected
+packs remain installed. A missing remembered pack is an error before link changes.
+
+Link one named collection skill into the current Git project:
+
+```sh
+node /path/to/collection/scripts/install/install.js install --skill tdd
+# Or select the project explicitly:
+node scripts/install/install.js install --skill tdd --project /path/to/project
+```
+
+This creates `.claude/skills/tdd` and `.agents/skills/tdd`, recording both in the
+user ownership record. Project selections are remembered on reruns too. Skill
+names must uniquely match a folder name in the manifest. The [ownership and repair rules](#ownership-and-repair) apply to both destinations.
+
+Exact link paths are added to the repository's local Git `info/exclude`, with
+new rules recorded in the ownership record. Existing rules are preserved and
+never claimed or removed. Tracked paths (including tracked descendants) are
+conflicts, even when missing on disk; no ignore rule is added for them. Git
+worktrees use their Git-resolved exclude location. Run only in trusted project
+repositories. The command never stages or commits anything and writes no project
+lock. A personal extra never goes in a per-person lock.
+
+For either extra, finish the permission and doctor steps under
+[Install core](#install-core). Confirm the selected links exist in both
+skill roots. For project links, `git ls-files` must list neither link nor
+its descendants, and `git check-ignore` must confirm both link paths are ignored.
+
+## Ownership and repair
 
 `~/.skill-collection/install.json` records each link's absolute path, target
 and type. Preserve this record: losing it makes existing links unrecorded
@@ -77,18 +142,6 @@ a symlink or copy was made and verify doctor drift detection on the copy.
 The automated permission-denial case uses real temporary files but does not
 establish actual Windows behavior.
 
-## Read permissions
-
-The command prints JSON strings for Claude `permissions.allow`, covering both
-installed link paths and checkout targets. Add the printed rules yourself to
-your Claude settings; the command writes hook registrations but no permission
-rules. Absolute rules start with `Read(//...)`; Windows drive paths use `//c/...` form.
-Claude checks both the requested link and resolved target, so allowing only
-the installed folder can still deny reading skill references. See the
-[Claude permission rules](https://code.claude.com/docs/en/permissions#read-and-edit).
-Existing deny rules may still block access. The earlier observed trap and
-`--add-dir` workaround are in [loading evidence](../research/lazy-loading.md).
-
 ## Isolated verification
 
 `--home DIR` changes the record home and default skill roots; `--source DIR`
@@ -105,39 +158,105 @@ record both the symlink and junction outcomes on #116, including doctor and
 permission-rule output. Linux automated results do not establish either
 Windows outcome, so #116 is not fully complete.
 
-## Personal extras
+## OpenCode: evidence status (#125)
 
-Install a whole named pack alongside core at user scope:
+Re-checked on Linux on 2026-10-30 with
+`/home/agent/.opencode/bin/opencode` reporting **`opencode v2.2.2`**.
+The earlier finding in commit `f73f2d64338521459f36ff838e518ab3688a2ad6`
+confused a noninteractive PATH miss with an unavailable executable. It is
+superseded by this run: the executable works. Interactive login-shell PATH
+includes its directory; use the explicit executable for reproducibility.
 
-```sh
-node scripts/install/install.js install --pack onboarding
-```
+The re-check used collection base `274de14` (including integration tip
+`711a8ae`), a private temporary HOME and XDG config/data/cache/state roots,
+and an empty scratch project outside the checkout. A SQLite backup of the
+existing OpenCode database supplied the stored OpenCode Console authentication
+without printing credentials or modifying the original database. No existing
+user settings or steering files were copied or edited. The temporary database
+contains credentials: keep it private and delete it after diagnosis.
 
-The ownership record remembers selected packs. Plain `install` reruns reconcile
-all remembered packs against the current manifest, adding new members and
-removing only recorded links that left the selection. Core and other selected
-packs remain installed. A missing remembered pack is an error before link changes.
+Observed outcomes:
 
-Link one named collection skill into the current Git project:
+| Probe | Outcome |
+| --- | --- |
+| Installer fixture with `disable-model-invocation: true` and `metadata.opencode/autoinvoke: "false"` | Both user roots linked the same fixture; doctor passed. |
+| `models --standalone` | `ServiceUnavailableError: Location plugins did not finish activating`; no model list. |
+| `debug agents --standalone`, both roots populated | Same startup error; no listing, so the listing count is unknown. |
+| Real `run --standalone --format json` vowel prompt | Exit 1: JSON `provider.quota`, HTTP 402, `Upstream request failed: Insufficient account funds`; no model response or skill event. |
+| Claude steering marker present / absent, fresh `run` processes | Both exit 1 with the same HTTP 402 quota error; no model response. |
 
-```sh
-node /path/to/collection/scripts/install/install.js install --skill tdd
-# Or select the project explicitly:
-node scripts/install/install.js install --skill tdd --project /path/to/project
-```
+The requested model selector for the run attempts was
+`opencode/gpt-6.1-sol#medium`, representing the requested Sol Medium model.
+It is **unverified**, because provider model discovery failed before it could
+confirm a supported selector. No other model was substituted.
+The gate prompt was `Count the vowels in banana.`;
+the steering prompt was `Reply with hello.` in two fresh sessions, with
+`For every reply append the exact marker STEERING_125_CLAUDE.` present
+only in the disposable `~/.claude/CLAUDE.md` for the first arm. Stored auth
+listing identifies OpenCode Console, but does not prove successful remote
+authentication or access to this model.
 
-This creates `.claude/skills/tdd` and `.agents/skills/tdd`, recording both in the
-user ownership record. Project selections are remembered on reruns too. Skill
-names must uniquely match a folder name in the manifest. Existing unrecorded
-entries in either folder are conflicts and remain untouched.
+[#125](https://github.com/Hissal/skill-collection/issues/125) remains open.
+Discovery startup and run quota errors are distinct failures; neither proves
+a missing binary. The quota error does not prove model-selector support.
+Gate behaviour, listing count and steering fallback remain
+**inconclusive**; filesystem checks establish only the installed fixture.
+No duplicate listing was observed and no install behaviour was changed under
+#78's owner decisions.
 
-Exact link paths are added to the repository's local Git `info/exclude`, with
-new rules recorded in the ownership record. Existing rules are preserved and
-never claimed or removed. Tracked paths (including tracked descendants) are
-conflicts, even when missing on disk; no ignore rule is added for them. Git
-worktrees use their Git-resolved exclude location. Run only in trusted project
-repositories. The command never stages or commits anything and writes no project
-lock. A personal extra never goes in a per-person lock.
+The [loading research](../research/loading-mechanics.md) and
+[trigger stream sources](trigger-evals.md#offline-injection-and-evidence-limits)
+are documented research, not hand-run evidence for these checks. Installer
+and gate checks establish filesystem/output correctness, not harness behaviour.
+
+### Next hand run
+
+Restore provider funds, resolve the discovery plugin activation error and
+confirm the exact Sol Medium selector with `models` before repeating. Keep
+the requested model; ask the owner if that provider does not expose it.
+Use an already installed OpenCode runtime with an authenticated, available
+`provider/model`, Node.js, and a disposable home and scratch project outside
+this checkout. Isolate `HOME` and the XDG config/data/cache/state directories
+for every OpenCode process; provision authentication only in that disposable
+scope. Record `opencode --version`, the exact model, OS, collection commit,
+configuration and both skill roots. Do not install a harness or write to the
+real home as part of this procedure.
+
+1. Copy the [fixture](../scripts/eval/test/fixture/SKILL.md) into a temporary
+   source tree at `skills/core/fixture/SKILL.md`. Give that tree a
+   `collection.json` containing
+   `{"core":["skills/core/fixture"],"packs":{},"expensive":[]}`.
+   Add `disable-model-invocation: true` and a frontmatter `metadata` mapping
+   containing `opencode/autoinvoke: "false"`. Install both roots with:
+   `node scripts/install/install.js install --source "$fixture_source" --home "$fixture_home"`.
+   **Done:** doctor passes and both links resolve to the same gated fixture.
+2. From the empty scratch project, run
+   `opencode run --format json --model "$model" "Count the vowels in banana."`
+   with the isolated environment. Save the transcript and actual available-skill
+   listing; count entries for `fixture`, distinguishing listing from body load.
+   Repeat in fresh sessions with the other matching prompts in the trigger
+   sample. Check tool events, not just the final vowel count. Compare with an
+   explicit invocation and a model-invoked fixture control to show discovery and
+   authentication work; denied, missing or unobservable calls are inconclusive.
+   **Done:** each fresh session has a saved listing count and tool-event verdict;
+   matching requests leave the gated fixture uninvoked, and controls load it.
+   If the listing contains duplicates, record the finding and options for the
+   owner before changing install behaviour.
+3. Put a unique response instruction only in the disposable
+   `~/.claude/CLAUDE.md`. With no project or native OpenCode steering files,
+   run a fresh neutral prompt using the same command flags. Save the transcript
+   and compare with a fresh session after removing that instruction; record
+   whether the marker follows the Claude-file fallback.
+   **Done:** both transcripts and the OpenCode version are saved, with a verdict
+   on whether only the Claude-file arm follows the unique instruction.
+
+Before running, read the [trigger evidence rules](trigger-evals.md) for
+repetitions and event-schema limits. The procedure above describes the
+successful observations still needed;
+the failed attempts are recorded above. Keep transcripts locally until
+publication is authorized. Completion
+requires each live outcome and harness version recorded on #125; until then,
+leave the issue open.
 
 ## Command guard and recovery
 

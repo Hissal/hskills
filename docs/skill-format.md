@@ -4,7 +4,6 @@ What a skill folder in this collection holds, and the check that keeps the tree 
 
 - [Skill tree](#skill-tree)
 - [Collection manifest](#collection-manifest)
-
 - [Personal steering source](#personal-steering-source)
 - [Skill folder](#skill-folder)
 - [Frontmatter](#frontmatter)
@@ -63,18 +62,6 @@ collection. Membership completeness and exclusivity (core or exactly one pack),
 onboarding cardinality and plugin-list agreement belong to #110; expensive-list
 policy belongs to #111.
 
-Repository areas follow these conventions:
-
-| Area | Contents |
-|---|---|
-| `skills/core/<skill>/` | Core skills |
-| `skills/packs/<pack>/<skill>/` | Pack skills |
-| `hooks/` | Hook implementations and adapters |
-| `vendor/` | Source baselines, outside the installed skill tree |
-| `licenses/` | Source licence texts |
-| `scripts/` | Collection tooling |
-| Repository root | `collection.json` and `steering.md` |
-
 ## Personal steering source
 
 [`steering.md`](../steering.md) at the repository root is the owner's personal
@@ -90,8 +77,10 @@ and [owner opt-in and drift placement](https://github.com/Hissal/skill-collectio
 
 Attribution belongs to the comment and PR skills, per [the superseding owner
 decision](https://github.com/Hissal/skill-collection/issues/88#issuecomment-6512311352),
-and is absent from this source. The source's admission reasons, size and
-unavailable tooling-note requirement are recorded in [#118 evidence](../research/steering-source-118.md).
+and is absent from this source. For line admission and the measured source snapshot, read
+[#118 evidence](../research/steering-source-118.md). To recover the unresolved
+tooling notes, read the [recovery search](../research/steering-notes-recovery.md),
+which records coverage and the next authoritative-source lead.
 The 500-token tripwire measurement belongs to #92; command and path validation
 belongs to #112. Until the measurement uses this path by default, run
 `COLLECTION_ALWAYS_ON_PATH=steering.md node scripts/check/check.js` to include it.
@@ -547,10 +536,12 @@ The rule checks trees containing `docs/catalog.md`; fixture or subset trees
 without that artifact skip it. Malformed or duplicate markers fail. Text outside
 the markers remains byte-for-byte unchanged. The fixture runner also exercises
 the writer CLI, idempotence, renamed identities and the failure message.
+
 ### Release-local JSON catalog
 
-The same command writes root `catalog.json`. Commit both generated outputs;
-edit skill metadata and regenerate rather than hand-editing the JSON. Every
+The same command writes root `catalog.json`. Commit both generated outputs; generation is complete when the collection
+check accepts both artifacts as current.
+Edit skill metadata and regenerate rather than hand-editing the JSON. Every
 release tag carries the mapping for that revision. Its top-level object maps
 each stable skill ID to exactly a repository-relative skill folder `path`
 (with forward slashes, containing `SKILL.md`) and a `requires` array of

@@ -1,0 +1,20 @@
+{
+  "cwd": ".",
+  "models": [
+    {"label":"Opus","harness":"claude","model":"opus","tier":"frontier"},
+    {"label":"Sol","harness":"codex","model":"REPLACE_WITH_INSTALLED_SOL_ID","tier":"frontier"},
+    {"label":"lower","harness":"claude","model":"sonnet","tier":"lower"},
+    {"label":"Go","harness":"opencode","model":"REPLACE_WITH_GO_PROVIDER_MODEL","tier":"lower"}
+  ],
+  "skills": [{
+    "name":"fixture",
+    "queries":[
+      {"prompt":"Count the vowels in banana.","fire":true},
+      {"prompt":"How many vowels does orange contain?","fire":true},
+      {"prompt":"Give the vowel count for pear.","fire":true},
+      {"prompt":"Count the consonants in banana.","fire":false},
+      {"prompt":"Translate orange into French.","fire":false},
+      {"prompt":"How many letters are in pear?","fire":false}
+    ]
+  }]
+}

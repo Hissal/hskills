@@ -254,3 +254,50 @@ starts another workflow. See [core extension points](agents/core-extension-point
 |---|---|---|
 | `guide-needs-target` | fail | a guide needs-table target is not its own file, a same-pack skill, or explicitly project-selected vendor guidance |
 | `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
+
+## Hard requirements at runtime (#98)
+
+Before doing any work, load every skill declared in `requires` and the
+reference files needed from those skills. Resolve them through the installed
+skill listing across installation scopes. Begin work only when all required
+skills and needed reference files have loaded. If a skill or needed reference
+cannot load, stop without partial work and print the stop message below.
+A missing reference is a partial install and takes the same stop path.
+
+Runtime checks ask only whether the material loads. Identity and content
+verification belong to the installer. Loading a requirement grants no authority
+to invoke a user-invoked workflow; starting that workflow still requires the
+human's invocation.
+
+### Shared stop template
+
+Copy this block into each requiring skill's body before its work steps.
+Replace `<bare-callable-name>` and `<required-id>` for each declared requirement;
+use the callable name without a plugin prefix. Repeat the requirement line and
+message for each requirement. At runtime, fill `<unloadable-material>` with the
+skill or needed reference that failed to load.
+
+```md
+Before doing any work, load <bare-callable-name> (<required-id>) and its needed
+reference files through the installed skill listing. Begin work only after all
+requirements and needed references have loaded. If any cannot load, stop
+without partial work and print:
+
+Stopped: required skill <bare-callable-name> (<required-id>) could not be loaded
+completely. Unavailable: <unloadable-material>. Ordinary installers such as
+`npx skills` do not install requirements; the Unity sync resolves them from
+this metadata. Install or repair the requirement, then retry.
+
+Check only whether the required material loads; the installer verifies identity
+and content. Loading this requirement grants no permission to invoke a
+user-invoked workflow; wait for the human to invoke that workflow.
+```
+
+The `requirement-body-id` rule fails when a skill's `SKILL.md` body omits any
+ID in its non-empty `requires`. Frontmatter alone does not satisfy it. This is
+a presence check, never a wording check; behavioural evals validate the runtime
+stop behaviour.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `requirement-body-id` | fail | a required ID is absent from the requiring skill's body |

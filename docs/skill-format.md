@@ -212,6 +212,9 @@ the version inspected in [loading-mechanics research](../research/loading-mechan
 Bumping it requires re-verifying that research. CI installs the CLI but does not
 run the hand-run trigger evals or authenticate a model session.
 
+CI runs `npm ci` before both commands, so the check runs the pinned agnix and
+the real-agnix fixture cases run rather than skip.
+
 ## Guide format
 
 Guides recommend workflows; they never run them. A recommendation returns the

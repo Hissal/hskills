@@ -27,6 +27,8 @@ jobs:
           node-version: '22'
       - name: Install pinned Claude Code CLI
         run: npm install --global "@anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }}"
+      - name: Install pinned agnix
+        run: npm ci
       - name: Run collection check fixtures
         run: node scripts/check/test/run.js
       - name: Check collection

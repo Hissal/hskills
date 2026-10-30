@@ -58,7 +58,8 @@ the failed overlay and without assuming blank-home authentication is required.
 The earlier temporary-`CODEX_HOME` launch instruction is withdrawn: that home
 has no login, and the normal authenticated home does not load this cached plugin
 through the tested invocation overlay. See [authentication follow-up](human-review-auth-121.md)
-for paired host evidence and the proposed registration change. Human review and
+for historical paired host evidence and the subsequently executed normal-profile
+registration, verified ChatGPT authentication and exact normal-cache plugin path. Human review and
 Codex behavioral acceptance remain pending.
 
 ## Installed lifecycle
@@ -77,7 +78,9 @@ cover preservation of unrelated hooks and migration ownership.
 
 Linux evidence establishes no macOS or Windows result. No agents, PR, push,
 root-checkout branch switch, credential copy, trust write, or persistent user
-settings modification was part of these tests.
+settings modification was part of these original tests. The later authorized
+normal-profile registration did write marketplace/plugin settings while preserving
+legacy hooks; see the authentication follow-up above.
 
 ## Verification
 

@@ -122,7 +122,11 @@ Sol 402 above remains evidence about that specific request only.
 ## Resolved discovery controls (2026-10-31)
 
 Merged prerequisite `446a9fb1607922ff7bb8bec5600ed9997edb8822` and integration
-`7a0cfedbda417dd10bcb39f5cb0fb51388e4db7d` into the task branch. Installed
+`7a0cfedbda417dd10bcb39f5cb0fb51388e4db7d` into the task branch, then
+merged integration correction `de1ae445` after reading its positive ungated
+transcript. Its completed tool event uses `part.tool == "skill"` and
+`part.state.status == "completed"`; the earlier summary already counted one.
+The error was the blanket prose conclusion, not that event schema. Installed
 OpenCode now reports **v2.2.3**, Linux; no upgrade was performed for this task.
 [Runtime hash, exact model and matrix outcomes](evidence/opencode-125/discovery/summary.json)
 pin the actual run. These results do not retroactively establish v2.2.2 behavior.

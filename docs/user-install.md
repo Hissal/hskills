@@ -96,3 +96,9 @@ conflicts, even when missing on disk; no ignore rule is added for them. Git
 worktrees use their Git-resolved exclude location. Run only in trusted project
 repositories. The command never stages or commits anything and writes no project
 lock. A personal extra never goes in a per-person lock.
+
+## Cross-scope build evidence
+
+When verifying duplicate selection, mixed-scope requirements or Windows links,
+use the [#127 evidence and reproduction fixture](evidence/issue-127-cross-scope.md).
+Installer/doctor success alone establishes no effective harness selection.

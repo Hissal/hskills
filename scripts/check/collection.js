@@ -97,9 +97,16 @@ function load(root) {
     return vendor;
   };
 
+  let manifest;
   let release;
   let releaseLoaded = false;
   return {
+    get manifest() {
+      if (!manifest) manifest = files.includes(require('./manifest').FILE)
+        ? Object.assign({ exists: true }, require('./manifest').parse(text(require('./manifest').FILE)))
+        : { exists: false, data: null, errors: [] };
+      return manifest;
+    },
     resolved: resolveSkills(skills),
     root,
     get release() {

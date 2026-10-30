@@ -3,6 +3,8 @@
 What a skill folder in this collection holds, and the check that keeps the tree sound. Specs and tickets that build skills use this format and do not restate it. Decided in [#42](https://github.com/Hissal/skill-collection/issues/42#issuecomment-6191540887) (disclosure, modes, scripts), [#74](https://github.com/Hissal/skill-collection/issues/74#issuecomment-6442601759) (reachability) and [#18](https://github.com/Hissal/skill-collection/issues/18#issuecomment-6108951944) (layout); specified in [#77](https://github.com/Hissal/skill-collection/issues/77).
 
 - [Skill tree](#skill-tree)
+- [Collection manifest](#collection-manifest)
+
 - [Personal steering source](#personal-steering-source)
 - [Skill folder](#skill-folder)
 - [Frontmatter](#frontmatter)
@@ -25,6 +27,53 @@ One skill tree serves both install routes (folder and plugin):
 - pack skills: `skills/packs/<pack>/<skill>/`
 
 Vendor baselines, licences and scripts sit outside the skill tree; the manifest and the always-on source sit at the root.
+
+## Collection manifest
+
+The authored root `collection.json` names membership using repository-relative
+skill-folder paths, independent of stable IDs and hard requirements. It is JSON
+with exactly these three required fields:
+
+```json
+{
+  "core": ["skills/core/example"],
+  "packs": {
+    "onboarding": ["skills/packs/onboarding/automatic-guide"]
+  },
+  "expensive": ["skills/core/example"]
+}
+```
+
+- `core`: an array of core skill paths.
+- `packs`: an object mapping pack names to arrays of skill paths. A pack is a
+  named list; onboarding is a one-skill list containing the automatic guide.
+- `expensive`: an array of skill paths whose specs allow the expensive
+  description budget. It grants no membership or invocation authority.
+
+Pack names and path segments are lowercase kebab-case (letters and digits).
+Paths use forward slashes and exactly `skills/core/<skill>` or
+`skills/packs/<pack>/<skill>`, without a trailing slash. Every entry must name
+a skill folder in the checked tree, including untracked skills. Empty arrays and
+an empty packs object support the tree before skills are authored. Requirements
+stay in skill metadata (ADR 0004), never in this manifest.
+
+The `collection-manifest` rule rejects invalid JSON, any other shape, and
+entries without a skill. It is silent when the manifest is absent in a fixture
+collection. Membership completeness and exclusivity (core or exactly one pack),
+onboarding cardinality and plugin-list agreement belong to #110; expensive-list
+policy belongs to #111.
+
+Repository areas follow these conventions:
+
+| Area | Contents |
+|---|---|
+| `skills/core/<skill>/` | Core skills |
+| `skills/packs/<pack>/<skill>/` | Pack skills |
+| `hooks/` | Hook implementations and adapters |
+| `vendor/` | Source baselines, outside the installed skill tree |
+| `licenses/` | Source licence texts |
+| `scripts/` | Collection tooling |
+| Repository root | `collection.json` and `steering.md` |
 
 ## Personal steering source
 
@@ -153,6 +202,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 
 | Rule | Level | Finding |
 |---|---|---|
+| `collection-manifest` | fail | invalid manifest JSON or shape, or an entry naming no skill folder |
 | `utf8-bom` | fail | a text file starts with a UTF-8 BOM |
 | `crlf-line-ending` | fail | a text file has a CRLF line ending |
 | `description-colon` | fail | an unquoted `description` contains `: ` |
@@ -212,7 +262,7 @@ Run `npm ci` before the check and its fixtures to install pinned agnix; real-agn
 3. Add its row to the table above.
 4. Add its fixtures (next section).
 
-`c` is the collection view from `scripts/check/collection.js`; read it there rather than re-listing files or re-parsing frontmatter in the rule. It carries every checked file (`files`, `bytes`, `text`, `isText`, `exists`), the skills under `skills/` (`dir`, `name`, `skillMd`, `files`, `frontmatter` lines, `body` lines and their line numbers), `references(skill)` and `links(file)`. A rule that needs another shared fact (the manifest, git history) adds it to the view so later rules reuse it.
+`c` is the collection view from `scripts/check/collection.js`; read it there rather than re-listing files or re-parsing frontmatter in the rule. It exposes `manifest` (`exists`, parsed `data`, shape/parse `errors`) and carries every checked file (`files`, `bytes`, `text`, `isText`, `exists`), the skills under `skills/` (`dir`, `name`, `skillMd`, `files`, `frontmatter` lines, `body` lines and their line numbers), `references(skill)` and `links(file)`. A rule that needs another shared fact (the manifest, git history) adds it to the view so later rules reuse it.
 
 ## Adding a fixture
 

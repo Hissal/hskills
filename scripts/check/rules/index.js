@@ -4,6 +4,7 @@
 // list it here.
 
 module.exports = [
+  require('./collection-manifest'),
   require('./utf8-bom'),
   require('./crlf-line-ending'),
   require('./description-colon'),

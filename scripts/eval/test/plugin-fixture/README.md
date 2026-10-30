@@ -3,8 +3,10 @@
 Use this fixture only for the [plugin gate](https://github.com/Hissal/skill-collection/issues/123).
 Plugin manifests are templates materialized only in the scratch copy, outside
 release stamping. Its separate test marketplace is outside the release marketplace, collection
-manifest, catalog and install selection. The one-skill pack is test data;
-production skill plugins remain gated on #123. It carries no hooks.
+manifest, catalog and install selection. The one-skill pack is test data.
+The [authenticated gate passed](../../../../research/plugin-guide-reach.md)
+for bare and qualified references on both hosts, with controls recorded on
+#123 and #124. Production plugin generation remains separate. It carries no hooks.
 
 Run `node scripts/eval/trigger.js --help`, then:
 

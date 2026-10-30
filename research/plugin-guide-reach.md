@@ -5,7 +5,8 @@ references reached the fixture plugin on Claude Code 2.1.314 and Codex 0.166.0.
 The owner fallback in [#78 answer 3](https://github.com/Hissal/skill-collection/issues/78#issuecomment-6510537918)
 is not triggered. #124 production plugin generation remains outside this task;
 the successful gate is evidence for its prerequisite, not completion of #124.
-GitHub issue states/comments have not been changed by this retry.
+The passed gate and controls are recorded on [#123](https://github.com/Hissal/skill-collection/issues/123)
+and [#124](https://github.com/Hissal/skill-collection/issues/124).
 
 ## Evidence and scope
 
@@ -114,7 +115,7 @@ No gate writer or vendoring script was changed.
 # Historical empty-home attempt (#123)
 
 Executed 2026-10-30 on Linux under [spec #78](https://github.com/Hissal/skill-collection/issues/78).
-Historical first attempt: **inconclusive** (superseded by the authenticated retry below).
+Historical first attempt: **inconclusive** (superseded by the authenticated retry above).
 The owner's [answer 3](https://github.com/Hissal/skill-collection/issues/78#issuecomment-6510537918)
 requires actual bare-name reach. Authentication blocks establish neither success
 nor failure and do not support closing #124 as wontfix. No production skill
@@ -175,15 +176,14 @@ No guide or target load, resolved frontier identity, collision result or token
 spend was observed. HTTP 402, if encountered on a future authenticated retry,
 must likewise remain inconclusive.
 
-## Remaining gate
+## Historical follow-up (completed)
 
-Use an existing safe authentication mechanism with isolated configuration;
-otherwise leave this gate blocked. Confirm actual model identities and callable
-names, and record same-session guide and target loads for both targets on both
-hosts. Run the six-query trigger-quality matrix and repeats as needed; the two
-smoke queries here do not establish reliability. The trigger script observes only
-target loading, so a passing target verdict alone cannot prove guide reach.
-Publish actual evidence on #123 and #124 before changing the gate state.
+The authenticated retry above completed the bare and qualified matrices on both
+hosts, confirmed same-session guide and target loads, and recorded unrelated and
+plugin-disabled controls. The passed gate is recorded on #123 and #124; the
+empty-home authentication failure is historical evidence only. The trigger
+script observes target loading, so the captured guide-load evidence remains
+necessary to establish the chain.
 
 The CLI parser's optional `readName` supports Codex's bare entry-point name when
 the report label is plugin-qualified. An offline successful `cat` fixture failed

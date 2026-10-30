@@ -9,6 +9,9 @@ The marketplace's sole entry is the hooks-only guard. Its Claude and Codex
 compatibility manifests select separate hook files and adapters in the same
 package. Rules and the engine remain shared. Project rules are discovered from
 the hook payload's working directory, independently of the plugin location.
+A disposable-home probe invoked both cached adapters with a project-added
+`project.no-verify` rule; both denied `git commit --no-verify -m x` and named
+that rule. This verifies adapter behavior from the snapshot, not host loading.
 
 [Claude manifest reference](https://code.claude.com/docs/en/plugins-reference)
 defines `.claude-plugin/plugin.json` and plugin-root paths.
@@ -82,3 +85,10 @@ guard harness, 30 temporary-home installer cases, and seven gate cases. The
 collection check passed with one agnix warning: Claude ignores the marketplace
 entry's `policy` field, which Codex's documented marketplace schema requires.
 This field supplies Codex install/auth policy rather than Claude behavior.
+
+After merging `5031ae6`, all 31 installer cases and the collection check passed
+(including all 611 guard cases), with the same marketplace-policy warning.
+The check fixture suite previously passed all 216 cases; its code was unchanged
+by subsequent integration merges. A redundant repeat was stopped after confirming
+that unchanged scope. The later integration merge brought documentation and
+evidence corrections; `git diff --check` passed and the working tree was clean.

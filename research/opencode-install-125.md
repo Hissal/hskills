@@ -182,3 +182,11 @@ or explicit instruction configuration. This task records the exact contract gap;
 it does not change installation policy. Funds are not a blocker. Discovery,
 gate suppression, explicit body loading and one-versus-two-root counts are now
 verified for this installed version; Claude steering fallback is unsupported.
+
+Validation: `npm ci`; `python3 scripts/install/evidence/test-opencode-125.py`
+(4 passed); `node scripts/install/test/run.js` (36 cases, zero failures);
+`node scripts/check/test/run.js` (218 passed); `node scripts/check/check.js`
+(304 files, zero failures, four existing agnix fixture/marketplace warnings).
+The final offline `--discovery-only` runtime control also exited zero. No gate
+writer, installed harness, live settings, Codex authentication guidance or Windows
+handoff was changed. No agents, PR, push or merge into integration was performed.

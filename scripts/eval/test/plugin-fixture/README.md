@@ -13,11 +13,25 @@ CLAUDE_BIN=/path/to/claude CODEX_BIN=/path/to/codex node scripts/eval/test/plugi
 ```
 
 The printed scratch root contains a marketplace copy, two Git projects, configs,
-and an empty home. `bare` and `qualified` differ only in the guide's target.
-Use that home for **every** subsequent command: set `HOME` to `<root>/home`,
-`CLAUDE_CONFIG_DIR` to `<root>/home/.claude`, and `CODEX_HOME` to
-`<root>/home/.codex`. Retain inherited safe authentication if available; if none
-exists, record inconclusive. Keep credentials and real-home settings untouched.
+an empty home, and a private evidence directory populated by `capture.js`.
+Each real CLI call retains stdout, stderr, argv, cwd and exit status there.
+Keep these raw transcripts local; inspect and redact before sharing any excerpts.
+The six queries cover three guide requests and three unrelated controls.
+
+Check existing authentication first with `claude auth status` and
+`codex login status`. Use the existing authenticated runtime; keep inherited
+headers and guard variables. An empty scratch home is suitable for plugin
+registration, but hiding existing credentials during model execution does not
+test reachability. Claude supports per-invocation `--plugin-dir` and
+`--setting-sources project` with normal auth. Codex can use a scratch
+`CODEX_HOME` with an auth-file path reference (symlink, never a credential copy)
+and a regular scratch config preserving existing runtime settings plus the
+fixture marketplace/plugin tables. Verify `login status` again before execution.
+A config-file symlink can resolve the config directory back to the real home,
+selecting its plugins instead; verify the fixture appears enabled in `plugin list`.
+Use `--no-daemon` to keep these sessions independent of the shared daemon.
+Keep real user settings and installed plugins untouched. If the current runtime
+cannot expose auth safely to the scratch config, report that blocker.
 
 In that environment register the scratch marketplace with
 `codex plugin marketplace add <root>/marketplace --json`, then
@@ -27,8 +41,7 @@ validate it with `claude plugin validate <root>/marketplace/pack`.
 Run `node scripts/eval/trigger.js <root>/bare.json` and then the qualified config.
 Each starts fresh processes; no explicit skill invocation is added to prompts.
 
-These are smoke queries, not the six-query trigger-quality proof. Before a gate
-pass, inspect successful session evidence that **both** the guide and target
+Before a gate pass, inspect successful session evidence that **both** the guide and target
 loaded in the same run, record actual callable names, replace qualified targets
 if the host reports different names, and test host-command collisions. The
 trigger evaluator observes the target only; it cannot certify the guide chain.

@@ -23,11 +23,16 @@ for (const variant of ['bare','qualified']) {
  if (init.status !== 0) throw new Error('scratch git init failed');
  const models = [
   {label:'Opus',harness:'claude',model:'opus',tier:'frontier',command:[process.env.CLAUDE_BIN || 'claude','--setting-sources','project','--plugin-dir',path.join(root,'marketplace/pack')]},
-  {label:'Sol',harness:'codex',model:'gpt-6.1-sol',tier:'frontier',command:[process.env.CODEX_BIN || 'codex']},
+  {label:'Sol',harness:'codex',model:'gpt-6.1-sol',tier:'frontier',command:[process.env.CODEX_BIN || 'codex','--no-daemon']},
  ];
+ for (const model of models) model.command = [process.execPath, path.join(__dirname,'capture.js'), path.join(root,'evidence',variant), model.harness, ...model.command];
  fs.writeFileSync(path.join(root, variant+'.json'),JSON.stringify({cwd:variant,models,skills:[{name:'reach-fixture:reach-token',readName:'reach-token',queries:[
   {prompt:'Obtain the issue 123 fixture token through the guide.',fire:true},
+  {prompt:'Use the guide to obtain the issue 123 fixture token.',fire:true},
+  {prompt:'Through the guide, retrieve the issue 123 fixture token.',fire:true},
   {prompt:'What is two plus two?',fire:false},
+  {prompt:'Explain what a Git branch is.',fire:false},
+  {prompt:'Write a greeting for a teammate.',fire:false},
  ]}]},null,2)+'\n');
 }
 for (const dir of ['home/.codex','home/.claude']) fs.mkdirSync(path.join(root,dir),{recursive:true});

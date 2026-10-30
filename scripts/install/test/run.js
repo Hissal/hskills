@@ -69,6 +69,38 @@ const cases = [
     assert.equal(fs.readFileSync(exclude, 'utf8'), text);
   }]),
 
+  ['project alias installs nested extras and preserves tracked missing targets', f => {
+    f.run(0);
+    const root = path.join(f.home, 'worktree');
+    const nested = path.join(root, 'nested project');
+    const alias = path.join(f.home, 'project-alias');
+    fs.mkdirSync(nested, { recursive: true });
+    const git = (...args) => spawnSync('git', ['-C', root, ...args], { encoding: 'utf8' });
+    assert.equal(git('init').status, 0);
+    fs.symlinkSync(nested, alias, process.platform === 'win32' ? 'junction' : 'dir');
+    // A removed working-tree file is still owned by the index.
+    const tracked = path.join(nested, '.claude/skills/alpha');
+    fs.mkdirSync(path.dirname(tracked), { recursive: true });
+    fs.writeFileSync(tracked, 'tracked content');
+    assert.equal(git('add', '.').status, 0);
+    fs.unlinkSync(tracked);
+    f.run(1, 'install', ['--skill', 'alpha', '--project', alias]);
+    assert.match(f.last.stdout, /CONFLICT tracked project target/);
+    assert.equal(fs.existsSync(tracked), false);
+    assert.equal(git('show', ':nested project/.claude/skills/alpha').stdout, 'tracked content');
+    assert.equal(git('check-ignore', '--no-index', 'nested project/.claude/skills/alpha').status, 1);
+    const link = path.join(nested, '.agents/skills/alpha');
+    assert.equal(fs.realpathSync(link), fs.realpathSync(path.join(f.repo, 'skills/core/alpha')));
+    assert.equal(git('check-ignore', 'nested project/.agents/skills/alpha').status, 0);
+    const record = fs.readFileSync(f.record, 'utf8');
+    const exclude = fs.readFileSync(path.join(root, '.git/info/exclude'), 'utf8');
+    f.run(1);
+    assert.match(f.last.stdout, /CONFLICT tracked project target/);
+    assert.equal(fs.readFileSync(f.record, 'utf8'), record);
+    assert.equal(fs.readFileSync(path.join(root, '.git/info/exclude'), 'utf8'), exclude);
+    f.run(0, 'doctor');
+  }],
+
   ['project extras are recorded, ignored and preserved on rerun', (f) => {
     const project = path.join(f.home, 'project');
     fs.mkdirSync(project, { recursive: true });

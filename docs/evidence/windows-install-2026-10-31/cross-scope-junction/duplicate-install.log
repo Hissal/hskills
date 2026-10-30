@@ -1,0 +1,37 @@
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/home/.claude/skills/scope-rules/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/source/skills/packs/fixture/scope-rules/**)"
+LINK junction: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\home\.claude\skills\scope-rules -> C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\source\skills\packs\fixture\scope-rules
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/home/.agents/skills/scope-rules/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/source/skills/packs/fixture/scope-rules/**)"
+LINK junction: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\home\.agents\skills\scope-rules -> C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\source\skills\packs\fixture\scope-rules
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\home\.claude\skills\scope-rules (junction)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\home\.agents\skills\scope-rules (junction)
+Snapshot copied to C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\home\.agents\command-guard
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Claude Code: PreToolUse hook registered in C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\home\.claude\settings.json
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/home/.claude/skills/scope-rules/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/source/skills/packs/fixture/scope-rules/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/home/.agents/skills/scope-rules/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/source/skills/packs/fixture/scope-rules/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/project/.claude/skills/scope-caller/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/source/skills/packs/fixture/scope-caller/**)"
+LINK junction: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\project\.claude\skills\scope-caller -> C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\source\skills\packs\fixture\scope-caller
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/project/.agents/skills/scope-caller/**)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/skill-scope-127-Ah7GX3/duplicate/source/skills/packs/fixture/scope-caller/**)"
+LINK junction: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\project\.agents\skills\scope-caller -> C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\source\skills\packs\fixture\scope-caller
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\home\.claude\skills\scope-rules (junction)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\home\.agents\skills\scope-rules (junction)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\project\.claude\skills\scope-caller (junction)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\project\.agents\skills\scope-caller (junction)
+Snapshot copied to C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\home\.agents\command-guard
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Claude Code: PreToolUse hook registered in C:\Users\<user>\AppData\Local\Temp\skill-scope-127-Ah7GX3\duplicate\home\.claude\settings.json
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
+Duplicate user caller: manually created junctions (not installer-owned).

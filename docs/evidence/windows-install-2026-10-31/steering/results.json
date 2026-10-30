@@ -1,0 +1,128 @@
+[
+  {
+    "arm": "link",
+    "args": [
+      "install",
+      "--owner-steering"
+    ],
+    "status": 1,
+    "steering": [
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/link-home/.claude/CLAUDE.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)\"",
+      "STEERING symlink: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.claude\\CLAUDE.md -> C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\source\\steering.md",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/link-home/.codex/AGENTS.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)\"",
+      "STEERING symlink: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.codex\\AGENTS.md -> C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\source\\steering.md",
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.claude\\CLAUDE.md (symlink)",
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.codex\\AGENTS.md (symlink)",
+      "Snapshot copied to C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.agents\\command-guard",
+      "Claude Code: PreToolUse hook registered in C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.claude\\settings.json",
+      "Codex: PreToolUse hook written to C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.codex\\hooks.json. It does not run until you trust it: open Codex and run /hooks."
+    ]
+  },
+  {
+    "arm": "link",
+    "args": [
+      "install"
+    ],
+    "status": 1,
+    "steering": [
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/link-home/.claude/CLAUDE.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/link-home/.codex/AGENTS.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)\"",
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.claude\\CLAUDE.md (symlink)",
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.codex\\AGENTS.md (symlink)",
+      "Snapshot copied to C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.agents\\command-guard",
+      "Claude Code: PreToolUse hook registered in C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.claude\\settings.json",
+      "Codex: PreToolUse hook written to C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.codex\\hooks.json. It does not run until you trust it: open Codex and run /hooks."
+    ]
+  },
+  {
+    "arm": "link",
+    "args": [
+      "doctor"
+    ],
+    "status": 1,
+    "steering": [
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.claude\\CLAUDE.md (symlink)",
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\link-home\\.codex\\AGENTS.md (symlink)"
+    ]
+  },
+  {
+    "arm": "conflict",
+    "args": [
+      "install",
+      "--owner-steering"
+    ],
+    "status": 1,
+    "steering": [
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/conflict-home/.claude/CLAUDE.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)\"",
+      "CONFLICT unrecorded steering target: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\conflict-home\\.claude\\CLAUDE.md",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/conflict-home/.codex/AGENTS.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)\"",
+      "STEERING symlink: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\conflict-home\\.codex\\AGENTS.md -> C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\source\\steering.md",
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\conflict-home\\.codex\\AGENTS.md (symlink)",
+      "FAIL missing registration or overridden: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\conflict-home\\.claude\\settings.json"
+    ]
+  },
+  {
+    "arm": "copy",
+    "args": [
+      "install",
+      "--owner-steering"
+    ],
+    "status": 1,
+    "steering": [
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/copy-home/.claude/CLAUDE.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)\"",
+      "STEERING copy: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.claude\\CLAUDE.md -> C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\source\\steering.md",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/copy-home/.codex/AGENTS.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)\"",
+      "STEERING copy: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.codex\\AGENTS.md -> C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\source\\steering.md",
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.claude\\CLAUDE.md (copy)",
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.codex\\AGENTS.md (copy)",
+      "Snapshot copied to C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.agents\\command-guard",
+      "Claude Code: PreToolUse hook registered in C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.claude\\settings.json",
+      "Codex: PreToolUse hook written to C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.codex\\hooks.json. It does not run until you trust it: open Codex and run /hooks."
+    ]
+  },
+  {
+    "arm": "copy",
+    "args": [
+      "doctor"
+    ],
+    "status": 1,
+    "steering": [
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.claude\\CLAUDE.md (copy)",
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.codex\\AGENTS.md (copy)"
+    ]
+  },
+  {
+    "arm": "copy",
+    "args": [
+      "doctor"
+    ],
+    "status": 1,
+    "steering": [
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.claude\\CLAUDE.md (copy)",
+      "DOCTOR steering copy drift or replacement: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.codex\\AGENTS.md"
+    ]
+  },
+  {
+    "arm": "copy",
+    "args": [
+      "install"
+    ],
+    "status": 1,
+    "steering": [
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/copy-home/.claude/CLAUDE.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/copy-home/.codex/AGENTS.md)\"",
+      "ALLOW: \"Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)\"",
+      "DOCTOR ok: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.claude\\CLAUDE.md (copy)",
+      "DOCTOR steering copy drift or replacement: C:\\Users\\<user>\\AppData\\Local\\Temp\\steering-win-bAUSZi\\copy-home\\.codex\\AGENTS.md"
+    ]
+  }
+]

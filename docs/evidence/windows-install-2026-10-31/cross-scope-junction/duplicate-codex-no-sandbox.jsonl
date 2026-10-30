@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a18f0f-db43-74a2-83c5-6f4f439bfebf"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll read the selected scope-caller and its required skill and reference, then report the paths and markers without changing anything."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"The installed listing shows two `scope-caller` entries:\n\n- Project, selected: `C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\duplicate\\project\\.agents\\skills\\scope-caller\\SKILL.md`\n- Home: `C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\duplicate\\home\\.agents\\skills\\scope-caller\\SKILL.md`\n\nThe read command for the selected caller was blocked by execution policy. I therefore couldn’t load its body, identify its required skill and reference, or verify their body markers and reference token.\n\nNothing was edited, and no other skills were invoked."}}
+{"type":"turn.completed","usage":{"input_tokens":88547,"cached_input_tokens":67456,"cache_write_input_tokens":0,"output_tokens":418,"reasoning_output_tokens":70}}

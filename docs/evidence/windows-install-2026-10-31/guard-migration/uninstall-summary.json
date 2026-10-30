@@ -1,0 +1,22 @@
+{
+  "remainingOwned": [],
+  "unrelated": {
+    ".claude/settings.json": {
+      "identical": true,
+      "unrelatedHookKept": true,
+      "guardRemaining": false
+    },
+    ".codex/config.toml": {
+      "identical": true,
+      "unrelatedHookKept": false,
+      "guardRemaining": false
+    },
+    ".codex/hooks.json": {
+      "identical": true,
+      "unrelatedHookKept": true,
+      "guardRemaining": false
+    }
+  },
+  "userConfigUnchanged": true,
+  "changed": []
+}

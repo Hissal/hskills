@@ -1,0 +1,24 @@
+{
+  "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\duplicate\\project",
+  "argv": [
+    "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe",
+    "exec",
+    "--ephemeral",
+    "--skip-git-repo-check",
+    "--model",
+    "gpt-6.1-sol",
+    "-s",
+    "read-only",
+    "-c",
+    "approval_policy=\"never\"",
+    "-c",
+    "model_reasoning_effort=\"medium\"",
+    "-c",
+    "windows.sandbox=\"elevated\"",
+    "--json",
+    "Invoke $scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+  ],
+  "env": {
+    "CODEX_HOME": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\duplicate\\home\\.agents"
+  }
+}

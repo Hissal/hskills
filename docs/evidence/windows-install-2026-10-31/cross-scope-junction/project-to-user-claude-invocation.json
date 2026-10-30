@@ -1,0 +1,28 @@
+{
+  "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\project-to-user\\project",
+  "argv": [
+    "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+    "-p",
+    "--model",
+    "opus",
+    "--effort",
+    "medium",
+    "--setting-sources",
+    "user,project",
+    "--settings",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\project-to-user\\live-settings.json",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--no-session-persistence",
+    "--tools",
+    "Read,Skill",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "Invoke /scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+  ],
+  "env": {
+    "CLAUDE_CONFIG_DIR": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\project-to-user\\home\\.claude"
+  }
+}

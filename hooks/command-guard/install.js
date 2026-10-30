@@ -35,6 +35,9 @@ function readJson(file, fallback) {
 
 function writeJson(file, data) {
   if (fs.existsSync(file) && !fs.existsSync(file + '.before-command-guard')) fs.copyFileSync(file, file + '.before-command-guard');
+  record.settings = record.settings || [];
+  if (!record.settings.some(s => s.path === file)) record.settings.push({ path: file, backup: fs.existsSync(file + '.before-command-guard') ? file + '.before-command-guard' : null });
+  save();
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
 }

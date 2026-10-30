@@ -64,3 +64,11 @@ A project may add rules in `.agents/config/command-guard.json`, shaped like `rul
 - **Codex**: a hook that fails to start or times out does not stop the call, and `ask` is unsupported, so this adapter only ever denies or stays silent.
 - **OpenCode**: written against the v2 plugin API and checked on 2.0.27; the published plugin docs describe an older API this plugin does not use. OpenCode skips a plugin file it cannot load, so the guard is then absent without notice; the file is kept minimal for that reason, and a guard engine that fails to load denies every shell call. OpenCode's default configuration allows shell calls with no prompt, so there the guard is the only check.
 - Runtime checks so far: the test suite on Windows, and live probes of the installed Claude Code hook and OpenCode plugin on this machine. The Codex hook has not run in a real session. Linux and macOS cases run as simulated path models on Windows. Nothing has run on a real Linux or macOS host.
+
+## Plugin delivery
+
+The hooks-only guard is listed in this repository's marketplace. For snapshot
+preparation, use [the install command](../../docs/user-install.md#prepare-the-guard-plugin).
+When implementing registration, migration, or live acceptance, read
+[guard plugin evidence and completion criteria](../../research/guard-plugin-install.md).
+Current normal installs retain adapter registration pending verified migration.

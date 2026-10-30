@@ -6,6 +6,29 @@ const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
 const cli = path.resolve(__dirname, '../install.js');
 const cases = [
+  ['plugin preparation preserves working registration and snapshots', (f) => {
+    f.run(0);
+    const settings = path.join(f.home, '.claude/settings.json');
+    const before = fs.readFileSync(settings, 'utf8');
+    f.run(1, 'prepare-plugin');
+    assert.match(f.last.stdout, /UNSUPPORTED.*registration/);
+    assert.equal(fs.readFileSync(settings, 'utf8'), before);
+    const cache = path.join(f.home, '.skill-collection/plugin-cache');
+    const versions = fs.readdirSync(cache);
+    assert.equal(versions.length, 1);
+    const snapshot = path.join(cache, versions[0]);
+    assert.ok(fs.existsSync(path.join(snapshot, 'adapters/codex.js')));
+    const adapter = path.join(snapshot, 'adapters/claude-code.js');
+    const probe = command => spawnSync(process.execPath, [adapter], {
+      input: JSON.stringify({cwd: f.home, tool_name: 'Bash', tool_input: {command}}),
+      env: {...process.env, COMMAND_GUARD_STATE: path.join(f.home, 'state')}, encoding: 'utf8'
+    });
+    assert.match(probe('git push --force origin main').stdout, /HUMAN-REQUIRED/);
+    assert.equal(probe('git status').stdout, '');
+    f.run(1, 'prepare-plugin');
+    assert.deepEqual(fs.readdirSync(cache), versions);
+    assert.equal(fs.readFileSync(settings, 'utf8'), before);
+  }],
   ...['.claude', '.agents'].map(folder => ['preserves unrecorded project entry and exclude rules in ' + folder, (f) => {
     const project = path.join(f.home, 'project');
     const dest = path.join(project, folder, 'skills/alpha');
@@ -79,7 +102,7 @@ const cases = [
     const other = { type: 'command', command: 'echo personal' };
     const original = JSON.stringify({ hooks: { PreToolUse: [{ hooks: [other] }] } });
     fs.writeFileSync(settings, original);
-    f.run(0); f.run(0, 'doctor'); f.run(0);
+    f.run(1); assert.match(f.last.stdout, /PENDING Codex human trust/); f.run(1, 'doctor'); f.run(1);
     assert.equal(fs.readFileSync(settings + '.before-command-guard', 'utf8'), original);
     const config = JSON.parse(fs.readFileSync(settings));
     config.hooks.PreToolUse.at(-1).hooks.push(other);

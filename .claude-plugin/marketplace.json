@@ -1,0 +1,13 @@
+{
+  "name": "skill-collection",
+  "owner": {
+    "name": "Hissal"
+  },
+  "plugins": [
+    {
+      "name": "command-guard",
+      "source": "./hooks/command-guard",
+      "description": "Local accident prevention for covered shell commands; hooks only."
+    }
+  ]
+}

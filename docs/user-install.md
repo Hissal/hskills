@@ -101,8 +101,8 @@ lock. A personal extra never goes in a per-person lock.
 The same entry point delegates to the guard installer with the selected
 `--home`; it never falls back to the real home for guard files or probe state.
 Claude is installed by default; Codex and OpenCode are installed when their
-configuration directories exist under that home. No plugin migration (#121)
-is performed.
+configuration directories exist under that home. For plugin preparation or migration status, read
+[guard plugin delivery](../research/guard-plugin-install.md).
 
 | Harness | Delivery | Registration | Doctor |
 | --- | --- | --- | --- |
@@ -118,8 +118,8 @@ their group, and removes only unchanged recorded files. Replaced files survive.
 
 Doctor fails on missing registration, disabled Claude hooks, changed registration,
 or wrong block/allow verdicts. A probe denial is a successful guard verdict;
-missing or disabled hooks are absent protection, not a denial. Trust/untrusted
-state, host bypasses and project overrides are explicitly **unverified**:
+missing or disabled hooks are absent protection, not a denial. Codex trust is **pending** and fails the doctor until host verification is available.
+Host bypasses and project overrides are explicitly **unverified**:
 direct adapter probes cannot establish effective host invocation. An explicit
 `COMMAND_GUARD_HOME` override is reported if it differs from the installation.
 A host may skip an untrusted hook or an unloadable plugin entirely.
@@ -138,3 +138,11 @@ Automated Linux temporary-home CLI tests cover install, doctor and uninstall
 with all three harness directories. Live per-harness hand runs are still missing
 for #120, including trust, bypass, overrides and actual host invocation. The CLI
 probes are not that evidence; #120 is not fully accepted until it is recorded.
+
+## Prepare the guard plugin
+
+Run `node scripts/install/install.js prepare-plugin --home /temporary/home` to
+prepare a versioned snapshot. Completion is a printed snapshot path with verified
+bytes on rerun. The command exits with an unsupported-registration error and
+preserves working guard registration. For host support evidence and the remaining
+migration criteria, read [guard plugin delivery](../research/guard-plugin-install.md).

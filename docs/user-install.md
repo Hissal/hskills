@@ -110,10 +110,15 @@ Only the owner should opt in:
 node scripts/install/install.js install --owner-steering
 ```
 
-This links the checkout's root `steering.md` to `~/.claude/CLAUDE.md` and
-`~/.codex/AGENTS.md`. OpenCode uses the Claude file as its fallback.
+This links the checkout's root `steering.md` to `~/.claude/CLAUDE.md`,
+`~/.codex/AGENTS.md` and OpenCode V2's native
+`~/.config/opencode/AGENTS.md`. All destinations use the selected `--home`;
+the installer's existing OpenCode mapping is independent of `XDG_CONFIG_HOME`.
 The ownership record remembers the opt-in; later installs without the flag
-keep managing these two files. Without opt-in, no steering file is touched.
+manage all three files, including adding the native target to an older two-target
+record. Without opt-in, no steering file is touched.
+The [approved native steering policy and global probe](../research/opencode-install-125.md#approved-native-global-steering-2026-10-31)
+supersede the historical Claude fallback assumption.
 The current source is partial: two tooling notes remain unrecovered (#118).
 Linking it does not establish that those notes have been restored.
 
@@ -163,11 +168,14 @@ Windows outcome, so #116 is not fully complete.
 
 ## OpenCode verification
 
-OpenCode v2.2.2 normal model discovery lists Sol. The authenticated normal
-runtime returns HTTP 402 (`Insufficient account funds`). Both fixture links and
-doctor pass; the runtime skill API returns zero registered skills. Gate behavior,
-a meaningful duplicate count and Claude steering fallback remain unverified.
-For the saved evidence, account recovery step and temporary-overlay fixture, read
+OpenCode v2.2.3 on Linux with `opencode-go/claude-haiku-5-5` verifies
+one registered fixture through either one or both compatibility links, zero skill
+loads across 13 gated requests, and successful explicit and ungated body loads.
+The evidence runner activates location plugins before querying the skill registry;
+a fresh standalone skill listing alone can return an unactivated empty registry.
+Claude steering fallback is unsupported in V2. Native project and global
+`AGENTS.md` steering passed separate controls; the owner approved the native global
+installer destination through the existing opt-in. See
 [OpenCode verification](../research/opencode-install-125.md).
 
 ## Cross-scope build evidence

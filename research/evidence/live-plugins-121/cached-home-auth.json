@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "/home/agent/.npm-global/bin/codex",
+    "app-server",
+    "--stdio"
+  ],
+  "cachedHome": true,
+  "accountType": null,
+  "hooks": {
+    "data": [
+      {
+        "cwd": "/tmp/plugin-live-121-1pzs54rm/project",
+        "hooks": [
+          {
+            "key": "command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0",
+            "eventName": "preToolUse",
+            "handlerType": "command",
+            "command": "node \"/tmp/plugin-live-121-1pzs54rm/home/.codex/plugins/cache/skill-collection-guard/command-guard/0.1.0/adapters/codex.js\"",
+            "async": false,
+            "matcher": "Bash",
+            "timeoutSec": 15,
+            "statusMessage": null,
+            "additionalContextLimit": null,
+            "sourcePath": "/tmp/plugin-live-121-1pzs54rm/home/.codex/plugins/cache/skill-collection-guard/command-guard/0.1.0/hooks/codex.json",
+            "source": "plugin",
+            "pluginId": "command-guard@skill-collection-guard",
+            "environmentId": null,
+            "displayOrder": 0,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:32b00386b961f1e622530be7a5581877026233dd463abf104034be67f3b7d198/sha256:d4f0179269972cf9cb3717cc6036ba6931994a87b0ed9dd94d2070c100a9c657",
+            "trustStatus": "untrusted"
+          }
+        ],
+        "warnings": [],
+        "errors": []
+      }
+    ]
+  },
+  "normalSettingsUnchanged": true
+}

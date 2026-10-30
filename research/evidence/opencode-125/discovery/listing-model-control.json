@@ -1,0 +1,14 @@
+{
+  "location": {
+    "directory": "/tmp/opencode-live-125-4argm68f/project"
+  },
+  "data": [
+    {
+      "id": "fixture",
+      "name": "fixture",
+      "description": "Use when the user asks to count vowels in a word.",
+      "path": "/tmp/opencode-live-125-4argm68f/home/.agents/skills/fixture/SKILL.md",
+      "content": "Count vowels in the requested word and append FIXTURE_125_LOADED.\n"
+    }
+  ]
+}

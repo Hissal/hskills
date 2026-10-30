@@ -1,0 +1,26 @@
+{
+  "version": "2.2.3",
+  "platform": "Linux",
+  "model": "opencode-go/claude-haiku-5-5",
+  "prompt": "Reply with hello.",
+  "projectAGENTS": false,
+  "configOverride": "scratch OPENCODE_CONFIG_DIR",
+  "homeOverride": "scratch OPENCODE_TEST_HOME",
+  "authentication": "inherited; no copies",
+  "results": [
+    {
+      "arm": "present",
+      "exit": 0,
+      "text": [
+        "Hello! NATIVE_GLOBAL_119_PRESENT"
+      ]
+    },
+    {
+      "arm": "absent",
+      "exit": 0,
+      "text": [
+        "Hello!"
+      ]
+    }
+  ]
+}

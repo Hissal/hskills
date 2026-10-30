@@ -2,8 +2,11 @@
 
 Rechecked 2026-10-30 on Linux, OpenCode **v2.2.2**, starting from
 `a37ed41` (the integration branch included the authenticated #120 evidence).
-Status: fixture installation passes; live gate and steering verdicts remain
-inconclusive. These are runtime/account blockers, not another-spec dependencies.
+Status: discovery controls verified on v2.2.3; the owner approved native global
+steering at `~/.config/opencode/AGENTS.md` through `--owner-steering`.
+The native global present/absent control passed; see the approval section below.
+The v2.2.2 observations remain historical evidence.
+The paid Console observation below is historical, not a Go account diagnosis.
 
 ## Existing authenticated runtime
 
@@ -28,7 +31,7 @@ in [#120 evidence](live-hooks-120.md) do not establish OpenCode Console funds.
 
 ## Isolated fixture probes
 
-Reproduce with `python3 scripts/install/evidence/opencode-125.py` (manual,
+Reproduce with `python3 scripts/install/evidence/opencode-125.py --model <provider/model>` (manual,
 authenticated and potentially token-spending). It prints the temporary evidence
 directory. HOME, XDG roots, provider/model configuration and auth stay inherited.
 `OPENCODE_TEST_HOME` redirects OpenCode's home-scoped skills and steering to a
@@ -63,22 +66,180 @@ STEERING_125_CLAUDE.` only in the scratch `.claude/CLAUDE.md`, followed by a
 fresh process after removing that file. No project steering file is created.
 Quota failures in both arms establish no fallback verdict.
 
-## Completion boundary and human action
+## Go correction and rerun (2026-10-30)
 
-Restore funds on the **active OpenCode Console account** used by the normal
-runtime, then rerun the fixture command. No Claude/Codex reauthentication or
-credential migration is indicated by these results. The exact supported Medium variant is confirmed; successful model access beyond
-the quota check remains unverified.
+The earlier funds diagnosis applied only to paid Console
+`opencode/gpt-6.1-sol#medium`. It did not test the user's Go subscription.
+[Official Go documentation](https://opencode.ai/v2/docs/console/go/) (read
+2026-10-30) lists Claude Haiku 5.5 among Go models. Installed `models` lists
+`opencode-go/claude-haiku-5-5`. These are separate provider selections;
+restoring Console funds is not a prerequisite for this Go test.
 
-The empty registered-skill response cannot establish deduplication: a successful
-ungated discovery/body-load control is required before interpreting absence as
-user-only gate enforcement. If it remains empty after account recovery, diagnose
-location plugin activation/skill registration with the saved fixture, without
-changing the install policy. No duplicate was observed. If a valid control later
-lists two entries, the owner options are: retain both roots and accept duplicate
-listing, or adopt a harness-specific exclusion/install route. Put those options
-to the owner before changing behavior, per #78.
+Reran from integration `3a50d50` on Linux, OpenCode v2.2.2, using exactly
+`opencode-go/claude-haiku-5-5`, provider `opencode-go`, without a variant.
+The neutral normal-runtime request returned exit 0 and `Hello!`.
+All 18 model requests returned exit 0: neutral, initial gated request,
+six prompts repeated twice, explicit and ungated controls, and two steering
+arms. [Exact selection](evidence/opencode-125/go/selection.json),
+[transcripts and counts](evidence/opencode-125/go/summary.json).
+No authentication, real settings or subscription changes were made.
 
-#125 remains open: live gate behavior, meaningful once-versus-twice discovery,
-and successful Claude-file fallback are not proven. Filesystem doctor success
-and embedded-source support for the gate do not replace those runtime checks.
+Both gated and ungated API listings still returned `data: []`.
+All 13 gated requests had zero completed skill events. Explicit invocation
+reported it could not find `fixture`. The ungated control did load the body:
+[its transcript](evidence/opencode-125/go/model-control.jsonl) records one
+completed skill event and `FIXTURE_125_LOADED`. Empty API listings and the
+failed gated explicit control still leave gate and duplicate verdicts
+inconclusive.
+The steering marker was absent in both successful replies; this does not
+establish successful Claude-file fallback.
+
+Discovery diagnosis: `debug paths home` with the override resolves to the
+scratch home, and standalone server trace watches that scratch path. Thus the
+override is recognized; zero entries cannot be attributed to Console funds.
+Adding real project `.agents/skills/fixture` and `.opencode/skills/fixture`
+copies, then initializing the scratch project with Git, still returned zero
+entries. A native-scope explicit request also produced no completed skill
+event. These diagnostic copies were added after the saved matrix and changed
+only scratch files. Root cause of registration remains unresolved; investigate
+configuration compatibility/plugin activation before interpreting suppression.
+No install policy was changed and no meaningful duplicate count was obtained.
+
+Reproduce with:
+
+```sh
+python3 scripts/install/evidence/opencode-125.py --model opencode-go/claude-haiku-5-5
+```
+
+The model argument is required and includes the provider; an absent model or
+failed neutral request stops the runner without selecting a replacement.
+An empty ungated discovery control makes the runner exit nonzero after saving
+the matrix, explicitly marking gate and duplicate verdicts inconclusive.
+CLI fixture tests cover required model selection, exact Go selection with failed
+neutral access, and empty discovery (each substantive change observed red first).
+#125 remains open for successful gated explicit-load/discovery controls, gate enforcement,
+once-versus-twice discovery, and Claude steering fallback. The historical paid
+Sol 402 above remains evidence about that specific request only.
+
+## Resolved discovery controls (2026-10-31)
+
+Merged prerequisite `446a9fb1607922ff7bb8bec5600ed9997edb8822` and integration
+`7a0cfedbda417dd10bcb39f5cb0fb51388e4db7d` into the task branch, then
+merged integration correction `de1ae445` after reading its positive ungated
+transcript. Its completed tool event uses `part.tool == "skill"` and
+`part.state.status == "completed"`; the earlier summary already counted one.
+The error was the blanket prose conclusion, not that event schema. Installed
+OpenCode now reports **v2.2.3**, Linux; no upgrade was performed for this task.
+[Runtime hash, exact model and matrix outcomes](evidence/opencode-125/discovery/summary.json)
+pin the actual run. These results do not retroactively establish v2.2.2 behavior.
+
+**Cause (probe bug):** a fresh standalone `/api/skill` reads the unactivated
+registry. The tight native fixture loop returned `data: []` in under two seconds.
+On the same scratch server, calling `/api/agent` first activates location plugins;
+the next skill listing contains the fixture. Installed embedded implementation
+inspection corroborated this: `server.skill` calls `Skill.list` directly, whereas
+`server.agent` awaits activation. The native request also completed a skill load
+([transcript](evidence/opencode-125/discovery/native.jsonl)). No installed binary,
+live settings, credentials or provider configuration was modified or copied.
+
+Ranked hypotheses were activation timing, disabled scan configuration, fixture
+format, and wrong location. Same-server activation changed only the first variable
+and resolved listing. Native and compatibility sources both load. The installer
+links needed no change. The runner now starts a disposable loopback server,
+activates via the public agent API, lists on that same server, and terminates it.
+Its CLI regression failed before the fix and passed afterward. Empty or duplicate
+ungated discovery now stops before the gate matrix. `--discovery-only` skips
+model requests and catalog access for the short discovery loop.
+
+Observed controls, using exactly `opencode-go/claude-haiku-5-5`:
+
+- Both compatibility links: exactly **one** fixture, gated `autoinvoke: false`;
+  ungated: exactly **one**, without that restriction. Removing the Claude link
+  leaves exactly **one** entry through `.agents/skills`. These are actual fixture
+  registry counts, not total skill counts or zero-entry suppression claims.
+  [Gated](evidence/opencode-125/discovery/listing.json),
+  [ungated](evidence/opencode-125/discovery/listing-model-control.json),
+  [single root](evidence/opencode-125/discovery/listing-single-root.json).
+- Initial gated prompt plus six prompts repeated twice: **13 successful requests,
+  zero completed skill calls**. Explicit natural-language invocation: **one**
+  completed fixture call and body marker. Ungated vowel request: **one** completed
+  fixture call and body marker. All 18 matrix requests succeeded without errors.
+  The follow-up `@fixture` CLI probe returned no skill event or body marker despite
+  the documented mention syntax; explicit natural-language tool loading above
+  succeeds. Mention handling at the raw CLI seam remains a contract gap, not
+  proof of body loading. See
+  [transcript](evidence/opencode-125/discovery/mention-gated.jsonl).
+- Scratch Claude steering marker: absent both with and without `.claude/CLAUDE.md`.
+  Native project `AGENTS.md`: marker present in a successful fresh request
+  ([native steering](evidence/opencode-125/discovery/steering-native.jsonl)).
+
+Current [V2 skill documentation](https://opencode.ai/v2/docs/skills/)
+(read 2026-10-31) documents compatibility roots, ID deduplication, autoinvoke
+suppression and explicit `@skill-id` loading, matching these controls.
+Current [V2 instructions documentation](https://opencode.ai/v2/docs/instructions/)
+(read 2026-10-31) explicitly recognizes only `AGENTS.md`, without Claude fallback.
+**Historical policy gap (superseded by the approval below):** the collection's Claude-fallback steering assumption
+must be replaced by a separately approved OpenCode V2 native instruction target
+or explicit instruction configuration. This task records the exact contract gap;
+it does not change installation policy. Funds are not a blocker. Discovery,
+gate suppression, explicit body loading and one-versus-two-root counts are now
+verified for this installed version; Claude steering fallback is unsupported.
+
+Validation: `npm ci`; `python3 scripts/install/evidence/test-opencode-125.py`
+(4 passed); `node scripts/install/test/run.js` (36 cases, zero failures);
+`node scripts/check/test/run.js` (218 passed); `node scripts/check/check.js`
+(304 files, zero failures, four existing agnix fixture/marketplace warnings).
+The final offline `--discovery-only` runtime control also exited zero. No gate
+writer, installed harness, live settings, Codex authentication guidance or Windows
+handoff was changed. No agents, PR, push or merge into integration was performed.
+
+
+## Approved native global steering (2026-10-31)
+
+Owner decision: in the implementation request for this work, the user explicitly
+approved extending `--owner-steering` to OpenCode V2's native
+`~/.config/opencode/AGENTS.md`. Default install still has no steering. This
+supersedes #119's original Claude-fallback assumption and the pending decision
+above; the approval came from the user request, not a GitHub owner comment.
+The earlier failed fallback observations remain evidence of the old path.
+
+Implementation starts at integration `096a9ea`, with ancestry confirmed. The
+existing selected-home OpenCode config mapping is retained, with recorded
+ownership, remembered opt-in, conflict preservation and copy drift checks.
+Old two-target records acquire the third destination on a no-flag rerun.
+
+Executed a separate global control on Linux, OpenCode v2.2.3, exact model
+`opencode-go/claude-haiku-5-5`, without a variant. Both fresh standalone
+requests used the neutral prompt `Reply with hello.`, an empty scratch project,
+`OPENCODE_TEST_HOME` pointing to scratch home and `OPENCODE_CONFIG_DIR` pointing
+to scratch config. Only scratch config's `AGENTS.md` contained the instruction
+to append `NATIVE_GLOBAL_119_PRESENT`. With it present the reply was
+`Hello! NATIVE_GLOBAL_119_PRESENT`; after removal it was `Hello!`.
+Both exited zero. [Sanitized outcomes](evidence/opencode-125/native-global/summary.json).
+Authentication stayed inherited; no auth files were read or copied, and no real
+user config or home steering was modified. Global config override was confirmed
+in the installed binary's embedded Global service mapping before execution.
+The prior project-native result and this global result are distinct controls.
+Windows native link/copy behavior remains untested here.
+
+Reproduce in an empty scratch project with inherited authentication: set
+`OPENCODE_CONFIG_DIR` to a scratch config directory and `OPENCODE_TEST_HOME`
+to a scratch home, then run `opencode run --standalone --format json --model
+opencode-go/claude-haiku-5-5 'Reply with hello.'` in a fresh process for each
+arm, adding then removing only scratch config's `AGENTS.md` between arms.
+
+
+Validation for the native-target change: `npm ci` completed (Node v20.19.2
+reported engine warnings for dependencies requesting Node 22); installer CLI
+38 cases, zero failures; collection fixtures 218 passed, zero failed; OpenCode
+probe CLI fixtures 4 passed. The native destination failed a CLI filesystem
+assertion before implementation. The first expanded default-rerun test had an
+incorrect zero exit expectation; it was corrected to the existing pending
+Codex trust status while retaining all file-preservation assertions.
+
+Final collection check: 305 files, zero failures, four existing agnix
+fixture/marketplace warnings; its nested installer cases also passed 38/38.
+Guard cases passed 611/611. `git diff --check` passed. Integration tip
+`096a9ea4a01ad77d62236d541fbf00aac191444e` was already included; merging
+`feat/implement-issue-78` reported already up to date. No agents, PR, push or
+merge into integration was performed.

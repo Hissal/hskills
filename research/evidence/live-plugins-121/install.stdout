@@ -1,0 +1,12 @@
+Snapshot copied to /tmp/plugin-live-121-7ripxpcz/home/.agents/command-guard
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+ok   codex.js denies a force-push to main
+ok   codex.js is silent on git status
+Prepared plugin snapshot: /tmp/plugin-live-121-7ripxpcz/home/.skill-collection/plugin-cache/0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3
+REGISTERED claude: /tmp/plugin-live-121-7ripxpcz/home/.skill-collection/plugin-cache/0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3
+REGISTERED codex: /tmp/plugin-live-121-7ripxpcz/home/.skill-collection/plugin-cache/0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3
+REGISTERED claude: /tmp/plugin-live-121-7ripxpcz/home/.skill-collection/plugin-cache/0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3
+REGISTERED codex: /tmp/plugin-live-121-7ripxpcz/home/.skill-collection/plugin-cache/0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3
+PENDING host loading validation; direct adapter probes do not establish host invocation.
+PENDING Codex human trust: review the current hook in /hooks.

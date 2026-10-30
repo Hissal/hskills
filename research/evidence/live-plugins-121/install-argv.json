@@ -1,0 +1,9 @@
+[
+  "node",
+  "/home/agent/.t3/worktrees/skill-collection/t3-d5993293/scripts/install/install.js",
+  "install",
+  "--home",
+  "/tmp/plugin-live-121-7ripxpcz/home",
+  "--source",
+  "/tmp/plugin-live-121-7ripxpcz/source"
+]

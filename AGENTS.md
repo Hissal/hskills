@@ -17,3 +17,4 @@ Single-context: one root `GLOSSARY.md` plus `docs/adr/`. See `docs/agents/domain
 Skill folders, frontmatter, references and the collection check: [Skill format](docs/skill-format.md). Run `node scripts/check/check.js` and `node scripts/check/test/run.js`; both must pass.
 Hook structure, failure policy and verification: [Hook house style](docs/agents/hook-house-style.md).
 Research notes, citations and source ledgers: [Research area rules](docs/agents/research-rules.md).
+Vendoring scripts (`scripts/vendor/`): run `node scripts/vendor/test/run.js` after changing them; it must pass.

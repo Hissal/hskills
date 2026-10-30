@@ -1,0 +1,97 @@
+{
+  "steering-absent": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "Hello!"
+  },
+  "steering-present": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "Hello!"
+  },
+  "model-control": {
+    "completed_skill_calls": 1,
+    "errors": 0,
+    "text": "There are **3 vowels** in \"banana\" (all three are the letter \"a\").\n\nFIXTURE_125_LOADED"
+  },
+  "explicit-control": {
+    "completed_skill_calls": 1,
+    "errors": 0,
+    "text": "The vowels in \"banana\" are a, a, a, so the count is **3**.\n\nFIXTURE_125_LOADED"
+  },
+  "gate-r2-q6": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "There are **4** letters in \"pear\": p, e, a, r."
+  },
+  "gate-r2-q5": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "Orange \u2192 **orange** (masculine noun, *l'orange*)\n\nIn French, \"orange\" as the fruit is **une orange** (feminine), and as the color it is **orange** (invariable)."
+  },
+  "gate-r2-q4": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "There are **3** consonants in \"banana\": the b and the two n's."
+  },
+  "gate-r2-q3": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "Pear has 2 vowels: **e** and **a**."
+  },
+  "gate-r2-q2": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "\"orange\" has 3 vowels: **o, a, e**."
+  },
+  "gate-r2-q1": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "\"banana\" has 3 vowels: a, a, a."
+  },
+  "gate-r1-q6": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "There are **4** letters in \"pear\": p, e, a, r."
+  },
+  "gate-r1-q5": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "Orange in French is **orange** (the colour), and **orange** (the fruit) is also **orange**. The word is the same in both senses; it's pronounced roughly \"oh-RAHNZH.\""
+  },
+  "gate-r1-q4": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "There are **3 consonants** in \"banana\": the b and the two n's. The three a's are vowels."
+  },
+  "gate-r1-q3": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "The word \"pear\" has **2 vowels**: \"e\" and \"a\"."
+  },
+  "gate-r1-q2": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "\"orange\" contains **3 vowels**: o, a, and e (the \"i\" is not present, so the vowels are o, a, e)."
+  },
+  "gate-r1-q1": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "There are **3 vowels** in \"banana\": the three a's."
+  },
+  "gate-q1": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "\"banana\" has **3 vowels**: three a's."
+  },
+  "normal-control": {
+    "completed_skill_calls": 0,
+    "errors": 0,
+    "text": "Hello!"
+  },
+  "runtime": {
+    "version": "2.2.3",
+    "binary_sha256": "0e6eead6a9df15941ca5d122a22304b0f641f664242be11da7da10f6e19eba01",
+    "model": "opencode-go/claude-haiku-5-5"
+  }
+}

@@ -111,7 +111,8 @@ node scripts/install/install.js install --owner-steering
 ```
 
 This links the checkout's root `steering.md` to `~/.claude/CLAUDE.md` and
-`~/.codex/AGENTS.md`. OpenCode uses the Claude file as its fallback.
+`~/.codex/AGENTS.md`. OpenCode V2 requires native `AGENTS.md` instructions; Claude fallback is unsupported.
+The installer does not yet provision a separate OpenCode steering target.
 The ownership record remembers the opt-in; later installs without the flag
 keep managing these two files. Without opt-in, no steering file is touched.
 The current source is partial: two tooling notes remain unrecovered (#118).
@@ -163,16 +164,13 @@ Windows outcome, so #116 is not fully complete.
 
 ## OpenCode verification
 
-OpenCode v2.2.2 on Linux successfully answered the neutral request and all
-fixture requests using `opencode-go/claude-haiku-5-5` through existing Go access.
-The historical HTTP 402 applied to paid Console `opencode/gpt-6.1-sol#medium`,
-not Go. No Console top-up is indicated for this test.
-
-Both fixture links and doctor pass, but gated and ungated skill API listings
-are empty and the explicit body-load control fails. Gate enforcement and a
-meaningful duplicate count remain inconclusive. Neither steering reply contains
-the Claude-file marker, so fallback is not verified. For the exact selection,
-transcripts, discovery diagnostics and explicit-model reproduction, read
+OpenCode v2.2.3 on Linux with `opencode-go/claude-haiku-5-5` verifies
+one registered fixture through either one or both compatibility links, zero skill
+loads across 13 gated requests, and successful explicit and ungated body loads.
+The evidence runner activates location plugins before querying the skill registry;
+a fresh standalone skill listing alone can return an unactivated empty registry.
+Claude steering fallback is unsupported in V2; native `AGENTS.md` steering passed.
+A separate OpenCode steering installation policy remains an owner decision. See
 [OpenCode verification](../research/opencode-install-125.md).
 
 ## Cross-scope build evidence

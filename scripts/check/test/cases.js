@@ -259,8 +259,8 @@ module.exports.push({
 module.exports.push(...require('./vendoring-cases')({ skill, skillMd }));
 // ---- generated dependency catalog (#96) ------------------------------------
 module.exports.push(
-  { name: 'stale dependency catalog fails', files: { 'docs/catalog.md': '# Catalog\n' }, expect: ['fail dependency-catalog docs/catalog.md'] },
-  { name: 'fresh empty dependency catalog passes', files: { 'docs/catalog.md': '# Catalog\n\n<!-- BEGIN GENERATED DEPENDENCIES -->\n| Skill ID | Callable / source | Hard requirements |\n|---|---|---|\n<!-- END GENERATED DEPENDENCIES -->\n' }, expect: [] }
+  { name: 'stale dependency catalog fails', files: { 'catalog.json': '{}\n', 'docs/catalog.md': '# Catalog\n' }, expect: ['fail dependency-catalog docs/catalog.md'] },
+  { name: 'fresh empty dependency catalog passes', files: { 'catalog.json': '{}\n', 'docs/catalog.md': '# Catalog\n\n<!-- BEGIN GENERATED DEPENDENCIES -->\n| Skill ID | Callable / source | Hard requirements |\n|---|---|---|\n<!-- END GENERATED DEPENDENCIES -->\n' }, expect: [] }
 );
 // #97: ID stability against the last release tag (v<version>).
 const withId = (dir, id) => skill(dir, { fm: { metadata: metadata('hissal.skill-collection/' + id) } });

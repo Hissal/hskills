@@ -27,7 +27,8 @@ A guard that cannot produce a verdict denies the call.
 
 Use the collection entry point. Its [per-harness table, doctor states and
 ownership/recovery contract](../../docs/user-install.md#command-guard-and-recovery)
-cover this delegated installer. Live host hand runs for #120 remain missing.
+cover this delegated installer. Live Claude and Codex smoke probes pass; see [host evidence and remaining
+acceptance](../../research/live-hooks-120.md).
 
 ```
 node scripts/install/install.js install
@@ -63,7 +64,8 @@ A project may add rules in `.agents/config/command-guard.json`, shaped like `rul
 - **Not covered**: edit tools (freeze is not built yet), MCP tools that run commands, scripts and interpreters that delete from inside (`python -c`, a `.ps1` or `.sh` file's contents), .NET calls such as `[IO.Directory]::Delete`, commands sent over `ssh`, and input fed to an already running process.
 - **Codex**: a hook that fails to start or times out does not stop the call, and `ask` is unsupported, so this adapter only ever denies or stays silent.
 - **OpenCode**: written against the v2 plugin API and checked on 2.0.27; the published plugin docs describe an older API this plugin does not use. OpenCode skips a plugin file it cannot load, so the guard is then absent without notice; the file is kept minimal for that reason, and a guard engine that fails to load denies every shell call. OpenCode's default configuration allows shell calls with no prompt, so there the guard is the only check.
-- Earlier runtime evidence covered Windows tests and installed Claude Code/OpenCode probes. Linux temporary-home installer and direct adapter checks are now recorded in [plugin evidence](../../research/guard-plugin-install.md). These checks establish neither effective host hook loading nor live Codex trust; macOS validation remains missing. Installed executables are `/home/agent/.local/bin/claude`, `/home/agent/.npm-global/bin/codex` and `/home/agent/.opencode/bin/opencode`; PATH misses do not establish absence. #120, #121 and #125 retain their documented acceptance limits.
+- Earlier runtime evidence covered Windows tests and installed Claude Code/OpenCode probes. Linux temporary-home installer and direct adapter checks are now recorded in [plugin evidence](../../research/guard-plugin-install.md). Those disposable-home checks establish neither effective host hook loading nor live Codex trust;
+  the later [live adapter probes](../../research/live-hooks-120.md) verify both hosts using existing auth and Codex trust; macOS validation remains missing. Installed executables are `/home/agent/.local/bin/claude`, `/home/agent/.npm-global/bin/codex` and `/home/agent/.opencode/bin/opencode`; PATH misses do not establish absence. #120, #121 and #125 retain their documented acceptance limits.
 
 ## Plugin delivery
 

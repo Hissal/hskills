@@ -49,9 +49,11 @@ the #125 recheck). Its discovery activation and HTTP 402 quota failures leave
 OpenCode evaluation was not repeated here.
 Claude `auth status --json` in another disposable home reported
 `loggedIn: false` and `authMethod: none` (exit 1). No login or credential copy
-was attempted. No model sessions were launched. Registration/listing is not hook
-invocation. Both installed hosts provide registration APIs; effective loaded-hook behavior remains
-unverified. The unsupported automatic switch is an implementation limit, not a
+was attempted. No model sessions were launched in that disposable-home investigation.
+The later [authenticated live adapter smoke tests](live-hooks-120.md) pass on
+both hosts; they do not establish plugin loading. Registration/listing is not hook
+invocation. Both installed hosts provide registration APIs; effective plugin-loaded behavior remains
+unverified. The later live evidence verifies adapter delivery only. The unsupported automatic switch is an implementation limit, not a
 claim that either host has no plugin API.
 
 `prepare-plugin` creates a content-addressed version snapshot under the selected

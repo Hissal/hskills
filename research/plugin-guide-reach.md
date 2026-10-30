@@ -76,3 +76,15 @@ The CLI parser's optional `readName` supports Codex's bare entry-point name when
 the report label is plugin-qualified. An offline successful `cat` fixture failed
 against the previous CLI (both fake frontier verdicts fail) and passed with the
 change. Offline streams establish parsing only, not this owner gate.
+
+## Repository verification
+
+`npm ci` completed. Trigger CLI tests passed, including qualified-callable/bare
+entry-point classification; seven gate cases passed. The collection check passed
+with 611 guard cases, 31 installer cases and zero failures. Four agnix warnings
+remain: fixture guide directory/name mismatch (the prepared install uses the
+correct directory), missing fixture marketplace description, and `policy` ignored
+by Claude in both marketplaces (needed by Codex). These are packaging warnings,
+not evidence of effective names or reachability. No gate writer was changed.
+The collection fixture suite also passed: 216 cases, zero failures. Fixture
+preparation and JavaScript syntax checks passed after the final implementation.

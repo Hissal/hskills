@@ -32,7 +32,7 @@ function skillMd(name, o) {
   return '---\n' + head + '\n---\n\n' + (o.body !== undefined ? o.body : '# ' + name + '\n\nDo the work.\n');
 }
 
-const userInvoked = (o) => /^\s*true\s*$/.test((o.fm || {})['disable-model-invocation'] || '');
+const userInvoked = (o) => /^\s*true\s*(?:#.*)?$/.test((o.fm || {})['disable-model-invocation'] || '');
 
 // skill('skills/core/alpha', { fm, body, files: { 'REF.md': '...' }, openai })
 // -> files for one skill folder. `openai` replaces the generated Codex gate

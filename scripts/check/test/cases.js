@@ -172,11 +172,11 @@ module.exports.push(
   { name: 'duplicate ID fails', files: tree(skill('skills/core/alpha'), skill('skills/core/beta', { fm: { metadata: metadata('hissal.skill-collection/alpha') } })), expect: ['fail skill-metadata skills/core/beta/SKILL.md'] },
   { name: 'renamed folder retains identity', files: skill('skills/packs/web/renamed', { fm: { metadata: metadata('hissal.skill-collection/original', "'[]'") } }), expect: [] },
   { name: 'empty requirement string passes', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "''") } }), expect: [] },
-  { name: 'unresolved requirement fails', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "'[\"hissal.skill-collection/beta\"]'") } }), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
-  { name: 'requirements cross scope', files: tree(skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "'[\"hissal.skill-collection/beta\"]'") } }), skill('skills/packs/web/beta')), expect: [] }
+  { name: 'unresolved requirement fails', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "'[\"hissal.skill-collection/beta\"]'") }, body: 'Load hissal.skill-collection/beta.\n' }), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
+  { name: 'requirements cross scope', files: tree(skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "'[\"hissal.skill-collection/beta\"]'") }, body: 'Load hissal.skill-collection/beta.\n' }), skill('skills/packs/web/beta')), expect: [] }
 );
 
-const needing = (dir, id, requirements, body) => skill(dir, { fm: { metadata: metadata('hissal.skill-collection/' + id, "'" + JSON.stringify(requirements.map((r) => 'hissal.skill-collection/' + r)) + "'") }, ...(body === undefined ? {} : { body }) });
+const needing = (dir, id, requirements, body) => skill(dir, { fm: { metadata: metadata('hissal.skill-collection/' + id, "'" + JSON.stringify(requirements.map((r) => 'hissal.skill-collection/' + r)) + "'") }, body: (body === undefined ? 'Do the work.\n' : body) + requirements.map((r) => 'Load hissal.skill-collection/' + r + '.\n').join('') });
 module.exports.push(
   { name: 'self cycle fails', files: needing('skills/core/alpha', 'alpha', ['alpha']), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
   { name: 'multi skill cycle fails', files: tree(needing('skills/core/alpha', 'alpha', ['beta']), needing('skills/packs/web/beta', 'beta', ['alpha'])), expect: ['fail skill-requirements skills/packs/web/beta/SKILL.md'] },
@@ -184,3 +184,16 @@ module.exports.push(
   { name: 'missing required reference fails', files: tree(needing('skills/core/alpha', 'alpha', ['beta'], 'Read [reference](../../packs/web/beta/REF.md).\n'), skill('skills/packs/web/beta')), expect: ['fail requirement-reference skills/core/alpha/SKILL.md'] },
   { name: 'existing required reference passes', files: tree(needing('skills/core/alpha', 'alpha', ['beta'], 'Read [reference](../../packs/web/beta/REF.md).\n'), skill('skills/packs/web/beta', { body: 'Read [reference](REF.md).\n', files: { 'REF.md': '# Reference\n' } })), expect: [] }
 );
+
+// #98: runtime requirement IDs belong in the body, not only metadata.
+module.exports.push({
+  name: 'a requiring body missing one of two IDs fails',
+  files: tree(skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', '\'["hissal.skill-collection/beta","hissal.skill-collection/gamma"]\'') }, body: 'Load hissal.skill-collection/beta.\n' }), skill('skills/core/beta'), skill('skills/core/gamma')),
+  expect: ['fail requirement-body-id skills/core/alpha/SKILL.md'],
+});
+
+module.exports.push({
+  name: 'a body naming every required ID passes without prescribed wording',
+  files: tree(needing('skills/core/alpha', 'alpha', ['beta', 'gamma']), skill('skills/core/beta'), skill('skills/core/gamma')),
+  expect: [],
+});

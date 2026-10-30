@@ -18,4 +18,5 @@ module.exports = [
   require('./guide-needs-target'),
   require('./guide-routes-paths'),
   require('./guard-cases'),
+  require('./requirement-body-id'),
 ];

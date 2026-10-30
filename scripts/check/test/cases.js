@@ -125,3 +125,17 @@ module.exports.push(
   { name: 'missing required reference fails', files: tree(needing('skills/core/alpha', 'alpha', ['beta'], 'Read [reference](../../packs/web/beta/REF.md).\n'), skill('skills/packs/web/beta')), expect: ['fail requirement-reference skills/core/alpha/SKILL.md'] },
   { name: 'existing required reference passes', files: tree(needing('skills/core/alpha', 'alpha', ['beta'], 'Read [reference](../../packs/web/beta/REF.md).\n'), skill('skills/packs/web/beta', { body: 'Read [reference](REF.md).\n', files: { 'REF.md': '# Reference\n' } })), expect: [] }
 );
+
+// #101: the automatic guide (the onboarding pack's skill) matches the core
+// guide (skills/core/guide) outside frontmatter.
+const coreGuide = (o) => skill('skills/core/guide', Object.assign({ fm: { 'disable-model-invocation': ' true' }, body: '# Guide\n\nRead [support](SUPPORT.md).\n', files: { 'SUPPORT.md': '# Support\n' } }, o));
+const autoGuide = (o) => skill('skills/packs/onboarding/auto-guide', Object.assign({ fm: { description: ' Use at the start of a task to suggest a workflow.' }, body: '# Guide\n\nRead [support](SUPPORT.md).\n', files: { 'SUPPORT.md': '# Support\n' } }, o));
+module.exports.push(
+  { name: 'an automatic guide body differing from the core guide fails', files: tree(coreGuide(), autoGuide({ body: '# Guide\n\nRead [support](SUPPORT.md) first.\n' })), expect: ['fail automatic-guide-sync skills/packs/onboarding/auto-guide/SKILL.md'] },
+  { name: 'an automatic guide differing only in frontmatter and description passes', files: tree(coreGuide(), autoGuide()), expect: [] },
+  { name: 'an automatic guide without a core guide is silent', files: autoGuide({ body: '# Other\n', files: {} }), expect: [] },
+  { name: 'a core guide without an automatic guide is silent', files: tree(coreGuide(), skill('skills/packs/web/web-review')), expect: [] },
+  { name: 'an automatic guide bundled file differing from the core guide fails', files: tree(coreGuide(), autoGuide({ files: { 'SUPPORT.md': '# Support\n\nEdited.\n' } })), expect: ['fail automatic-guide-sync skills/packs/onboarding/auto-guide/SUPPORT.md'] },
+  { name: 'an automatic guide missing a core guide file fails', files: tree(coreGuide({ body: '# Guide\n\nRead [support](SUPPORT.md) and [more](refs/MORE.md).\n', files: { 'SUPPORT.md': '# Support\n', 'refs/MORE.md': '# More\n' } }), autoGuide({ body: '# Guide\n\nRead [support](SUPPORT.md) and [more](refs/MORE.md).\n', files: { 'SUPPORT.md': '# Support\n' } })), expect: ['fail missing-file skills/packs/onboarding/auto-guide/SKILL.md', 'fail automatic-guide-sync skills/packs/onboarding/auto-guide/SKILL.md'] },
+  { name: 'an automatic guide with an extra file fails', files: tree(coreGuide(), autoGuide({ files: { 'SUPPORT.md': '# Support\n', 'scripts/extra.js': 'x\n' } })), expect: ['fail automatic-guide-sync skills/packs/onboarding/auto-guide/scripts/extra.js'] }
+);

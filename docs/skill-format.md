@@ -254,3 +254,16 @@ starts another workflow. See [core extension points](agents/core-extension-point
 |---|---|---|
 | `guide-needs-target` | fail | a guide needs-table target is not its own file, a same-pack skill, or explicitly project-selected vendor guidance |
 | `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
+
+### Automatic guide (#101)
+
+The automatic guide is the core guide (`skills/core/guide/`) published
+model-invoked. It is the onboarding pack's one skill
+(`skills/packs/onboarding/<name>/`); its callable name is not yet decided, so
+the check finds it by that folder. Generate it from the core guide and commit
+the output; the generator belongs to spec 12. Edit the core guide, then
+regenerate: only frontmatter (the gate and the description) may differ.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `automatic-guide-sync` | fail | the automatic guide's `SKILL.md` body, or a bundled file, differs from the core guide's, or one guide bundles a file the other lacks; silent until both guides exist |

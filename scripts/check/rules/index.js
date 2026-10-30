@@ -17,4 +17,6 @@ module.exports = [
 
   require('./guide-needs-target'),
   require('./guide-routes-paths'),
+
+  require('./automatic-guide-sync'),
 ];

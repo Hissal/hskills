@@ -1,20 +1,28 @@
 $ install.js install --owner-steering (preload deny-file-links)
 exit 1
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/copy-home/.claude/CLAUDE.md)"
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)"
-STEERING copy: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.claude\CLAUDE.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\source\steering.md
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/copy-home/.codex/AGENTS.md)"
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)"
-STEERING copy: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.codex\AGENTS.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\source\steering.md
-DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.claude\CLAUDE.md (copy)
-DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.codex\AGENTS.md (copy)
-Snapshot copied to C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.agents\command-guard
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/copy-home/.claude/CLAUDE.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+STEERING copy: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.claude\CLAUDE.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\source\steering.md
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/copy-home/.codex/AGENTS.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+STEERING copy: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.codex\AGENTS.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\source\steering.md
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/copy-home/.config/opencode/AGENTS.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+STEERING copy: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.config\opencode\AGENTS.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\source\steering.md
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.claude\CLAUDE.md (copy)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.codex\AGENTS.md (copy)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.config\opencode\AGENTS.md (copy)
+Snapshot copied to C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.agents\command-guard
 ok   claude-code.js denies a force-push to main
 ok   claude-code.js is silent on git status
 ok   codex.js denies a force-push to main
 ok   codex.js is silent on git status
-Claude Code: PreToolUse hook registered in C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.claude\settings.json
-Codex: PreToolUse hook written to C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.codex\hooks.json. It does not run until you trust it: open Codex and run /hooks.
+Claude Code: PreToolUse hook registered in C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.claude\settings.json
+Codex: PreToolUse hook written to C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.codex\hooks.json. It does not run until you trust it: open Codex and run /hooks.
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status
+OpenCode: plugin installed at C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.config\opencode\plugins\command-guard.js. Running OpenCode servers pick it up on restart.
 ok   claude-code.js denies a force-push to main
 ok   claude-code.js is silent on git status
 Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
@@ -22,11 +30,15 @@ ok   codex.js denies a force-push to main
 ok   codex.js is silent on git status
 PENDING Codex human trust: review the current hook in /hooks; trust is unverified.
 Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: codex.js
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status
 
 $ install.js doctor
 exit 1
-DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.claude\CLAUDE.md (copy)
-DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.codex\AGENTS.md (copy)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.claude\CLAUDE.md (copy)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.codex\AGENTS.md (copy)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.config\opencode\AGENTS.md (copy)
 ok   claude-code.js denies a force-push to main
 ok   claude-code.js is silent on git status
 Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
@@ -34,11 +46,15 @@ ok   codex.js denies a force-push to main
 ok   codex.js is silent on git status
 PENDING Codex human trust: review the current hook in /hooks; trust is unverified.
 Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: codex.js
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status
 
 $ install.js doctor
 exit 1
-DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.claude\CLAUDE.md (copy)
-DOCTOR steering copy drift or replacement: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.codex\AGENTS.md
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.claude\CLAUDE.md (copy)
+DOCTOR steering copy drift or replacement: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.codex\AGENTS.md
+DOCTOR steering copy drift or replacement: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.config\opencode\AGENTS.md
 ok   claude-code.js denies a force-push to main
 ok   claude-code.js is silent on git status
 Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
@@ -46,15 +62,21 @@ ok   codex.js denies a force-push to main
 ok   codex.js is silent on git status
 PENDING Codex human trust: review the current hook in /hooks; trust is unverified.
 Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: codex.js
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status
 
 $ install.js install (preload deny-file-links)
 exit 1
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/copy-home/.claude/CLAUDE.md)"
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)"
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/copy-home/.codex/AGENTS.md)"
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)"
-DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.claude\CLAUDE.md (copy)
-DOCTOR steering copy drift or replacement: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\copy-home\.codex\AGENTS.md
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/copy-home/.claude/CLAUDE.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/copy-home/.codex/AGENTS.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/copy-home/.config/opencode/AGENTS.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.claude\CLAUDE.md (copy)
+DOCTOR steering copy drift or replacement: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.codex\AGENTS.md
+DOCTOR steering copy drift or replacement: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\copy-home\.config\opencode\AGENTS.md
 ok   claude-code.js denies a force-push to main
 ok   claude-code.js is silent on git status
 Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
@@ -62,4 +84,7 @@ ok   codex.js denies a force-push to main
 ok   codex.js is silent on git status
 PENDING Codex human trust: review the current hook in /hooks; trust is unverified.
 Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: codex.js
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status
 

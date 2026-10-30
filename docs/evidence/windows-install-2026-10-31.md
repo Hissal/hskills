@@ -13,7 +13,7 @@ Retained files are in [windows-install-2026-10-31](windows-install-2026-10-31/);
 
 | Item | Value |
 | --- | --- |
-| Commit | `3a50d50` (PR #180 head), plus the evidence scripts in this commit |
+| Commit | Link matrix and guard: `3a50d50` (PR #180 head then). Steering: PR #180 `e0aa7ee` (native OpenCode target) merged into this branch |
 | OS | Windows 11 Home 25H2, build 10.0.26200, x86_64; Developer Mode on; non-admin user |
 | Shell / runtime | PowerShell 7.6.9; Node v22.23.2; git 2.56.0.windows.3 |
 | Claude Code | 2.1.314, `--model opus --effort medium`, resolved **claude-opus-5-5** (init event and `modelUsage`) |
@@ -83,20 +83,22 @@ canonical source paths, in both arms. Windows precedence and listing match the L
 
 ## Owner steering (#119)
 
-Run root `steering/`; `results.json` holds each command, exit status and steering lines.
+Run root `steering/` at `e0aa7ee`; `results.json` holds each command, exit status and steering lines.
+Targets: `.claude/CLAUDE.md`, `.codex/AGENTS.md` and native OpenCode `.config/opencode/AGENTS.md`,
+read from the ownership record.
 
 | Case | Observation |
 | --- | --- |
-| Actual file symlinks | Both targets `SymbolicLink`, realpath = fixture `steering.md`; `DOCTOR ok (symlink)` |
+| Actual file symlinks | All three targets `SymbolicLink`, realpath = fixture `steering.md`; `DOCTOR ok (symlink)` |
 | Rerun without the flag | `ownerSteering` and the steering record unchanged; links kept |
-| Unrecorded `CLAUDE.md` | `CONFLICT unrecorded steering target`; file content `mine` survives |
-| Fixture-injected file-link refusal | Both targets copied, `DOCTOR ok (copy)` |
-| Edited copy | `DOCTOR steering copy drift or replacement`; a rerun preserves the edit |
+| Unrecorded `CLAUDE.md` | `CONFLICT unrecorded steering target`; file content `mine` survives; the other two link |
+| Fixture-injected file-link refusal | All three copied, `DOCTOR ok (copy)` |
+| Edited Codex and OpenCode copies | `DOCTOR steering copy drift or replacement` for each; a rerun preserves both edits |
 
 Every steering command exits 1 because the minimal fixture source installs the legacy guard, whose Codex
 trust stays pending; steering verdicts come from the `DOCTOR` lines, not exit codes. Actual OS file-link
-refusal was not exercised. The runner reads targets from the ownership record, so it covers the upcoming
-OpenCode `AGENTS.md` steering target unchanged once PR #180 adds it.
+refusal was not exercised. No steering file is touched without the flag: the guard-only homes above
+carry no steering entries.
 
 ## Guard lifecycle and live plugin probes (#120, #121)
 
@@ -154,5 +156,5 @@ sessions (marketplace `lastUpdated` stamps, no fixture content).
 | --- | --- |
 | Actual OS directory-symlink refusal → junction | Human: turn Developer Mode off, then `node scripts/install/evidence/live-cross-scope-windows.js symlink` should record `Junction` without injection |
 | Actual OS file-symlink refusal → steering copy | Same session: `node scripts/install/evidence/steering-windows.js` (its link arm expects symlinks and will stop at the first assertion; the copy is then in its log) |
-| OpenCode steering target and OpenCode on Windows | After the PR #180 OpenCode steering update; outside this handoff's Claude/Codex scope |
+| OpenCode host reading its steering file, OpenCode guard on Windows | Outside this handoff's Claude/Codex scope; the steering link/copy/drift rows above cover the OpenCode target's files only |
 | Uninstall after Codex trust | Policy decision above |

@@ -67,13 +67,14 @@ for (const p of dests(copyHome)) {
   assert.equal(fs.readFileSync(p, 'utf8'), 'fixture steering\n');
 }
 run('copy', copyHome, ['doctor']);
-const edited = dests(copyHome)[1];
-fs.writeFileSync(edited, 'local edit\n');
+// Edit every copy but the first, so each later target reports its own drift.
+const edited = dests(copyHome).slice(1);
+for (const p of edited) fs.writeFileSync(p, 'local edit\n');
 const drift = run('copy', copyHome, ['doctor']);
 assert.notEqual(drift.status, 0);
-assert.match(drift.stdout, /copy drift/);
+for (const p of edited) assert.ok(drift.stdout.includes(`copy drift or replacement: ${p}`), p);
 run('copy', copyHome, ['install'], ['--require', preload]);
-assert.equal(fs.readFileSync(edited, 'utf8'), 'local edit\n');
+for (const p of edited) assert.equal(fs.readFileSync(p, 'utf8'), 'local edit\n');
 
 fs.writeFileSync(path.join(root, 'results.json'), JSON.stringify(results, null, 2));
 console.log(JSON.stringify(results, null, 2));

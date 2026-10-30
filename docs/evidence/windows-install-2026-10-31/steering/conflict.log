@@ -1,11 +1,15 @@
 $ install.js install --owner-steering
 exit 1
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/conflict-home/.claude/CLAUDE.md)"
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)"
-CONFLICT unrecorded steering target: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\conflict-home\.claude\CLAUDE.md
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/conflict-home/.codex/AGENTS.md)"
-ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-bAUSZi/source/steering.md)"
-STEERING symlink: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\conflict-home\.codex\AGENTS.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\source\steering.md
-DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\conflict-home\.codex\AGENTS.md (symlink)
-FAIL missing registration or overridden: C:\Users\<user>\AppData\Local\Temp\steering-win-bAUSZi\conflict-home\.claude\settings.json
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/conflict-home/.claude/CLAUDE.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+CONFLICT unrecorded steering target: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\conflict-home\.claude\CLAUDE.md
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/conflict-home/.codex/AGENTS.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+STEERING symlink: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\conflict-home\.codex\AGENTS.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\source\steering.md
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/conflict-home/.config/opencode/AGENTS.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+STEERING symlink: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\conflict-home\.config\opencode\AGENTS.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\source\steering.md
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\conflict-home\.codex\AGENTS.md (symlink)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\conflict-home\.config\opencode\AGENTS.md (symlink)
+FAIL missing registration or overridden: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\conflict-home\.claude\settings.json
 

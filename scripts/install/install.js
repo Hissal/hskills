@@ -3,6 +3,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { execFileSync } = require('child_process');
 const { parse } = require('../check/manifest');
 
 function stat(file) {
@@ -19,7 +20,7 @@ function readRule(file) {
 function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help')) {
-    console.log('Usage: node scripts/install/install.js [install|doctor] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.skill-collection/install.json. Prints Claude Read rules; writes no permissions.');
+    console.log('Usage: node scripts/install/install.js [install|doctor] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR] [--pack NAME] [--skill NAME [--project DIR]]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.skill-collection/install.json. Prints Claude Read rules; writes no permissions.');
     return;
   }
   const command = args[0] && !args[0].startsWith('--') ? args.shift() : 'install';
@@ -27,8 +28,8 @@ function main() {
   const options = {};
   while (args.length) {
     const key = args.shift();
-    if (!['--home', '--source', '--claude-root', '--agents-root'].includes(key) || !args.length || args[0].startsWith('--') || options[key]) throw new Error('invalid option: ' + key);
-    options[key] = path.resolve(args.shift());
+    if (!['--home', '--source', '--claude-root', '--agents-root', '--pack', '--skill', '--project'].includes(key) || !args.length || args[0].startsWith('--') || options[key]) throw new Error('invalid option: ' + key);
+    options[key] = ['--pack', '--skill'].includes(key) ? args.shift() : path.resolve(args.shift());
   }
   const home = options['--home'] || os.homedir();
   const source = options['--source'] || path.resolve(__dirname, '../..');
@@ -39,6 +40,7 @@ function main() {
   const before = previous ? fs.readFileSync(record, 'utf8') : null;
   const data = previous ? JSON.parse(before) : { version: 1, links: [] };
   if (data.version !== 1 || !Array.isArray(data.links) || data.links.some(l => !l || typeof l.path !== 'string' || !path.isAbsolute(l.path) || typeof l.target !== 'string' || !path.isAbsolute(l.target) || !['symlink', 'junction'].includes(l.type)) || new Set(data.links.map(l => l.path)).size !== data.links.length) throw new Error('invalid ownership record');
+  if (data.selections && (!Array.isArray(data.selections.packs) || data.selections.packs.some(p => typeof p !== 'string') || !Array.isArray(data.selections.projects) || data.selections.projects.some(p => !p || typeof p.root !== 'string' || !path.isAbsolute(p.root) || typeof p.skill !== 'string'))) throw new Error('invalid selections in ownership record');
   let failed = false;
   function problem(message) { console.log(message); failed = true; }
   function doctor() {
@@ -54,20 +56,69 @@ function main() {
     const manifest = parse(fs.readFileSync(path.join(source, 'collection.json'), 'utf8'));
     if (!manifest.data) throw new Error(manifest.errors.join('; '));
     const desired = new Map();
-    for (const skill of manifest.data.core) {
+    const projectLinks = new Map();
+    const selections = data.selections || { packs: [], projects: [] };
+    if (options['--pack']) {
+      if (!manifest.data.packs[options['--pack']]) throw new Error('unknown pack: ' + options['--pack']);
+      if (!selections.packs.includes(options['--pack'])) selections.packs.push(options['--pack']);
+    }
+    if (options['--skill']) {
+      const project = options['--project'] || process.cwd();
+      if (!selections.projects.some(p => p.root === project && p.skill === options['--skill'])) selections.projects.push({ root: project, skill: options['--skill'] });
+    } else if (options['--project']) throw new Error('--project requires --skill');
+    function add(skill, destinations) {
       const target = path.join(source, skill);
       if (!fs.statSync(target).isDirectory()) throw new Error('not a skill directory: ' + target);
-      for (const root of roots) {
+      for (const root of destinations) {
         const dest = path.join(root, path.basename(skill));
-        if (desired.has(dest)) throw new Error('duplicate core destination: ' + dest);
+        if (desired.has(dest) && desired.get(dest) !== target) throw new Error('duplicate destination: ' + dest);
         desired.set(dest, target);
       }
+    }
+    for (const skill of manifest.data.core) add(skill, roots);
+    for (const pack of selections.packs) {
+      if (!manifest.data.packs[pack]) throw new Error('remembered pack missing: ' + pack);
+      for (const skill of manifest.data.packs[pack]) add(skill, roots);
+    }
+    const skills = [...new Set([...manifest.data.core, ...Object.values(manifest.data.packs).flat()])];
+    for (const project of selections.projects) {
+      const matches = skills.filter(s => path.basename(s) === project.skill);
+      if (matches.length !== 1) throw new Error('unknown or ambiguous skill: ' + project.skill);
+      const destinations = [path.join(project.root, '.claude/skills'), path.join(project.root, '.agents/skills')];
+      add(matches[0], destinations);
+      for (const root of destinations) projectLinks.set(path.join(root, project.skill), project.root);
+    }
+    if (options['--pack'] || options['--skill'] || data.selections) data.selections = selections;
+    function exclude(dest) {
+      const project = projectLinks.get(dest);
+      if (!project) return true;
+      const git = (...args) => execFileSync('git', ['-C', project, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+      const top = git('rev-parse', '--show-toplevel');
+      const relative = path.relative(top, dest).split(path.sep).join('/');
+      if (git('ls-files', '--', relative)) {
+        problem('CONFLICT tracked project target: ' + dest);
+        return false;
+      }
+      const file = path.resolve(project, git('rev-parse', '--git-path', 'info/exclude'));
+      if (stat(file) && !stat(file).isFile()) throw new Error('git exclude must be a regular file');
+      const before = stat(file) ? fs.readFileSync(file, 'utf8') : '';
+      // Exact literal pattern: never hide siblings or take ownership of existing rules.
+      const pattern = '/' + relative.replace(/([\\*?\[\] !#])/g, '\\$1');
+      if (!before.split(/\r?\n/).includes(pattern)) {
+        fs.mkdirSync(path.dirname(file), { recursive: true });
+        const text = (before && !before.endsWith('\n') ? '\n' : '') + pattern + '\n';
+        fs.appendFileSync(file, text);
+        data.excludes ||= [];
+        data.excludes.push({ path: file, pattern });
+      }
+      return true;
     }
     // Validate the whole desired set before touching any installed link.
     try {
       for (const link of [...data.links]) {
         if (!stat(link.path)) { data.links.splice(data.links.indexOf(link), 1); continue; }
         if (!owned(link)) { problem('CONFLICT recorded entry replaced: ' + link.path); continue; }
+        if (projectLinks.has(link.path) && !exclude(link.path)) continue;
         if (desired.get(link.path) === link.target) continue;
         fs.unlinkSync(link.path);
         data.links.splice(data.links.indexOf(link), 1);
@@ -79,6 +130,7 @@ function main() {
         const recorded = data.links.find(l => l.path === dest);
         if (recorded) continue;
         if (stat(dest)) { problem('CONFLICT unrecorded target: ' + dest); continue; }
+        if (!exclude(dest)) continue;
         fs.mkdirSync(path.dirname(dest), { recursive: true });
         let type = 'symlink';
         try { fs.symlinkSync(target, dest, 'dir'); }

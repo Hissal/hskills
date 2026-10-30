@@ -19,6 +19,7 @@ module.exports = [
   require('./guide-needs-target'),
   require('./guide-routes-paths'),
   require('./guard-cases'),
+  require('./install-cases'),
   require('./requirement-body-id'),
   // copied skills (#102)
   require('./vendor-lock'),

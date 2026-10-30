@@ -190,6 +190,12 @@ def main(argv: list[str]) -> int:
         root = Path(git(Path.cwd(), "rev-parse", "--show-toplevel").strip())
         changed = changed_files(root, argv)
         accepted = load_accepted(root)
+        # A changed accepted list is reviewed against every file it names,
+        # not only the files the change touched.
+        if ACCEPTED in changed:
+            for rel in dict.fromkeys(e["file"] for e in accepted):
+                if rel not in changed and (root / rel).is_file():
+                    changed.append(rel)
         scanner = load_scanner()
         results = scan(scanner, root, changed)
     except SetupError as e:
@@ -211,14 +217,16 @@ def main(argv: list[str]) -> int:
             fails += 1
             failed.add(rel)
             print(f"FAIL {where} [skill-scanner] {f['severity']} {f['type']}: {f['description']}")
-    # Staleness is judged only for files this run scanned.
+    # Staleness is judged for files this run scanned, and for files that are gone.
     scanned_files = {rel for rel in changed if in_scope(rel) and (root / rel).is_file()}
     for i, e in enumerate(accepted):
-        if i not in used and e["file"] in scanned_files:
+        gone = not (root / e["file"]).is_file()
+        if i not in used and (gone or e["file"] in scanned_files):
             fails += 1
             failed.add(ACCEPTED)
+            why = "the file no longer exists" if gone else "matches no current finding"
             print(f'FAIL {ACCEPTED} [stale-accepted] {e["file"]}: {e["finding"]}: '
-                  f'"{e["line"]}" matches no current finding; remove the entry')
+                  f'"{e["line"]}" {why}; remove the entry')
     scanned = sum(1 for rel in changed if in_scope(rel))
     if fails:
         also = f"; {accepts} accepted" if accepts else ""

@@ -250,11 +250,31 @@ const cases = [
   },
   {
     name: 'an entry for a file this run did not scan is not stale',
-    base: { 'hooks/guard/old.js': `${CURL}\n`, [ACCEPTED]: accepted(entry('hooks/guard/old.js', CURL), entry('hooks/guard/gone.js', CURL)) },
+    base: { 'hooks/guard/old.js': `${CURL}\n`, [ACCEPTED]: accepted(entry('hooks/guard/old.js', CURL)) },
     change: { 'hooks/guard/hook.js': 'module.exports = () => 0;\n' },
     check(r) {
       assert.equal(r.status, 0, r.stdout + r.stderr);
       assert.match(r.stdout, /^ok: 1 changed skill and hook file\(s\) scanned, no findings$/m);
+    },
+  },
+  {
+    name: 'an entry for a deleted file is stale',
+    base: { 'hooks/guard/old.js': `${CURL}\n`, [ACCEPTED]: accepted(entry('hooks/guard/old.js', CURL)) },
+    change: { 'hooks/guard/hook.js': 'module.exports = () => 0;\n' },
+    remove: ['hooks/guard/old.js'],
+    check(r) {
+      assert.equal(r.status, 1, r.stdout + r.stderr);
+      assert.match(r.stdout, /^FAIL scripts\/security-scan\/accepted\.json \[stale-accepted\] hooks\/guard\/old\.js: Shell HTTP request: .* the file no longer exists; remove the entry$/m);
+    },
+  },
+  {
+    name: 'a changed accepted file has its entries checked against files the change did not touch',
+    base: { 'hooks/guard/old.js': `${CURL}\n`, 'hooks/guard/other.js': 'module.exports = () => 0;\n' },
+    change: { [ACCEPTED]: accepted(entry('hooks/guard/old.js', CURL), entry('hooks/guard/other.js', CURL)) },
+    check(r) {
+      assert.equal(r.status, 1, r.stdout + r.stderr);
+      assert.match(r.stdout, /^ACCEPTED hooks\/guard\/old\.js:1 /m);
+      assert.match(r.stdout, /^FAIL scripts\/security-scan\/accepted\.json \[stale-accepted\] hooks\/guard\/other\.js: Shell HTTP request: .* matches no current finding; remove the entry$/m);
     },
   },
   ...[

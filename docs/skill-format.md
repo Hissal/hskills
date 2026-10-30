@@ -279,11 +279,6 @@ and Linux. Either command failing fails its job; both platforms run even if one
 fails. Checkout includes history and tags for checks against the last release.
 There is no pre-commit hook.
 
-The workflow's `CLAUDE_CODE_VERSION` is the single Claude Code CLI pin, matching
-the version inspected in [loading-mechanics research](../research/loading-mechanics.md).
-Bumping it requires re-verifying that research. CI installs the CLI but does not
-run the hand-run trigger evals or authenticate a model session.
-
 ### Security scan
 
 The workflow's `security-scan` job runs the deterministic part of Sentry's
@@ -334,10 +329,11 @@ setup error. Run the scan's fixtures with `node scripts/security-scan/test/run.j
   line keeps it accepted, editing it puts it back under review, and identical
   lines in one file are all accepted. An accepted finding prints `ACCEPTED
   <file>:<line> [skill-scanner] <severity> <finding>: <reason>` and passes; any
-  other finding in the same file still fails. An entry matching no finding in a
-  file the run scanned fails as `FAIL scripts/security-scan/accepted.json
-  [stale-accepted]`; remove it. Entries for files the run did not scan are not
-  judged.
+  other finding in the same file still fails. A change to `accepted.json` scans
+  every file it names, so each entry is checked when it is added. An entry is
+  stale when its file is gone, or when it matches no finding in a file the run
+  scanned; a stale entry fails as `FAIL scripts/security-scan/accepted.json
+  [stale-accepted]`; remove it.
 
 ## Guide format
 

@@ -53,7 +53,24 @@ const tree = (...parts) => Object.assign({}, ...parts);
 // A stand-in guard harness that prints `out` and exits with `code`.
 const guard = (out, code) => ({ 'hooks/command-guard/test/run.js': 'console.log(' + JSON.stringify(out.join('\n')) + ');\nprocess.exit(' + code + ');\n' });
 
+const releaseConfig = (extra) => JSON.stringify({ packages: { '.': {
+  'release-type': 'simple', 'initial-version': '0.1.0',
+  'bump-minor-pre-major': true, 'bump-patch-for-minor-pre-major': true,
+  'include-component-in-tag': false, 'extra-files': extra,
+} } });
+const pluginPath = 'plugins/example/.codex-plugin/plugin.json';
+const stamp = { type: 'json', path: pluginPath, jsonpath: '$.version' };
+
 module.exports = [
+  { name: 'release covers every plugin', files: {
+    'release-please-config.json': releaseConfig([stamp]),
+    [pluginPath]: '{"version":"0.1.0"}\n',
+  }, expect: [] },
+  { name: 'new plugin needs a release stamp', files: {
+    'release-please-config.json': releaseConfig([]),
+    [pluginPath]: '{"version":"0.1.0"}\n',
+  }, expect: ['fail release-config ' + pluginPath] },
+
   // ---- the check itself ------------------------------------------------------
   ...[['bare', 'ID is not publisher-qualified'], ['another.publisher/alpha', "another publisher's ID"]].map(([id, message]) => ({ name: 'invalid ID diagnostic ' + id, files: skill('skills/core/alpha', { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "' + id + '"' } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'], output: [message] })),
   { name: 'core guide resolves core skills', files: tree(skill('skills/core/guide', { body: '| Need | Target |\n|---|---|\n| Tests | `skill: alpha` |\n' }), skill('skills/core/alpha')), expect: [] },

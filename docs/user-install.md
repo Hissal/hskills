@@ -96,3 +96,62 @@ conflicts, even when missing on disk; no ignore rule is added for them. Git
 worktrees use their Git-resolved exclude location. Run only in trusted project
 repositories. The command never stages or commits anything and writes no project
 lock. A personal extra never goes in a per-person lock.
+
+## OpenCode: evidence status (#125)
+
+On 2026-10-30 in this Linux environment, `command -v opencode` returned no
+path. No OpenCode session ran. Claude Code reported `2.1.312`, but that is
+not an OpenCode version or evidence of OpenCode reading Claude steering.
+[#125](https://github.com/Hissal/skill-collection/issues/125) remains open.
+The invocation gate, listing count with both user roots, and Claude steering
+fallback all remain **untested**. The pending procedure below defines the
+observations needed for each.
+
+The [loading research](../research/loading-mechanics.md) and
+[trigger stream sources](trigger-evals.md#offline-injection-and-evidence-limits)
+are documented research, not hand-run evidence for these checks. Installer
+and gate checks establish filesystem/output correctness, not harness behaviour.
+
+### Remaining hand run
+
+Use an already installed OpenCode runtime with an authenticated, available
+`provider/model`, Node.js, and a disposable home and scratch project outside
+this checkout. Isolate `HOME` and the XDG config/data/cache/state directories
+for every OpenCode process; provision authentication only in that disposable
+scope. Record `opencode --version`, the exact model, OS, collection commit,
+configuration and both skill roots. Do not install a harness or write to the
+real home as part of this procedure.
+
+1. Copy the [fixture](../scripts/eval/test/fixture/SKILL.md) into a temporary
+   source tree at `skills/core/fixture/SKILL.md`. Give that tree a
+   `collection.json` containing
+   `{"core":["skills/core/fixture"],"packs":{},"expensive":[]}`.
+   Add `disable-model-invocation: true` and a frontmatter `metadata` mapping
+   containing `opencode/autoinvoke: "false"`. Install both roots with:
+   `node scripts/install/install.js install --source "$fixture_source" --home "$fixture_home"`.
+   **Done:** doctor passes and both links resolve to the same gated fixture.
+2. From the empty scratch project, run
+   `opencode run --format json --model "$model" "Count the vowels in banana."`
+   with the isolated environment. Save the transcript and actual available-skill
+   listing; count entries for `fixture`, distinguishing listing from body load.
+   Repeat in fresh sessions with the other matching prompts in the trigger
+   sample. Check tool events, not just the final vowel count. Compare with an
+   explicit invocation and a model-invoked fixture control to show discovery and
+   authentication work; denied, missing or unobservable calls are inconclusive.
+   **Done:** each fresh session has a saved listing count and tool-event verdict;
+   matching requests leave the gated fixture uninvoked, and controls load it.
+   If the listing contains duplicates, record the finding and options for the
+   owner before changing install behaviour.
+3. Put a unique response instruction only in the disposable
+   `~/.claude/CLAUDE.md`. With no project or native OpenCode steering files,
+   run a fresh neutral prompt using the same command flags. Save the transcript
+   and compare with a fresh session after removing that instruction; record
+   whether the marker follows the Claude-file fallback.
+   **Done:** both transcripts and the OpenCode version are saved, with a verdict
+   on whether only the Claude-file arm follows the unique instruction.
+
+Before running, read the [trigger evidence rules](trigger-evals.md) for
+repetitions and event-schema limits. These commands are pending, not executed
+results. Keep transcripts locally until publication is authorized. Completion
+requires each live outcome and harness version recorded on #125; until then,
+leave the issue open.

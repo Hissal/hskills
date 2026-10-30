@@ -4,6 +4,8 @@ What a skill folder in this collection holds, and the check that keeps the tree 
 
 - [Skill tree](#skill-tree)
 - [Collection manifest](#collection-manifest)
+
+- [Personal steering source](#personal-steering-source)
 - [Skill folder](#skill-folder)
 - [Frontmatter](#frontmatter)
 - [Harness gates](#harness-gates)
@@ -71,7 +73,28 @@ Repository areas follow these conventions:
 | `vendor/` | Source baselines, outside the installed skill tree |
 | `licenses/` | Source licence texts |
 | `scripts/` | Collection tooling |
-| Repository root | `collection.json` and the steering source (defined by #118) |
+| Repository root | `collection.json` and `steering.md` |
+
+## Personal steering source
+
+[`steering.md`](../steering.md) at the repository root is the owner's personal
+always-on steering source, shared by Claude Code and Codex. It is separate
+from this repository's contributor instructions in `AGENTS.md`.
+
+The collection never writes another person's steering file. Others may copy
+what they want manually. Owner installation is a separate, explicit opt-in:
+link this source into `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`, or use a
+copy with a doctor drift check where linking is unavailable. No hook injects
+this text and no output style carries it. See [the install decision](https://github.com/Hissal/skill-collection/issues/18#issuecomment-6108951944)
+and [owner opt-in and drift placement](https://github.com/Hissal/skill-collection/issues/78#issuecomment-6510537918).
+
+Attribution belongs to the comment and PR skills, per [the superseding owner
+decision](https://github.com/Hissal/skill-collection/issues/88#issuecomment-6512311352),
+and is absent from this source. The source's admission reasons, size and
+unavailable tooling-note requirement are recorded in [#118 evidence](../research/steering-source-118.md).
+The 500-token tripwire measurement belongs to #92; command and path validation
+belongs to #112. Until the measurement uses this path by default, run
+`COLLECTION_ALWAYS_ON_PATH=steering.md node scripts/check/check.js` to include it.
 
 ## Skill folder
 

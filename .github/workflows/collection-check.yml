@@ -33,6 +33,8 @@ jobs:
         run: node scripts/check/test/run.js
       - name: Run gate writer tests
         run: node scripts/gates/test/run.js
+      - name: Run drift script fixtures
+        run: node scripts/vendor/test/run.js
       - name: Check collection
         run: node scripts/check/check.js
 

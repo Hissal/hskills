@@ -81,4 +81,22 @@ module.exports = [
   { name: 'references in a subfolder linked from SKILL.md pass', files: skill('skills/core/alpha', { body: 'Read [a](references/A.md).\n', files: { 'references/A.md': '# A\n' } }), expect: [] },
   { name: 'NOTICE.md needs no link', files: skill('skills/core/alpha', { files: { 'NOTICE.md': '# Notice\n' } }), expect: [] },
   { name: 'warnings alone exit zero', files: tree(skill('skills/core/alpha', { body: lines(501) }), skill('skills/core/beta', { files: { 'X.md': '# X\n' } })), expect: ['warn skill-body-length skills/core/alpha/SKILL.md', 'warn reference-unlinked skills/core/beta/X.md'] },
+
+  // ---- agnix on trial (#93): its findings warn, never fail ------------------
+  // Stubbed unless `agnix: 'real'`; see run.js.
+  { name: 'agnix errors and warnings print as warnings and exit zero', files: tree(skill('skills/core/alpha'), { 'AGENTS.md': '# a\n' }),
+    agnix: { diagnostics: [{ level: 'error', rule: 'AS-004', file: 'skills/core/alpha/SKILL.md', line: 2, message: 'bad name' }, { level: 'warning', rule: 'XP-007', file: 'AGENTS.md', line: 1, message: 'too big' }] },
+    expect: ['warn agnix skills/core/alpha/SKILL.md', 'warn agnix AGENTS.md'] },
+  { name: 'agnix info diagnostics are not printed', files: skill('skills/core/alpha'),
+    agnix: { diagnostics: [{ level: 'info', rule: 'AS-020', file: 'skills/core/alpha/SKILL.md', line: 3, message: 'advice' }] }, expect: [] },
+  { name: 'agnix findings on files outside the collection are dropped', files: tree(skill('skills/core/alpha'), { '.gitignore': 'scratch/\n', 'scratch/x.md': '# x\n' }),
+    agnix: { diagnostics: [{ level: 'error', rule: 'AS-004', file: 'scratch/x.md', line: 1, message: 'bad' }] }, expect: [] },
+  { name: 'agnix not installed warns and exits zero', files: skill('skills/core/alpha'), agnix: 'missing', expect: ['warn agnix package.json'] },
+  { name: 'an agnix version other than the pin warns', files: skill('skills/core/alpha'), agnix: { version: '0.0.1' }, expect: ['warn agnix package.json'] },
+  { name: 'agnix output that is not JSON warns and exits zero', files: skill('skills/core/alpha'), agnix: { raw: 'thread panicked' }, expect: ['warn agnix package.json'] },
+  { name: 'real agnix: a clean skill passes', files: skill('skills/core/alpha'), agnix: 'real', expect: [] },
+  { name: 'real agnix: a fixable error warns and the skill is left as written', files: skill('skills/core/alpha', { fm: { name: ' Alpha_Bad' } }), agnix: 'real',
+    expect: ['warn agnix skills/core/alpha/SKILL.md', 'warn agnix skills/core/alpha/SKILL.md'] },
+  { name: 'real agnix: a Claude Code skill rule warns', files: skill('skills/core/alpha', { fm: { 'allowed-tools': ' Read, Bash' } }), agnix: 'real', expect: ['warn agnix skills/core/alpha/SKILL.md'] },
+  { name: 'real agnix: wording-opinion PE rules are off', files: tree(skill('skills/core/alpha'), { 'CLAUDE.md': '# Project\n\nWrite clean code. Be helpful and accurate.\n\nNever use var.\n' }), agnix: 'real', expect: [] },
 ];

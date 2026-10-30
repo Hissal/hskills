@@ -10,6 +10,7 @@ What a skill folder in this collection holds, and the check that keeps the tree 
 - [Portability](#portability)
 - [Line endings](#line-endings)
 - [The collection check](#the-collection-check)
+- [agnix (on trial)](#agnix-on-trial)
 - [Adding a rule](#adding-a-rule)
 - [Adding a fixture](#adding-a-fixture)
 
@@ -83,6 +84,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `skill-body-length` | warn | a `SKILL.md` body over 500 lines |
 | `reference-contents` | warn | a reference over 100 lines with no contents list |
 | `reference-unlinked` | warn | a reference not linked straight from `SKILL.md` (`NOTICE.md` excepted) |
+| `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
 
 Test the check with its fixture runner:
 
@@ -91,6 +93,17 @@ node scripts/check/test/run.js
 ```
 
 Every change to the check keeps both green: the runner, and the check on the real tree.
+
+## agnix (on trial)
+
+[agnix](https://github.com/agent-sh/agnix) lints harness format mechanics beside the collection's own rules ([#93](https://github.com/Hissal/skill-collection/issues/93)). Install it once with `npm ci`, which installs the version pinned in `package.json`; the check runs it as its `agnix` rule.
+
+- **Scope and rules off**: [`.agnix.toml`](../.agnix.toml) scopes it to Claude Code and Codex. It turns off `CX-SK-001`, `XP-SK-001`, and for good the wording-opinion rules: every `PE-*`, `AGM-002` and `AGM-004`. `CC-MEM-005` to `009` and `CDX-AG-004` are off too: the pinned version has retired them, so they are not listed.
+- **Autofix**: never run. The check passes no fix flag, and its fixture runner fails any case where the check changed a file.
+- **Output**: agnix errors and warnings print as `WARN <file>:<line> [agnix] <agnix rule> ...`; its info-level advice is not printed. A missing agnix, a version other than the pin, or a failed run is one warning on `package.json`. Nothing agnix reports fails the run.
+- **Trial**: decided in [#77, owner answer 10](https://github.com/Hissal/skill-collection/issues/77#issuecomment-6509966712). The owner judges agnix after its first run over the first real batch of skills, then promotes it to failing (the rule's level becomes `fail`) or drops it (the rule, `.agnix.toml` and the pin go). The collection's own rules stay either way.
+- **Decision**: pending. Record the owner's promote-or-drop decision here, with its date and issue link.
+- **Bumping the pin**: change `package.json`, run `npm install`, and re-check `.agnix.toml` against agnix's changelog, since releases retire and rename rules.
 
 ## Adding a rule
 

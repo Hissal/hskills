@@ -11,4 +11,5 @@ module.exports = [
   require('./skill-body-length'),
   require('./reference-contents'),
   require('./reference-unlinked'),
+  require('./agnix'),
 ];

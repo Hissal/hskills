@@ -1,100 +1,84 @@
 # OpenCode verification: #125
 
-Re-checked on Linux on 2026-10-30 with
-`/home/agent/.opencode/bin/opencode` reporting **`opencode v2.2.2`**.
-The earlier finding in commit `f73f2d64338521459f36ff838e518ab3688a2ad6`
-confused a noninteractive PATH miss with an unavailable executable. It is
-superseded by this run: the executable works. Interactive login-shell PATH
-includes its directory; use the explicit executable for reproducibility.
+Rechecked 2026-10-30 on Linux, OpenCode **v2.2.2**, starting from
+`a37ed41` (the integration branch included the authenticated #120 evidence).
+Status: fixture installation passes; live gate and steering verdicts remain
+inconclusive. These are runtime/account blockers, not another-spec dependencies.
 
-The re-check used collection base `274de14` (including integration tip
-`711a8ae`), a private temporary HOME and XDG config/data/cache/state roots,
-and an empty scratch project outside the checkout. A SQLite backup of the
-existing OpenCode database supplied the stored OpenCode Console authentication
-without printing credentials or modifying the original database. No existing
-user settings or steering files were copied or edited. The temporary database
-contains credentials: keep it private and delete it after diagnosis.
+## Existing authenticated runtime
 
-Observed outcomes:
+Normal `models` succeeds and lists `opencode/gpt-6.1-sol`. Normal `auth list`
+reports stored OpenCode Console accounts. Safe `debug config` retains the
+Personal / OpenCode provider configuration. No credential file was read or
+copied, no login was attempted, and no real settings were changed.
 
-| Probe | Outcome |
+The normal-runtime control, without any home override or standalone flag,
+ran `run --format json --model opencode/gpt-6.1-sol#medium 'Reply with hello.'`.
+It returned exit 1, `provider.quota`, HTTP **402**, and the exact message
+`Upstream request failed: Insufficient account funds`.
+[Saved error event](evidence/opencode-125/normal-control.jsonl).
+The normal runtime `api GET /api/model` also confirms this exact active, enabled
+model and its `medium` variant with `reasoningEffort: medium`
+([sanitized model record](evidence/opencode-125/model.json)). Actual response
+reasoning remains unobservable because the provider returns quota failure. No alternative model was substituted.
+
+This supersedes the earlier copied-database experiment, whose selector and
+account context were unverified. Claude/Codex's successful authenticated runs
+in [#120 evidence](live-hooks-120.md) do not establish OpenCode Console funds.
+
+## Isolated fixture probes
+
+Reproduce with `python3 scripts/install/evidence/opencode-125.py` (manual,
+authenticated and potentially token-spending). It prints the temporary evidence
+directory. HOME, XDG roots, provider/model configuration and auth stay inherited.
+`OPENCODE_TEST_HOME` redirects OpenCode's home-scoped skills and steering to a
+scratch tree; each isolated probe uses `--standalone` so an existing service
+cannot ignore the process override. This runtime-specific test override was
+located in the installed binary's embedded Global implementation; it leaves
+XDG config/data paths unchanged. No secret-bearing database is copied.
+
+The installer and doctor pass. Both `.claude/skills/fixture` and
+`.agents/skills/fixture` resolve to the same source. The source contains
+`disable-model-invocation: true` and `metadata.opencode/autoinvoke: "false"`.
+The fixture runner also provides an ungated discovery control, an explicit
+invocation control, and the six trigger sample prompts repeated twice when the
+first model request succeeds. Errors stop that matrix rather than manufacture
+negative firing results. Inspect completed skill events under the
+[trigger evidence rules](../docs/trigger-evals.md); this runner saves observations,
+not automatic acceptance verdicts.
+
+Observed on this run:
+
+| Probe | Result |
 | --- | --- |
-| Installer fixture with `disable-model-invocation: true` and `metadata.opencode/autoinvoke: "false"` | Both user roots linked the same fixture; doctor passed. |
-| `models --standalone` | `ServiceUnavailableError: Location plugins did not finish activating`; no model list. |
-| `debug agents --standalone`, both roots populated | Same startup error; no listing, so the listing count is unknown. |
-| Real `run --standalone --format json` vowel prompt | Exit 1: JSON `provider.quota`, HTTP 402, `Upstream request failed: Insufficient account funds`; no model response or skill event. |
-| Claude steering marker present / absent, fresh `run` processes | Both exit 1 with the same HTTP 402 quota error; no model response. |
+| `api GET /api/skill --standalone`, both roots linked | Exit 0, `data: []`: zero registered entries, zero fixture entries. [API response](evidence/opencode-125/listing.json). |
+| Ungated fixture, fresh standalone skill API | Exit 0, also `data: []`; discovery control fails, so zero gated entries cannot prove suppression. |
+| `debug agents --standalone` | First diagnostic attempt failed with `ServiceUnavailableError: Location plugins did not finish activating`; fixture-run attempt succeeded. Intermittent startup failure. Agent listing is not a skill listing. |
+| Gated vowel request | Exit 1, same HTTP 402 [error](evidence/opencode-125/gate-q1.jsonl); no completed skill invocation. |
+| Claude steering present | Exit 1, same HTTP 402 [error](evidence/opencode-125/steering-present.jsonl). |
+| Claude steering absent | Exit 1, same HTTP 402 [error](evidence/opencode-125/steering-absent.jsonl). |
 
-The requested model selector for the run attempts was
-`opencode/gpt-6.1-sol#medium`, representing the requested Sol Medium model.
-It is **unverified**, because provider model discovery failed before it could
-confirm a supported selector. No other model was substituted.
-The gate prompt was `Count the vowels in banana.`;
-the steering prompt was `Reply with hello.` in two fresh sessions, with
-`For every reply append the exact marker STEERING_125_CLAUDE.` present
-only in the disposable `~/.claude/CLAUDE.md` for the first arm. Stored auth
-listing identifies OpenCode Console, but does not prove successful remote
-authentication or access to this model.
+Steering is the unique instruction `For every reply append the exact marker
+STEERING_125_CLAUDE.` only in the scratch `.claude/CLAUDE.md`, followed by a
+fresh process after removing that file. No project steering file is created.
+Quota failures in both arms establish no fallback verdict.
 
-[#125](https://github.com/Hissal/skill-collection/issues/125) remains open.
-Discovery startup and run quota errors are distinct failures; neither proves
-a missing binary. The quota error does not prove model-selector support.
-Gate behaviour, listing count and steering fallback remain
-**inconclusive**; filesystem checks establish only the installed fixture.
-No duplicate listing was observed and no install behaviour was changed under
-#78's owner decisions.
+## Completion boundary and human action
 
-The [loading research](loading-mechanics.md) and
-[trigger stream sources](../docs/trigger-evals.md#offline-injection-and-evidence-limits)
-are documented research, not hand-run evidence for these checks. Installer
-and gate checks establish filesystem/output correctness, not harness behaviour.
+Restore funds on the **active OpenCode Console account** used by the normal
+runtime, then rerun the fixture command. No Claude/Codex reauthentication or
+credential migration is indicated by these results. The exact supported Medium variant is confirmed; successful model access beyond
+the quota check remains unverified.
 
-### Next hand run
+The empty registered-skill response cannot establish deduplication: a successful
+ungated discovery/body-load control is required before interpreting absence as
+user-only gate enforcement. If it remains empty after account recovery, diagnose
+location plugin activation/skill registration with the saved fixture, without
+changing the install policy. No duplicate was observed. If a valid control later
+lists two entries, the owner options are: retain both roots and accept duplicate
+listing, or adopt a harness-specific exclusion/install route. Put those options
+to the owner before changing behavior, per #78.
 
-Restore provider funds, resolve the discovery plugin activation error and
-confirm the exact Sol Medium selector with `models` before repeating. Keep
-the requested model; ask the owner if that provider does not expose it.
-Use an already installed OpenCode runtime with an authenticated, available
-`provider/model`, Node.js, and a disposable home and scratch project outside
-this checkout. Isolate `HOME` and the XDG config/data/cache/state directories
-for every OpenCode process; provision authentication only in that disposable
-scope. Record `opencode --version`, the exact model, OS, collection commit,
-configuration and both skill roots. Do not install a harness or write to the
-real home as part of this procedure.
-
-1. Copy the [fixture](../scripts/eval/test/fixture/SKILL.md) into a temporary
-   source tree at `skills/core/fixture/SKILL.md`. Give that tree a
-   `collection.json` containing
-   `{"core":["skills/core/fixture"],"packs":{},"expensive":[]}`.
-   Add `disable-model-invocation: true` and a frontmatter `metadata` mapping
-   containing `opencode/autoinvoke: "false"`. Install both roots with:
-   `node scripts/install/install.js install --source "$fixture_source" --home "$fixture_home"`.
-   **Done:** doctor passes and both links resolve to the same gated fixture.
-2. From the empty scratch project, run
-   `opencode run --format json --model "$model" "Count the vowels in banana."`
-   with the isolated environment. Save the transcript and actual available-skill
-   listing; count entries for `fixture`, distinguishing listing from body load.
-   Repeat in fresh sessions with the other matching prompts in the trigger
-   sample. Check tool events, not just the final vowel count. Compare with an
-   explicit invocation and a model-invoked fixture control to show discovery and
-   authentication work; denied, missing or unobservable calls are inconclusive.
-   **Done:** each fresh session has a saved listing count and tool-event verdict;
-   matching requests leave the gated fixture uninvoked, and controls load it.
-   If the listing contains duplicates, record the finding and options for the
-   owner before changing install behaviour.
-3. Put a unique response instruction only in the disposable
-   `~/.claude/CLAUDE.md`. With no project or native OpenCode steering files,
-   run a fresh neutral prompt using the same command flags. Save the transcript
-   and compare with a fresh session after removing that instruction; record
-   whether the marker follows the Claude-file fallback.
-   **Done:** both transcripts and the OpenCode version are saved, with a verdict
-   on whether only the Claude-file arm follows the unique instruction.
-
-Before running, read the [trigger evidence rules](../docs/trigger-evals.md) for
-repetitions and event-schema limits. The procedure above describes the
-successful observations still needed;
-the failed attempts are recorded above. Keep transcripts locally until
-publication is authorized. Completion
-requires each live outcome and harness version recorded on #125; until then,
-leave the issue open.
-
+#125 remains open: live gate behavior, meaningful once-versus-twice discovery,
+and successful Claude-file fallback are not proven. Filesystem doctor success
+and embedded-source support for the gate do not replace those runtime checks.

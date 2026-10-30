@@ -49,12 +49,15 @@ try {
     const got = res.stdout.split('\n').map((l) => l.match(FINDING)).filter(Boolean).map((m) => key(m[1], m[3], m[2])).sort();
     const want = (c.expect || []).slice().sort();
     const exit = want.some((w) => w.startsWith('fail ')) ? 1 : 0;
-    const ok = res.status === exit && JSON.stringify(got) === JSON.stringify(want);
+    const other = res.stdout.split('\n').filter((l) => l && !FINDING.test(l));
+    const outputOk = !c.output || (other.length === c.output.length && c.output.every((re, j) => re.test(other[j])));
+    const ok = res.status === exit && JSON.stringify(got) === JSON.stringify(want) && outputOk;
     if (ok) { passed++; return; }
     failed++;
     console.log('FAIL ' + c.name);
     console.log('     expected exit ' + exit + ': ' + JSON.stringify(want));
     console.log('     got exit ' + res.status + ': ' + JSON.stringify(got));
+    if (!outputOk) console.log('     expected output ' + c.output.join(' ') + ', got ' + JSON.stringify(other));
     if (res.stderr) console.log('     stderr: ' + res.stderr.trim().split('\n').slice(0, 6).join('\n     '));
   });
 } finally {

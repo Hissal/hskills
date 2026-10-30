@@ -35,7 +35,7 @@ function main() {
   }
   const home = options['--home'] || os.homedir();
   if (command === 'prepare-plugin') {
-    require('./plugin').prepare(home);
+    require('./plugin').registration(home, path.join(options['--source'] || path.resolve(__dirname, '../..'), 'hooks/command-guard'));
     process.exitCode = 1;
     return;
   }
@@ -211,12 +211,21 @@ function main() {
     }
   }
   if (command !== 'uninstall') doctor();
+  if (command === 'uninstall' && fs.existsSync(path.join(home, '.skill-collection/plugins.json'))) {
+    if (!require('./plugin').registration(home, path.join(source, 'hooks/command-guard'), command)) { process.exitCode = 1; return; }
+  }
   {
     // A skill conflict still needs guard diagnostics, without installing it.
     const guardCommand = failed ? 'doctor' : command;
-    const result = spawnSync(process.execPath, [path.resolve(__dirname, '../../hooks/command-guard/install.js'), '--home', home, ...(guardCommand === 'install' ? [] : ['--' + guardCommand])], { encoding: 'utf8', timeout: 60000 });
+    const result = spawnSync(process.execPath, [path.resolve(__dirname, '../../hooks/command-guard/install.js'), '--home', home, ...(fs.existsSync(path.join(source, 'hooks/command-guard/.claude-plugin/plugin.json')) ? ['--source', path.join(source, 'hooks/command-guard'), '--plugin-mode'] : []), ...(guardCommand === 'install' ? [] : ['--' + guardCommand])], { encoding: 'utf8', timeout: 60000 });
     process.stdout.write(result.stdout || ''); process.stderr.write(result.stderr || '');
     if (result.status !== 0) failed = true;
+  }
+  if (!failed && command === 'install' && fs.existsSync(path.join(source, 'hooks/command-guard/.claude-plugin/plugin.json'))) {
+    if (!require('./plugin').registration(home, path.join(source, 'hooks/command-guard'))) failed = true;
+  }
+  if (command === 'doctor' && fs.existsSync(path.join(home, '.skill-collection/plugins.json'))) {
+    if (!require('./plugin').registration(home, path.join(source, 'hooks/command-guard'), command)) failed = true;
   }
   if (failed) process.exitCode = 1;
 }

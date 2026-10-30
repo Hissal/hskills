@@ -60,8 +60,10 @@ const cases = [
     f.run(0);
     const settings = path.join(f.home, '.claude/settings.json');
     const before = fs.readFileSync(settings, 'utf8');
+    f.env = { ...process.env, COMMAND_GUARD_CLAUDE: '/does-not-exist' };
+    fs.cpSync(path.resolve(__dirname, '../../../hooks/command-guard'), path.join(f.repo, 'hooks/command-guard'), { recursive: true });
     f.run(1, 'prepare-plugin');
-    assert.match(f.last.stdout, /UNSUPPORTED.*registration/);
+    assert.match(f.last.stderr, /FAIL install/);
     assert.equal(fs.readFileSync(settings, 'utf8'), before);
     const cache = path.join(f.home, '.skill-collection/plugin-cache');
     const versions = fs.readdirSync(cache);
@@ -381,7 +383,9 @@ fs.symlinkSync = function(target, dest, type) {
     assert.match(f.last.stdout, /Read\(/);
   }],
 ];
-let failures = 0;
+const plugins = spawnSync(process.execPath, [path.join(__dirname, 'plugin.js')], { encoding: 'utf8', timeout: 180000 });
+process.stdout.write(plugins.stdout || ''); process.stderr.write(plugins.stderr || '');
+let failures = plugins.status === 0 ? 0 : 1;
 for (const [name, test] of cases) {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'collection-install-'));
   try {
@@ -392,7 +396,7 @@ for (const [name, test] of cases) {
     const f = { repo, home, targets, record: path.join(home, '.skill-collection/install.json'),
       manifest(core, packs = {}) { fs.writeFileSync(path.join(repo, 'collection.json'), JSON.stringify({ core, packs, expensive: [] })); },
       run(status, command = 'install', extra = []) {
-        this.last = spawnSync(process.execPath, [...(this.nodeArgs || []), cli, command, '--home', home, '--source', repo, '--claude-root', targets[0], '--agents-root', targets[1], ...extra], { encoding: 'utf8' });
+        this.last = spawnSync(process.execPath, [...(this.nodeArgs || []), cli, command, '--home', home, '--source', repo, '--claude-root', targets[0], '--agents-root', targets[1], ...extra], { encoding: 'utf8', env: this.env || process.env });
         assert.equal(this.last.status, status, this.last.stdout + this.last.stderr);
       },
     };

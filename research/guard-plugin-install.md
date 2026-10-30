@@ -53,29 +53,33 @@ was attempted. No model sessions were launched in that disposable-home investiga
 The later [authenticated live adapter smoke tests](live-hooks-120.md) pass on
 both hosts; they do not establish plugin loading. Registration/listing is not hook
 invocation. Both installed hosts provide registration APIs; effective plugin-loaded behavior remains
-unverified. The later live evidence verifies adapter delivery only. The unsupported automatic switch is an implementation limit, not a
-claim that either host has no plugin API.
+unverified. The later live evidence verifies adapter delivery only. Snapshot
+registration and selective migration are implemented below; live plugin loading
+remains unverified.
 
-`prepare-plugin` creates a content-addressed version snapshot under the selected
-home and verifies existing snapshot bytes on rerun. It exits unsuccessfully with
-an explicit unsupported registration message. It preserves existing settings
-and ownership records: replacement registration and effective host behavior
-remain unverified. Normal installation retains #120's adapter delivery.
+## Implemented registration and migration
+
+`prepare-plugin` and normal installs now call the installed host plugin APIs
+against a dedicated marketplace inside the content-addressed snapshot. The
+listing must report enabled and an effective source equal to that snapshot.
+Snapshot adapters pass block and allow probes before registration. Each host's
+successful registration permits selective removal of its recorded legacy handlers;
+a failed host registration rolls back configuration changes and retains its hooks.
+The write journal preserves before/after bytes and refuses uninstall of changed
+files. No credentials are copied and no trust is granted.
+
+Disposable-home real CLI cases cover registration failure with rollback, selective
+migration, rerun, source update, normal install and uninstall. Changed owned
+configuration makes uninstall refuse all removal and preserve the change. Source overrides select the guard package as
+well as skill links. These cases establish registration, not live loading.
 
 ## Remaining acceptance
 
-1. Implement host registration against the prepared snapshot. Complete when a
-   host reports an enabled plugin whose effective source is the snapshot and
-   adapter probes succeed. Until then preserve the working legacy registration.
-2. Migrate only recorded adapter-marker groups in the corresponding settings
-   file, retaining every unrelated handler. Complete when temporary-home cases
-   show failed registration leaves the old guard and successful registration
-   removes only owned handlers. This migration is not implemented here.
-3. Run real Claude and Codex sessions. Complete when each records a block,
+1. Run real Claude and Codex sessions. Complete when each records a block,
    silent allow, project-added block, and unchanged effective guard after a
    checkout branch switch. Record trust waiting as pending; verify trust through
    the host rather than writing approval state. These live tests were not run.
-4. Record macOS and Windows results separately. Linux cases establish neither.
+2. Record macOS and Windows results separately. Linux cases establish neither.
 
 The prepared cache is not claimed as host branch-switch evidence. Keep #121
 open until every acceptance criterion on the issue has evidence.
@@ -100,9 +104,19 @@ evidence corrections; `git diff --check` passed and the working tree was clean.
 The installed `/home/agent/.local/bin/claude` validator was rerun against the
 merged marketplace. It passed with two warnings: `plugins[0].policy` is ignored
 by Claude, and the plugin manifest lacks author information. The README install
-suggestion is advice, not a validation warning; automatic migration remains
-unsupported. The collection's pinned agnix reports only the policy warning.
+suggestion is advice, not a validation warning; registration is now implemented; live loading remains pending validation. The collection's pinned agnix reports only the policy warning.
 The [OpenAI marketplace contract](https://developers.openai.com/plugins/build/plugins)
 requires `policy.installation` and `policy.authentication` on each entry, so
 retain those fields for Codex. The Claude warning describes a real difference
 between hosts, not failed registration or evidence of effective hook loading.
+
+### Registration implementation verification (2026-10-30)
+
+`node scripts/install/test/plugin.js --real` passed against the installed Claude
+and Codex CLIs with fresh temporary HOME, CLAUDE_CONFIG_DIR and CODEX_HOME.
+No credentials or trust state were copied. Enabled listings reported the prepared
+snapshot as effective source. The deterministic CLI boundary double runs the same
+migration and ownership cases inside the collection check; it supplies host
+responses while the installer uses real temporary files. The 36 pre-existing
+installer cases and 218 check fixtures also passed. Live plugin session loading,
+branch-switch behavior and non-Linux hosts still require their separate evidence.

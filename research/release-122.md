@@ -5,9 +5,11 @@ Ticket: [#122](https://github.com/Hissal/skill-collection/issues/122), under
 2026-10-30 on Linux. Status: local offline evidence, ready for review.
 
 The owner's answer 14 governs the version rules. Prerequisite
-`a9df86829303813ea000c34cda31251e790ef20f` supplies the marketplace and the two
+`d8f4e8c9cb407aa3b9dfaa4e6426287f07aa0278` (including `a9df868`) supplies the marketplace and the two
 hook-only plugin manifests. #121 remains partial: automatic registration is
-unsupported and the existing guard is preserved.
+unsupported and the existing guard is preserved. Isolated plugin installs succeeded
+on both hosts per [plugin evidence](guard-plugin-install.md); automatic migration
+and live-session verification remain unfinished.
 
 Executed `node scripts/release/dry-run.js` with pinned release-please 17.11.2
 on Node 20.19.2 and repeated successfully on Node 22 (the supported runtime).

@@ -11,19 +11,19 @@ const config = require('../../release-please-config.json').packages['.'];
 const root = require('path').resolve(__dirname, '../..');
 const read = (file) => fs.readFileSync(require('path').join(root, file), 'utf8');
 async function main() {
-const strategy = await buildStrategy({
-  releaseType: config['release-type'],
-  github: {
-    repository: { owner: 'Hissal', repo: 'skill-collection' },
-    findFilesByGlobAndRef: async (file) => { read(file); return [file]; },
-  },
-  targetBranch: 'main', path: '.',
-  initialVersion: config['initial-version'],
-  bumpMinorPreMajor: config['bump-minor-pre-major'],
-  bumpPatchForMinorPreMajor: config['bump-patch-for-minor-pre-major'],
-  includeComponentInTag: config['include-component-in-tag'],
-  extraFiles: config['extra-files'],
-});
+  const strategy = await buildStrategy({
+    releaseType: config['release-type'],
+    github: {
+      repository: { owner: 'Hissal', repo: 'skill-collection' },
+      findFilesByGlobAndRef: async (file) => { read(file); return [file]; },
+    },
+    targetBranch: 'main', path: '.',
+    initialVersion: config['initial-version'],
+    bumpMinorPreMajor: config['bump-minor-pre-major'],
+    bumpPatchForMinorPreMajor: config['bump-patch-for-minor-pre-major'],
+    includeComponentInTag: config['include-component-in-tag'],
+    extraFiles: config['extra-files'],
+  });
   const scenarios = [
     ['first release', 'feat(unity-pack): add guidance', null, '0.1.0'],
     ['pack feature', 'feat(unity-pack): add guidance', '0.1.0', '0.1.1'],

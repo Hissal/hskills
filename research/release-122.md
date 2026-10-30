@@ -9,7 +9,8 @@ The owner's answer 14 governs the version rules. Prerequisite
 hook-only plugin manifests. #121 remains partial: automatic registration is
 unsupported and the existing guard is preserved.
 
-Executed `node scripts/release/dry-run.js` with pinned release-please 17.11.2.
+Executed `node scripts/release/dry-run.js` with pinned release-please 17.11.2
+on Node 20.19.2 and repeated successfully on Node 22 (the supported runtime).
 It builds candidates using the real release-please factory, Conventional Commit
 parser, default changelog generator and JSON updaters, with local file discovery
 in place of GitHub. Nothing is written or published. Synthetic commit scenarios

@@ -116,3 +116,16 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
+
+## Continuous integration
+
+[Collection check](../.github/workflows/collection-check.yml) runs the fixture runner
+and the same collection check command on every push and pull request, on Windows
+and Linux. Either command failing fails its job; both platforms run even if one
+fails. Checkout includes history and tags for checks against the last release.
+There is no pre-commit hook.
+
+The workflow's `CLAUDE_CODE_VERSION` is the single Claude Code CLI pin, matching
+the version inspected in [loading-mechanics research](../research/loading-mechanics.md).
+Bumping it requires re-verifying that research. CI installs the CLI but does not
+run the hand-run trigger evals or authenticate a model session.

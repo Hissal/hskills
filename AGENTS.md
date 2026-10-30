@@ -14,6 +14,8 @@ Single-context: one root `GLOSSARY.md` plus `docs/adr/`. See `docs/agents/domain
 
 ### Collection maintenance
 
-Skill folders, frontmatter, references and the collection check: [Skill format](docs/skill-format.md). Run `node scripts/check/check.js` and `node scripts/check/test/run.js`; both must pass.
+Skill folders, frontmatter, references and the collection check: [Skill format](docs/skill-format.md). Run `node scripts/check/check.js` and `node scripts/check/test/run.js`; both must pass. After changing the gate writer, also run `node scripts/gates/test/run.js`. Run `npm ci` once first, so the check runs the pinned agnix.
 Hook structure, failure policy and verification: [Hook house style](docs/agents/hook-house-style.md).
 Research notes, citations and source ledgers: [Research area rules](docs/agents/research-rules.md).
+Trigger and behavioural evals, including the required missing-requirement case: [Trigger evals](docs/trigger-evals.md), [Behavioural evals](docs/behavioural-evals.md).
+Vendoring scripts (`scripts/vendor/`): run `node scripts/vendor/test/run.js` after changing them; it must pass.

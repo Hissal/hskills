@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const vendorLock = require('../vendor/lock');
 
 const { parseMetadata, resolveSkills } = require('./metadata');
 
@@ -88,6 +89,14 @@ function load(root) {
 
   for (const skill of skills) skill.metadata = parseMetadata(skill.frontmatter);
 
+  // The copied-skill record (#102): vendor.lock.json parsed once, if the
+  // collection holds one. { exists, entries, errors }; see scripts/vendor/lock.js.
+  let vendor;
+  const getVendor = () => {
+    if (!vendor) vendor = known.has(vendorLock.LOCK) ? Object.assign({ exists: true }, vendorLock.parse(text(vendorLock.LOCK))) : { exists: false, entries: [], errors: [] };
+    return vendor;
+  };
+
   return {
     resolved: resolveSkills(skills),
     root,
@@ -102,6 +111,8 @@ function load(root) {
     exists: (file) => known.has(file.replace(/\/$/, '')),
     // a skill's reference files: its Markdown files other than NOT_REFERENCES
     references: (s) => s.files.filter((f) => f.endsWith('.md') && !NOT_REFERENCES.has(f.slice(s.dir.length + 1))),
+    // copied skills: vendor.lock.json parsed once (scripts/vendor/lock.js)
+    get vendor() { return getVendor(); },
     // a file's relative links resolved to repository-relative paths
     links: (file) => links(text(file)).map((l) => Object.assign(l, { path: path.posix.normalize(path.posix.join(path.posix.dirname(file), l.target.replace(/\\/g, '/'))) })),
   };

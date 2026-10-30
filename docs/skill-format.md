@@ -5,11 +5,14 @@ What a skill folder in this collection holds, and the check that keeps the tree 
 - [Skill tree](#skill-tree)
 - [Skill folder](#skill-folder)
 - [Frontmatter](#frontmatter)
+- [Harness gates](#harness-gates)
 - [Disclosed references](#disclosed-references)
 - [Scripts](#scripts)
 - [Portability](#portability)
 - [Line endings](#line-endings)
+- [Copied skills](#copied-skills)
 - [The collection check](#the-collection-check)
+- [agnix (on trial)](#agnix-on-trial)
 - [Adding a rule](#adding-a-rule)
 - [Adding a fixture](#adding-a-fixture)
 
@@ -34,6 +37,25 @@ One folder per skill, with `SKILL.md` at its root. The folder is the installed u
 - `description`: for a model-invoked skill, the trigger only: when to load it, never what it does step by step. Quote a description that contains `: ` (`description: "Use when: ..."`). Claude Code tolerates the unquoted form, but strict YAML loaders such as `npx skills` skip the skill without a word.
 - `when_to_use` (optional): further trigger text, counted with the description.
 - `disable-model-invocation` (optional): `true` makes the skill user-invoked. It is the single source for the gate on every harness; the Codex and OpenCode gates are written from it.
+- `metadata` holds the generated OpenCode gate, `opencode/autoinvoke` (see [Harness gates](#harness-gates)), beside any other metadata.
+
+## Harness gates
+
+Whether a skill is model-invoked is decided once, by `disable-model-invocation`, and copied into each harness's own gate. Both gates live in the skill folder, so both install routes carry them:
+
+| Harness | Gate | Model-invoked | User-invoked |
+|---|---|---|---|
+| Claude Code | `SKILL.md` `disable-model-invocation` (the source) | absent or `false` | `true` |
+| Codex | `agents/openai.yaml` `policy.allow_implicit_invocation` | `true` | `false` |
+| OpenCode | `SKILL.md` `metadata` `opencode/autoinvoke` | `"true"` | `"false"` |
+
+Codex ignores `disable-model-invocation`, and OpenCode lets `opencode/autoinvoke` override it, so each gate is written out for every skill. The OpenCode value is the quoted string, since collection metadata values are strings. The gates are generated, never hand-edited: change `disable-model-invocation`, then run the writer:
+
+```
+node scripts/gates/write-gates.js
+```
+
+It writes only those two values, leaving every other line of `SKILL.md` and `agents/openai.yaml` alone, and a second run changes nothing. Run it with `--help` for its `KEY: value` output. The check's `harness-gates` rule fails when a gate is missing, unreadable or disagrees with the source, and names the writer command. Formats and sources: [loading mechanics](../research/loading-mechanics.md) (Codex) and the [OpenCode skill docs](https://github.com/anomalyco/opencode/blob/582c974ee362683f5dd5c7f9741cae207581c6b5/packages/web/src/content/docs/skills.mdx#L34-L96).
 
 ## Disclosed references
 
@@ -59,6 +81,37 @@ A skill's folder works wherever it is installed. It never assumes a sibling fold
 
 The repository is LF everywhere, with no UTF-8 BOM: either breaks frontmatter and shebang detection on some Linux tools. `.gitattributes` makes every text checkout LF, Windows included; the check fails on a CRLF or a BOM in any collection text file.
 
+## Copied skills
+
+A skill copied from a source keeps its provenance in plain files (ADR 0002, [#17](https://github.com/Hissal/skill-collection/issues/17#issuecomment-6108951556), [#51](https://github.com/Hissal/skill-collection/issues/51#issuecomment-6477057987)). An idea taken without copying text needs no record, and no skill carries a `SPEC.md` or `SOURCES.md`.
+
+- **Lock**: `vendor.lock.json` at the root lists every copied skill:
+
+  ```json
+  { "skills": [
+    { "skill": "skills/core/grilling",
+      "source": "mattpocock/skills",
+      "path": "skills/grilling",
+      "sha": "<full 40-character commit SHA>",
+      "license": "MIT",
+      "changes": "one line: what this copy changes, or none" } ] }
+  ```
+
+  `skill` is the copy's folder in this tree; `source` the GitHub `owner/repo`; `path` the skill folder in the source; `sha` the pinned commit; `license` the source's licence identifier; `changes` the one-line reason for local changes. Every field is required and no other field is allowed. One entry per skill folder.
+- **Baseline**: the source folder at the pinned commit, every file, at `vendor/<owner>/<repo>/<skill>/` (`<skill>` is the copy's folder name). The vendor area sits outside every skill root and plugin directory, so no harness loads the baseline's `SKILL.md` and no plugin cache copies it. Everything under `vendor/` belongs to one entry's baseline. Baselines are committed LF and BOM-free like every file (see [Line endings](#line-endings)); the drift script normalises CRLF and BOM itself when it compares with a source.
+- **Licence area**: each source's licence in full at `licenses/<owner>/<repo>.txt`.
+- **`NOTICE.md`**: each copied skill's folder holds one, generated from the lock and the licence area: the source repository, path, pinned commit, licence, local changes and the full licence text. It travels with plugin and folder installs. Never edit it; after changing the lock or a licence file, regenerate:
+
+  ```
+  node scripts/vendor/notice.js
+  ```
+
+  `NOTICE.md` is not a reference: it needs no link from `SKILL.md`.
+
+Scripts read the lock through `scripts/vendor/lock.js`, never by parsing it themselves.
+
+**Drift**: `node scripts/vendor/drift.js` classifies every lock entry against its baseline and its source's default branch, one `<skill>: <class>` line each; `--merge <skill>` takes a source update by three-way merge. Run it with `--help` first. Its fixture triples are in `scripts/vendor/test/cases.js`, run by `node scripts/vendor/test/run.js`.
+
 ## The collection check
 
 ```
@@ -79,11 +132,18 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `utf8-bom` | fail | a text file starts with a UTF-8 BOM |
 | `crlf-line-ending` | fail | a text file has a CRLF line ending |
 | `description-colon` | fail | an unquoted `description` contains `: ` |
+| `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
 | `missing-file` | fail | a Markdown file in a skill links a path inside the skill folder that is not in the collection |
 | `skill-body-length` | warn | a `SKILL.md` body over 500 lines |
 | `reference-contents` | warn | a reference over 100 lines with no contents list |
 | `reference-unlinked` | warn | a reference not linked straight from `SKILL.md` (`NOTICE.md` excepted) |
 | `guard-cases` | fail | a [command guard case](../hooks/command-guard/test/run.js) fails, or the harness exits non-zero; a passing harness prints only its `guard:` summary line |
+| `vendor-lock` | fail | `vendor.lock.json` is not valid against [Copied skills](#copied-skills), or an entry names no skill folder; the other `vendor-*` rules wait until the lock is valid |
+| `vendor-baseline` | fail | a lock entry has no baseline `SKILL.md`, or a file under `vendor/` is in no entry's baseline |
+| `vendor-licence` | fail | a lock entry's source has no licence file |
+| `copied-file-safety` | fail | a text file in a lock-listed copied skill contains hidden Unicode controls or a Windows, macOS or Linux personal home path; reports the line and, for Unicode, the code point |
+| `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` sits in a skill with no lock entry |
+| `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
 
 Test the check with its fixture runner:
 
@@ -91,7 +151,24 @@ Test the check with its fixture runner:
 node scripts/check/test/run.js
 ```
 
+and the gate writer with its own (it shares gate parsing with the `harness-gates` rule):
+
+```
+node scripts/gates/test/run.js
+```
+
 Every change to the check keeps both green: the runner, and the check on the real tree.
+
+## agnix (on trial)
+
+[agnix](https://github.com/agent-sh/agnix) lints harness format mechanics beside the collection's own rules ([#93](https://github.com/Hissal/skill-collection/issues/93)). Install it once with `npm ci`, which installs the version pinned in `package.json`; the check runs it as its `agnix` rule.
+
+- **Scope and rules off**: [`.agnix.toml`](../.agnix.toml) scopes it to Claude Code and Codex. It turns off `CX-SK-001`, `XP-SK-001`, and for good the wording-opinion rules: every `PE-*`, `AGM-002` and `AGM-004`. `CC-MEM-005` to `009` and `CDX-AG-004` are off too: the pinned version has retired them, so they are not listed.
+- **Autofix**: never run. The check passes no fix flag, and its fixture runner fails any case where the check changed a file.
+- **Output**: agnix errors and warnings print as `WARN <file>:<line> [agnix] <agnix rule> ...`; its info-level advice is not printed. A missing agnix, a version other than the pin, or a failed run is one warning on `package.json`. Nothing agnix reports fails the run.
+- **Trial**: decided in [#77, owner answer 10](https://github.com/Hissal/skill-collection/issues/77#issuecomment-6509966712). The owner judges agnix after its first run over the first real batch of skills, then promotes it to failing (the rule's level becomes `fail`) or drops it (the rule, `.agnix.toml` and the pin go). The collection's own rules stay either way.
+- **Decision**: pending. Record the owner's promote-or-drop decision here, with its date and issue link.
+- **Bumping the pin**: change `package.json`, run `npm install`, and re-check `.agnix.toml` against agnix's changelog, since releases retire and rename rules.
 
 ## Adding a rule
 
@@ -113,10 +190,13 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 ```
 
 - `files` is written untracked into a scratch git repository; `committed` (same shape) is committed first.
+- `before` (optional) lists repository scripts run as `node <script> <fixture>` before the check, such as the `NOTICE.md` generator; `clean: true` also requires them to leave every committed file unchanged.
+- `history` is a list of earlier commits, `{ files, tag? }`, each a whole tree, optionally tagged. `committed` then replaces the last tree. Use it for rules that read git history.
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
 - `output` (optional) lists regexes the check's other stdout lines must match one to one, in order, for cases about what the check prints besides findings.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
+- `skill()` also writes matching harness gates: the OpenCode gate appended to `skillMd()`'s `metadata` (the `gate` option replaces it; `null` leaves it out) and `agents/openai.yaml` (the `openai` option replaces it; `null` leaves it out).
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
 
 ## Idle-cost tripwires
@@ -199,6 +279,40 @@ the version inspected in [loading-mechanics research](../research/loading-mechan
 Bumping it requires re-verifying that research. CI installs the CLI but does not
 run the hand-run trigger evals or authenticate a model session.
 
+### Security scan (#94)
+
+The workflow's `security-scan` job runs the deterministic part of Sentry's
+[`skill-scanner`](https://github.com/getsentry/skills/tree/d12f250460ffd961f549dbebf7eeb0cf4afd4c2e/skills/skill-scanner)
+(its `scan_skill.py`) on the `skills/` and `hooks/` files a push or pull request
+changes. Any finding fails the job with one `FAIL <file>[:line] [skill-scanner]
+<severity> <type>: <description>` line. Own, copied and contributed skills are
+scanned alike; there is no allowlist. The model-judged half of `skill-scanner`
+belongs to code review and skill intake.
+
+Run it locally on demand (needs [uv](https://docs.astral.sh/uv/)); the collection
+check does not run it:
+
+```sh
+uv run scripts/security-scan/scan.py --base origin/main
+```
+
+`--base <rev>` scans the files changed in `<rev>...HEAD`; paths instead of
+`--base` scan the named files. Exit 0 is clean, 1 is findings, 2 is a usage or
+setup error. Run the scan's fixtures with `node scripts/security-scan/test/run.js`.
+
+- **Pin**: [`scan.py`](../scripts/security-scan/scan.py) holds the getsentry/skills
+  commit and the sha256 of `scan_skill.py`; it downloads that file once into
+  `~/.cache/skill-collection/skill-scanner/` (`SKILL_SCANNER_CACHE` overrides)
+  and stops on a hash mismatch. Bump both together. The workflow pins uv.
+- **Coverage**: a changed file inside a skill folder gets the scanner's whole-skill
+  scan, reported only for the changed files. Changed files the scanner's walk
+  skips (hook files, skill files outside `SKILL.md`, `references/*.md` and
+  `scripts/*.{py,sh,js,ts}`) get its per-file checks: prompt injection,
+  obfuscation, secrets, and dangerous code for code files. Untrusted URLs and the
+  description overlap figure are scanner output, not findings.
+CI runs `npm ci` before both commands, so the check runs the pinned agnix and
+the real-agnix fixture cases run rather than skip.
+
 ## Guide format
 
 Guides recommend workflows; they never run them. A recommendation returns the
@@ -278,6 +392,110 @@ starts another workflow. See [core extension points](agents/core-extension-point
 |---|---|---|
 | `guide-needs-target` | fail | a guide needs-table target is not its own file, a same-pack skill, or explicitly project-selected vendor guidance |
 | `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
+
+## Hard requirements at runtime (#98)
+
+Before doing any work, load every skill declared in `requires` and the
+reference files needed from those skills. Resolve them through the installed
+skill listing across installation scopes. Begin work only when all required
+skills and needed reference files have loaded. If a skill or needed reference
+cannot load, stop without partial work and print the stop message below.
+A missing reference is a partial install and takes the same stop path.
+
+Runtime checks ask only whether the material loads. Identity and content
+verification belong to the installer. Loading a requirement grants no authority
+to invoke a user-invoked workflow; starting that workflow still requires the
+human's invocation.
+
+### Shared stop template
+
+Copy this block into each requiring skill's body before its work steps.
+Replace `<bare-callable-name>` and `<required-id>` for each declared requirement;
+use the callable name without a plugin prefix. Repeat the requirement line and
+message for each requirement. At runtime, fill `<unloadable-material>` with the
+skill or needed reference that failed to load.
+
+```md
+Before doing any work, load <bare-callable-name> (<required-id>) and its needed
+reference files through the installed skill listing. Begin work only after all
+requirements and needed references have loaded. If any cannot load, stop
+without partial work and print:
+
+Stopped: required skill <bare-callable-name> (<required-id>) could not be loaded
+completely. Unavailable: <unloadable-material>. Ordinary installers such as
+`npx skills` do not install requirements; the Unity sync resolves them from
+this metadata. Install or repair the requirement, then retry.
+
+Check only whether the required material loads; the installer verifies identity
+and content. Loading this requirement grants no permission to invoke a
+user-invoked workflow; wait for the human to invoke that workflow.
+```
+
+The `requirement-body-id` rule fails when a skill's `SKILL.md` body omits any
+ID in its non-empty `requires`. Frontmatter alone does not satisfy it. This is
+a presence check, never a wording check; behavioural evals validate the runtime
+stop behaviour.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `requirement-body-id` | fail | a required ID is absent from the requiring skill's body |
+## Generated dependency catalog (#96)
+
+After changing skill identity, callable name, folder or hard requirements, run:
+
+```
+node scripts/catalog/generate.js
+node scripts/check/check.js
+```
+
+The writer replaces only the section between `BEGIN GENERATED DEPENDENCIES`
+and `END GENERATED DEPENDENCIES` HTML comments in `docs/catalog.md`. On first
+use it appends the marked section. Keep pack membership and optional guide
+routes outside those markers. Rows and requirements sort by stable ID and use
+LF; the table includes skills without requirements. Targets show the current
+callable name and source path resolved by ID. Invalid metadata, duplicate IDs
+and unresolved requirements stop generation before any write.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `dependency-catalog` | fail | the catalog's marked dependency section differs from fresh metadata output; names the regenerate command |
+
+The rule checks trees containing `docs/catalog.md`; fixture or subset trees
+without that artifact skip it. Malformed or duplicate markers fail. Text outside
+the markers remains byte-for-byte unchanged. The fixture runner also exercises
+the writer CLI, idempotence, renamed identities and the failure message.
+## Skill ID stability (#97)
+
+A skill keeps its `agent-skills-sync.id` across renames and moves. The check
+compares the working tree with the last release tag: the nearest `v<version>`
+tag (release-please's form) reachable from `HEAD`. Before the first release
+there is no such tag and the rule is silent; a checkout without tags is silent
+too, so CI fetches them.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
+
+Deleting or re-identifying a skill on purpose is legitimate: read the warning,
+confirm the change is intended, and leave it.
+
+## Copied file safety
+
+Remove hidden controls from copied skill text, including scripts and generated
+notices. The check rejects U+00AD, U+034F, U+061C, U+180E, U+200B–U+200F,
+U+202A–U+202E, U+2060–U+206F, U+FEFF and U+FFF9–U+FFFB. Ordinary non-ASCII
+letters, emoji and variation selectors pass.
+
+Replace personal absolute paths under Windows drive-letter `Users` or
+`Documents and Settings`, macOS `/Users/<user>`, Linux `/home/<user>` or
+`/root` with portable paths or environment variables. Both Windows slash
+forms are checked, including doubled backslashes in string literals.
+
+This rule uses the lock module's copied-folder lookup. It scans non-ignored
+text files in those folders, including nested files; baselines and files
+outside copied skill folders are outside its scope. Binary files use the
+collection's existing NUL-byte exclusion. An invalid lock is reported by
+`vendor-lock` before copied-file safety runs.
 
 ### Automatic guide (#101)
 

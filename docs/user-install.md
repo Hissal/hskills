@@ -165,6 +165,12 @@ fallback remain inconclusive: discovery failed during plugin activation, and
 model probes returned HTTP 402. For OpenCode verification or diagnosis, read
 [the run evidence and next hand run](../research/opencode-install-125.md).
 
+## Cross-scope build evidence
+
+When verifying duplicate selection, mixed-scope requirements or Windows links,
+use the [#127 evidence and reproduction fixture](evidence/issue-127-cross-scope.md).
+Installer/doctor success alone establishes no effective harness selection.
+
 ## Command guard and recovery
 
 The same entry point delegates to the guard installer with the selected

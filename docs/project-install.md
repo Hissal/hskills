@@ -144,3 +144,7 @@ expect it to stop before review work, naming `reviewing` and
 [behavioural eval procedure](behavioural-evals.md) to record the run; spec 3 owns
 that case. This is the install arrangement, not a claim that the case has run
 or that those skills already ship at this revision.
+
+When verifying effective selection or mixed-scope reference reads, consult the
+[#127 evidence and remaining matrix](evidence/issue-127-cross-scope.md) before
+claiming runtime support.

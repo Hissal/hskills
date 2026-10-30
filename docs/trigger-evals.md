@@ -67,10 +67,13 @@ Primary sources inspected 2026-10-30; source reading, not a live runtime proof:
   input, not prose mentioning a name. Errors and denied calls are inconclusive.
 - [Codex non-interactive docs](https://developers.openai.com/codex/noninteractive/)
   confirm `exec --json --model`, JSONL command events and `turn.completed`.
-  No documented dedicated skill event or reliable mapping of shell commands to
-  skill loads was confirmed. **Codex currently always reports inconclusive.**
-  A shell command mentioning SKILL.md or a final answer claiming skill use is
-  insufficient evidence. Thus this implementation cannot yet prove a Sol pass.
+  A live Codex CLI 0.166.0 fixture run on 2026-10-30 emitted an
+  `item.completed` command execution with `status: completed`, exit code zero,
+  a simple `cat` of the installed `skills/<name>/SKILL.md`, and the frontmatter
+  body in `aggregated_output`. The evaluator counts this narrow read pattern
+  with matching `name:` as fired. Mentions in prose or filename searches do not
+  count; other commands naming that entry point are inconclusive. This is
+  observed CLI behavior, not a dedicated skill event guaranteed by the docs.
 - [OpenCode CLI](https://opencode.ai/docs/cli/#run) confirms `run --format json
   --model` and provider/model selectors. [Agent Skills](https://opencode.ai/docs/skills/)
   confirms native `skill` loading. The pinned
@@ -82,8 +85,6 @@ Primary sources inspected 2026-10-30; source reading, not a live runtime proof:
   `skill` calls by `part.state.metadata.metadata.name`. This source snapshot does not
   prove that every installed OpenCode version emits the same schema.
 
-No authenticated harness or frontier-model evaluation was executed for #108.
-The six-query two-frontier test uses synthetic streamed Claude events; it proves
-script behavior, not model trigger quality or Sol observability. The live-run
-acceptance criterion and recording that run on the issue remain unvalidated;
-the implementer brief prohibits issue edits. Keep this limitation with any report.
+Offline tests prove stream classification, not model trigger quality. Record
+live eval dates, CLI versions, installation scope, model selectors, per-query
+outcomes and spend separately; a single pass does not establish reliability.

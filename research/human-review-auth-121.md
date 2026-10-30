@@ -1,8 +1,8 @@
 # Codex human review with existing authentication (#121)
 
 Read/executed 2026-10-30, Linux, Codex 0.166.0, integration base `3a50d50`.
-Updated 2026-10-31: normal-profile registration executed and paired authentication /
-plugin provenance verified; human trust review and behavioral acceptance remain pending.
+Updated 2026-10-31: normal-profile registration, human trust review and Linux
+Codex behavioral acceptance verified. See [post-review live evidence](codex-acceptance-121.md).
 Authenticated attachment to the original isolated cache remains unresolved. This corrects the [live acceptance handoff](live-plugins-121.md),
 under [#78](https://github.com/Hissal/skill-collection/issues/78).
 
@@ -91,7 +91,8 @@ The tested human launch command uses the normal profile and existing auth:
 
 Then open `/hooks` and review **only the new plugin definition** at the exact
 normal cache path above. Preserve the legacy user hook and its trust. Human trust
-approval and Codex behavioral acceptance remain pending. The earlier negative
+approval and Linux Codex behavioral acceptance subsequently passed; see the
+[post-review run](codex-acceptance-121.md). The earlier negative
 overlay and unauthenticated temporary-home results above remain historical
 evidence; registration does not establish authenticated attachment to that home.
 

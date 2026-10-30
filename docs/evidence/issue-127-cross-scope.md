@@ -131,6 +131,14 @@ again at `/tmp/skill-scope-127-bBHM62`. This installer revision also writes and
 probes guard snapshots inside the temporary home; those adapter probes are not
 live harness evidence.
 
+Merged the next integration tip, `057aabbdea818bd18e49d5bbdd2837560a4ece13`,
+as `f48c4c7` (including partial plugin packaging). All three fixture scenarios
+again exited 0 at `/tmp/skill-scope-127-Vbhkko`. The collection check on this
+tip passed: 611 guard cases, 31 installer cases, zero failures. It reported one
+inherited agnix warning, `CC-MP-005`, for unknown marketplace field
+`plugins[0].policy` in `.claude-plugin/marketplace.json:11` (ignored by Claude).
+The final post-merge fixture suite passed all 216 cases with zero failures.
+
 ## Live verification completion criteria
 
 For each live run use a fresh scenario and an authenticated existing runtime whose

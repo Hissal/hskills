@@ -118,3 +118,61 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 - `output` (optional) lists regexes the check's other stdout lines must match one to one, in order, for cases about what the check prints besides findings.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
+
+## Skill identity and hard requirements (#95)
+
+Author identity once, in string-valued `metadata` in `SKILL.md`:
+
+```yaml
+metadata:
+  agent-skills-sync.schema: "1"
+  agent-skills-sync.id: "hissal.skill-collection/example"
+  agent-skills-sync.requires: '["hissal.skill-collection/knowledge"]'
+```
+
+Schema is the string `"1"`, not the number `1`. IDs use the publisher prefix
+`hissal.skill-collection/` and a lowercase kebab-case slug. Each ID is unique
+and survives callable renames, folder moves, address and installation scope
+changes. Other publishers can adopt the same metadata keys with their own
+prefix; this collection currently rejects external IDs and requirements until
+an external locator/version contract exists.
+
+`requires` is a JSON array of ID strings inside a YAML string. Omit it, use an
+empty string, or use `'[]'` for no requirements. Declare only knowledge the skill
+cannot work without. Optional pack lookups, suggestions, related reading and
+process calls are not hard requirements and grant no invocation authority.
+
+Requirements resolve by ID against the whole collection tree at the same
+revision, across core and pack folders, rather than relative to the caller's
+installation scope. Every required ID must resolve; cycles, including self
+requirements, fail. A reference in a required skill is named with a relative
+Markdown link into that skill's folder, using the existing file-link convention;
+the target must exist in the resolved requirement's folder. This applies to links
+from both the calling `SKILL.md` and its Markdown references. Code spans and
+fenced examples do not declare file links.
+
+Metadata uses an indented YAML string mapping. Plain, single-quoted,
+double-quoted and literal/folded block strings are supported; structured YAML
+values, aliases and duplicate keys are rejected. Use quoted scalars for values
+such as numbers or booleans that YAML would otherwise interpret as non-strings.
+
+Additional fail rules:
+
+| Rule | Level | Finding |
+|---|---|---|
+| `skill-metadata` | fail | missing or invalid schema/ID, malformed requirements or duplicate ID |
+| `skill-requirements` | fail | a requirement outside the resolved set or a requirement cycle |
+| `requirement-reference` | fail | a Markdown link names a missing file in a required skill's folder |
+
+## Continuous integration
+
+[Collection check](../.github/workflows/collection-check.yml) runs the fixture runner
+and the same collection check command on every push and pull request, on Windows
+and Linux. Either command failing fails its job; both platforms run even if one
+fails. Checkout includes history and tags for checks against the last release.
+There is no pre-commit hook.
+
+The workflow's `CLAUDE_CODE_VERSION` is the single Claude Code CLI pin, matching
+the version inspected in [loading-mechanics research](../research/loading-mechanics.md).
+Bumping it requires re-verifying that research. CI installs the CLI but does not
+run the hand-run trigger evals or authenticate a model session.

@@ -83,6 +83,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `skill-body-length` | warn | a `SKILL.md` body over 500 lines |
 | `reference-contents` | warn | a reference over 100 lines with no contents list |
 | `reference-unlinked` | warn | a reference not linked straight from `SKILL.md` (`NOTICE.md` excepted) |
+| `guard-cases` | fail | a [command guard case](../hooks/command-guard/test/run.js) fails, or the harness exits non-zero; a passing harness prints only its `guard:` summary line |
 
 Test the check with its fixture runner:
 
@@ -114,6 +115,7 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 - `files` is written untracked into a scratch git repository; `committed` (same shape) is committed first.
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
+- `output` (optional) lists regexes the check's other stdout lines must match one to one, in order, for cases about what the check prints besides findings.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
 

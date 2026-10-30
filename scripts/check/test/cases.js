@@ -8,6 +8,8 @@
 //              the exit code must be 1 when any 'fail' is expected, else 0.
 //              Findings not listed fail the case, so a passing neighbour
 //              proves the tree is clean.
+//   output:    regexes the check's other stdout lines (not findings) must
+//              match one to one, in order (optional)
 // Build skills with skill() so every fixture starts from a skill that passes
 // every rule; a ticket that adds a required field adds it there once.
 
@@ -32,6 +34,9 @@ function skill(dir, o) {
 }
 
 const tree = (...parts) => Object.assign({}, ...parts);
+
+// A stand-in guard harness that prints `out` and exits with `code`.
+const guard = (out, code) => ({ 'hooks/command-guard/test/run.js': 'console.log(' + JSON.stringify(out.join('\n')) + ');\nprocess.exit(' + code + ');\n' });
 
 module.exports = [
   // ---- the check itself ------------------------------------------------------
@@ -91,6 +96,14 @@ module.exports = [
   { name: 'generic advice is not a guide target', files: skill('skills/packs/web/web-guide', { body: '| Need | Target |\n|---|---|\n| Tests | Follow good practices |\n' }), expect: ['fail guide-needs-target skills/packs/web/web-guide/SKILL.md'] },
   { name: 'a directory is not a guide reference target', files: skill('skills/packs/web/web-guide', { body: '| Need | Target |\n|---|---|\n| Tests | [Tests](refs/) |\n\nRead [tests](refs/TESTS.md).\n', files: { 'refs/TESTS.md': '# Tests\n' } }), expect: ['fail guide-needs-target skills/packs/web/web-guide/SKILL.md'] },
   { name: 'a fenced needs table is only an example', files: skill('skills/packs/web/web-guide', { body: '```md\n| Need | Target |\n|---|---|\n| Tests | missing |\n```\n' }), expect: [] },
+
+  // ---- the command guard harness (#91) ---------------------------------------
+  // A fixture stands in for hooks/command-guard/test/run.js: a script that
+  // prints the real harness's FAIL lines and summary and exits the same way.
+  { name: 'a failing guard case fails the check', files: guard(['FAIL [bash/linux] expected allow, got reflection: "ls"', '     detail', 'FAIL fs: a second case', 'FAILED: 1 passed, 2 failed'], 1), expect: ['fail guard-cases hooks/command-guard/test/run.js', 'fail guard-cases hooks/command-guard/test/run.js'] },
+  { name: 'a guard harness that exits non-zero without a FAIL line fails the check', files: guard(['TypeError: boom'], 1), expect: ['fail guard-cases hooks/command-guard/test/run.js'] },
+  { name: 'a passing guard harness adds only a summary line', files: guard(['note: could not create a directory link; link cases skipped (EPERM)', 'ok: 2 passed, 0 failed'], 0), expect: [], output: [/^guard: ok: 2 passed, 0 failed$/, /^ok: /] },
+  { name: 'a tree without the guard runs no harness', files: { 'README.md': '# x\n' }, expect: [], output: [/^ok: /] },
 ];
 
 // ---- idle-cost tripwires (#92) ----------------------------------------------

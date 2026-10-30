@@ -49,7 +49,11 @@ try {
     const got = res.stdout.split('\n').map((l) => l.match(FINDING)).filter(Boolean).map((m) => key(m[1], m[3], m[2])).sort();
     const want = (c.expect || []).slice().sort();
     const exit = want.some((w) => w.startsWith('fail ')) ? 1 : 0;
-    const outputOk = (c.output || []).every((line) => res.stdout.includes(line));
+    const other = res.stdout.split('\n').filter((l) => l && !FINDING.test(l) && !l.startsWith('TRIPWIRE '));
+    const outputOk = (c.output || []).every((expected) => typeof expected === 'string'
+      ? res.stdout.includes(expected)
+      : other.some((line) => expected.test(line))) &&
+      (!(c.output || []).some((expected) => expected instanceof RegExp) || other.length === c.output.length);
     const ok = outputOk && res.status === exit && JSON.stringify(got) === JSON.stringify(want);
     if (ok) { passed++; return; }
     failed++;

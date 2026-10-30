@@ -5,7 +5,7 @@ const crypto = require('crypto');
 
 // Preparation is independent of registration: never remove a functioning hook
 // merely because its replacement's files exist.
-function prepare(home, source = path.resolve(__dirname, '../../hooks/command-guard')) {
+function prepare(home, source = path.resolve(__dirname, '../../hooks/command-guard'), writes = []) {
   const files = [];
   for (const dir of ['.claude-plugin', '.codex-plugin', 'hooks', 'engine', 'rules', 'adapters']) {
     for (const name of fs.readdirSync(path.join(source, dir)).sort()) {
@@ -18,7 +18,20 @@ function prepare(home, source = path.resolve(__dirname, '../../hooks/command-gua
   const dest = path.join(home, '.skill-collection/plugin-cache', version + '-' + hash.digest('hex'));
   if (fs.existsSync(dest)) {
     if (!fs.lstatSync(dest).isDirectory() || fs.lstatSync(dest).isSymbolicLink()) throw new Error('CONFLICT plugin snapshot entry: ' + dest);
+    const expected = new Set(files.map(([name]) => path.join(dest, name)));
+    const manifest = path.join(dest, '.claude-plugin/marketplace.json');
+    if (writes.some(w => w.path === manifest)) expected.add(manifest);
+    function verify(dir) {
+      for (const name of fs.readdirSync(dir)) {
+        const p = path.join(dir, name);
+        const info = fs.lstatSync(p);
+        if (info.isDirectory() && !info.isSymbolicLink()) verify(p);
+        else if (!expected.has(p) || !writes.some(w => w.path === p)) throw new Error('CONFLICT unrecorded plugin snapshot entry: ' + p);
+      }
+    }
+    verify(dest);
     for (const [name, content] of files) {
+      if (!writes.some(w => w.path === path.join(dest, name))) throw new Error('CONFLICT unrecorded plugin snapshot: ' + dest);
       if (!fs.lstatSync(path.join(dest, name)).isFile() || fs.lstatSync(path.join(dest, name)).isSymbolicLink() || !fs.readFileSync(path.join(dest, name)).equals(content)) throw new Error('CONFLICT modified plugin snapshot: ' + dest);
     }
   } else {
@@ -95,6 +108,17 @@ function registration(home, source, action = 'install') {
     const effective = entry && (entry.readFromFolder || entry.source?.path || entry.installPath);
     if (!entry || !entry.enabled || !effective || fs.realpathSync(effective) !== fs.realpathSync(snapshot)) throw new Error('missing, disabled or overridden plugin: ' + host);
   }
+  function ready(host) {
+    if (host === 'claude') return true; // inspect verifies enabled effective registration.
+    const r = spawnSync(process.execPath, [path.join(__dirname, 'codex-hook-status.js')], { env, cwd: home, encoding: 'utf8', timeout: 15000 });
+    try {
+      const groups = JSON.parse(r.stdout).result.data;
+      return groups.length > 0 && groups.every(group => {
+        const hooks = group.hooks.filter(h => h.source === 'plugin' && h.pluginId === 'command-guard@skill-collection-guard');
+        return !(group.errors || []).length && hooks.length > 0 && hooks.every(h => h.enabled && h.trustStatus === 'trusted');
+      });
+    } catch { return false; }
+  }
   function probeSnapshot(snapshot) {
   const probeState = fs.mkdtempSync(path.join(require('os').tmpdir(), 'guard-probe-'));
   try {
@@ -112,12 +136,18 @@ function registration(home, source, action = 'install') {
       if (!fs.existsSync(w.path) || fs.lstatSync(w.path).isSymbolicLink() || fs.readFileSync(w.path, 'base64') !== w.after) throw new Error('modified plugin snapshot: ' + w.path);
     }
     if (!data.hosts.length) throw new Error('missing plugin registration');
+    let pending = false;
     for (const h of data.hosts) { inspect(h.host, h.snapshot); probeSnapshot(h.snapshot); console.log('REGISTERED ' + h.host + ': ' + h.snapshot); }
-    console.log('PENDING host loading validation; direct adapter probes do not establish host invocation.');
-    if (data.hosts.some(h => h.host === 'codex')) console.log('PENDING Codex human trust: review the current hook in /hooks.');
-    return false;
+    for (const h of data.hosts) {
+      if (!ready(h.host)) { console.log('PENDING Codex human trust: review the current hook in /hooks.'); pending = true; }
+    }
+    return !pending;
   }
-  const snapshot = prepare(home, source);
+  // Validate the complete journal before preparation, backups or host commands.
+  for (const w of data.writes) {
+    if (currentBytes(w.path) !== w.after) throw new Error('CONFLICT changed registration preserved: ' + w.path);
+  }
+  const snapshot = prepare(home, source, data.writes);
   for (const dir of ['.claude-plugin', '.codex-plugin', 'hooks', 'engine', 'rules', 'adapters']) {
     for (const name of fs.readdirSync(path.join(snapshot, dir))) {
       const p = path.join(snapshot, dir, name);
@@ -170,7 +200,7 @@ function registration(home, source, action = 'install') {
     save();
     // Remove only handlers recorded by the old installer, and only for this host.
     const legacyFile = path.join(home, '.skill-collection/guard.json');
-    if (fs.existsSync(legacyFile)) {
+    if (fs.existsSync(legacyFile) && ready(host)) {
       const legacy = JSON.parse(fs.readFileSync(legacyFile));
       const settings = path.join(home, host === 'claude' ? '.claude/settings.json' : '.codex/hooks.json');
       if (fs.existsSync(settings)) {

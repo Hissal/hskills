@@ -70,7 +70,6 @@ A project may add rules in `.agents/config/command-guard.json`, shaped like `rul
 ## Plugin delivery
 
 The hooks-only guard is listed in this repository's marketplace. For snapshot
-preparation, use [the install command](../../docs/user-install.md#prepare-the-guard-plugin).
+preparation, use [the install command](../../docs/user-install.md#register-the-guard-plugin).
 When implementing registration, migration, or live acceptance, read
 [guard plugin evidence and completion criteria](../../research/guard-plugin-install.md).
-Normal installs register against the prepared snapshot, then remove only recorded legacy handlers for each successfully registered host. Registration and direct probes leave live host invocation pending validation.

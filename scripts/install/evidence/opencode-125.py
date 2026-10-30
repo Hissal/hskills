@@ -6,6 +6,7 @@ XDG and provider configuration remain inherited. OPENCODE_TEST_HOME isolates onl
 OpenCode's home-scoped skill/steering lookup; --standalone gives each probe a fresh
 server that reads that override. No login, settings update or auto approval.
 """
+import argparse
 import json
 import os
 from pathlib import Path
@@ -14,7 +15,11 @@ import tempfile
 
 repo = Path(__file__).resolve().parents[3]
 cli = os.environ.get('OPENCODE_125_CLI', '/home/agent/.opencode/bin/opencode')
-model = 'opencode/gpt-6.1-sol#medium'
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--model', required=True, help='Exact provider/model[#variant]; no fallback')
+model = parser.parse_args().model
+if '/' not in model:
+    parser.error('--model must include provider/model')
 root = Path(tempfile.mkdtemp(prefix='opencode-live-125-'))
 project = root / 'project'
 project.mkdir()
@@ -49,10 +54,12 @@ def run(name, args, overlay=True):
 run('version', ['--version'], False)
 run('models', ['models'], False)
 # Safe discovery must succeed before selecting the exact requested model.
-if 'opencode/gpt-6.1-sol' not in (root / 'models.stdout').read_text().splitlines():
-    raise SystemExit('Requested Sol absent from normal model listing; no substitute selected.')
+if model.split('#', 1)[0] not in (root / 'models.stdout').read_text().splitlines():
+    raise SystemExit('Requested model absent from normal model listing; no substitute selected.')
 run('model-catalog', ['api', 'GET', '/api/model'], False)
-run('normal-control', ['run', '--format', 'json', '--model', model, 'Reply with hello.'], False)
+(root / 'selection.json').write_text(json.dumps({'model': model, 'provider': model.split('/')[0]}))
+if run('normal-control', ['run', '--format', 'json', '--model', model, 'Reply with hello.'], False) != 0:
+    raise SystemExit('Neutral request failed; inspect evidence before any account diagnosis.')
 write_skill(True)
 subprocess.run(['node', str(repo / 'scripts/install/install.js'), 'install',
                 '--source', str(source), '--home', str(home)], check=True)
@@ -82,3 +89,12 @@ run('steering-present', [*probe, 'Reply with hello.'])
 steering.unlink()
 run('steering-absent', [*probe, 'Reply with hello.'])
 print('Inspect listing and completed skill tool events; errors are inconclusive, never passes.')
+# A successful process with no registered fixture is a failed control, not a gate pass.
+try:
+    listing = json.loads((root / 'listing-model-control.stdout').read_text())
+    entries = listing.get('data', [])
+    discovered = any(entry.get('name') == 'fixture' for entry in entries)
+except (ValueError, AttributeError, TypeError):
+    discovered = False
+if not discovered:
+    raise SystemExit('Discovery control failed; gate and duplicate verdicts are inconclusive.')

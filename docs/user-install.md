@@ -163,11 +163,16 @@ Windows outcome, so #116 is not fully complete.
 
 ## OpenCode verification
 
-OpenCode v2.2.2 normal model discovery lists Sol. The authenticated normal
-runtime returns HTTP 402 (`Insufficient account funds`). Both fixture links and
-doctor pass; the runtime skill API returns zero registered skills. Gate behavior,
-a meaningful duplicate count and Claude steering fallback remain unverified.
-For the saved evidence, account recovery step and temporary-overlay fixture, read
+OpenCode v2.2.2 on Linux successfully answered the neutral request and all
+fixture requests using `opencode-go/claude-haiku-5-5` through existing Go access.
+The historical HTTP 402 applied to paid Console `opencode/gpt-6.1-sol#medium`,
+not Go. No Console top-up is indicated for this test.
+
+Both fixture links and doctor pass, but gated and ungated skill API listings
+are empty and the explicit body-load control fails. Gate enforcement and a
+meaningful duplicate count remain inconclusive. Neither steering reply contains
+the Claude-file marker, so fallback is not verified. For the exact selection,
+transcripts, discovery diagnostics and explicit-model reproduction, read
 [OpenCode verification](../research/opencode-install-125.md).
 
 ## Cross-scope build evidence

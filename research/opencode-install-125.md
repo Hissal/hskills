@@ -2,8 +2,9 @@
 
 Rechecked 2026-10-30 on Linux, OpenCode **v2.2.2**, starting from
 `a37ed41` (the integration branch included the authenticated #120 evidence).
-Status: fixture installation passes; live gate and steering verdicts remain
-inconclusive. These are runtime/account blockers, not another-spec dependencies.
+Status: Go access and fixture installation pass; live gate and steering
+verdicts remain inconclusive because discovery/body-load controls fail.
+The paid Console observation below is historical, not a Go account diagnosis.
 
 ## Existing authenticated runtime
 
@@ -28,7 +29,7 @@ in [#120 evidence](live-hooks-120.md) do not establish OpenCode Console funds.
 
 ## Isolated fixture probes
 
-Reproduce with `python3 scripts/install/evidence/opencode-125.py` (manual,
+Reproduce with `python3 scripts/install/evidence/opencode-125.py --model <provider/model>` (manual,
 authenticated and potentially token-spending). It prints the temporary evidence
 directory. HOME, XDG roots, provider/model configuration and auth stay inherited.
 `OPENCODE_TEST_HOME` redirects OpenCode's home-scoped skills and steering to a
@@ -63,22 +64,57 @@ STEERING_125_CLAUDE.` only in the scratch `.claude/CLAUDE.md`, followed by a
 fresh process after removing that file. No project steering file is created.
 Quota failures in both arms establish no fallback verdict.
 
-## Completion boundary and human action
+## Go correction and rerun (2026-10-30)
 
-Restore funds on the **active OpenCode Console account** used by the normal
-runtime, then rerun the fixture command. No Claude/Codex reauthentication or
-credential migration is indicated by these results. The exact supported Medium variant is confirmed; successful model access beyond
-the quota check remains unverified.
+The earlier funds diagnosis applied only to paid Console
+`opencode/gpt-6.1-sol#medium`. It did not test the user's Go subscription.
+[Official Go documentation](https://opencode.ai/v2/docs/console/go/) (read
+2026-10-30) lists Claude Haiku 5.5 among Go models. Installed `models` lists
+`opencode-go/claude-haiku-5-5`. These are separate provider selections;
+restoring Console funds is not a prerequisite for this Go test.
 
-The empty registered-skill response cannot establish deduplication: a successful
-ungated discovery/body-load control is required before interpreting absence as
-user-only gate enforcement. If it remains empty after account recovery, diagnose
-location plugin activation/skill registration with the saved fixture, without
-changing the install policy. No duplicate was observed. If a valid control later
-lists two entries, the owner options are: retain both roots and accept duplicate
-listing, or adopt a harness-specific exclusion/install route. Put those options
-to the owner before changing behavior, per #78.
+Reran from integration `3a50d50` on Linux, OpenCode v2.2.2, using exactly
+`opencode-go/claude-haiku-5-5`, provider `opencode-go`, without a variant.
+The neutral normal-runtime request returned exit 0 and `Hello!`.
+All 18 model requests returned exit 0: neutral, initial gated request,
+six prompts repeated twice, explicit and ungated controls, and two steering
+arms. [Exact selection](evidence/opencode-125/go/selection.json),
+[transcripts and counts](evidence/opencode-125/go/summary.json).
+No authentication, real settings or subscription changes were made.
 
-#125 remains open: live gate behavior, meaningful once-versus-twice discovery,
-and successful Claude-file fallback are not proven. Filesystem doctor success
-and embedded-source support for the gate do not replace those runtime checks.
+Both gated and ungated API listings still returned `data: []`.
+All 13 gated requests had zero completed skill events. Explicit invocation
+reported it could not find `fixture`. The ungated control did load the body:
+[its transcript](evidence/opencode-125/go/model-control.jsonl) records one
+completed skill event and `FIXTURE_125_LOADED`. Empty API listings and the
+failed gated explicit control still leave gate and duplicate verdicts
+inconclusive.
+The steering marker was absent in both successful replies; this does not
+establish successful Claude-file fallback.
+
+Discovery diagnosis: `debug paths home` with the override resolves to the
+scratch home, and standalone server trace watches that scratch path. Thus the
+override is recognized; zero entries cannot be attributed to Console funds.
+Adding real project `.agents/skills/fixture` and `.opencode/skills/fixture`
+copies, then initializing the scratch project with Git, still returned zero
+entries. A native-scope explicit request also produced no completed skill
+event. These diagnostic copies were added after the saved matrix and changed
+only scratch files. Root cause of registration remains unresolved; investigate
+configuration compatibility/plugin activation before interpreting suppression.
+No install policy was changed and no meaningful duplicate count was obtained.
+
+Reproduce with:
+
+```sh
+python3 scripts/install/evidence/opencode-125.py --model opencode-go/claude-haiku-5-5
+```
+
+The model argument is required and includes the provider; an absent model or
+failed neutral request stops the runner without selecting a replacement.
+An empty ungated discovery control makes the runner exit nonzero after saving
+the matrix, explicitly marking gate and duplicate verdicts inconclusive.
+CLI fixture tests cover required model selection, exact Go selection with failed
+neutral access, and empty discovery (each substantive change observed red first).
+#125 remains open for successful gated explicit-load/discovery controls, gate enforcement,
+once-versus-twice discovery, and Claude steering fallback. The historical paid
+Sol 402 above remains evidence about that specific request only.

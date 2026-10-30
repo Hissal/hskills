@@ -1,0 +1,158 @@
+[
+  {
+    "probe": "explicit-control",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "There are 3 vowels in \"banana\": the three *a*s. I didn't find a `fixture` skill, so I answered the question directly."
+    ]
+  },
+  {
+    "probe": "gate-q1",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "\"banana\" has 3 vowels: a, a, a."
+    ]
+  },
+  {
+    "probe": "gate-r1-q1",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "There are **3 vowels** in \"banana\": the letter *a* appears three times."
+    ]
+  },
+  {
+    "probe": "gate-r1-q2",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "Orange contains **3 vowels**: o, a, and e (the letters o-r-a-n-g-e)."
+    ]
+  },
+  {
+    "probe": "gate-r1-q3",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "\"pear\" has 2 vowels: **e** and **a**."
+    ]
+  },
+  {
+    "probe": "gate-r1-q4",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "There are **3** consonants in \"banana\": the b and the two n's. The other three letters are vowels (a, a, a)."
+    ]
+  },
+  {
+    "probe": "gate-r1-q5",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "Orange (the fruit or the color) is **orange** in French, pronounced /\u0254.\u0281\u0251\u0303\u0292/. It's a noun, and it is also the adjective for the color, which doesn't change in the masculine form: *une chemise orange* (an orange shirt).\n\nIf you mean the fruit specifically, it's *une orange*. The tree is *un oranger*."
+    ]
+  },
+  {
+    "probe": "gate-r1-q6",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "There are **4** letters in \"pear\": p, e, a, r."
+    ]
+  },
+  {
+    "probe": "gate-r2-q1",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "There are **3** vowels in \"banana\": the three a's."
+    ]
+  },
+  {
+    "probe": "gate-r2-q2",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "Orange contains **3 vowels**: o, a, and e (the letters o, a, e in \"orange\")."
+    ]
+  },
+  {
+    "probe": "gate-r2-q3",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "Vowels in \"pear\" (a, e, a \u2192 counting the letters a, e, and a): **3 vowels** (a, e, a are the vowels in p-e-a-r; the \"a\" and \"e\" are vowels, so the count is 2 plus the final \"a\"... let me be precise).\n\nBreaking it down letter by letter: **p**, **e**, **a**, **r**. The vowels are **e** and **a**.\n\n**Vowel count for \"pear\": 2**"
+    ]
+  },
+  {
+    "probe": "gate-r2-q4",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "There are **3** consonants in \"banana\": the b and the two n's."
+    ]
+  },
+  {
+    "probe": "gate-r2-q5",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "Orange (the fruit or the color) is **orange** in French. The fruit is **une orange** and the color is **orange**, which doesn't change in form."
+    ]
+  },
+  {
+    "probe": "gate-r2-q6",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "There are **4** letters in \"pear\": p, e, a, r."
+    ]
+  },
+  {
+    "probe": "listing-model-control",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": []
+  },
+  {
+    "probe": "listing",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": []
+  },
+  {
+    "probe": "model-control",
+    "errors": 0,
+    "completed_skill_events": 1,
+    "text": [
+      "The word \"banana\" has **3 vowels**: three a's.\n\nFIXTURE_125_LOADED"
+    ]
+  },
+  {
+    "probe": "normal-control",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "Hello!"
+    ]
+  },
+  {
+    "probe": "steering-absent",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "Hello!"
+    ]
+  },
+  {
+    "probe": "steering-present",
+    "errors": 0,
+    "completed_skill_events": 0,
+    "text": [
+      "Hello!"
+    ]
+  }
+]

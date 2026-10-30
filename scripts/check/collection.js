@@ -9,6 +9,8 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const vendorLock = require('../vendor/lock');
 
+const { parseMetadata, resolveSkills } = require('./metadata');
+
 const BOM = '\uFEFF';
 // Markdown files in a skill folder that are not references: the entry point,
 // and the generated licence notice (#77, owner answer 1).
@@ -85,6 +87,8 @@ function load(root) {
     return Object.assign({ dir, name: path.posix.basename(dir), skillMd, files: own }, splitFrontmatter(text(skillMd)));
   });
 
+  for (const skill of skills) skill.metadata = parseMetadata(skill.frontmatter);
+
   // The copied-skill record (#102): vendor.lock.json parsed once, if the
   // collection holds one. { exists, entries, errors }; see scripts/vendor/lock.js.
   let vendor;
@@ -94,9 +98,11 @@ function load(root) {
   };
 
   return {
+    resolved: resolveSkills(skills),
     root,
     files,
     skills,
+    needsTables: require('./guide-tables').needsTables,
     bytes,
     text,
     isText,
@@ -105,8 +111,9 @@ function load(root) {
     exists: (file) => known.has(file.replace(/\/$/, '')),
     // a skill's reference files: its Markdown files other than NOT_REFERENCES
     references: (s) => s.files.filter((f) => f.endsWith('.md') && !NOT_REFERENCES.has(f.slice(s.dir.length + 1))),
-    // a file's relative links resolved to repository-relative paths
+    // copied skills: vendor.lock.json parsed once (scripts/vendor/lock.js)
     get vendor() { return getVendor(); },
+    // a file's relative links resolved to repository-relative paths
     links: (file) => links(text(file)).map((l) => Object.assign(l, { path: path.posix.normalize(path.posix.join(path.posix.dirname(file), l.target.replace(/\\/g, '/'))) })),
   };
 }

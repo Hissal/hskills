@@ -90,7 +90,9 @@ for (const h of hostile) {
 // On posix the engine always counts /tmp, /var/tmp and /private/tmp as temp,
 // whatever tmp it is given, so the scratch directory sits in home there:
 // under the real temp the whole tree would be a throwaway clone.
-const scratch = fs.mkdtempSync(path.join(process.platform === 'win32' ? os.tmpdir() : os.homedir(), 'command-guard-test-'));
+// Windows temp may use an 8.3 alias; build the stand-in temp and targets from
+// the physical scratch path so both match the engine's physical candidates.
+const scratch = fs.realpathSync.native(fs.mkdtempSync(path.join(process.platform === 'win32' ? os.tmpdir() : os.homedir(), 'command-guard-test-')));
 const native = process.platform === 'win32' ? 'powershell' : 'bash';
 const rmrf = (p) => (native === 'powershell' ? 'Remove-Item -Recurse -Force "' + p + '"' : 'rm -rf "' + p + '"');
 try {

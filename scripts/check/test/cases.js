@@ -15,18 +15,26 @@ const lines = (n, prefix) => Array.from({ length: n }, (_, i) => (prefix || 'lin
 
 // A SKILL.md that passes every rule. `fm` replaces or adds frontmatter lines
 // (key -> raw text after "key:"), `body` replaces the body.
+// The OpenCode gate (`metadata`) defaults to the value the gate writer
+// generates from `disable-model-invocation`; a `null` fm value drops the line.
 function skillMd(name, o) {
   o = o || {};
   const fm = Object.assign({ name: ' ' + name, description: ' Use when testing the collection check.' }, o.fm || {});
-  const head = Object.entries(fm).map(([k, v]) => k + ':' + v).join('\n');
+  if (!('metadata' in fm)) fm.metadata = '\n  opencode/autoinvoke: "' + !userInvoked(o) + '"';
+  const head = Object.entries(fm).filter(([, v]) => v !== null).map(([k, v]) => k + ':' + v).join('\n');
   return '---\n' + head + '\n---\n\n' + (o.body !== undefined ? o.body : '# ' + name + '\n\nDo the work.\n');
 }
 
-// skill('skills/core/alpha', { fm, body, files: { 'REF.md': '...' } })
-// -> files for one skill folder.
+const userInvoked = (o) => /^\s*true\s*$/.test((o.fm || {})['disable-model-invocation'] || '');
+
+// skill('skills/core/alpha', { fm, body, files: { 'REF.md': '...' }, openai })
+// -> files for one skill folder. `openai` replaces the generated Codex gate
+// file agents/openai.yaml; `null` leaves it out.
 function skill(dir, o) {
   o = o || {};
   const out = { [dir + '/SKILL.md']: skillMd(dir.split('/').pop(), o) };
+  const openai = o.openai !== undefined ? o.openai : 'policy:\n  allow_implicit_invocation: ' + !userInvoked(o) + '\n';
+  if (openai !== null) out[dir + '/agents/openai.yaml'] = openai;
   for (const [f, content] of Object.entries(o.files || {})) out[dir + '/' + f] = content;
   return out;
 }
@@ -46,7 +54,7 @@ module.exports = [
   { name: 'LF neighbour passes', files: { 'README.md': '# x\nbody\n' }, expect: [] },
   { name: 'CRLF in a skill file fails', files: skill('skills/core/alpha', { body: '# alpha\r\n' }), expect: ['fail crlf-line-ending skills/core/alpha/SKILL.md'] },
   { name: 'a UTF-8 BOM fails', files: tree(skill('skills/core/alpha'), { 'notes.txt': '\uFEFFhello\n' }), expect: ['fail utf8-bom notes.txt'] },
-  { name: 'a BOM on SKILL.md fails', files: { 'skills/core/alpha/SKILL.md': '\uFEFF' + skillMd('alpha') }, expect: ['fail utf8-bom skills/core/alpha/SKILL.md'] },
+  { name: 'a BOM on SKILL.md fails', files: tree(skill('skills/core/alpha'), { 'skills/core/alpha/SKILL.md': '\uFEFF' + skillMd('alpha') }), expect: ['fail utf8-bom skills/core/alpha/SKILL.md'] },
   { name: 'binary files are skipped', files: { 'logo.png': Buffer.from([0xef, 0xbb, 0xbf, 0, 13, 10, 0]) }, expect: [] },
 
   // ---- frontmatter -----------------------------------------------------------
@@ -81,4 +89,25 @@ module.exports = [
   { name: 'references in a subfolder linked from SKILL.md pass', files: skill('skills/core/alpha', { body: 'Read [a](references/A.md).\n', files: { 'references/A.md': '# A\n' } }), expect: [] },
   { name: 'NOTICE.md needs no link', files: skill('skills/core/alpha', { files: { 'NOTICE.md': '# Notice\n' } }), expect: [] },
   { name: 'warnings alone exit zero', files: tree(skill('skills/core/alpha', { body: lines(501) }), skill('skills/core/beta', { files: { 'X.md': '# X\n' } })), expect: ['warn skill-body-length skills/core/alpha/SKILL.md', 'warn reference-unlinked skills/core/beta/X.md'] },
+
+  // ---- harness gates (#99): generated from disable-model-invocation ---------
+  { name: 'model-invoked gates that match pass', files: skill('skills/core/alpha'), expect: [] },
+  { name: 'user-invoked gates that match pass', files: skill('skills/core/alpha', { fm: { 'disable-model-invocation': ' true' } }), expect: [] },
+  { name: 'disable-model-invocation: false gates that match pass', files: skill('skills/core/alpha', { fm: { 'disable-model-invocation': ' false' } }), expect: [] },
+  { name: 'a Codex gate mismatch fails', files: skill('skills/core/alpha', { fm: { 'disable-model-invocation': ' true' }, openai: 'policy:\n  allow_implicit_invocation: true\n' }), expect: ['fail harness-gates skills/core/alpha/agents/openai.yaml'] },
+  { name: 'a Codex gate set implicit on a model-invoked skill fails', files: skill('skills/core/alpha', { openai: 'policy:\n  allow_implicit_invocation: false\n' }), expect: ['fail harness-gates skills/core/alpha/agents/openai.yaml'] },
+  { name: 'a Codex gate beside other openai.yaml keys passes', files: skill('skills/core/alpha', { fm: { 'disable-model-invocation': ' true' }, openai: 'interface:\n  display_name: "Alpha"\npolicy:\n  # generated\n  allow_implicit_invocation: false # from SKILL.md\n' }), expect: [] },
+  { name: 'a quoted Codex gate value fails', files: skill('skills/core/alpha', { openai: 'policy:\n  allow_implicit_invocation: "true"\n' }), expect: ['fail harness-gates skills/core/alpha/agents/openai.yaml'] },
+  { name: 'a missing Codex gate file fails', files: skill('skills/core/alpha', { openai: null }), expect: ['fail harness-gates skills/core/alpha/agents/openai.yaml'] },
+  { name: 'an openai.yaml without the Codex gate fails', files: skill('skills/core/alpha', { openai: 'interface:\n  display_name: "Alpha"\n' }), expect: ['fail harness-gates skills/core/alpha/agents/openai.yaml'] },
+  { name: 'a Codex gate outside policy fails', files: skill('skills/core/alpha', { openai: 'interface:\n  allow_implicit_invocation: true\n' }), expect: ['fail harness-gates skills/core/alpha/agents/openai.yaml'] },
+  { name: 'an OpenCode gate mismatch fails', files: skill('skills/core/alpha', { fm: { 'disable-model-invocation': ' true', metadata: '\n  opencode/autoinvoke: "true"' } }), expect: ['fail harness-gates skills/core/alpha/SKILL.md'] },
+  { name: 'an OpenCode gate set off on a model-invoked skill fails', files: skill('skills/core/alpha', { fm: { metadata: '\n  opencode/autoinvoke: "false"' } }), expect: ['fail harness-gates skills/core/alpha/SKILL.md'] },
+  { name: 'an OpenCode gate beside other metadata passes', files: skill('skills/core/alpha', { fm: { 'disable-model-invocation': ' true', metadata: '\n  audience: maintainers\n  "opencode/autoinvoke": "false"' } }), expect: [] },
+  { name: 'an unquoted OpenCode gate value passes (OpenCode reads YAML booleans)', files: skill('skills/core/alpha', { fm: { metadata: '\n  opencode/autoinvoke: true' } }), expect: [] },
+  { name: 'a missing OpenCode gate fails', files: skill('skills/core/alpha', { fm: { metadata: null } }), expect: ['fail harness-gates skills/core/alpha/SKILL.md'] },
+  { name: 'metadata without the OpenCode gate fails', files: skill('skills/core/alpha', { fm: { metadata: '\n  audience: maintainers' } }), expect: ['fail harness-gates skills/core/alpha/SKILL.md'] },
+  { name: 'an OpenCode gate outside metadata fails', files: skill('skills/core/alpha', { fm: { metadata: null, 'opencode/autoinvoke': ' "true"' } }), expect: ['fail harness-gates skills/core/alpha/SKILL.md'] },
+  { name: 'an unreadable disable-model-invocation fails', files: skill('skills/core/alpha', { fm: { 'disable-model-invocation': ' yes' } }), expect: ['fail harness-gates skills/core/alpha/SKILL.md'] },
+  { name: 'both gates wrong fail once each', files: skill('skills/packs/web/beta', { fm: { 'disable-model-invocation': ' true', metadata: null }, openai: null }), expect: ['fail harness-gates skills/packs/web/beta/SKILL.md', 'fail harness-gates skills/packs/web/beta/agents/openai.yaml'] },
 ];

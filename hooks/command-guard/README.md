@@ -25,8 +25,12 @@ A guard that cannot produce a verdict denies the call.
 
 ## Install
 
+Use the collection entry point. Its [per-harness table, doctor states and
+ownership/recovery contract](../../docs/user-install.md#command-guard-and-recovery)
+cover this delegated installer. Live host hand runs for #120 remain missing.
+
 ```
-node hooks/command-guard/install.js
+node scripts/install/install.js install
 ```
 
 This copies a snapshot to `~/.agents/command-guard`, fires each adapter once, and registers the hooks only when that check passes:
@@ -44,7 +48,7 @@ The agent reports the error or the blocked command. It does not disable the guar
 To recover, stop the agent session, then either repair the guard and rerun the installer, or remove it:
 
 ```
-node hooks/command-guard/install.js --uninstall
+node scripts/install/install.js uninstall
 ```
 
 Restart the session afterwards. After an uninstall, sessions have no guard protection. Removing the guard is not approval for any single command.

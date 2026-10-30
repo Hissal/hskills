@@ -40,10 +40,19 @@ try {
     const dir = path.join(scratch, String(i));
     fs.mkdirSync(dir);
     git(dir, ['init', '-q']);
+    // history: earlier commits, each a whole tree, optionally tagged
+    for (const h of c.history || []) {
+      git(dir, ['rm', '-rqf', '--ignore-unmatch', '.']);
+      write(dir, h.files);
+      git(dir, ['add', '-A']);
+      git(dir, ['commit', '-q', '--allow-empty', '-m', 'history']);
+      if (h.tag) git(dir, ['tag', h.tag]);
+    }
     if (c.committed) {
+      if (c.history) git(dir, ['rm', '-rqf', '--ignore-unmatch', '.']);
       write(dir, c.committed);
       git(dir, ['add', '-A']);
-      git(dir, ['commit', '-q', '-m', 'fixture']);
+      git(dir, ['commit', '-q', '--allow-empty', '-m', 'fixture']);
     }
     write(dir, c.files || {});
     // before: repository scripts run on the fixture first, as

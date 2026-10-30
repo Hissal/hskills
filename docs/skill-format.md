@@ -5,6 +5,7 @@ What a skill folder in this collection holds, and the check that keeps the tree 
 - [Skill tree](#skill-tree)
 - [Skill folder](#skill-folder)
 - [Frontmatter](#frontmatter)
+- [Harness gates](#harness-gates)
 - [Disclosed references](#disclosed-references)
 - [Scripts](#scripts)
 - [Portability](#portability)
@@ -35,6 +36,25 @@ One folder per skill, with `SKILL.md` at its root. The folder is the installed u
 - `description`: for a model-invoked skill, the trigger only: when to load it, never what it does step by step. Quote a description that contains `: ` (`description: "Use when: ..."`). Claude Code tolerates the unquoted form, but strict YAML loaders such as `npx skills` skip the skill without a word.
 - `when_to_use` (optional): further trigger text, counted with the description.
 - `disable-model-invocation` (optional): `true` makes the skill user-invoked. It is the single source for the gate on every harness; the Codex and OpenCode gates are written from it.
+- `metadata` holds the generated OpenCode gate, `opencode/autoinvoke` (see [Harness gates](#harness-gates)), beside any other metadata.
+
+## Harness gates
+
+Whether a skill is model-invoked is decided once, by `disable-model-invocation`, and copied into each harness's own gate. Both gates live in the skill folder, so both install routes carry them:
+
+| Harness | Gate | Model-invoked | User-invoked |
+|---|---|---|---|
+| Claude Code | `SKILL.md` `disable-model-invocation` (the source) | absent or `false` | `true` |
+| Codex | `agents/openai.yaml` `policy.allow_implicit_invocation` | `true` | `false` |
+| OpenCode | `SKILL.md` `metadata` `opencode/autoinvoke` | `"true"` | `"false"` |
+
+Codex ignores `disable-model-invocation`, and OpenCode lets `opencode/autoinvoke` override it, so each gate is written out for every skill. The OpenCode value is the quoted string, since collection metadata values are strings. The gates are generated, never hand-edited: change `disable-model-invocation`, then run the writer:
+
+```
+node scripts/gates/write-gates.js
+```
+
+It writes only those two values, leaving every other line of `SKILL.md` and `agents/openai.yaml` alone, and a second run changes nothing. Run it with `--help` for its `KEY: value` output. The check's `harness-gates` rule fails when a gate is missing, unreadable or disagrees with the source, and names the writer command. Formats and sources: [loading mechanics](../research/loading-mechanics.md) (Codex) and the [OpenCode skill docs](https://github.com/anomalyco/opencode/blob/582c974ee362683f5dd5c7f9741cae207581c6b5/packages/web/src/content/docs/skills.mdx#L34-L96).
 
 ## Disclosed references
 
@@ -111,6 +131,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `utf8-bom` | fail | a text file starts with a UTF-8 BOM |
 | `crlf-line-ending` | fail | a text file has a CRLF line ending |
 | `description-colon` | fail | an unquoted `description` contains `: ` |
+| `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
 | `missing-file` | fail | a Markdown file in a skill links a path inside the skill folder that is not in the collection |
 | `skill-body-length` | warn | a `SKILL.md` body over 500 lines |
 | `reference-contents` | warn | a reference over 100 lines with no contents list |
@@ -125,6 +146,12 @@ Test the check with its fixture runner:
 
 ```
 node scripts/check/test/run.js
+```
+
+and the gate writer with its own (it shares gate parsing with the `harness-gates` rule):
+
+```
+node scripts/gates/test/run.js
 ```
 
 Every change to the check keeps both green: the runner, and the check on the real tree.
@@ -150,10 +177,12 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 
 - `files` is written untracked into a scratch git repository; `committed` (same shape) is committed first.
 - `before` (optional) lists repository scripts run as `node <script> <fixture>` before the check, such as the `NOTICE.md` generator; `clean: true` also requires them to leave every committed file unchanged.
+- `history` is a list of earlier commits, `{ files, tag? }`, each a whole tree, optionally tagged. `committed` then replaces the last tree. Use it for rules that read git history.
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
 - `output` (optional) lists regexes the check's other stdout lines must match one to one, in order, for cases about what the check prints besides findings.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
+- `skill()` also writes matching harness gates: the OpenCode gate appended to `skillMd()`'s `metadata` (the `gate` option replaces it; `null` leaves it out) and `agents/openai.yaml` (the `openai` option replaces it; `null` leaves it out).
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
 
 ## Idle-cost tripwires
@@ -387,3 +416,17 @@ The rule checks trees containing `docs/catalog.md`; fixture or subset trees
 without that artifact skip it. Malformed or duplicate markers fail. Text outside
 the markers remains byte-for-byte unchanged. The fixture runner also exercises
 the writer CLI, idempotence, renamed identities and the failure message.
+## Skill ID stability (#97)
+
+A skill keeps its `agent-skills-sync.id` across renames and moves. The check
+compares the working tree with the last release tag: the nearest `v<version>`
+tag (release-please's form) reachable from `HEAD`. Before the first release
+there is no such tag and the rule is silent; a checkout without tags is silent
+too, so CI fetches them.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
+
+Deleting or re-identifying a skill on purpose is legitimate: read the warning,
+confirm the change is intended, and leave it.

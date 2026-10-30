@@ -54,21 +54,23 @@ invocation. Both installed hosts provide registration APIs; effective loaded-hoo
 unverified. The unsupported automatic switch is an implementation limit, not a
 claim that either host has no plugin API.
 
-`prepare-plugin` creates a content-addressed version snapshot under the selected
-home and verifies existing snapshot bytes on rerun. It exits unsuccessfully with
-an explicit unsupported registration message. It preserves existing settings
-and ownership records: replacement registration and effective host behavior
-remain unverified. Normal installation retains #120's adapter delivery.
+## Implemented registration and migration
+
+`prepare-plugin` and normal installs now call the installed host plugin APIs
+against a dedicated marketplace inside the content-addressed snapshot. The
+listing must report enabled and an effective source equal to that snapshot.
+Snapshot adapters pass block and allow probes before registration. Each host's
+successful registration permits selective removal of its recorded legacy handlers;
+a failed host registration rolls back configuration changes and retains its hooks.
+The write journal preserves before/after bytes and refuses uninstall of changed
+files. No credentials are copied and no trust is granted.
+
+Disposable-home real CLI cases cover registration failure, selective migration,
+rerun, source update and uninstall. Source overrides select the guard package as
+well as skill links. These cases establish registration, not live loading.
 
 ## Remaining acceptance
 
-1. Implement host registration against the prepared snapshot. Complete when a
-   host reports an enabled plugin whose effective source is the snapshot and
-   adapter probes succeed. Until then preserve the working legacy registration.
-2. Migrate only recorded adapter-marker groups in the corresponding settings
-   file, retaining every unrelated handler. Complete when temporary-home cases
-   show failed registration leaves the old guard and successful registration
-   removes only owned handlers. This migration is not implemented here.
 3. Run real Claude and Codex sessions. Complete when each records a block,
    silent allow, project-added block, and unchanged effective guard after a
    checkout branch switch. Record trust waiting as pending; verify trust through
@@ -98,8 +100,7 @@ evidence corrections; `git diff --check` passed and the working tree was clean.
 The installed `/home/agent/.local/bin/claude` validator was rerun against the
 merged marketplace. It passed with two warnings: `plugins[0].policy` is ignored
 by Claude, and the plugin manifest lacks author information. The README install
-suggestion is advice, not a validation warning; automatic migration remains
-unsupported. The collection's pinned agnix reports only the policy warning.
+suggestion is advice, not a validation warning; registration is now implemented; live loading remains pending validation. The collection's pinned agnix reports only the policy warning.
 The [OpenAI marketplace contract](https://developers.openai.com/plugins/build/plugins)
 requires `policy.installation` and `policy.authentication` on each entry, so
 retain those fields for Codex. The Claude warning describes a real difference

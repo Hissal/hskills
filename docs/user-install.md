@@ -160,10 +160,12 @@ Windows outcome, so #116 is not fully complete.
 
 ## OpenCode verification
 
-OpenCode v2.2.2 is installed. Gate behaviour, listing count and Claude steering
-fallback remain inconclusive: discovery failed during plugin activation, and
-model probes returned HTTP 402. For OpenCode verification or diagnosis, read
-[the run evidence and next hand run](../research/opencode-install-125.md).
+OpenCode v2.2.2 normal model discovery lists Sol. The authenticated normal
+runtime returns HTTP 402 (`Insufficient account funds`). Both fixture links and
+doctor pass; the runtime skill API returns zero registered skills. Gate behavior,
+a meaningful duplicate count and Claude steering fallback remain unverified.
+For the saved evidence, account recovery step and temporary-overlay fixture, read
+[OpenCode verification](../research/opencode-install-125.md).
 
 ## Cross-scope build evidence
 

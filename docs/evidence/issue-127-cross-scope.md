@@ -115,29 +115,21 @@ duplicate destination (`ENOENT`); both were corrected before the successful run.
 
 ## Integration and checks
 
-Merged integration tip `711a8aeeb31d59a03c5de5bb99a4c042a3341b1e` after the
-initial evidence commit; merge commit `f91019b` includes the steering changes.
-The merged fixture rerun exited 0 at `/tmp/skill-scope-127-TSfa76`.
-The merged collection check passed with 611 guard cases, 26 installer cases,
-zero failures and zero warnings. The post-merge `node scripts/check/test/run.js`
-passed all 216 cases with zero failures. The collection check also passed after
-the PATH/authentication correction. `npm ci` completed before checks;
-`git diff --check` passed.
+Final selected integration tip: `c89e412d514f20f0d851b02d23ec64597550536d`,
+merged as `349877cb72cd5b92661b44ce63c90c835965be26`. Intermediate integration
+merges included steering, guard lifecycle, plugin preparation and release tooling.
+The personal-install conflict was resolved by preserving both the guard recovery
+section and the conditional cross-scope evidence pointer.
 
-Integration advanced again to `5031ae620f9ebdce89c23441abe43b2b181d46bd`;
-merge commit `470dfa5` preserves both the guard recovery section and the
-cross-scope evidence pointer in personal installation docs. The fixture passed
-again at `/tmp/skill-scope-127-bBHM62`. This installer revision also writes and
-probes guard snapshots inside the temporary home; those adapter probes are not
-live harness evidence.
-
-Merged the next integration tip, `057aabbdea818bd18e49d5bbdd2837560a4ece13`,
-as `f48c4c7` (including partial plugin packaging). All three fixture scenarios
-again exited 0 at `/tmp/skill-scope-127-Vbhkko`. The collection check on this
-tip passed: 611 guard cases, 31 installer cases, zero failures. It reported one
-inherited agnix warning, `CC-MP-005`, for unknown marketplace field
-`plugins[0].policy` in `.claude-plugin/marketplace.json:11` (ignored by Claude).
-The final post-merge fixture suite passed all 216 cases with zero failures.
+The final fixture rerun passed all three scenarios at
+`/tmp/skill-scope-127-2iBxpU`. This installer revision also writes and probes guard
+snapshots inside each temporary home; adapter probes are not live harness evidence.
+`npm ci` completed before the final checks, with zero vulnerabilities.
+`node scripts/check/check.js` passed: 611 guard cases, 32 installer cases,
+zero failures. Its one inherited agnix warning is `CC-MP-005` for unknown
+marketplace field `plugins[0].policy` in `.claude-plugin/marketplace.json:11`;
+Claude ignores that field. `node scripts/check/test/run.js` passed all 218 cases
+with zero failures. `git diff --check` passed.
 
 ## Live verification completion criteria
 

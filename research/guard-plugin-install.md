@@ -71,3 +71,11 @@ remain unverified. Normal installation retains #120's adapter delivery.
 
 The prepared cache is not claimed as host branch-switch evidence. Keep #121
 open until every acceptance criterion on the issue has evidence.
+
+## Automated verification
+
+After merging integration commit `711a8ae`, Linux verification passed the 611-case
+guard harness, 30 temporary-home installer cases, and seven gate cases. The
+collection check passed with one agnix warning: Claude ignores the marketplace
+entry's `policy` field, which Codex's documented marketplace schema requires.
+This field supplies Codex install/auth policy rather than Claude behavior.

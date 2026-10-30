@@ -6,6 +6,65 @@ const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
 const cli = path.resolve(__dirname, '../install.js');
 const cases = [
+  ...['.claude', '.agents'].map(folder => ['preserves unrecorded project entry and exclude rules in ' + folder, (f) => {
+    const project = path.join(f.home, 'project');
+    const dest = path.join(project, folder, 'skills/alpha');
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.writeFileSync(dest, 'personal');
+    spawnSync('git', ['-C', project, 'init']);
+    const exclude = path.join(project, '.git/info/exclude');
+    fs.writeFileSync(exclude, '# personal rules\nother-file\n');
+    f.run(1, 'install', ['--skill', 'alpha', '--project', project]);
+    assert.equal(fs.readFileSync(dest, 'utf8'), 'personal');
+    const text = fs.readFileSync(exclude, 'utf8');
+    assert.ok(text.startsWith('# personal rules\nother-file\n'));
+    assert.ok(!text.includes('/' + folder + '/skills/alpha'));
+    f.run(1);
+    assert.equal(fs.readFileSync(exclude, 'utf8'), text);
+  }]),
+
+  ['project extras are recorded, ignored and preserved on rerun', (f) => {
+    const project = path.join(f.home, 'project');
+    fs.mkdirSync(project, { recursive: true });
+    const git = (...args) => spawnSync('git', ['-C', project, ...args], { encoding: 'utf8' });
+    assert.equal(git('init').status, 0);
+    fs.writeFileSync(path.join(project, 'skills-lock.json'), 'personal lock');
+    f.run(0, 'install', ['--skill', 'alpha', '--project', project]);
+    for (const folder of ['.claude', '.agents']) {
+      const link = path.join(project, folder, 'skills/alpha');
+      assert.equal(fs.realpathSync(link), path.join(f.repo, 'skills/core/alpha'));
+      assert.equal(git('check-ignore', link).status, 0);
+      assert.ok(JSON.parse(fs.readFileSync(f.record)).links.some(l => l.path === link));
+    }
+    const record = fs.readFileSync(f.record, 'utf8');
+    f.run(0);
+    assert.equal(fs.readFileSync(f.record, 'utf8'), record);
+    assert.equal(fs.readFileSync(path.join(project, 'skills-lock.json'), 'utf8'), 'personal lock');
+    assert.equal(git('ls-files').stdout, '');
+  }],
+  ...['.claude', '.agents'].map(folder => ['preserves tracked project entries in ' + folder, (f) => {
+    const project = path.join(f.home, 'project');
+    const dest = path.join(project, folder, 'skills/alpha');
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.writeFileSync(dest, 'tracked');
+    const git = (...args) => spawnSync('git', ['-C', project, ...args], { encoding: 'utf8' });
+    git('init'); git('add', '.');
+    f.run(1, 'install', ['--skill', 'alpha', '--project', project]);
+    assert.equal(fs.readFileSync(dest, 'utf8'), 'tracked');
+    assert.equal(git('check-ignore', '--no-index', dest).status, 1);
+  }]),
+
+  ['remembers packs and reconciles membership without losing core', (f) => {
+    fs.mkdirSync(path.join(f.repo, 'skills/packs/study/beta'), { recursive: true });
+    f.manifest(['skills/core/alpha'], { study: ['skills/packs/study/beta'] });
+    f.run(0, 'install', ['--pack', 'study']);
+    for (const root of f.targets) assert.deepEqual(fs.readdirSync(root).sort(), ['alpha', 'beta']);
+    fs.mkdirSync(path.join(f.repo, 'skills/packs/study/gamma'));
+    f.manifest(['skills/core/alpha'], { study: ['skills/packs/study/gamma'] });
+    f.run(0);
+    for (const root of f.targets) assert.deepEqual(fs.readdirSync(root).sort(), ['alpha', 'gamma']);
+  }],
+
   ['refuses an empty ownership record without installing', (f) => {
     fs.mkdirSync(path.dirname(f.record), { recursive: true });
     fs.writeFileSync(f.record, '');
@@ -105,8 +164,8 @@ for (const [name, test] of cases) {
     fs.mkdirSync(path.join(repo, 'skills/core/alpha'), { recursive: true });
     const f = { repo, home, targets, record: path.join(home, '.skill-collection/install.json'),
       manifest(core, packs = {}) { fs.writeFileSync(path.join(repo, 'collection.json'), JSON.stringify({ core, packs, expensive: [] })); },
-      run(status, command = 'install') {
-        this.last = spawnSync(process.execPath, [cli, command, '--home', home, '--source', repo, '--claude-root', targets[0], '--agents-root', targets[1]], { encoding: 'utf8' });
+      run(status, command = 'install', extra = []) {
+        this.last = spawnSync(process.execPath, [cli, command, '--home', home, '--source', repo, '--claude-root', targets[0], '--agents-root', targets[1], ...extra], { encoding: 'utf8' });
         assert.equal(this.last.status, status, this.last.stdout + this.last.stderr);
       },
     };

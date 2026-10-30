@@ -1,4 +1,4 @@
-# User-scope core links
+# Personal skill links
 
 Run from a local checkout with Node.js installed:
 
@@ -9,9 +9,9 @@ node scripts/install/install.js doctor
 ```
 
 Install links the manifest's core list into `~/.claude/skills` and
-`~/.agents/skills`. Checkout edits are live. Packs are excluded. The current
+`~/.agents/skills`. Checkout edits are live. Packs are excluded by default. The current
 manifest is empty until skills are authored. This command installs no guards,
-steering, plugins or project skills.
+steering or plugins.
 
 `~/.skill-collection/install.json` records each link's absolute path, target
 and type. Preserve this record: losing it makes existing links unrecorded
@@ -62,3 +62,37 @@ and perform isolated installs with symlink permission enabled and disabled;
 record both the symlink and junction outcomes on #116, including doctor and
 permission-rule output. Linux automated results do not establish either
 Windows outcome, so #116 is not fully complete.
+
+## Personal extras
+
+Install a whole named pack alongside core at user scope:
+
+```sh
+node scripts/install/install.js install --pack onboarding
+```
+
+The ownership record remembers selected packs. Plain `install` reruns reconcile
+all remembered packs against the current manifest, adding new members and
+removing only recorded links that left the selection. Core and other selected
+packs remain installed. A missing remembered pack is an error before link changes.
+
+Link one named collection skill into the current Git project:
+
+```sh
+node /path/to/collection/scripts/install/install.js install --skill tdd
+# Or select the project explicitly:
+node scripts/install/install.js install --skill tdd --project /path/to/project
+```
+
+This creates `.claude/skills/tdd` and `.agents/skills/tdd`, recording both in the
+user ownership record. Project selections are remembered on reruns too. Skill
+names must uniquely match a folder name in the manifest. Existing unrecorded
+entries in either folder are conflicts and remain untouched.
+
+Exact link paths are added to the repository's local Git `info/exclude`, with
+new rules recorded in the ownership record. Existing rules are preserved and
+never claimed or removed. Tracked paths (including tracked descendants) are
+conflicts, even when missing on disk; no ignore rule is added for them. Git
+worktrees use their Git-resolved exclude location. Run only in trusted project
+repositories. The command never stages or commits anything and writes no project
+lock. A personal extra never goes in a per-person lock.

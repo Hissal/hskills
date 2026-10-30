@@ -20,3 +20,5 @@ Research notes, citations and source ledgers: [Research area rules](docs/agents/
 Trigger and behavioural evals, including the required missing-requirement case: [Trigger evals](docs/trigger-evals.md), [Behavioural evals](docs/behavioural-evals.md).
 Vendoring scripts (`scripts/vendor/`): run `node scripts/vendor/test/run.js` after changing them; it must pass.
 Copying a skill in from a source, or taking a source's update: [Vendoring and intake runbook](docs/vendoring.md).
+
+Releases, commit scopes and adding plugin manifests: [Release maintenance](docs/releases.md).

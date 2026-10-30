@@ -29,6 +29,8 @@ jobs:
           node-version: '22'
       - name: Install pinned agnix
         run: npm ci
+      - name: Verify release candidates offline
+        run: node scripts/release/dry-run.js
       - name: Run collection check fixtures
         run: node scripts/check/test/run.js
       - name: Run gate writer tests

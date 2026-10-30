@@ -124,6 +124,13 @@ passed all 216 cases with zero failures. The collection check also passed after
 the PATH/authentication correction. `npm ci` completed before checks;
 `git diff --check` passed.
 
+Integration advanced again to `5031ae620f9ebdce89c23441abe43b2b181d46bd`;
+merge commit `470dfa5` preserves both the guard recovery section and the
+cross-scope evidence pointer in personal installation docs. The fixture passed
+again at `/tmp/skill-scope-127-bBHM62`. This installer revision also writes and
+probes guard snapshots inside the temporary home; those adapter probes are not
+live harness evidence.
+
 ## Live verification completion criteria
 
 For each live run use a fresh scenario and an authenticated existing runtime whose

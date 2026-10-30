@@ -522,6 +522,39 @@ The rule checks trees containing `docs/catalog.md`; fixture or subset trees
 without that artifact skip it. Malformed or duplicate markers fail. Text outside
 the markers remains byte-for-byte unchanged. The fixture runner also exercises
 the writer CLI, idempotence, renamed identities and the failure message.
+### Release-local JSON catalog
+
+The same command writes root `catalog.json`. Commit both generated outputs;
+edit skill metadata and regenerate rather than hand-editing the JSON. Every
+release tag carries the mapping for that revision. Its top-level object maps
+each stable skill ID to exactly a repository-relative skill folder `path`
+(with forward slashes, containing `SKILL.md`) and a `requires` array of
+direct skill IDs:
+
+```json
+{
+  "hissal.skill-collection/example": {
+    "path": "skills/core/example",
+    "requires": ["hissal.skill-collection/knowledge"]
+  },
+  "hissal.skill-collection/knowledge": {
+    "path": "skills/packs/study/knowledge",
+    "requires": []
+  }
+}
+```
+
+IDs and requirement arrays sort lexically; output uses two-space indentation,
+LF and a final newline. Skills without requirements have an empty array.
+Paths follow folder moves while IDs remain stable. Requirements are direct;
+resolvers expand the graph at the same immutable revision.
+
+The `release-catalog` rule fails on missing or byte-stale JSON when
+`docs/catalog.md` is present, and also checks JSON-only trees. Subset fixtures
+with neither artifact skip it. Failures name `node scripts/catalog/generate.js`.
+The writer validates both outputs before writing either; the human document
+outside its dependency markers stays unchanged.
+
 ## Skill ID stability
 
 A skill keeps its `agent-skills-sync.id` across renames and moves. The check

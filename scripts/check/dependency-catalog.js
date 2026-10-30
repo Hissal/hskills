@@ -2,6 +2,7 @@
 
 const START = '<!-- BEGIN GENERATED DEPENDENCIES -->';
 const END = '<!-- END GENERATED DEPENDENCIES -->';
+const JSON_FILE = 'catalog.json';
 const FILE = 'docs/catalog.md';
 
 function generate(c) {
@@ -33,4 +34,12 @@ function update(text, c) {
   return text.slice(0, start) + generated + text.slice(end + END.length);
 }
 
-module.exports = { FILE, generate, update };
+function generateJson(c) {
+  // Share the human catalog's metadata and resolution validation.
+  generate(c);
+  const entries = c.skills.slice().sort((a, b) => a.metadata.id < b.metadata.id ? -1 : a.metadata.id > b.metadata.id ? 1 : 0)
+    .map((s) => [s.metadata.id, { path: s.dir, requires: s.metadata.requires.slice().sort() }]);
+  return JSON.stringify(Object.fromEntries(entries), null, 2) + '\n';
+}
+
+module.exports = { FILE, JSON_FILE, generate, generateJson, update };

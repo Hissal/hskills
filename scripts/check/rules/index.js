@@ -26,6 +26,7 @@ module.exports = [
   require('./vendor-licence'),
   require('./vendor-notice'),
   require('./dependency-catalog'),
+  require('./release-catalog'),
 
   require('./harness-gates'),
 

@@ -37,7 +37,33 @@ try {
   assert.equal(record.hosts.length, 2);
   for (const host of record.hosts) assert.ok(host.snapshot.startsWith(home));
   assert.deepEqual(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse[0].hooks, [{ type: 'command', command: 'echo personal' }]);
+  const codexHooks = path.join(home, '.codex/hooks.json');
+  const fallback = fs.readFileSync(codexHooks);
+  assert.match(fallback.toString(), /command-guard/);
+  const claudeHome = path.join(home, 'claude-only');
+  fs.mkdirSync(claudeHome);
+  const claudeOnly = spawnSync(process.execPath, [cli, 'prepare-plugin', '--home', claudeHome, '--source', source], {
+    encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: claude }
+  });
+  assert.equal(claudeOnly.status, 0, claudeOnly.stdout + claudeOnly.stderr);
+  const occupiedHome = path.join(home, 'occupied-home');
+  const occupied = path.join(occupiedHome, '.skill-collection/plugin-cache', path.basename(record.hosts[0].snapshot));
+  fs.cpSync(record.hosts[0].snapshot, occupied, { recursive: true });
+  fs.unlinkSync(path.join(occupied, '.claude-plugin/marketplace.json'));
+  const existingAdapter = fs.readFileSync(path.join(occupied, 'adapters/codex.js'));
+  const occupiedRun = spawnSync(process.execPath, [cli, 'prepare-plugin', '--home', occupiedHome, '--source', source], { encoding: 'utf8' });
+  assert.match(occupiedRun.stdout + occupiedRun.stderr, /CONFLICT/);
+  assert.equal(fs.existsSync(path.join(occupiedHome, '.skill-collection/plugins.json')), false);
+  spawnSync(process.execPath, [cli, 'uninstall', '--home', occupiedHome]);
+  assert.deepEqual(fs.readFileSync(path.join(occupied, 'adapters/codex.js')), existingAdapter);
   const again = run();
+  assert.deepEqual(fs.readFileSync(codexHooks), fallback);
+  if (!real) {
+  fs.writeFileSync(path.join(home, '.codex/human-trusted'), 'human fixture decision');
+  const trusted = run();
+  assert.equal(trusted.status, 0, trusted.stdout + trusted.stderr);
+  assert.ok(!fs.readFileSync(codexHooks, 'utf8').includes('/command-guard/adapters/'));
+  }
   assert.match(again.stdout, /REGISTERED claude/, again.stderr);
   fs.appendFileSync(path.join(source, 'hooks/command-guard/adapters/claude-code.js'), '\n// updated source\n');
   const updated = run();
@@ -53,9 +79,26 @@ try {
   const refused = spawnSync(process.execPath, [cli, 'uninstall', '--home', home], { encoding: 'utf8' });
   assert.equal(refused.status, 1);
   assert.match(fs.readFileSync(config, 'utf8'), /personal change/);
+  const personal = fs.readFileSync(config);
+  const journal = fs.readFileSync(path.join(home, '.skill-collection/plugins.json'));
+  const reinstall = run();
+  assert.match(reinstall.stdout + reinstall.stderr, /CONFLICT/);
+  assert.deepEqual(fs.readFileSync(config), personal);
+  assert.deepEqual(fs.readFileSync(path.join(home, '.skill-collection/plugins.json')), journal);
+  spawnSync(process.execPath, [cli, 'uninstall', '--home', home]);
+  assert.deepEqual(fs.readFileSync(config), personal);
   fs.writeFileSync(config, installedConfig);
+  const latest = JSON.parse(fs.readFileSync(path.join(home, '.skill-collection/plugins.json')));
+  const extra = path.join(latest.hosts[0].snapshot, 'adapters/personal.txt');
+  fs.writeFileSync(extra, 'personal snapshot addition');
+  const extraRun = run();
+  assert.match(extraRun.stdout + extraRun.stderr, /CONFLICT/);
+  spawnSync(process.execPath, [cli, 'uninstall', '--home', home]);
+  assert.equal(fs.readFileSync(extra, 'utf8'), 'personal snapshot addition');
+
   const uninstall = spawnSync(process.execPath, [cli, 'uninstall', '--home', home], { encoding: 'utf8' });
   assert.equal(uninstall.status, 0, uninstall.stdout + uninstall.stderr);
   assert.ok(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse.every(g => g.hooks.every(h => h.command === 'echo personal')));
+
   console.log('plugin ' + (real ? 'real CLI' : 'CLI boundary') + ' registration, rollback, migration, update and uninstall passed');
 } finally { fs.rmSync(home, { recursive: true, force: true }); }

@@ -35,8 +35,8 @@ function main() {
   }
   const home = options['--home'] || os.homedir();
   if (command === 'prepare-plugin') {
-    require('./plugin').registration(home, path.join(options['--source'] || path.resolve(__dirname, '../..'), 'hooks/command-guard'));
-    process.exitCode = 1;
+    const ok = require('./plugin').registration(home, path.join(options['--source'] || path.resolve(__dirname, '../..'), 'hooks/command-guard'));
+    process.exitCode = ok ? 0 : 1;
     return;
   }
   const source = options['--source'] || path.resolve(__dirname, '../..');

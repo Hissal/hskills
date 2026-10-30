@@ -228,14 +228,23 @@ prepared snapshot. Enabled listings must report that snapshot as effective sourc
 
 `HOME/.skill-collection/plugins.json` journals snapshot files and host configuration
 writes. Failed host registration rolls back its writes and retains legacy hooks.
-After each successful registration, only exact recorded legacy handlers with the
+Before registration mutates host files, every recorded write must still match its
+last installed bytes. Conflicts preserve current bytes and the journal. Existing
+snapshots must contain only recorded files; byte-identical unrecorded snapshots
+are conflicts, not adopted installations.
+
+Once the replacement is ready, only exact recorded legacy handlers with the
 adapter marker are removed from that host's settings; unrelated handlers survive.
+Codex readiness is read through the host's app-server `hooks/list` API: enabled
+plugin hooks must report trusted. Pending or unavailable trust retains the legacy
+fallback; the installer never writes trust. Claude readiness requires an enabled
+registration at the expected snapshot and successful adapter probes.
 Settings keep their first-write backup. Uninstall restores recorded configuration
 only while its bytes still match; changed files are conflicts and remain owned
 for recovery. Resolve conflicts manually before retrying uninstall.
 
-Registration is implemented; live loading remains pending validation. The command
-returns failure for pending host validation and Codex trust, even after successful
-registration. It grants no trust. Review Codex `/hooks` yourself. Direct snapshot
-probes establish adapter behavior only. For live acceptance, read
-[the remaining evidence criteria](../research/guard-plugin-install.md).
+Doctor checks registration and snapshot block/allow probes. Claude-only
+registration can pass these checks. Codex returns pending while its current hook
+trust is unresolved; review Codex `/hooks` yourself. Direct snapshot probes
+establish adapter behavior; live host acceptance evidence is recorded separately
+in [the plugin investigation](../research/live-plugins-121.md).

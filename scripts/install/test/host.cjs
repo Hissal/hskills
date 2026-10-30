@@ -10,6 +10,16 @@ fs.mkdirSync(dir, { recursive: true });
 const market = path.join(dir, 'market.json');
 const installed = path.join(dir, 'installed.json');
 const args = process.argv.slice(2);
+if (args[0] === 'app-server') {
+  require('readline').createInterface({ input: process.stdin }).on('line', line => {
+    const request = JSON.parse(line);
+    if (request.id === 1) console.log(JSON.stringify({ id: 1, result: {} }));
+    if (request.id === 2) console.log(JSON.stringify({ id: 2, result: { data: [{ hooks: [{
+      source: 'plugin', pluginId: 'command-guard@skill-collection-guard', enabled: true,
+      trustStatus: fs.existsSync(path.join(root, 'human-trusted')) ? 'trusted' : 'untrusted'
+    }], errors: [] }] } }));
+  });
+} else {
 let output = {};
 if (args[1] === 'marketplace') {
   if (args[2] === 'add') fs.writeFileSync(market, JSON.stringify({ source: args[3] }));
@@ -24,3 +34,5 @@ if (args[1] === 'marketplace') {
   output = host === 'codex' ? { installed: list } : list;
 }
 console.log(JSON.stringify(output));
+
+}

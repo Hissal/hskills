@@ -144,6 +144,9 @@ establish actual Windows behavior.
 
 ## Isolated verification
 
+To finish native Windows host acceptance, follow the
+[Windows agent handoff](handoffs/windows-install-acceptance.md).
+
 `--home DIR` changes the record home and default skill roots; `--source DIR`
 selects a fixture checkout; `--claude-root DIR` and `--agents-root DIR`
 override the two destination directories. All overrides are absolute-resolved.

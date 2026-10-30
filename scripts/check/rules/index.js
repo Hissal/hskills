@@ -24,4 +24,5 @@ module.exports = [
   require('./vendor-baseline'),
   require('./vendor-licence'),
   require('./vendor-notice'),
+  require('./dependency-catalog'),
 ];

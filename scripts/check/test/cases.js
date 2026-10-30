@@ -201,3 +201,8 @@ module.exports.push({
 });
 // ---- copied skills (#102) -----------------------------------------------------
 module.exports.push(...require('./vendoring-cases')({ skill, skillMd }));
+// ---- generated dependency catalog (#96) ------------------------------------
+module.exports.push(
+  { name: 'stale dependency catalog fails', files: { 'docs/catalog.md': '# Catalog\n' }, expect: ['fail dependency-catalog docs/catalog.md'] },
+  { name: 'fresh empty dependency catalog passes', files: { 'docs/catalog.md': '# Catalog\n\n<!-- BEGIN GENERATED DEPENDENCIES -->\n| Skill ID | Callable / source | Hard requirements |\n|---|---|---|\n<!-- END GENERATED DEPENDENCIES -->\n' }, expect: [] }
+);

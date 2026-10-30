@@ -55,13 +55,11 @@ the failed overlay and without assuming blank-home authentication is required.
 [Official hook documentation](https://learn.chatgpt.com/docs/hooks), read
 2026-10-30, confirms plugin installation does not grant hook trust.
 
-Minimum human action for that installation: launch
-`CODEX_HOME=/tmp/plugin-live-121-1pzs54rm/home/.codex /home/agent/.npm-global/bin/codex`
-and review the current command-guard hook in `/hooks`. That retained temporary
-installation has no copied credentials; if the host requires authentication,
-use its normal login flow. No trust-bypass flag or persisted approval was used.
-Codex block/allow/project and running-session branch acceptance remain pending
-this review and an authenticated session that loads that installation.
+The earlier temporary-`CODEX_HOME` launch instruction is withdrawn: that home
+has no login, and the normal authenticated home does not load this cached plugin
+through the tested invocation overlay. See [authentication follow-up](human-review-auth-121.md)
+for paired host evidence and the proposed registration change. Human review and
+Codex behavioral acceptance remain pending.
 
 ## Installed lifecycle
 

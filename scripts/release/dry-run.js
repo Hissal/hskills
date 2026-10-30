@@ -7,8 +7,8 @@ const { buildStrategy } = require('release-please/build/src/factory');
 const { parseConventionalCommits } = require('release-please/build/src/commit');
 const { Version } = require('release-please/build/src/version');
 const { TagName } = require('release-please/build/src/util/tag-name');
-const config = require('../../release-please-config.json').packages['.'];
-const root = require('path').resolve(__dirname, '../..');
+const root = require('path').resolve(process.argv[2] || require('path').join(__dirname, '../..'));
+const config = JSON.parse(fs.readFileSync(require('path').join(root, 'release-please-config.json'), 'utf8')).packages['.'];
 const read = (file) => fs.readFileSync(require('path').join(root, file), 'utf8');
 async function main() {
   const strategy = await buildStrategy({

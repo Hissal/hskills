@@ -239,3 +239,41 @@ returns failure for pending host validation and Codex trust, even after successf
 registration. It grants no trust. Review Codex `/hooks` yourself. Direct snapshot
 probes establish adapter behavior only. For live acceptance, read
 [the remaining evidence criteria](../research/guard-plugin-install.md).
+
+## Whole-list skill plugins
+
+Use the plugin route for a whole core or named pack; use the folder route above
+for individual selection. Plugin skill lists are generated from `collection.json`
+by `node scripts/plugins/generate.js`. Empty lists publish no plugin. Production
+membership is currently empty; these commands become useful when the content
+specs add manifest entries. Core never includes onboarding. When its actual
+entry arrives, onboarding publishes as a separate one-skill plugin.
+
+Register this checkout with `claude plugin marketplace add <checkout>` or
+`codex plugin marketplace add <checkout>`. Install `collection-core@skill-collection`
+and `collection-pack-<pack>@skill-collection` together at the same release when
+the pack requires core. Plugins do not resolve metadata requirements. Other
+required packs must likewise be installed explicitly; a missing requirement
+causes the skill to stop. Keep the hooks-only guard at its own plugin root.
+
+On Claude, `claude plugin install <plugin>@skill-collection --scope project`
+records project enablement in `.claude/settings.json`. For a user install kept
+disabled by default, install with `--scope user`, disable it at user scope, then
+enable it with `claude plugin enable <plugin>@skill-collection --scope project`.
+Claude enables whole plugins; individual skills cannot be disabled separately.
+
+On Codex, `codex plugin add <plugin>@skill-collection` installs the cache copy.
+Set `[plugins."<plugin>@skill-collection"]` with `enabled = false` in the user
+config and `enabled = true` in the project's `.codex/config.toml` to opt in there.
+Codex may skip project config in an untrusted project: review its normal project
+trust prompt yourself, then verify effective plugin selection in a new session.
+The collection generator grants no trust and edits no user settings.
+
+Read permissions must cover installed plugin entry points and disclosed reference
+files in the host's plugin cache, outside the project directory. On Claude,
+review and add `Read(<absolute-cache-root>/**)` for each installed plugin as
+needed. For linked folder skills, cover both the link and its source target.
+Keep permission grants under human control; the generator writes none.
+
+The fixture runtime evidence and platform limits are in
+[plugin generation verification](../research/plugin-generation-124.md).

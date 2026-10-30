@@ -117,6 +117,28 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
 
+## Idle-cost tripwires
+
+Every check run prints estimated tokens (Unicode characters ÷ 4) for core and
+each pack present in the collection. Only model-invoked skills contribute their
+`description` and optional `when_to_use` values; `disable-model-invocation: true`
+excludes a skill. Bodies, reference files and skills outside the collection's
+core and pack tree contribute nothing. Quoting and block-scalar markers are
+syntax rather than listing text.
+
+`COLLECTION_ALWAYS_ON_PATH` is the single setting for the repository-relative
+always-on source path, **set by spec 2, #118/#114**. It is unset by default.
+When unset or when the file is absent from the checked collection, the check
+prints “not measured” with the reason and continues successfully.
+
+The `idle-cost` warning fires above 500 tokens for the always-on source,
+1,000 for core descriptions, or 1,000 for one pack's descriptions. Equality
+passes; warnings leave the exit code zero unless another rule fails.
+Review growth when a warning appears.
+
+Tripwire fixtures may set `alwaysOnPath` and assert figure text with `output`
+(an array of expected stdout substrings); the runner clears an inherited
+always-on setting for other fixtures.
 ## Skill identity and hard requirements (#95)
 
 Author identity once, in string-valued `metadata` in `SKILL.md`:

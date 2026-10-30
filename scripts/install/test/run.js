@@ -275,7 +275,7 @@ fs.symlinkSync = function(target, dest, type) {
     assert.equal(fs.lstatSync(dest).ino, before.ino);
     if (kind === 'file') assert.equal(fs.readFileSync(dest, 'utf8'), 'mine');
     if (kind.includes('link')) assert.equal(fs.readlinkSync(dest), path.join(f.repo, kind === 'link' ? 'steering.md' : 'missing'));
-    assert.equal(JSON.parse(fs.readFileSync(f.record)).steering.length, 1);
+    assert.equal(JSON.parse(fs.readFileSync(f.record)).steering.length, 2);
   }]),
   ['copies when file symlinks are denied and doctor detects drift without repairing it', f => {
     // Deny the OS operation only; all installation and verification uses real files.
@@ -291,7 +291,7 @@ fs.symlinkSync = function(target, dest, type) {
     f.run(1, 'install', ['--owner-steering']);
     const record = fs.readFileSync(f.record, 'utf8');
     const entries = JSON.parse(record).steering;
-    assert.deepEqual(entries.map(e => e.type), ['copy', 'copy']);
+    assert.deepEqual(entries.map(e => e.type), ['copy', 'copy', 'copy']);
     for (const e of entries) assert.equal(fs.readFileSync(e.path, 'utf8'), 'personal steering\n');
     f.run(1);
     assert.equal(fs.readFileSync(f.record, 'utf8'), record);
@@ -302,24 +302,63 @@ fs.symlinkSync = function(target, dest, type) {
     assert.equal(fs.readFileSync(entries[0].path, 'utf8'), 'personal steering\n');
     assert.equal(fs.readFileSync(f.record, 'utf8'), record);
     fs.writeFileSync(path.join(f.repo, 'steering.md'), 'personal steering\n');
-    fs.writeFileSync(entries[0].path, 'local edit');
+    fs.writeFileSync(entries[2].path, 'local edit');
     f.run(1, 'doctor');
     assert.match(f.last.stdout, /copy drift/);
     f.run(1);
-    assert.equal(fs.readFileSync(entries[0].path, 'utf8'), 'local edit');
+    assert.equal(fs.readFileSync(entries[2].path, 'utf8'), 'local edit');
   }],
 
-  ['steering is untouched without opt-in', f => {
-    const dest = path.join(f.home, '.claude/CLAUDE.md');
-    fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.writeFileSync(dest, 'mine');
+  ['steering is untouched at all three destinations without opt-in', f => {
+    const names = ['.claude/CLAUDE.md', '.codex/AGENTS.md', '.config/opencode/AGENTS.md'];
     f.run(0);
-    assert.equal(fs.readFileSync(dest, 'utf8'), 'mine');
-    assert.equal(fs.existsSync(path.join(f.home, '.codex/AGENTS.md')), false);
+    for (const name of names) {
+      const dest = path.join(f.home, name);
+      assert.equal(fs.existsSync(dest), false);
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.writeFileSync(dest, 'mine');
+    }
+    f.run(1);
+    for (const name of names) assert.equal(fs.readFileSync(path.join(f.home, name), 'utf8'), 'mine');
   }],
-  ['steering opt-in links both targets and survives a no-flag rerun', f => {
+  ['old two-target opt-in record gains native steering without changing existing targets', f => {
+    const old = ['.claude/CLAUDE.md', '.codex/AGENTS.md'].map(name => {
+      const dest = path.join(f.home, name);
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.symlinkSync(path.join(f.repo, 'steering.md'), dest, 'file');
+      return { path: dest, target: path.join(f.repo, 'steering.md'), type: 'symlink' };
+    });
+    const inodes = old.map(e => fs.lstatSync(e.path).ino);
+    fs.mkdirSync(path.dirname(f.record), { recursive: true });
+    fs.writeFileSync(f.record, JSON.stringify({ version: 1, links: [], ownerSteering: true, steering: old }));
+    // An inherited XDG root must not redirect a selected --home.
+    const external = path.join(f.repo, 'external-config');
+    f.env = { ...process.env, XDG_CONFIG_HOME: external };
+    f.run(1);
+    const migrated = JSON.parse(fs.readFileSync(f.record));
+    assert.deepEqual(migrated.steering.slice(0, 2), old);
+    assert.deepEqual(old.map(e => fs.lstatSync(e.path).ino), inodes);
+    assert.equal(migrated.steering.length, 3);
+    assert.equal(fs.realpathSync(path.join(f.home, '.config/opencode/AGENTS.md')), path.join(f.repo, 'steering.md'));
+    assert.equal(fs.existsSync(external), false);
+    const before = fs.readFileSync(f.record, 'utf8');
+    f.run(1);
+    assert.equal(fs.readFileSync(f.record, 'utf8'), before);
+  }],
+  ['native personal steering survives opt-in and a remembered rerun', f => {
+    const dest = path.join(f.home, '.config/opencode/AGENTS.md');
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.writeFileSync(dest, 'native personal rules');
+    for (const extra of [['--owner-steering'], []]) {
+      f.run(1, 'install', extra);
+      assert.match(f.last.stdout, /CONFLICT unrecorded steering target: .*opencode/);
+      assert.equal(fs.readFileSync(dest, 'utf8'), 'native personal rules');
+      assert.equal(JSON.parse(fs.readFileSync(f.record)).steering.length, 2);
+    }
+  }],
+  ['steering opt-in links all three targets and survives a no-flag rerun', f => {
     f.run(1, 'install', ['--owner-steering']);
-    for (const name of ['.claude/CLAUDE.md', '.codex/AGENTS.md'])
+    for (const name of ['.claude/CLAUDE.md', '.codex/AGENTS.md', '.config/opencode/AGENTS.md'])
       assert.equal(fs.realpathSync(path.join(f.home, name)), path.join(f.repo, 'steering.md'));
     assert.match(f.last.stdout, /ALLOW: .*CLAUDE\.md/);
     assert.match(f.last.stdout, /ALLOW: .*steering\.md/);

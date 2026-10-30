@@ -84,8 +84,11 @@ No authentication, real settings or subscription changes were made.
 
 Both gated and ungated API listings still returned `data: []`.
 All 13 gated requests had zero completed skill events. Explicit invocation
-reported it could not find `fixture`; the ungated control did not load its
-body either. These are failed discovery controls, not gate passes.
+reported it could not find `fixture`. The ungated control did load the body:
+[its transcript](evidence/opencode-125/go/model-control.jsonl) records one
+completed skill event and `FIXTURE_125_LOADED`. Empty API listings and the
+failed gated explicit control still leave gate and duplicate verdicts
+inconclusive.
 The steering marker was absent in both successful replies; this does not
 establish successful Claude-file fallback.
 
@@ -112,7 +115,7 @@ An empty ungated discovery control makes the runner exit nonzero after saving
 the matrix, explicitly marking gate and duplicate verdicts inconclusive.
 CLI fixture tests cover required model selection, exact Go selection with failed
 neutral access, and empty discovery (each substantive change observed red first).
-#125 remains open for successful body-load/discovery controls, gate enforcement,
+#125 remains open for successful gated explicit-load/discovery controls, gate enforcement,
 once-versus-twice discovery, and Claude steering fallback. The historical paid
 Sol 402 above remains evidence about that specific request only.
 

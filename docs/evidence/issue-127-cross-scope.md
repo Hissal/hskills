@@ -18,8 +18,14 @@ exited 0: #117 was already integrated; no extra merge was necessary.
 Observed parent runtime: Linux `6.12.113+deb13-amd64 x86_64`, Node `v20.19.2`.
 `/home/agent/.local/bin/claude --version` exited 0, reporting
 `2.1.312 (Claude Code)`. Its `--help` and `auth status --help` exited 0.
-`command -v codex` and `command -v opencode` returned no path (exit 1).
-No harness was installed; no Windows host was available.
+Initial noninteractive `command -v codex` and `command -v opencode` returned no
+path (exit 1); that was a PATH limitation, not binary absence. After the user's
+interactive-shell correction, explicit-path probes exited 0:
+`/home/agent/.npm-global/bin/codex --version` reported `codex-cli 0.166.0`;
+`/home/agent/.opencode/bin/opencode --version` reported `opencode v2.2.2`.
+Codex `login --help` and `exec --help` also exited 0. No harness was installed;
+no Windows host was available. OpenCode #125 live validation is separately
+assigned and was not duplicated here.
 
 ## Authentication boundary
 
@@ -40,6 +46,20 @@ in this isolated configuration; it says nothing about authentication in the real
 home. No login, model request, model selector, transcript or spend was produced.
 The supported CLI alone is insufficient to justify a live run. Real home settings,
 plugins and skills were neither modified nor imported.
+
+Codex authentication was also probed using the installed binary:
+
+```sh
+mkdir -p /tmp/issue-127-codex/home/.codex
+HOME=/tmp/issue-127-codex/home \
+CODEX_HOME=/tmp/issue-127-codex/home/.codex \
+/home/agent/.npm-global/bin/codex login status
+```
+
+It exited 1 with `Not logged in`, plus a warning: `Refusing to create helper
+binaries under temporary dir "/tmp"`. No real-home config or credentials were
+imported. No Codex model request was made; actual selection and double listing
+remain unverified despite the installed CLI.
 
 ## Isolated filesystem run
 
@@ -86,12 +106,23 @@ duplicate destination (`ENOENT`); both were corrected before the successful run.
 | Observation | Claude Code | Codex |
 | --- | --- | --- |
 | Linux installer symlinks resolve on disk | Verified in `.claude` root | Verified in `.agents` root; no CLI run |
-| Effective duplicate selection | Missing: no isolated auth | Missing: CLI absent |
-| Actual duplicate listing | Missing | Missing: CLI absent |
-| Project caller loads user requirement and reference | Missing: no isolated auth | Missing: CLI absent |
-| User caller loads project requirement and reference | Missing: no isolated auth | Missing: CLI absent |
+| Effective duplicate selection | Missing: no isolated auth | Missing: no isolated auth |
+| Actual duplicate listing | Missing | Missing: no isolated auth |
+| Project caller loads user requirement and reference | Missing: no isolated auth | Missing: no isolated auth |
+| User caller loads project requirement and reference | Missing: no isolated auth | Missing: no isolated auth |
 | Windows installer directory symlink followed by harness | Missing: no Windows | Missing: no Windows |
 | Windows installer junction followed by harness | Missing: no Windows | Missing: no Windows |
+
+## Integration and checks
+
+Merged integration tip `711a8aeeb31d59a03c5de5bb99a4c042a3341b1e` after the
+initial evidence commit; merge commit `f91019b` includes the steering changes.
+The merged fixture rerun exited 0 at `/tmp/skill-scope-127-TSfa76`.
+The merged collection check passed with 611 guard cases, 26 installer cases,
+zero failures and zero warnings. The post-merge `node scripts/check/test/run.js`
+passed all 216 cases with zero failures. The collection check also passed after
+the PATH/authentication correction. `npm ci` completed before checks;
+`git diff --check` passed.
 
 ## Live verification completion criteria
 

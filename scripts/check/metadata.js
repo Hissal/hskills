@@ -5,19 +5,7 @@
 const PREFIX = 'agent-skills-sync.';
 const ID = /^hissal\.skill-collection\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-function scalar(raw) {
-  const value = raw.trim();
-  if (value.startsWith('"')) {
-    try { return JSON.parse(value.replace(/\s+#.*$/, '')); } catch (e) { return null; }
-  }
-  if (value.startsWith("'")) {
-    const m = value.match(/^'((?:[^']|'')*)'\s*(?:#.*)?$/);
-    return m ? m[1].replace(/''/g, "'") : null;
-  }
-  const plain = value.replace(/\s+#.*$/, '');
-  if (!plain || /^(?:[\[\]{}&*!>|]|null$|~$|true$|false$|[-+]?\d+(?:\.\d+)?$)/i.test(plain)) return null;
-  return plain;
-}
+const { read: scalar, block: blockScalar } = require('./scalar');
 
 function parseMetadata(frontmatter) {
   const values = Object.create(null);
@@ -39,9 +27,7 @@ function parseMetadata(frontmatter) {
       if (/^[|>][-+]?(?:\s+#.*)?$/.test(m[3])) {
         const block = [];
         while (i + 1 < lines.length && (/^\s*$/.test(lines[i + 1]) || lines[i + 1].search(/\S/) > indent)) block.push(lines[++i]);
-        const width = Math.min(...block.filter((l) => l.trim()).map((l) => l.search(/\S/)));
-        value = block.map((l) => l.slice(width)).join(m[3][0] === '>' ? ' ' : '\n');
-        if (!m[3].includes('-')) value += '\n';
+        value = blockScalar(m[3], block);
       } else value = scalar(m[3]);
       if (key === null || value === null || typeof value !== 'string') errors.push('metadata values must be strings');
       else if (Object.hasOwn(values, key)) errors.push('duplicate metadata key ' + key);
@@ -59,7 +45,8 @@ function parseMetadata(frontmatter) {
     } catch (e) { errors.push('requires must be a JSON array of collection ID strings inside a string'); requires = []; }
   }
   if (schema !== '1') errors.push('declare agent-skills-sync.schema as "1"');
-  if (!ID.test(id || '')) errors.push('declare an ID under hissal.skill-collection/ with a lowercase kebab-case slug');
+  if (!/^[a-z0-9]+(?:[.-][a-z0-9]+)*\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id || '')) errors.push('ID is not publisher-qualified; use <publisher>/<lowercase-kebab-case-slug>');
+  else if (!ID.test(id)) errors.push("another publisher's ID is not allowed in this collection; use hissal.skill-collection/");
   return { values, schema, id, requires, errors };
 }
 

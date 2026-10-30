@@ -45,7 +45,7 @@ cannot be created under `/tmp`; registration itself succeeded.
 The installed API uses `plugin add`, not `plugin install` (the latter exited 2).
 No real-home files were edited. OpenCode is installed at `/home/agent/.opencode/bin/opencode` (v2.2.2 in
 the #125 recheck). Its discovery activation and HTTP 402 quota failures leave
-#125 inconclusive; see [the corrected evidence](../docs/user-install.md#opencode-evidence-status-125).
+#125 inconclusive; see [the corrected evidence](opencode-install-125.md).
 OpenCode evaluation was not repeated here.
 Claude `auth status --json` in another disposable home reported
 `loggedIn: false` and `authMethod: none` (exit 1). No login or credential copy

@@ -2,7 +2,9 @@
 
 Rechecked 2026-10-30 on Linux, OpenCode **v2.2.2**, starting from
 `a37ed41` (the integration branch included the authenticated #120 evidence).
-Status: superseded by the successful v2.2.3 discovery controls below.
+Status: discovery controls verified on v2.2.3; the owner approved native global
+steering at `~/.config/opencode/AGENTS.md` through `--owner-steering`.
+The native global present/absent control passed; see the approval section below.
 The v2.2.2 observations remain historical evidence.
 The paid Console observation below is historical, not a Go account diagnosis.
 
@@ -176,7 +178,7 @@ Current [V2 skill documentation](https://opencode.ai/v2/docs/skills/)
 suppression and explicit `@skill-id` loading, matching these controls.
 Current [V2 instructions documentation](https://opencode.ai/v2/docs/instructions/)
 (read 2026-10-31) explicitly recognizes only `AGENTS.md`, without Claude fallback.
-**Owner decision pending:** the collection's Claude-fallback steering assumption
+**Historical policy gap (superseded by the approval below):** the collection's Claude-fallback steering assumption
 must be replaced by a separately approved OpenCode V2 native instruction target
 or explicit instruction configuration. This task records the exact contract gap;
 it does not change installation policy. Funds are not a blocker. Discovery,
@@ -190,3 +192,54 @@ Validation: `npm ci`; `python3 scripts/install/evidence/test-opencode-125.py`
 The final offline `--discovery-only` runtime control also exited zero. No gate
 writer, installed harness, live settings, Codex authentication guidance or Windows
 handoff was changed. No agents, PR, push or merge into integration was performed.
+
+
+## Approved native global steering (2026-10-31)
+
+Owner decision: in the implementation request for this work, the user explicitly
+approved extending `--owner-steering` to OpenCode V2's native
+`~/.config/opencode/AGENTS.md`. Default install still has no steering. This
+supersedes #119's original Claude-fallback assumption and the pending decision
+above; the approval came from the user request, not a GitHub owner comment.
+The earlier failed fallback observations remain evidence of the old path.
+
+Implementation starts at integration `096a9ea`, with ancestry confirmed. The
+existing selected-home OpenCode config mapping is retained, with recorded
+ownership, remembered opt-in, conflict preservation and copy drift checks.
+Old two-target records acquire the third destination on a no-flag rerun.
+
+Executed a separate global control on Linux, OpenCode v2.2.3, exact model
+`opencode-go/claude-haiku-5-5`, without a variant. Both fresh standalone
+requests used the neutral prompt `Reply with hello.`, an empty scratch project,
+`OPENCODE_TEST_HOME` pointing to scratch home and `OPENCODE_CONFIG_DIR` pointing
+to scratch config. Only scratch config's `AGENTS.md` contained the instruction
+to append `NATIVE_GLOBAL_119_PRESENT`. With it present the reply was
+`Hello! NATIVE_GLOBAL_119_PRESENT`; after removal it was `Hello!`.
+Both exited zero. [Sanitized outcomes](evidence/opencode-125/native-global/summary.json).
+Authentication stayed inherited; no auth files were read or copied, and no real
+user config or home steering was modified. Global config override was confirmed
+in the installed binary's embedded Global service mapping before execution.
+The prior project-native result and this global result are distinct controls.
+Windows native link/copy behavior remains untested here.
+
+Reproduce in an empty scratch project with inherited authentication: set
+`OPENCODE_CONFIG_DIR` to a scratch config directory and `OPENCODE_TEST_HOME`
+to a scratch home, then run `opencode run --standalone --format json --model
+opencode-go/claude-haiku-5-5 'Reply with hello.'` in a fresh process for each
+arm, adding then removing only scratch config's `AGENTS.md` between arms.
+
+
+Validation for the native-target change: `npm ci` completed (Node v20.19.2
+reported engine warnings for dependencies requesting Node 22); installer CLI
+38 cases, zero failures; collection fixtures 218 passed, zero failed; OpenCode
+probe CLI fixtures 4 passed. The native destination failed a CLI filesystem
+assertion before implementation. The first expanded default-rerun test had an
+incorrect zero exit expectation; it was corrected to the existing pending
+Codex trust status while retaining all file-preservation assertions.
+
+Final collection check: 305 files, zero failures, four existing agnix
+fixture/marketplace warnings; its nested installer cases also passed 38/38.
+Guard cases passed 611/611. `git diff --check` passed. Integration tip
+`096a9ea4a01ad77d62236d541fbf00aac191444e` was already included; merging
+`feat/implement-issue-78` reported already up to date. No agents, PR, push or
+merge into integration was performed.

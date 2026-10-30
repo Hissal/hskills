@@ -152,7 +152,7 @@ function main() {
       if (steeringEnabled) {
         data.ownerSteering = true;
         data.steering ||= [];
-        for (const dest of [path.join(home, '.claude/CLAUDE.md'), path.join(home, '.codex/AGENTS.md')]) {
+        for (const dest of [path.join(home, '.claude/CLAUDE.md'), path.join(home, '.codex/AGENTS.md'), path.join(home, '.config/opencode/AGENTS.md')]) {
           console.log('ALLOW: ' + readRule(dest, false));
           console.log('ALLOW: ' + readRule(steeringSource, false));
           const entry = data.steering.find(l => l.path === dest);

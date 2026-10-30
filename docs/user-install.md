@@ -212,10 +212,12 @@ steering remain installed. Restart sessions.
 After uninstall there is no guard protection. Removal approves no individual
 command. Agents must report failures, not disable or bypass the guard.
 
-Automated Linux temporary-home CLI tests cover install, doctor and uninstall
-with all three harness directories. Live per-harness hand runs are still missing
-for #120, including trust, bypass, overrides and actual host invocation. The CLI
-probes are not that evidence; #120 is not fully accepted until it is recorded.
+Automated temporary-home CLI tests cover installation, doctor and uninstall.
+For actual Claude/Codex adapter invocation, read [live hook evidence](../research/live-hooks-120.md);
+for Claude plugin sessions, checkout independence and the Codex trust barrier,
+read [live plugin evidence](../research/live-plugins-121.md). OpenCode host
+acceptance and Windows harness reads remain outstanding; adapter probes alone
+do not establish those results.
 
 ## Register the guard plugin
 

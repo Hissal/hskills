@@ -4,6 +4,9 @@
 //   name:      what the case proves
 //   files:     { 'repo/relative/path': content } written untracked
 //   committed: same shape, written and committed before `files` (optional)
+//   before:    repository scripts run as `node <script> <fixture>` before the
+//              check (optional); clean: true also requires they change no
+//              committed file
 //   expect:    every finding the check must print, as '<fail|warn> <rule> <file>';
 //              the exit code must be 1 when any 'fail' is expected, else 0.
 //              Findings not listed fail the case, so a passing neighbour
@@ -44,7 +47,7 @@ module.exports = [
   { name: 'a new, unstaged skill is checked beside committed ones', committed: skill('skills/core/alpha'), files: skill('skills/core/beta', { body: 'Read [x](X.md).\n' }), expect: ['fail missing-file skills/core/beta/SKILL.md'] },
   { name: 'a committed skill is checked', committed: skill('skills/core/alpha', { body: 'Read [x](X.md).\n' }), expect: ['fail missing-file skills/core/alpha/SKILL.md'] },
   { name: 'ignored files are not checked', files: tree(skill('skills/core/alpha'), { '.gitignore': 'scratch/\n', 'scratch/a.txt': 'x\r\n' }, skill('scratch/skills/core/z', { body: 'Read [x](X.md).\n' })), expect: [] },
-  { name: 'SKILL.md files outside skills/ are not skills', files: skill('vendor/src/alpha', { body: 'Read [x](X.md).\n' }), expect: [] },
+  { name: 'SKILL.md files outside skills/ are not skills', files: skill('docs/examples/alpha', { body: 'Read [x](X.md).\n' }), expect: [] },
 
   // ---- line endings and BOM (every non-ignored text file) --------------------
   { name: 'CRLF in a text file fails', files: { 'README.md': '# x\r\nbody\r\n' }, expect: ['fail crlf-line-ending README.md'] },
@@ -84,7 +87,6 @@ module.exports = [
   { name: 'a reference not linked from SKILL.md warns', files: skill('skills/core/alpha', { body: 'Read [a](A.md).\n', files: { 'A.md': 'See [b](B.md).\n', 'B.md': '# B\n' } }), expect: ['warn reference-unlinked skills/core/alpha/B.md'] },
   { name: 'a reference only named in a code span warns', files: skill('skills/core/alpha', { body: 'Read `REF.md`.\n', files: { 'REF.md': '# Ref\n' } }), expect: ['warn reference-unlinked skills/core/alpha/REF.md'] },
   { name: 'references in a subfolder linked from SKILL.md pass', files: skill('skills/core/alpha', { body: 'Read [a](references/A.md).\n', files: { 'references/A.md': '# A\n' } }), expect: [] },
-  { name: 'NOTICE.md needs no link', files: skill('skills/core/alpha', { files: { 'NOTICE.md': '# Notice\n' } }), expect: [] },
   { name: 'warnings alone exit zero', files: tree(skill('skills/core/alpha', { body: lines(501) }), skill('skills/core/beta', { files: { 'X.md': '# X\n' } })), expect: ['warn skill-body-length skills/core/alpha/SKILL.md', 'warn reference-unlinked skills/core/beta/X.md'] },
   // ---- guide needs targets (#100) -------------------------------------------
   { name: 'a missing guide reference fails', files: skill('skills/packs/web/web-guide', { body: '## Needs\n\n| Need | Target |\n|---|---|\n| Testing | [Tests](TESTS.md) |\n' }), expect: ['fail missing-file skills/packs/web/web-guide/SKILL.md', 'fail guide-needs-target skills/packs/web/web-guide/SKILL.md'] },
@@ -197,3 +199,5 @@ module.exports.push({
   files: tree(needing('skills/core/alpha', 'alpha', ['beta', 'gamma']), skill('skills/core/beta'), skill('skills/core/gamma')),
   expect: [],
 });
+// ---- copied skills (#102) -----------------------------------------------------
+module.exports.push(...require('./vendoring-cases')({ skill, skillMd }));

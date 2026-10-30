@@ -65,6 +65,19 @@ try {
    config.models[0].command = [process.execPath,fake,mode];
    assert.equal(run().status,2,mode);
  }
+ // Plugin callable names may differ from the entry point's bare name.
+ config.models[0].command = [process.execPath,fake,'codex'];
+ config.skills[0].name = 'fixture-pack:fixture';
+ config.skills[0].readName = 'fixture';
+ config.models[1].harness = 'codex';
+ config.models[1].command = [process.execPath,fake,'codex'];
+ const plugin = run();
+ assert.equal(plugin.status,0,plugin.stdout);
+ assert.match(plugin.stdout,/RESULT: fixture-pack:fixture Opus q1 fired/);
+ config.skills[0].name = 'fixture';
+ delete config.skills[0].readName;
+ config.models[1].harness = 'claude';
+ config.models[1].command = [process.execPath,fake];
  config.models[0].harness = 'opencode';
  config.models[0].command = [process.execPath,fake,'opencode'];
  assert.equal(run().status,0);

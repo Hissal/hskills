@@ -6,6 +6,72 @@ const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
 const cli = path.resolve(__dirname, '../install.js');
 const cases = [
+  ...['file', 'directory', 'link', 'dangling link'].map(kind => ['preserves unrecorded steering ' + kind, f => {
+    const dest = path.join(f.home, '.claude/CLAUDE.md');
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    if (kind === 'file') fs.writeFileSync(dest, 'mine');
+    else if (kind === 'directory') fs.mkdirSync(dest);
+    else fs.symlinkSync(path.join(f.repo, kind === 'link' ? 'steering.md' : 'missing'), dest, 'file');
+    const before = fs.lstatSync(dest);
+    f.run(1, 'install', ['--owner-steering']);
+    assert.match(f.last.stdout, /CONFLICT unrecorded steering/);
+    assert.equal(fs.lstatSync(dest).ino, before.ino);
+    if (kind === 'file') assert.equal(fs.readFileSync(dest, 'utf8'), 'mine');
+    if (kind.includes('link')) assert.equal(fs.readlinkSync(dest), path.join(f.repo, kind === 'link' ? 'steering.md' : 'missing'));
+    assert.equal(JSON.parse(fs.readFileSync(f.record)).steering.length, 1);
+  }]),
+  ['copies when file symlinks are denied and doctor detects drift without repairing it', f => {
+    // Deny the OS operation only; all installation and verification uses real files.
+    const preload = path.join(f.repo, 'deny-file-links.cjs');
+    fs.writeFileSync(preload, `const fs = require('fs');
+const original = fs.symlinkSync;
+fs.symlinkSync = function(target, dest, type) {
+  if (type === 'file') throw Object.assign(new Error('permission denied'), { code: 'EPERM' });
+  return original.apply(this, arguments);
+};
+`);
+    f.nodeArgs = ['--require', preload];
+    f.run(0, 'install', ['--owner-steering']);
+    const record = fs.readFileSync(f.record, 'utf8');
+    const entries = JSON.parse(record).steering;
+    assert.deepEqual(entries.map(e => e.type), ['copy', 'copy']);
+    for (const e of entries) assert.equal(fs.readFileSync(e.path, 'utf8'), 'personal steering\n');
+    f.run(0);
+    assert.equal(fs.readFileSync(f.record, 'utf8'), record);
+    fs.writeFileSync(path.join(f.repo, 'steering.md'), 'updated source');
+    f.run(1, 'doctor');
+    assert.match(f.last.stdout, /DOCTOR steering copy drift/);
+    f.run(1);
+    assert.equal(fs.readFileSync(entries[0].path, 'utf8'), 'personal steering\n');
+    assert.equal(fs.readFileSync(f.record, 'utf8'), record);
+    fs.writeFileSync(path.join(f.repo, 'steering.md'), 'personal steering\n');
+    fs.writeFileSync(entries[0].path, 'local edit');
+    f.run(1, 'doctor');
+    assert.match(f.last.stdout, /copy drift/);
+    f.run(1);
+    assert.equal(fs.readFileSync(entries[0].path, 'utf8'), 'local edit');
+  }],
+
+  ['steering is untouched without opt-in', f => {
+    const dest = path.join(f.home, '.claude/CLAUDE.md');
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.writeFileSync(dest, 'mine');
+    f.run(0);
+    assert.equal(fs.readFileSync(dest, 'utf8'), 'mine');
+    assert.equal(fs.existsSync(path.join(f.home, '.codex/AGENTS.md')), false);
+  }],
+  ['steering opt-in links both targets and survives a no-flag rerun', f => {
+    f.run(0, 'install', ['--owner-steering']);
+    for (const name of ['.claude/CLAUDE.md', '.codex/AGENTS.md'])
+      assert.equal(fs.realpathSync(path.join(f.home, name)), path.join(f.repo, 'steering.md'));
+    assert.match(f.last.stdout, /ALLOW: .*CLAUDE\.md/);
+    assert.match(f.last.stdout, /ALLOW: .*steering\.md/);
+    const before = fs.readFileSync(f.record, 'utf8');
+    assert.equal(JSON.parse(before).ownerSteering, true);
+    f.run(0);
+    assert.equal(fs.readFileSync(f.record, 'utf8'), before);
+  }],
+
   ['refuses an empty ownership record without installing', (f) => {
     fs.mkdirSync(path.dirname(f.record), { recursive: true });
     fs.writeFileSync(f.record, '');
@@ -105,11 +171,12 @@ for (const [name, test] of cases) {
     fs.mkdirSync(path.join(repo, 'skills/core/alpha'), { recursive: true });
     const f = { repo, home, targets, record: path.join(home, '.skill-collection/install.json'),
       manifest(core, packs = {}) { fs.writeFileSync(path.join(repo, 'collection.json'), JSON.stringify({ core, packs, expensive: [] })); },
-      run(status, command = 'install') {
-        this.last = spawnSync(process.execPath, [cli, command, '--home', home, '--source', repo, '--claude-root', targets[0], '--agents-root', targets[1]], { encoding: 'utf8' });
+      run(status, command = 'install', extra = []) {
+        this.last = spawnSync(process.execPath, [...(this.nodeArgs || []), cli, command, '--home', home, '--source', repo, '--claude-root', targets[0], '--agents-root', targets[1], ...extra], { encoding: 'utf8' });
         assert.equal(this.last.status, status, this.last.stdout + this.last.stderr);
       },
     };
+    fs.writeFileSync(path.join(repo, 'steering.md'), 'personal steering\n');
     f.manifest(['skills/core/alpha']);
     test(f);
   } catch (e) { console.log('FAIL ' + name + ': ' + e.message); failures++; }

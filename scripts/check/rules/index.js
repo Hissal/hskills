@@ -27,4 +27,6 @@ module.exports = [
   require('./dependency-catalog'),
 
   require('./harness-gates'),
+
+  require('./id-stability'),
 ];

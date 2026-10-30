@@ -175,6 +175,7 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 
 - `files` is written untracked into a scratch git repository; `committed` (same shape) is committed first.
 - `before` (optional) lists repository scripts run as `node <script> <fixture>` before the check, such as the `NOTICE.md` generator; `clean: true` also requires them to leave every committed file unchanged.
+- `history` is a list of earlier commits, `{ files, tag? }`, each a whole tree, optionally tagged. `committed` then replaces the last tree. Use it for rules that read git history.
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
 - `output` (optional) lists regexes the check's other stdout lines must match one to one, in order, for cases about what the check prints besides findings.
@@ -413,3 +414,17 @@ The rule checks trees containing `docs/catalog.md`; fixture or subset trees
 without that artifact skip it. Malformed or duplicate markers fail. Text outside
 the markers remains byte-for-byte unchanged. The fixture runner also exercises
 the writer CLI, idempotence, renamed identities and the failure message.
+## Skill ID stability (#97)
+
+A skill keeps its `agent-skills-sync.id` across renames and moves. The check
+compares the working tree with the last release tag: the nearest `v<version>`
+tag (release-please's form) reachable from `HEAD`. Before the first release
+there is no such tag and the rule is silent; a checkout without tags is silent
+too, so CI fetches them.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
+
+Deleting or re-identifying a skill on purpose is legitimate: read the warning,
+confirm the change is intended, and leave it.

@@ -7,6 +7,8 @@
 //   before:    repository scripts run as `node <script> <fixture>` before the
 //              check (optional); clean: true also requires they change no
 //              committed file
+//   history:   [{ files, tag? }] whole trees committed (and tagged) in order
+//              before `committed`, which replaces the last one (optional)
 //   expect:    every finding the check must print, as '<fail|warn> <rule> <file>';
 //              the exit code must be 1 when any 'fail' is expected, else 0.
 //              Findings not listed fail the case, so a passing neighbour
@@ -235,4 +237,19 @@ module.exports.push(...require('./vendoring-cases')({ skill, skillMd }));
 module.exports.push(
   { name: 'stale dependency catalog fails', files: { 'docs/catalog.md': '# Catalog\n' }, expect: ['fail dependency-catalog docs/catalog.md'] },
   { name: 'fresh empty dependency catalog passes', files: { 'docs/catalog.md': '# Catalog\n\n<!-- BEGIN GENERATED DEPENDENCIES -->\n| Skill ID | Callable / source | Hard requirements |\n|---|---|---|\n<!-- END GENERATED DEPENDENCIES -->\n' }, expect: [] }
+);
+// #97: ID stability against the last release tag (v<version>).
+const withId = (dir, id) => skill(dir, { fm: { metadata: metadata('hissal.skill-collection/' + id) } });
+const released = tree(skill('skills/core/alpha'), skill('skills/core/beta'));
+module.exports.push(
+  { name: 'with no release tag the rule is silent', history: [{ files: released }], committed: skill('skills/core/alpha'), files: withId('skills/core/beta', 'gamma'), expect: [] },
+  { name: 'a non-release tag is not a baseline', history: [{ files: released, tag: 'experiment' }], committed: skill('skills/core/alpha'), expect: [] },
+  { name: 'an ID at the last release that is gone warns', history: [{ files: released, tag: 'v1.0.0' }], committed: skill('skills/core/alpha'), expect: ['warn id-stability skills/core/beta/SKILL.md'] },
+  { name: 'a folder now carrying a different ID warns', history: [{ files: released, tag: 'v1.0.0' }], committed: tree(skill('skills/core/alpha'), withId('skills/core/beta', 'gamma')), expect: ['warn id-stability skills/core/beta/SKILL.md'] },
+  { name: 'an uncommitted ID change warns', history: [{ files: released, tag: 'v1.0.0' }], committed: released, files: withId('skills/core/alpha', 'gamma'), expect: ['warn id-stability skills/core/alpha/SKILL.md'] },
+  { name: 'a moved skill keeping its ID passes', history: [{ files: released, tag: 'v1.0.0' }], committed: tree(skill('skills/core/alpha'), withId('skills/packs/web/beta', 'beta')), expect: [] },
+  { name: 'a renamed skill keeping its ID passes', history: [{ files: released, tag: 'v1.0.0' }], committed: tree(skill('skills/core/alpha'), withId('skills/core/renamed', 'beta')), expect: [] },
+  { name: 'a skill added since the release passes', history: [{ files: released, tag: 'v1.0.0' }], committed: tree(released, skill('skills/core/gamma')), expect: [] },
+  { name: 'the latest release tag is the baseline', history: [{ files: released, tag: 'v1.0.0' }, { files: skill('skills/core/alpha'), tag: 'v1.1.0' }], committed: skill('skills/core/alpha'), expect: [] },
+  { name: 'an ID warning alone exits zero', history: [{ files: released, tag: 'v1.0.0' }], committed: tree(withId('skills/core/alpha', 'beta'), withId('skills/core/beta', 'alpha')), expect: ['warn id-stability skills/core/alpha/SKILL.md', 'warn id-stability skills/core/beta/SKILL.md'] }
 );

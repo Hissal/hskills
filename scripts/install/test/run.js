@@ -6,6 +6,41 @@ const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
 const cli = path.resolve(__dirname, '../install.js');
 const cases = [
+  ...(process.platform === 'win32' ? [false, true].map(deny => [
+    `Windows installer ${deny ? 'junction fallback' : 'directory symlink'} loads reference`, f => {
+      const target = path.join(f.repo, 'skills/core/alpha');
+      fs.mkdirSync(path.join(target, 'references'));
+      fs.writeFileSync(path.join(target, 'references/token.md'), 'WINDOWS-REFERENCE');
+      if (deny) {
+        const preload = path.join(f.repo, 'deny-directory-links.cjs');
+        fs.writeFileSync(preload, `const fs = require('fs');
+const original = fs.symlinkSync;
+fs.symlinkSync = function(target, dest, type) {
+  if (type === 'dir') throw Object.assign(new Error('permission denied'), { code: 'EPERM' });
+  return original.apply(this, arguments);
+};
+`);
+        f.nodeArgs = ['--require', preload];
+      }
+      f.run(0);
+      const links = JSON.parse(fs.readFileSync(f.record)).links;
+      assert.equal(links.length, 2);
+      for (const entry of links) {
+        assert.equal(entry.type, deny ? 'junction' : 'symlink');
+        assert.ok(fs.lstatSync(entry.path).isSymbolicLink());
+        // Node reports both as symbolic links; inspect Windows' reparse type.
+        const inspected = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+          '(Get-Item -LiteralPath $env:SCOPE_LINK).LinkType'], {
+          encoding: 'utf8', env: { ...process.env, SCOPE_LINK: entry.path }
+        });
+        assert.equal(inspected.status, 0, inspected.stderr);
+        assert.equal(inspected.stdout.trim(), deny ? 'Junction' : 'SymbolicLink');
+        assert.equal(fs.realpathSync(entry.path), fs.realpathSync(target));
+        assert.equal(fs.readFileSync(path.join(entry.path, 'references/token.md'), 'utf8'), 'WINDOWS-REFERENCE');
+      }
+      f.run(0, 'doctor');
+    }
+  ]) : []),
   ['preserves an unrecorded dangling guard symlink', f => {
     const dest = path.join(f.home, '.agents/command-guard/engine/index.js');
     const outside = path.join(f.repo, 'outside-missing');

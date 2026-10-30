@@ -9,6 +9,7 @@ What a skill folder in this collection holds, and the check that keeps the tree 
 - [Scripts](#scripts)
 - [Portability](#portability)
 - [Line endings](#line-endings)
+- [Copied skills](#copied-skills)
 - [The collection check](#the-collection-check)
 - [Adding a rule](#adding-a-rule)
 - [Adding a fixture](#adding-a-fixture)
@@ -59,6 +60,35 @@ A skill's folder works wherever it is installed. It never assumes a sibling fold
 
 The repository is LF everywhere, with no UTF-8 BOM: either breaks frontmatter and shebang detection on some Linux tools. `.gitattributes` makes every text checkout LF, Windows included; the check fails on a CRLF or a BOM in any collection text file.
 
+## Copied skills
+
+A skill copied from a source keeps its provenance in plain files (ADR 0002, [#17](https://github.com/Hissal/skill-collection/issues/17#issuecomment-6108951556), [#51](https://github.com/Hissal/skill-collection/issues/51#issuecomment-6477057987)). An idea taken without copying text needs no record, and no skill carries a `SPEC.md` or `SOURCES.md`.
+
+- **Lock**: `vendor.lock.json` at the root lists every copied skill:
+
+  ```json
+  { "skills": [
+    { "skill": "skills/core/grilling",
+      "source": "mattpocock/skills",
+      "path": "skills/grilling",
+      "sha": "<full 40-character commit SHA>",
+      "license": "MIT",
+      "changes": "one line: what this copy changes, or none" } ] }
+  ```
+
+  `skill` is the copy's folder in this tree; `source` the GitHub `owner/repo`; `path` the skill folder in the source; `sha` the pinned commit; `license` the source's licence identifier; `changes` the one-line reason for local changes. Every field is required and no other field is allowed. One entry per skill folder.
+- **Baseline**: the source folder at the pinned commit, every file, at `vendor/<owner>/<repo>/<skill>/` (`<skill>` is the copy's folder name). The vendor area sits outside every skill root and plugin directory, so no harness loads the baseline's `SKILL.md` and no plugin cache copies it. Everything under `vendor/` belongs to one entry's baseline. Baselines are committed LF and BOM-free like every file (see [Line endings](#line-endings)); the drift script normalises CRLF and BOM itself when it compares with a source.
+- **Licence area**: each source's licence in full at `licenses/<owner>/<repo>.txt`.
+- **`NOTICE.md`**: each copied skill's folder holds one, generated from the lock and the licence area: the source repository, path, pinned commit, licence, local changes and the full licence text. It travels with plugin and folder installs. Never edit it; after changing the lock or a licence file, regenerate:
+
+  ```
+  node scripts/vendor/notice.js
+  ```
+
+  `NOTICE.md` is not a reference: it needs no link from `SKILL.md`.
+
+Scripts read the lock through `scripts/vendor/lock.js`, never by parsing it themselves.
+
 ## The collection check
 
 ```
@@ -83,6 +113,10 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `skill-body-length` | warn | a `SKILL.md` body over 500 lines |
 | `reference-contents` | warn | a reference over 100 lines with no contents list |
 | `reference-unlinked` | warn | a reference not linked straight from `SKILL.md` (`NOTICE.md` excepted) |
+| `vendor-lock` | fail | `vendor.lock.json` is not valid against [Copied skills](#copied-skills), or an entry names no skill folder; the other `vendor-*` rules wait until the lock is valid |
+| `vendor-baseline` | fail | a lock entry has no baseline `SKILL.md`, or a file under `vendor/` is in no entry's baseline |
+| `vendor-licence` | fail | a lock entry's source has no licence file |
+| `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` sits in a skill with no lock entry |
 
 Test the check with its fixture runner:
 
@@ -112,6 +146,7 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 ```
 
 - `files` is written untracked into a scratch git repository; `committed` (same shape) is committed first.
+- `before` (optional) lists repository scripts run as `node <script> <fixture>` before the check, such as the `NOTICE.md` generator; `clean: true` also requires them to leave every committed file unchanged.
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.

@@ -11,4 +11,9 @@ module.exports = [
   require('./skill-body-length'),
   require('./reference-contents'),
   require('./reference-unlinked'),
+  // copied skills (#102)
+  require('./vendor-lock'),
+  require('./vendor-baseline'),
+  require('./vendor-licence'),
+  require('./vendor-notice'),
 ];

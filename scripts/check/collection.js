@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const vendorLock = require('../vendor/lock');
 
 const BOM = '\uFEFF';
 // Markdown files in a skill folder that are not references: the entry point,
@@ -84,6 +85,14 @@ function load(root) {
     return Object.assign({ dir, name: path.posix.basename(dir), skillMd, files: own }, splitFrontmatter(text(skillMd)));
   });
 
+  // The copied-skill record (#102): vendor.lock.json parsed once, if the
+  // collection holds one. { exists, entries, errors }; see scripts/vendor/lock.js.
+  let vendor;
+  const getVendor = () => {
+    if (!vendor) vendor = known.has(vendorLock.LOCK) ? Object.assign({ exists: true }, vendorLock.parse(text(vendorLock.LOCK))) : { exists: false, entries: [], errors: [] };
+    return vendor;
+  };
+
   return {
     root,
     files,
@@ -97,6 +106,7 @@ function load(root) {
     // a skill's reference files: its Markdown files other than NOT_REFERENCES
     references: (s) => s.files.filter((f) => f.endsWith('.md') && !NOT_REFERENCES.has(f.slice(s.dir.length + 1))),
     // a file's relative links resolved to repository-relative paths
+    get vendor() { return getVendor(); },
     links: (file) => links(text(file)).map((l) => Object.assign(l, { path: path.posix.normalize(path.posix.join(path.posix.dirname(file), l.target.replace(/\\/g, '/'))) })),
   };
 }

@@ -12,6 +12,7 @@ const { spawnSync } = require('child_process');
 const cases = require('./cases');
 
 const CHECK = path.join(__dirname, '..', 'check.js');
+const REPO = path.join(__dirname, '..', '..', '..');
 const FINDING = /^(FAIL|WARN) (.+?)(?::\d+)? \[([\w-]+)\] /;
 let failed = 0;
 let passed = 0;
@@ -44,17 +45,26 @@ try {
       git(dir, ['commit', '-q', '-m', 'fixture']);
     }
     write(dir, c.files || {});
+    // before: repository scripts run on the fixture first, as
+    // `node <script> <fixture>` (e.g. a generator); clean: they must leave
+    // the committed files unchanged
+    for (const script of c.before || []) {
+      const pre = spawnSync(process.execPath, [path.join(REPO, script), dir], { encoding: 'utf8' });
+      if (pre.status !== 0) console.log('     ' + script + ' exited ' + pre.status + ': ' + (pre.stdout + pre.stderr).trim());
+    }
+    const dirty = c.clean ? spawnSync('git', ['status', '--porcelain'], { cwd: dir, encoding: 'utf8' }).stdout.trim() : '';
 
     const res = spawnSync(process.execPath, [CHECK, dir], { encoding: 'utf8' });
     const got = res.stdout.split('\n').map((l) => l.match(FINDING)).filter(Boolean).map((m) => key(m[1], m[3], m[2])).sort();
     const want = (c.expect || []).slice().sort();
     const exit = want.some((w) => w.startsWith('fail ')) ? 1 : 0;
-    const ok = res.status === exit && JSON.stringify(got) === JSON.stringify(want);
+    const ok = res.status === exit && JSON.stringify(got) === JSON.stringify(want) && !dirty;
     if (ok) { passed++; return; }
     failed++;
     console.log('FAIL ' + c.name);
     console.log('     expected exit ' + exit + ': ' + JSON.stringify(want));
     console.log('     got exit ' + res.status + ': ' + JSON.stringify(got));
+    if (dirty) console.log('     changed committed files: ' + dirty.replace(/\n/g, ', '));
     if (res.stderr) console.log('     stderr: ' + res.stderr.trim().split('\n').slice(0, 6).join('\n     '));
   });
 } finally {

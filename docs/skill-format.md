@@ -212,6 +212,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `vendor-licence` | fail | a lock entry's source has no licence file |
 | `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` sits in a skill with no lock entry |
 | `dependency-catalog` | fail | the catalog's marked dependency section differs from fresh metadata output; names the regenerate command |
+| `release-config` | fail | invalid single-version release settings or a plugin manifest missing its JSON version stamp entry |
 | `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
 | `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
 | `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |

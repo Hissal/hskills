@@ -3,6 +3,7 @@
   "private": true,
   "description": "Tooling for the skill collection. `npm ci` installs the pinned agnix the collection check runs.",
   "devDependencies": {
-    "agnix": "0.60.1"
+    "agnix": "0.60.1",
+    "release-please": "17.11.2"
   }
 }

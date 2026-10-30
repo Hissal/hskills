@@ -34,7 +34,7 @@ function prepare(home) {
     } finally { fs.rmSync(stage, { recursive: true, force: true }); }
   }
   console.log('Prepared plugin snapshot: ' + dest);
-  console.log('UNSUPPORTED automatic plugin registration: host registration and effective hook trust have not been verified. Existing guard registration preserved.');
+  console.log('UNSUPPORTED automatic plugin registration switch: effective host hook loading and trust remain unverified. Existing guard registration preserved.');
   console.log('PENDING Codex human trust: review the installed hook in /hooks; adapter probes cannot establish trust.');
 }
 module.exports = { prepare };

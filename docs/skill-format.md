@@ -118,3 +118,245 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `vendor-baseline` | fail | a lock entry has no baseline `SKILL.md`, or a file under `vendor/` is in no entry's baseline |
 | `vendor-licence` | fail | a lock entry's source has no licence file |
 | `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` sits in a skill with no lock entry |
+
+Test the check with its fixture runner:
+
+```
+node scripts/check/test/run.js
+```
+
+Every change to the check keeps both green: the runner, and the check on the real tree.
+
+## Adding a rule
+
+1. Write `scripts/check/rules/<id>.js` exporting `{ id, level, check }`. `level` is `'fail'` or `'warn'`. `check(c)` returns findings `[{ file, line?, message }]`; `file` is repository-relative with `/`, and `message` says what to do.
+2. List it in `scripts/check/rules/index.js`. The registry is the only list of rules: `check.js` runs whatever it holds.
+3. Add its row to the table above.
+4. Add its fixtures (next section).
+
+`c` is the collection view from `scripts/check/collection.js`; read it there rather than re-listing files or re-parsing frontmatter in the rule. It carries every checked file (`files`, `bytes`, `text`, `isText`, `exists`), the skills under `skills/` (`dir`, `name`, `skillMd`, `files`, `frontmatter` lines, `body` lines and their line numbers), `references(skill)` and `links(file)`. A rule that needs another shared fact (the manifest, git history) adds it to the view so later rules reuse it.
+
+## Adding a fixture
+
+Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case is a fixture collection tree and every finding the check must print:
+
+```js
+{ name: 'a reference not linked from SKILL.md warns',
+  files: skill('skills/core/alpha', { body: 'Read [a](A.md).\n', files: { 'A.md': 'See [b](B.md).\n', 'B.md': '# B\n' } }),
+  expect: ['warn reference-unlinked skills/core/alpha/B.md'] },
+```
+
+- `files` is written untracked into a scratch git repository; `committed` (same shape) is committed first.
+- `before` (optional) lists repository scripts run as `node <script> <fixture>` before the check, such as the `NOTICE.md` generator; `clean: true` also requires them to leave every committed file unchanged.
+- `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
+- Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
+- `output` (optional) lists regexes the check's other stdout lines must match one to one, in order, for cases about what the check prints besides findings.
+- Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
+- Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'﻿'`), so the repository itself stays LF and BOM-free.
+
+## Idle-cost tripwires
+
+Every check run prints estimated tokens (Unicode characters ÷ 4) for core and
+each pack present in the collection. Only model-invoked skills contribute their
+`description` and optional `when_to_use` values; `disable-model-invocation: true`
+excludes a skill. Bodies, reference files and skills outside the collection's
+core and pack tree contribute nothing. Quoting and block-scalar markers are
+syntax rather than listing text.
+
+`COLLECTION_ALWAYS_ON_PATH` is the single setting for the repository-relative
+always-on source path, **set by spec 2, #118/#114**. It is unset by default.
+When unset or when the file is absent from the checked collection, the check
+prints “not measured” with the reason and continues successfully.
+
+The `idle-cost` warning fires above 500 tokens for the always-on source,
+1,000 for core descriptions, or 1,000 for one pack's descriptions. Equality
+passes; warnings leave the exit code zero unless another rule fails.
+Review growth when a warning appears.
+
+Tripwire fixtures may set `alwaysOnPath` and assert figure text with `output`
+(an array of expected stdout substrings); the runner clears an inherited
+always-on setting for other fixtures.
+## Skill identity and hard requirements (#95)
+
+Author identity once, in string-valued `metadata` in `SKILL.md`:
+
+```yaml
+metadata:
+  agent-skills-sync.schema: "1"
+  agent-skills-sync.id: "hissal.skill-collection/example"
+  agent-skills-sync.requires: '["hissal.skill-collection/knowledge"]'
+```
+
+Schema is the string `"1"`, not the number `1`. IDs use the publisher prefix
+`hissal.skill-collection/` and a lowercase kebab-case slug. Each ID is unique
+and survives callable renames, folder moves, address and installation scope
+changes. Other publishers can adopt the same metadata keys with their own
+prefix; this collection currently rejects external IDs and requirements until
+an external locator/version contract exists.
+
+`requires` is a JSON array of ID strings inside a YAML string. Omit it, use an
+empty string, or use `'[]'` for no requirements. Declare only knowledge the skill
+cannot work without. Optional pack lookups, suggestions, related reading and
+process calls are not hard requirements and grant no invocation authority.
+
+Requirements resolve by ID against the whole collection tree at the same
+revision, across core and pack folders, rather than relative to the caller's
+installation scope. Every required ID must resolve; cycles, including self
+requirements, fail. A reference in a required skill is named with a relative
+Markdown link into that skill's folder, using the existing file-link convention;
+the target must exist in the resolved requirement's folder. This applies to links
+from both the calling `SKILL.md` and its Markdown references. Code spans and
+fenced examples do not declare file links.
+
+Metadata uses an indented YAML string mapping. Plain, single-quoted,
+double-quoted and literal/folded block strings are supported; structured YAML
+values, aliases and duplicate keys are rejected. Use quoted scalars for values
+such as numbers or booleans that YAML would otherwise interpret as non-strings.
+
+Additional fail rules:
+
+| Rule | Level | Finding |
+|---|---|---|
+| `skill-metadata` | fail | missing or invalid schema/ID, malformed requirements or duplicate ID |
+| `skill-requirements` | fail | a requirement outside the resolved set or a requirement cycle |
+| `requirement-reference` | fail | a Markdown link names a missing file in a required skill's folder |
+
+## Continuous integration
+
+[Collection check](../.github/workflows/collection-check.yml) runs the fixture runner
+and the same collection check command on every push and pull request, on Windows
+and Linux. Either command failing fails its job; both platforms run even if one
+fails. Checkout includes history and tags for checks against the last release.
+There is no pre-commit hook.
+
+The workflow's `CLAUDE_CODE_VERSION` is the single Claude Code CLI pin, matching
+the version inspected in [loading-mechanics research](../research/loading-mechanics.md).
+Bumping it requires re-verifying that research. CI installs the CLI but does not
+run the hand-run trigger evals or authenticate a model session.
+
+## Guide format
+
+Guides recommend workflows; they never run them. A recommendation returns the
+exact user invocation and leaves starting a user-invoked workflow to the human.
+A small guide is primarily routes and has a needs table only when it supplies
+knowledge. These rules follow [ADR 0003](adr/0003-core-reaches-packs-through-the-pack-list.md)
+and [#100](https://github.com/Hissal/skill-collection/issues/100).
+
+### Pack guides and needs tables
+
+A pack has at most one guide, named `<pack>-guide`, model-invoked. Put its needs
+table in the `SKILL.md` body, so knowledge lookups see it immediately. Each row
+maps a specific need to concrete knowledge: a reference file in the guide's own
+folder, another skill in the same pack, or vendor guidance selected by the
+project. A row never ends at generic advice.
+
+Use a two-column Markdown table headed `Need` and `Target` (case-insensitive).
+Tables in fenced examples are ignored. The target forms are:
+
+- A relative Markdown link to a file in this guide's folder, including nested
+  references; anchors may select a section. Directories do not count.
+- `skill: <callable-name>` (optionally in backticks), resolved to a skill in the
+  same pack. This is an installed-skill lookup, not a sibling filesystem path.
+- `vendor-guidance: <project-selected guidance>` (optionally in backticks).
+  Describe the specific selected source or project pointer. The check recognises
+  this marker and does not resolve it: the consuming project's choice is outside
+  the collection tree. An arbitrary external URL alone is not this declaration.
+
+Minimal needs table for a hypothetical `web-guide`:
+
+```md
+| Need | Target |
+|---|---|
+| Test idioms for this stack | [Test idioms](references/TESTING.md) |
+| Web review checks | `skill: web-review` |
+| Framework API contracts | vendor-guidance: framework documentation selected in project instructions |
+```
+
+The check recognises guides named `guide` or ending in `-guide`. It fails a
+needs-table row whose target does not resolve by the above rules, including a
+skill from another pack. General missing-file checks still apply to links.
+
+### Routes
+
+Pack workflow routes live in `ROUTES.md` beside `SKILL.md`. Link it directly
+from `SKILL.md` with an instruction to load it **only when routes are requested**;
+knowledge lookups must not load routes. A pack with no user-invoked workflows
+ships no `ROUTES.md`. A pack guide with routes must never use `paths:`, because
+core guide discovery needs it visible in the installed listing.
+
+Every route pairs a distinguishing situation with the exact invocation the
+human can type, including arguments when needed. For example:
+
+```md
+| Situation | Invocation |
+|---|---|
+| Review a web change before merging | `/web-review` |
+| Diagnose a failing browser test | `/web-debug <failing test>` |
+```
+
+The core guide is user-invoked. Its main workflow routes stay in its `SKILL.md`
+body; supporting routes live in a directly disclosed reference grouped by need.
+The automatic guide uses the same body format; its comparison rule is defined
+separately. Route content belongs to the guide's own skill spec.
+
+### Extension points
+
+An extension point is one sentence naming the need and asking the project's
+listed pack guides; it never names a particular pack or pack skill. Example:
+“Ask the project's listed pack guides for this stack's test idioms and fixtures.”
+The caller keeps its current job while obtaining that knowledge; a lookup never
+starts another workflow. See [core extension points](agents/core-extension-points.md).
+
+### Guide check rules
+
+| Rule | Level | Finding |
+|---|---|---|
+| `guide-needs-target` | fail | a guide needs-table target is not its own file, a same-pack skill, or explicitly project-selected vendor guidance |
+| `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
+
+## Hard requirements at runtime (#98)
+
+Before doing any work, load every skill declared in `requires` and the
+reference files needed from those skills. Resolve them through the installed
+skill listing across installation scopes. Begin work only when all required
+skills and needed reference files have loaded. If a skill or needed reference
+cannot load, stop without partial work and print the stop message below.
+A missing reference is a partial install and takes the same stop path.
+
+Runtime checks ask only whether the material loads. Identity and content
+verification belong to the installer. Loading a requirement grants no authority
+to invoke a user-invoked workflow; starting that workflow still requires the
+human's invocation.
+
+### Shared stop template
+
+Copy this block into each requiring skill's body before its work steps.
+Replace `<bare-callable-name>` and `<required-id>` for each declared requirement;
+use the callable name without a plugin prefix. Repeat the requirement line and
+message for each requirement. At runtime, fill `<unloadable-material>` with the
+skill or needed reference that failed to load.
+
+```md
+Before doing any work, load <bare-callable-name> (<required-id>) and its needed
+reference files through the installed skill listing. Begin work only after all
+requirements and needed references have loaded. If any cannot load, stop
+without partial work and print:
+
+Stopped: required skill <bare-callable-name> (<required-id>) could not be loaded
+completely. Unavailable: <unloadable-material>. Ordinary installers such as
+`npx skills` do not install requirements; the Unity sync resolves them from
+this metadata. Install or repair the requirement, then retry.
+
+Check only whether the required material loads; the installer verifies identity
+and content. Loading this requirement grants no permission to invoke a
+user-invoked workflow; wait for the human to invoke that workflow.
+```
+
+The `requirement-body-id` rule fails when a skill's `SKILL.md` body omits any
+ID in its non-empty `requires`. Frontmatter alone does not satisfy it. This is
+a presence check, never a wording check; behavioural evals validate the runtime
+stop behaviour.
+
+| Rule | Level | Finding |
+|---|---|---|
+| `requirement-body-id` | fail | a required ID is absent from the requiring skill's body |

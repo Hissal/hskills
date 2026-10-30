@@ -144,7 +144,7 @@ module.exports.push({
     skill('skills/core/alpha', { fm: { description: ' "' + 'x'.repeat(3996) + '"', when_to_use: " 'yyyy'" } }),
     skill('skills/core/beta', { fm: { description: ' ' + 'x'.repeat(8000), 'disable-model-invocation': ' true # explicit gate' } }),
     skill('skills/packs/web/gamma', { fm: { description: ' >-\n  ' + 'x'.repeat(4000), 'disable-model-invocation': ' false' } }),
-    skill('vendor/skills/core/external', { fm: { description: ' ' + 'x'.repeat(8000) } }),
+    skill('fixtures/skills/core/external', { fm: { description: ' ' + 'x'.repeat(8000) } }),
     skill('skills/packs/empty/delta', { fm: { description: ' ' + 'x'.repeat(8000), 'disable-model-invocation': ' true' } })),
   expect: [],
   output: ['TRIPWIRE core: 1000 tokens', 'TRIPWIRE pack/web: 1000 tokens', 'TRIPWIRE pack/empty: 0 tokens', 'TRIPWIRE always-on: 500 tokens'],

@@ -64,3 +64,18 @@ try {
       : other.some((line) => expected.test(line))) &&
       (!(c.output || []).some((expected) => expected instanceof RegExp) || other.length === c.output.length);
     const ok = outputOk && res.status === exit && JSON.stringify(got) === JSON.stringify(want) && !dirty;
+    if (ok) { passed++; return; }
+    failed++;
+    console.log('FAIL ' + c.name);
+    console.log('     expected exit ' + exit + ': ' + JSON.stringify(want));
+    console.log('     got exit ' + res.status + ': ' + JSON.stringify(got));
+    if (!outputOk) console.log('     stdout: ' + res.stdout);
+    if (dirty) console.log('     changed committed files: ' + dirty.replace(/\n/g, ', '));
+    if (res.stderr) console.log('     stderr: ' + res.stderr.trim().split('\n').slice(0, 6).join('\n     '));
+  });
+} finally {
+  fs.rmSync(scratch, { recursive: true, force: true });
+}
+
+console.log((failed ? 'FAILED' : 'ok') + ': ' + passed + ' passed, ' + failed + ' failed');
+process.exit(failed ? 1 : 0);

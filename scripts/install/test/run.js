@@ -6,6 +6,56 @@ const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
 const cli = path.resolve(__dirname, '../install.js');
 const cases = [
+  ['preserves an unrecorded dangling guard symlink', f => {
+    const dest = path.join(f.home, '.agents/command-guard/engine/index.js');
+    const outside = path.join(f.repo, 'outside-missing');
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.symlinkSync(outside, dest, 'file');
+    f.run(1);
+    assert.match(f.last.stderr, /CONFLICT/);
+    assert.equal(fs.readlinkSync(dest), outside);
+    assert.equal(fs.existsSync(outside), false);
+  }],
+  ['preserves a recorded guard file replaced by a matching symlink', f => {
+    f.run(0);
+    const record = path.join(f.home, '.skill-collection/guard.json');
+    const dest = path.join(f.home, '.agents/command-guard/engine/index.js');
+    const outside = path.join(f.repo, 'outside');
+    const content = fs.readFileSync(dest);
+    fs.writeFileSync(outside, content);
+    fs.unlinkSync(dest);
+    fs.symlinkSync(outside, dest, 'file');
+    f.run(1);
+    assert.match(f.last.stderr, /CONFLICT/);
+    assert.deepEqual(fs.readFileSync(outside), content);
+    assert.equal(fs.readlinkSync(dest), outside);
+    f.run(1, 'uninstall');
+    assert.match(f.last.stderr, /overridden installed file preserved/);
+    assert.equal(fs.readlinkSync(dest), outside);
+    assert.deepEqual(fs.readFileSync(outside), content);
+    assert.ok(JSON.parse(fs.readFileSync(record)).files.some(e => e.path === dest));
+  }],
+  ['doctor reports broken skills and guard independently without writes', f => {
+    f.run(0);
+    fs.rmSync(path.join(f.repo, 'skills/core/alpha'), { recursive: true });
+    const settings = path.join(f.home, '.claude/settings.json');
+    fs.writeFileSync(settings, '{}');
+    const record = fs.readFileSync(f.record, 'utf8');
+    f.run(1, 'doctor');
+    assert.match(f.last.stdout, /DOCTOR dangling/);
+    assert.match(f.last.stdout, /FAIL missing registration/);
+    assert.equal(fs.readFileSync(settings, 'utf8'), '{}');
+    assert.equal(fs.readFileSync(f.record, 'utf8'), record);
+  }],
+  ['install conflicts still diagnose guard without installing it', f => {
+    fs.mkdirSync(f.targets[0], { recursive: true });
+    fs.writeFileSync(path.join(f.targets[0], 'alpha'), 'personal');
+    f.run(1);
+    assert.match(f.last.stdout, /CONFLICT unrecorded/);
+    assert.match(f.last.stdout, /FAIL missing registration/);
+    assert.equal(fs.existsSync(path.join(f.home, '.agents/command-guard')), false);
+    assert.equal(fs.existsSync(path.join(f.home, '.claude/settings.json')), false);
+  }],
   ['plugin preparation preserves working registration and snapshots', (f) => {
     f.run(0);
     const settings = path.join(f.home, '.claude/settings.json');

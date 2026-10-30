@@ -28,6 +28,11 @@ let record = readJson(RECORD, { groups: [], files: [] });
 function save() { fs.mkdirSync(path.dirname(RECORD), { recursive: true }); fs.writeFileSync(RECORD, JSON.stringify(record, null, 2) + '\n'); }
 const fwd = (p) => p.replace(/\\/g, '/');
 
+function entryStat(file) {
+  try { return fs.lstatSync(file); }
+  catch (e) { if (e.code === 'ENOENT') return null; throw e; }
+}
+
 function readJson(file, fallback) {
   if (!fs.existsSync(file)) return fallback;
   return JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -138,8 +143,9 @@ function uninstall() {
     if (config) { setGroup(config, null); writeJson(file, config); }
   }
   for (const entry of record.files) {
-    if (!fs.existsSync(entry.path)) continue;
-    if (fs.readFileSync(entry.path, 'base64') === entry.content) fs.unlinkSync(entry.path);
+    const info = entryStat(entry.path);
+    if (!info) continue;
+    if (info.isFile() && fs.readFileSync(entry.path, 'base64') === entry.content) fs.unlinkSync(entry.path);
     else throw new Error('overridden installed file preserved: ' + entry.path);
   }
   record = { groups: [], files: [] }; save();
@@ -153,7 +159,8 @@ async function install() {
   function copy(file, dest) {
     const content = fs.readFileSync(file, 'base64');
     const previous = record.files.find(f => f.path === dest);
-    if (fs.existsSync(dest) && (!previous || fs.readFileSync(dest, 'base64') !== previous.content)) throw new Error('CONFLICT unrecorded or overridden guard file: ' + dest);
+    const info = entryStat(dest);
+    if (info && (!info.isFile() || !previous || fs.readFileSync(dest, 'base64') !== previous.content)) throw new Error('CONFLICT unrecorded or overridden guard file: ' + dest);
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(file, dest);
     record.files = record.files.filter(f => f.path !== dest);

@@ -13,16 +13,18 @@ node scripts/install/install.js install
 ```
 
 Install links the manifest's core list into `~/.claude/skills` and
-`~/.agents/skills`. Checkout edits are live. Packs are excluded by default. Membership comes from
-[`collection.json`](../collection.json); an empty selection creates no skill links. This command installs no guards,
-steering or plugins.
+`~/.agents/skills`. Checkout edits are live. Membership comes from
+[`collection.json`](../collection.json); an empty selection creates no skill links.
+For optional packs or project links, see [Personal extras](#personal-extras).
+For personal steering, see [Owner-only personal steering](#owner-only-personal-steering).
+The default install manages core skills only; it installs no guards or plugins.
 
 Add the printed Claude allow rules as described under [Read permissions](#read-permissions).
 Run `node scripts/install/install.js doctor`. Installation is complete when
-   install and doctor exit zero and Claude can read an installed skill and its
-   needed references. An empty selection verifies only the command and record,
-   not skill availability. Resolve any reported conflicts using
-   [Ownership and repair](#ownership-and-repair), then rerun.
+install and doctor exit zero and Claude can read an installed skill and its
+needed references. An empty selection verifies only the command and record,
+not skill availability. Resolve any reported conflicts using
+[Ownership and repair](#ownership-and-repair), then rerun.
 
 ## Read permissions
 
@@ -96,6 +98,46 @@ Linux and macOS use directory symlinks. Windows tries a directory symlink,
 then a junction if Windows refuses permission or support for symlinks. Each
 created link reports its type, also retained in the record and doctor output.
 No symlinks are committed to git.
+
+## Owner-only personal steering
+
+Only the owner should opt in:
+
+```sh
+node scripts/install/install.js install --owner-steering
+```
+
+This links the checkout's root `steering.md` to `~/.claude/CLAUDE.md` and
+`~/.codex/AGENTS.md`. OpenCode uses the Claude file as its fallback.
+The ownership record remembers the opt-in; later installs without the flag
+keep managing these two files. Without opt-in, no steering file is touched.
+The current source is partial: two tooling notes remain unrecovered (#118).
+Linking it does not establish that those notes have been restored.
+
+An existing unrecorded entry is a conflict, even a link to this source.
+Move it aside yourself once, preserving any text you need, then rerun.
+The installer never replaces an unrecorded file, directory or dangling link.
+A replaced recorded entry is preserved and fails doctor.
+
+The installer tries a file symlink on every OS. If permission or support
+prevents it, it creates an exclusive copy and records its content digest.
+Doctor runs after install and on demand, reporting missing or replaced links
+and any difference between a copy and its source. It also detects local copy
+edits. Copies are not refreshed automatically: preserve local edits, move the
+copy aside, then rerun install to recreate the missing recorded entry.
+Switching checkouts with existing steering entries reports a source conflict;
+keep using the recorded checkout or move the entries aside before reinstalling.
+
+During migration, manually empty Claude Code's PR attribution setting
+(`attribution.pr`) so the PR skill supplies the single attribution footer.
+Keep commit co-author trailers (`attribution.commit`) enabled.
+The installer does not change either setting.
+
+Windows actual validation remains missing for #119. Run isolated installs on
+Windows with file-symlink permission enabled and disabled, then record whether
+a symlink or copy was made and verify doctor drift detection on the copy.
+The automated permission-denial case uses real temporary files but does not
+establish actual Windows behavior.
 
 ## Isolated verification
 

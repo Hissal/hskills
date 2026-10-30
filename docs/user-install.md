@@ -13,7 +13,6 @@ node scripts/install/install.js install
 ```
 
 Install links the manifest's core list into `~/.claude/skills` and
-<<<<<<< HEAD
 `~/.agents/skills`. Checkout edits are live. Membership comes from
 [`collection.json`](../collection.json); an empty selection creates no skill links.
 For optional packs or project links, see [Personal extras](#personal-extras).
@@ -80,13 +79,6 @@ skill roots. For project links, `git ls-files` must list neither link nor
 its descendants, and `git check-ignore` must confirm both link paths are ignored.
 
 ## Ownership and repair
-=======
-`~/.agents/skills`. Checkout edits are live. For optional packs or project links,
-see [Personal extras](#personal-extras). To install the owner's personal steering,
-see [Owner-only personal steering](#owner-only-personal-steering). The default install manages core skills and the command guard. Plugin
-registration remains pending; see [plugin preparation](#prepare-the-guard-plugin).
-Installation is complete when install and doctor both exit zero.
->>>>>>> a9df868
 
 `~/.skill-collection/install.json` records each link's absolute path, target
 and type. Preserve this record: losing it makes existing links unrecorded

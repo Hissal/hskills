@@ -295,3 +295,49 @@ module.exports.push(
   { name: 'a stale automatic guide gate fails harness-gates, not the sync', files: tree(coreGuide(), autoGuide({ openai: 'policy:\n  allow_implicit_invocation: false\n' })), expect: ['fail harness-gates skills/packs/onboarding/auto-guide/agents/openai.yaml'] },
   { name: 'an automatic guide with an extra file fails', files: tree(coreGuide(), autoGuide({ files: { 'SUPPORT.md': '# Support\n', 'scripts/extra.js': 'x\n' } })), expect: ['fail automatic-guide-sync skills/packs/onboarding/auto-guide/scripts/extra.js'] }
 );
+
+// #114: the manifest's data contract, independent of membership policy (#110).
+module.exports.push({
+  name: 'a manifest with invalid JSON fails',
+  files: { 'collection.json': '{' },
+  expect: ['fail collection-manifest collection.json'],
+});
+for (const data of [
+  null, [], {}, { core: [], packs: {}, expensive: [], requires: [] },
+  { core: 'alpha', packs: {}, expensive: [] },
+  { core: [], packs: [], expensive: [] },
+  { core: [], packs: { web: 'alpha' }, expensive: [] },
+  { core: [], packs: { 'Bad Pack': [] }, expensive: [] },
+  { core: [], packs: {}, expensive: [7] },
+  { core: ['../alpha'], packs: {}, expensive: [] },
+  { core: ['skills/core/alpha/'], packs: {}, expensive: [] },
+]) module.exports.push({
+  name: 'a manifest outside its documented shape fails: ' + JSON.stringify(data),
+  files: { 'collection.json': JSON.stringify(data) },
+  expect: ['fail collection-manifest collection.json'],
+});
+module.exports.push({
+  name: 'an empty manifest passes before skills are authored',
+  files: { 'collection.json': '{"core":[],"packs":{},"expensive":[]}' },
+  expect: [],
+});
+for (const data of [
+  { core: ['skills/core/missing'], packs: {}, expensive: [] },
+  { core: [], packs: { web: ['skills/packs/web/missing'] }, expensive: [] },
+  { core: [], packs: {}, expensive: ['skills/core/missing'] },
+]) module.exports.push({
+  name: 'a manifest entry must name a skill in the tree: ' + JSON.stringify(data),
+  files: { 'collection.json': JSON.stringify(data) },
+  expect: ['fail collection-manifest collection.json'],
+});
+module.exports.push({
+  name: 'a manifest names core, pack and expensive skills',
+  files: tree(skill('skills/core/alpha'), skill('skills/packs/onboarding/beta'), {
+    'collection.json': JSON.stringify({
+      core: ['skills/core/alpha'],
+      packs: { onboarding: ['skills/packs/onboarding/beta'] },
+      expensive: ['skills/core/alpha'],
+    }),
+  }),
+  expect: [],
+});

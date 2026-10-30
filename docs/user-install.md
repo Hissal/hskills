@@ -73,7 +73,8 @@ lock. A personal extra never goes in a per-person lock.
 
 For either extra, finish the permission and doctor steps under
 [Install core](#install-core). Confirm the selected links exist in both
-skill roots; project links must also be untracked in `git status`.
+skill roots. For project links, `git ls-files` must list neither link nor
+its descendants, and `git check-ignore` must confirm both link paths are ignored.
 
 ## Ownership and repair
 

@@ -17,7 +17,7 @@ const lines = (n, prefix) => Array.from({ length: n }, (_, i) => (prefix || 'lin
 // (key -> raw text after "key:"), `body` replaces the body.
 function skillMd(name, o) {
   o = o || {};
-  const fm = Object.assign({ name: ' ' + name, description: ' Use when testing the collection check.' }, o.fm || {});
+  const fm = Object.assign({ name: ' ' + name, description: ' Use when testing the collection check.', metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/' + name + '"' }, o.fm || {});
   const head = Object.entries(fm).map(([k, v]) => k + ':' + v).join('\n');
   return '---\n' + head + '\n---\n\n' + (o.body !== undefined ? o.body : '# ' + name + '\n\nDo the work.\n');
 }
@@ -107,7 +107,7 @@ module.exports.push({
   files: tree(
     skill('skills/packs/web/alpha', { fm: { description: ' ' + 'x'.repeat(2000) } }),
     skill('skills/packs/web/beta', { fm: { description: ' ' + 'x'.repeat(2004) } }),
-    skill('skills/packs/unity/alpha', { fm: { description: ' xxxx' } })),
+    skill('skills/packs/unity/gamma', { fm: { description: ' xxxx' } })),
   expect: ['warn idle-cost skills/packs/web'],
   output: ['TRIPWIRE pack/web: 1001 tokens', 'TRIPWIRE pack/unity: 1 tokens'],
 });
@@ -118,9 +118,9 @@ module.exports.push({
     { 'fixture-steering.txt': 'x'.repeat(2000) },
     skill('skills/core/alpha', { fm: { description: ' "' + 'x'.repeat(3996) + '"', when_to_use: " 'yyyy'" } }),
     skill('skills/core/beta', { fm: { description: ' ' + 'x'.repeat(8000), 'disable-model-invocation': ' true # explicit gate' } }),
-    skill('skills/packs/web/alpha', { fm: { description: ' >-\n  ' + 'x'.repeat(4000), 'disable-model-invocation': ' false' } }),
+    skill('skills/packs/web/gamma', { fm: { description: ' >-\n  ' + 'x'.repeat(4000), 'disable-model-invocation': ' false' } }),
     skill('vendor/skills/core/external', { fm: { description: ' ' + 'x'.repeat(8000) } }),
-    skill('skills/packs/empty/alpha', { fm: { description: ' ' + 'x'.repeat(8000), 'disable-model-invocation': ' true' } })),
+    skill('skills/packs/empty/delta', { fm: { description: ' ' + 'x'.repeat(8000), 'disable-model-invocation': ' true' } })),
   expect: [],
   output: ['TRIPWIRE core: 1000 tokens', 'TRIPWIRE pack/web: 1000 tokens', 'TRIPWIRE pack/empty: 0 tokens', 'TRIPWIRE always-on: 500 tokens'],
 });
@@ -129,3 +129,35 @@ module.exports.push({
   alwaysOnPath: 'missing-steering.txt', files: {}, expect: [],
   output: ['TRIPWIRE always-on: not measured (file absent from collection: missing-steering.txt)'],
 });
+// #95: identity metadata, exercised through the collection CLI.
+module.exports.push({ name: 'missing schema fails', files: skill('skills/core/alpha', { fm: { metadata: '\n  agent-skills-sync.id: "hissal.skill-collection/alpha"' } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'] });
+
+// #95: metadata validation neighbours.
+const metadata = (id, requires, schema) => '\n  agent-skills-sync.schema: ' + (schema === undefined ? '"1"' : schema) + '\n  agent-skills-sync.id: "' + id + '"' + (requires === undefined ? '' : '\n  agent-skills-sync.requires: ' + requires);
+for (const [name, value] of [
+  ['numeric schema', metadata('hissal.skill-collection/alpha', undefined, '1')],
+  ['wrong schema', metadata('hissal.skill-collection/alpha', undefined, '"2"')],
+  ['missing ID', '\n  agent-skills-sync.schema: "1"'],
+  ['external ID', metadata('other/alpha')],
+  ['non JSON requirements', metadata('hissal.skill-collection/alpha', "'broken'")],
+  ['object requirements', metadata('hissal.skill-collection/alpha', "'{}'")],
+  ['non string requirement', metadata('hissal.skill-collection/alpha', "'[1]'")],
+  ['external requirement', metadata('hissal.skill-collection/alpha', "'[\"other/beta\"]'")],
+  ['raw array requirements', metadata('hissal.skill-collection/alpha', '["hissal.skill-collection/beta"]')],
+]) module.exports.push({ name: name + ' fails', files: skill('skills/core/alpha', { fm: { metadata: value } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'] });
+module.exports.push(
+  { name: 'duplicate ID fails', files: tree(skill('skills/core/alpha'), skill('skills/core/beta', { fm: { metadata: metadata('hissal.skill-collection/alpha') } })), expect: ['fail skill-metadata skills/core/beta/SKILL.md'] },
+  { name: 'renamed folder retains identity', files: skill('skills/packs/web/renamed', { fm: { metadata: metadata('hissal.skill-collection/original', "'[]'") } }), expect: [] },
+  { name: 'empty requirement string passes', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "''") } }), expect: [] },
+  { name: 'unresolved requirement fails', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "'[\"hissal.skill-collection/beta\"]'") } }), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
+  { name: 'requirements cross scope', files: tree(skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "'[\"hissal.skill-collection/beta\"]'") } }), skill('skills/packs/web/beta')), expect: [] }
+);
+
+const needing = (dir, id, requirements, body) => skill(dir, { fm: { metadata: metadata('hissal.skill-collection/' + id, "'" + JSON.stringify(requirements.map((r) => 'hissal.skill-collection/' + r)) + "'") }, ...(body === undefined ? {} : { body }) });
+module.exports.push(
+  { name: 'self cycle fails', files: needing('skills/core/alpha', 'alpha', ['alpha']), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
+  { name: 'multi skill cycle fails', files: tree(needing('skills/core/alpha', 'alpha', ['beta']), needing('skills/packs/web/beta', 'beta', ['alpha'])), expect: ['fail skill-requirements skills/packs/web/beta/SKILL.md'] },
+  { name: 'diamond requirements pass', files: tree(needing('skills/core/alpha', 'alpha', ['beta', 'gamma']), needing('skills/core/beta', 'beta', ['delta']), needing('skills/core/gamma', 'gamma', ['delta']), skill('skills/core/delta')), expect: [] },
+  { name: 'missing required reference fails', files: tree(needing('skills/core/alpha', 'alpha', ['beta'], 'Read [reference](../../packs/web/beta/REF.md).\n'), skill('skills/packs/web/beta')), expect: ['fail requirement-reference skills/core/alpha/SKILL.md'] },
+  { name: 'existing required reference passes', files: tree(needing('skills/core/alpha', 'alpha', ['beta'], 'Read [reference](../../packs/web/beta/REF.md).\n'), skill('skills/packs/web/beta', { body: 'Read [reference](REF.md).\n', files: { 'REF.md': '# Reference\n' } })), expect: [] }
+);

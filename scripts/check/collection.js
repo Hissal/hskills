@@ -100,6 +100,7 @@ function load(root) {
   return {
     resolved: resolveSkills(skills),
     root,
+    get release() { return require('./release').lastRelease(root); },
     files,
     skills,
     needsTables: require('./guide-tables').needsTables,
@@ -113,6 +114,22 @@ function load(root) {
     references: (s) => s.files.filter((f) => f.endsWith('.md') && !NOT_REFERENCES.has(f.slice(s.dir.length + 1))),
     // copied skills: vendor.lock.json parsed once (scripts/vendor/lock.js)
     get vendor() { return getVendor(); },
+    ownPaths: (file, skill) => {
+      const out = [];
+      let fence = null;
+      text(file).split(/\r?\n/).forEach((line, i) => {
+        const f = line.match(/^\s{0,3}(`{3,}|~{3,})/);
+        if (f) { fence = fence === f[1][0] ? null : fence || f[1][0]; return; }
+        if (fence) return;
+        for (const m of line.matchAll(/`([^`\s]+)`/g)) {
+          const target = m[1];
+          const first = target.split('/')[0];
+          if (!target.startsWith('./') && !(target.includes('/') && known.has(skill.dir + '/' + first) && !files.includes(skill.dir + '/' + first))) continue;
+          out.push({ target, line: i + 1, path: path.posix.normalize(path.posix.join(path.posix.dirname(file), target)) });
+        }
+      });
+      return out;
+    },
     // a file's relative links resolved to repository-relative paths
     links: (file) => links(text(file)).map((l) => Object.assign(l, { path: path.posix.normalize(path.posix.join(path.posix.dirname(file), l.target.replace(/\\/g, '/'))) })),
   };

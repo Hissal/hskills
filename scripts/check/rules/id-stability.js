@@ -1,13 +1,12 @@
 'use strict';
 // Warns, never fails: deleting a skill on purpose is legitimate (#77, owner
 // answer 4). Silent until the first release tag exists.
-const { lastRelease } = require('../release');
 
 module.exports = {
   id: 'id-stability',
   level: 'warn',
   check(c) {
-    const release = lastRelease(c.root);
+    const release = c.release;
     if (!release) return [];
     const byDir = new Map(c.skills.map((s) => [s.dir, s]));
     const out = [];

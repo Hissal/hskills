@@ -1,0 +1,5 @@
+interface:
+  display_name: "Commenting"
+  short_description: "Mark and check comments posted on the user's behalf"
+policy:
+  allow_implicit_invocation: true

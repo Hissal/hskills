@@ -1,4 +1,8 @@
 {
+  "hissal.skill-collection/commenting": {
+    "path": "skills/core/commenting",
+    "requires": []
+  },
   "hissal.skill-collection/csharp-guide": {
     "path": "skills/packs/csharp/csharp-guide",
     "requires": []

@@ -1,5 +1,6 @@
 {
   "core": [
+    "skills/core/commenting",
     "skills/core/guide"
   ],
   "packs": {

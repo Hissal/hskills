@@ -277,7 +277,7 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 ```
 
 - `files` is written untracked into a scratch git repository; `committed` (same shape) is committed first.
-- `before` (optional) lists repository scripts run as `node <script> <fixture>` before the check, such as the `NOTICE.md` generator; `clean: true` also requires them to leave every committed file unchanged.
+- `before` (optional) lists repository scripts run as `node <script> <fixture>` before the check, such as the `NOTICE.md` generator. A script that exits nonzero fails the case, and a file one deletes is not compared afterwards; `clean: true` also requires them to leave every committed file unchanged.
 - `history` is a list of earlier commits, `{ files, tag? }`, each a whole tree, optionally tagged. `committed` then replaces the last tree. Use it for rules that read git history.
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
@@ -640,7 +640,7 @@ for byte, and files the core guide does not bundle are removed. A second run
 changes nothing. The description is fixed in
 [`guide.js`](../scripts/onboarding/guide.js); the core guide keeps its own.
 
-`automatic-guide-sync` compares the committed onboarding guide with the
+`automatic-guide-sync` compares the committed automatic guide with the
 generator's output, so the check fails until it is regenerated. The guide is
 a one-skill pack: install it at user scope with
 `node scripts/install/install.js install --pack onboarding`, or as the

@@ -63,9 +63,8 @@ the default branch changes.
 Merging a release PR allows the next workflow run to create its GitHub release
 and `v<version>` tag. A tag identifies the committed catalog at that revision;
 verify generated catalog and automatic guide outputs before approving the PR.
-Guard
-plugin acceptance remains incomplete under #121; release stamping does not
-establish live hook trust or cross-platform behavior.
+Guard plugin acceptance remains incomplete under #121; release stamping does
+not establish live hook trust or cross-platform behavior.
 
 Implementation evidence: [#122 offline dry run](../research/release-122.md).
 Configuration semantics: [release-please manifest documentation](https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md)

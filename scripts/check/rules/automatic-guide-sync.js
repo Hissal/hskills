@@ -21,20 +21,23 @@ module.exports = {
     const fix = 'run ' + guide.COMMAND + '; edit the core guide, never the automatic guide';
     const autos = c.skills.filter((s) => AUTOMATIC.test(s.dir));
     if (!autos.length) return [];
-    const coreCodex = core.dir + '/' + gates.CODEX_FILE;
-    let expected;
+    let generated;
     try {
-      expected = guide.generate(c.text(core.skillMd), c.exists(coreCodex) ? c.text(coreCodex) : null);
+      generated = guide.outputs(c).files;
     } catch (e) {
       return [{ file: core.skillMd, message: 'cannot generate the automatic guide: ' + e.message }];
     }
+    // The generator's SKILL.md and Codex gate file; every other file it
+    // writes is a core guide file, compared byte for byte below.
+    const expectedSkillMd = generated[guide.DIR + '/SKILL.md'];
+    const expectedCodex = generated[guide.DIR + '/' + gates.CODEX_FILE];
     return autos.flatMap((auto) => {
       const out = [];
       const i = firstDifference(core.body, auto.body);
       if (i >= 0) out.push({ file: auto.skillMd, line: auto.bodyLine + i, message: 'body differs from ' + core.skillMd + '; ' + fix });
-      else if (c.text(auto.skillMd) !== expected.skillMd) out.push({ file: auto.skillMd, message: 'frontmatter differs from what the generator writes; ' + fix });
+      else if (!c.bytes(auto.skillMd).equals(expectedSkillMd)) out.push({ file: auto.skillMd, message: 'frontmatter differs from what the generator writes; ' + fix });
       const autoCodex = auto.dir + '/' + gates.CODEX_FILE;
-      if (c.exists(autoCodex) && c.text(autoCodex) !== expected.codex) out.push({ file: autoCodex, message: 'differs from what the generator writes from ' + coreCodex + '; ' + fix });
+      if (c.exists(autoCodex) && !c.bytes(autoCodex).equals(expectedCodex)) out.push({ file: autoCodex, message: 'differs from what the generator writes; ' + fix });
       const coreFiles = bundled(core);
       const autoFiles = bundled(auto);
       for (const [rel, file] of coreFiles) {

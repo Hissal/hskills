@@ -5,8 +5,9 @@
 //   files:     { 'repo/relative/path': content } written untracked
 //   committed: same shape, written and committed before `files` (optional)
 //   before:    repository scripts run as `node <script> <fixture>` before the
-//              check (optional); clean: true also requires they change no
-//              committed file
+//              check (optional); one exiting nonzero fails the case, and a
+//              file one deletes is not compared; clean: true also requires
+//              they change no committed file
 //   history:   [{ files, tag? }] whole trees committed (and tagged) in order
 //              before `committed`, which replaces the last one (optional)
 //   expect:    every finding the check must print, as '<fail|warn> <rule> <file>';

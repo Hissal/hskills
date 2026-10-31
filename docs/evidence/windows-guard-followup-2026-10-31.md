@@ -156,6 +156,15 @@ through the installer CLI, with CLI doubles for the hosts. **No native Windows r
    `snapshotEntriesRemaining`. The summaries retained above keep the old field.
    New summaries name the remaining comparison `nonTrustConfigMatchesMinimalFixture`:
    it includes preserved preference tables, so `false` alone is not an uninstall failure.
+   Successful fixture acceptance requires exit 0, no owned files or snapshot entries
+   remaining, preserved personal settings, and preserved trust and preference values.
+   Neither this informational comparison nor trust byte identity alone decides a pass.
+4. **Redirected parents.** Before registration or cleanup, parents below the selected
+   home are checked without following links. Replacing a snapshot's `adapters` parent
+   or `.claude/plugins` with a symlink or junction conflicts before external files or
+   the journal change, even when the external files match the recorded content.
+   The `lifecycle.js` ancestor-link case exercises both paths; it uses directory
+   symlinks on Linux and junctions on Windows. Native execution remains pending.
 
 ## Not covered
 
@@ -163,5 +172,6 @@ through the installer CLI, with CLI doubles for the hosts. **No native Windows r
 | --- | --- |
 | Trusted reinstall and uninstall on the unmodified native config | **Failed**, finding 1; repair pending native rerun |
 | Reinstall of the same snapshot after uninstall without manual recovery | **Failed**, finding 2; repair pending native rerun |
+| Linked-parent rejection and retry after busy directory removal | Linux regressions only; pending native execution |
 | Claude run without the exact grant (negative control) | Not run |
 | OpenCode on Windows, actual OS symlink refusal, macOS | Outside this follow-up |

@@ -254,7 +254,9 @@ directories the installer created; journals written before that derive them from
 recorded snapshot files. Uninstall removes only those directories, deepest first,
 and only when empty; a non-empty or replaced directory is a conflict and stays,
 with its contents. An unrecorded snapshot directory, even an empty one, stays a
-conflict.
+conflict. Parents below the selected home must remain real directories. A symlink
+or junction replacing a snapshot or host-plugin parent is a conflict before
+cleanup; external files and the ownership journal stay untouched.
 
 Once the replacement is ready, only exact recorded legacy handlers with the
 adapter marker are removed from that host's settings; unrelated handlers survive.

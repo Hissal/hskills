@@ -46,6 +46,10 @@ Accepted forms:
   ```
 
   No `[hooks]` header was present. The backup taken before install had no hook tables.
+  The full file also holds Codex-written `[tui]` and `[windows]` tables, which the repair
+  treats as personal edits: the [native rerun](windows-guard-followup-2026-10-31.md#findings-for-owners)
+  found that the whole file conflicts. A later repair accepts those two tables when they
+  hold only known preference fields ([repairs after the rerun](windows-guard-followup-2026-10-31.md#repairs-after-this-rerun-native-rerun-pending)).
   Codex 0.166.0 is the version in the original report; the reading itself did not run
   `codex --version`.
 - **Source**: at Codex [`6ff1e1ca`](https://github.com/openai/codex/blob/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/core/config.schema.json)
@@ -84,8 +88,9 @@ The allow probe is `node -e "console.log('ALLOW_120')"`. **Native**, recorded in
 marker and exited 0 in PowerShell. That shows portability only, not host guard acceptance.
 `node scripts/install/evidence/live-plugins-windows.js probe-commands` prints the probes, the
 project rule and the Claude grants. The Claude run grants only these exact commands, never
-a wildcard. The plugin suite asserts that. **Unverified**: whether Claude's `Bash(...)`
-rule parser accepts the inner parentheses as an exact match. The native rerun must check it.
+a wildcard. The plugin suite asserts that. **Native**: in the
+[rerun](windows-guard-followup-2026-10-31.md#live-probes), Claude accepted the exact grants
+with their inner parentheses, and both hosts ran the allow probe with exit 0.
 
 ## Verification
 
@@ -98,7 +103,8 @@ rule parser accepts the inner parentheses as an exact match. The native rerun mu
   `FAIL uninstall: CONFLICT …` and exits 1.
 - `node scripts/install/test/run.js` runs the plugin suite and the trust suite separately.
 
-These results come from Linux, Node 22.23.4. **Pending, parent-coordinated:** an authenticated native
-Windows rerun of trust, reinstall, uninstall and the live Claude/Codex probes. That rerun
-must retain the sanitized post-`/hooks` TOML, without credentials or setting secrets.
-macOS and the report's actual OS symlink-refusal cases are not covered.
+These results come from Linux, Node 22.23.4. The authenticated native Windows rerun
+is in [the follow-up rerun report](windows-guard-followup-2026-10-31.md). Live probes and
+preserved-trust recognition pass there. Trusted reinstall and uninstall still **fail** on
+the unmodified config, and reinstalling after uninstall conflicts on the empty snapshot
+directory. macOS and the report's actual OS symlink-refusal cases are not covered.

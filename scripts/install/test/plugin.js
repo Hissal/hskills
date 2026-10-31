@@ -151,11 +151,16 @@ try {
   fs.writeFileSync(extra, 'personal snapshot addition');
   const extraRun = run();
   assert.match(extraRun.stdout + extraRun.stderr, /CONFLICT/);
-  spawnSync(process.execPath, [cli, 'uninstall', '--home', home]);
+  const kept = spawnSync(process.execPath, [cli, 'uninstall', '--home', home], { encoding: 'utf8' });
+  assert.equal(kept.status, 1, kept.stdout + kept.stderr);
+  assert.match(kept.stdout, /CONFLICT non-empty directory preserved: .*adapters/);
   assert.equal(fs.readFileSync(extra, 'utf8'), 'personal snapshot addition');
+  fs.unlinkSync(extra);
 
   const uninstall = spawnSync(process.execPath, [cli, 'uninstall', '--home', home], { encoding: 'utf8' });
   assert.equal(uninstall.status, 0, uninstall.stdout + uninstall.stderr);
+  // Both the updated and the superseded snapshot trees are gone.
+  for (const snapshot of [latest.hosts[0].snapshot, record.hosts[0].snapshot]) assert.equal(fs.existsSync(snapshot), false, snapshot);
   assert.ok(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse.every(g => g.hooks.every(h => h.command === 'echo personal')));
 
   console.log('plugin ' + (real ? 'real CLI' : 'CLI boundary') + ' registration, rollback, migration, update and uninstall passed');

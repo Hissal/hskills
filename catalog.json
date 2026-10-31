@@ -10,5 +10,9 @@
   "hissal.skill-collection/onboarding-guide": {
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []
+  },
+  "hissal.skill-collection/reviewing": {
+    "path": "skills/core/reviewing",
+    "requires": []
   }
 }

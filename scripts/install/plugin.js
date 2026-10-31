@@ -158,7 +158,7 @@ function registration(home, source, action = 'install') {
         const fallback = (codexGroups || []).flatMap(g => g.hooks || []).filter(h => h.source === 'user' && commands.includes(h.command));
         const protectedFallback = !!codexGroups?.length && codexGroups.every(g => !(g.errors || []).length && g.hooks.some(h => fallback.includes(h) && h.enabled && h.trustStatus === 'trusted'));
         console.log('Codex legacy fallback: ' + (codexGroups === null ? 'status unavailable' : fallback.length ? fallback.map(h => (h.enabled ? 'enabled/' : 'disabled/') + h.trustStatus).join(', ') : 'absent'));
-        console.log(protectedFallback ? 'PROTECTED by trusted legacy fallback while plugin trust is pending.' : 'UNPROTECTED: no verified trusted legacy fallback; human /hooks review required.');
+        console.log(protectedFallback ? 'PROTECTED by trusted legacy fallback while plugin trust is pending (hooks/list status; live invocation unverified).' : 'UNPROTECTED: no verified trusted legacy fallback; human /hooks review required.');
         pending = true; }
     }
     return !pending;

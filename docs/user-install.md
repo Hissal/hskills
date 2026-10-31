@@ -267,7 +267,10 @@ for recovery. Resolve conflicts manually before retrying uninstall.
 
 Doctor checks registration and snapshot block/allow probes. Claude-only
 registration can pass these checks. Codex returns pending while its current hook
-trust is unresolved; review Codex `/hooks` yourself. Direct snapshot probes
+trust is unresolved; review Codex `/hooks` yourself. Uninstall preserves validated
+hook-state tables, so Codex may reuse existing approval for matching hook content
+on reinstall. Doctor reads the current host-reported state; the installer grants
+no new approval. Direct snapshot probes
 establish adapter behavior; live host acceptance evidence is recorded separately
 in [the plugin investigation](../research/live-plugins-121.md).
 

@@ -71,7 +71,11 @@ comparison still decides.
 
 Doctor reports the actual enabled/trust state of retained legacy handlers from
 `hooks/list`. Pending plugin trust with no trusted legacy handler prints `UNPROTECTED`.
-Human review in `/hooks` remains required.
+Human review in `/hooks` is required while the current hook is untrusted. Preserved
+trust records can be reused on reinstall if Codex accepts their hashes for the current
+hook content; doctor checks the host-reported state. Preserving a record grants no new
+approval. A trusted legacy fallback message describes `hooks/list` status, not a live
+invocation test.
 
 ## 3. Probe portability
 

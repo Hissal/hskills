@@ -1,0 +1,13 @@
+plugin CLI boundary registration, rollback, migration, update and uninstall passed
+trust delta uninstall preserves human trust and personal settings
+ok directory removal errors leave a journal that supports retry
+ok native trust and Codex preferences survive repeated reinstall and uninstall
+ok an unknown Codex preference beside trust stays a whole-file conflict
+ok same-snapshot reinstall after uninstall, then doctor and uninstall
+ok user entries in the snapshot tree are preserved, never deleted
+ok a legacy journal derives directory provenance from its recorded snapshot files
+ok ancestor directory links preserve matching external files and the journal
+ok a dangling ownership-record link never creates its external target
+ok an unrecorded empty snapshot tree is never adopted
+guard lifecycle CLI regressions: 0 failures
+40 install cases, 0 failures

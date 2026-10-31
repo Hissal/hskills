@@ -19,6 +19,7 @@ const { spawnSync } = require('child_process');
 const cases = require('./cases');
 const { git, write } = require('../../test-util');
 require('./catalog');
+require('../../plugins/test/run');
 
 const CHECK = path.join(__dirname, '..', 'check.js');
 const REPO = path.join(__dirname, '..', '..', '..');

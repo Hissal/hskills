@@ -25,14 +25,19 @@ A guard that cannot produce a verdict denies the call.
 
 ## Install
 
+Use the collection entry point. Its [per-harness table, doctor states and
+ownership/recovery contract](../../docs/user-install.md#command-guard-and-recovery)
+cover this delegated installer. Live Claude and Codex smoke probes pass; see [host evidence and remaining
+acceptance](../../research/live-hooks-120.md).
+
 ```
-node hooks/command-guard/install.js
+node scripts/install/install.js install
 ```
 
 This copies a snapshot to `~/.agents/command-guard`, fires each adapter once, and registers the hooks only when that check passes:
 
-- **Claude Code**: `~/.claude/settings.json`, `PreToolUse` on `Bash|PowerShell|Monitor` with `onFailure: "block"` (needs v2.1.295 or later).
-- **Codex**: `~/.codex/hooks.json`, `PreToolUse` on `Bash`. Codex skips a new or changed hook until you trust it in `/hooks`.
+- **Claude Code**: hooks-only plugin registered from a content-addressed snapshot.
+- **Codex**: the same snapshot through its plugin API. Review new or changed hooks in `/hooks`; installation grants no trust.
 - **OpenCode**: `~/.config/opencode/plugins/command-guard.js`, a v2 plugin that rejects the call in `tool.execute.before` and, for human-required commands, also denies the `shell` permission in `permission.evaluate`. A running OpenCode server picks it up on restart.
 
 The installed guard is a copy, so switching branches here cannot break running sessions. Rerun the installer after changing the guard. The first write to each settings file leaves a `.before-command-guard` copy beside it.
@@ -44,7 +49,7 @@ The agent reports the error or the blocked command. It does not disable the guar
 To recover, stop the agent session, then either repair the guard and rerun the installer, or remove it:
 
 ```
-node hooks/command-guard/install.js --uninstall
+node scripts/install/install.js uninstall
 ```
 
 Restart the session afterwards. After an uninstall, sessions have no guard protection. Removing the guard is not approval for any single command.
@@ -59,4 +64,12 @@ A project may add rules in `.agents/config/command-guard.json`, shaped like `rul
 - **Not covered**: edit tools (freeze is not built yet), MCP tools that run commands, scripts and interpreters that delete from inside (`python -c`, a `.ps1` or `.sh` file's contents), .NET calls such as `[IO.Directory]::Delete`, commands sent over `ssh`, and input fed to an already running process.
 - **Codex**: a hook that fails to start or times out does not stop the call, and `ask` is unsupported, so this adapter only ever denies or stays silent.
 - **OpenCode**: written against the v2 plugin API and checked on 2.0.27; the published plugin docs describe an older API this plugin does not use. OpenCode skips a plugin file it cannot load, so the guard is then absent without notice; the file is kept minimal for that reason, and a guard engine that fails to load denies every shell call. OpenCode's default configuration allows shell calls with no prompt, so there the guard is the only check.
-- Runtime checks so far: the test suite on Windows, and live probes of the installed Claude Code hook and OpenCode plugin on this machine. The Codex hook has not run in a real session. Linux and macOS cases run as simulated path models on Windows. Nothing has run on a real Linux or macOS host.
+- Earlier runtime evidence covered Windows tests and installed Claude Code/OpenCode probes. Linux temporary-home installer and direct adapter checks are now recorded in [plugin evidence](../../research/guard-plugin-install.md). Those disposable-home checks establish neither effective host hook loading nor live Codex trust;
+  the later [live adapter probes](../../research/live-hooks-120.md) verify both hosts using existing auth and Codex trust; macOS validation remains missing. Installed executables are `/home/agent/.local/bin/claude`, `/home/agent/.npm-global/bin/codex` and `/home/agent/.opencode/bin/opencode`; PATH misses do not establish absence. #120, #121 and #125 retain their documented acceptance limits.
+
+## Plugin delivery
+
+The hooks-only guard is listed in this repository's marketplace. For snapshot
+preparation, use [the install command](../../docs/user-install.md#register-the-guard-plugin).
+When implementing registration, migration, or live acceptance, read
+[guard plugin evidence and completion criteria](../../research/guard-plugin-install.md).

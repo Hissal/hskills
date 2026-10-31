@@ -1,0 +1,5 @@
+Snapshot copied to C:\Users\<user>\AppData\Local\Temp\plugin-live-win-AN63RN\home\.agents\command-guard
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+ok   codex.js denies a force-push to main
+ok   codex.js is silent on git status

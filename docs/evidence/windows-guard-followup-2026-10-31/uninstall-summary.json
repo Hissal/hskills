@@ -1,0 +1,108 @@
+{
+  "status": 1,
+  "remainingOwned": [
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\.claude-plugin\\plugin.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\.codex-plugin\\plugin.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\hooks\\claude.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\hooks\\codex.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\engine\\index.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\engine\\lex.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\engine\\paths.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\rules\\core.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\adapters\\claude-code.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\adapters\\codex.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\adapters\\hook.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\adapters\\opencode-plugin.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\adapters\\opencode.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3\\.claude-plugin\\marketplace.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\.claude-plugin\\marketplace.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\.claude-plugin\\plugin.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\.codex-plugin\\plugin.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\adapters\\claude-code.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\adapters\\codex.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\adapters\\hook.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\adapters\\opencode-plugin.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\adapters\\opencode.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\engine\\index.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\engine\\lex.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\engine\\paths.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\hooks\\claude.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\hooks\\codex.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\rules\\core.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\installed_plugins.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude\\plugins\\known_marketplaces.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\.claude-plugin\\marketplace.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\.claude-plugin\\plugin.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\.codex-plugin\\plugin.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\adapters\\claude-code.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\adapters\\codex.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\adapters\\hook.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\adapters\\opencode-plugin.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\adapters\\opencode.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\engine\\index.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\engine\\lex.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\engine\\paths.js",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\hooks\\claude.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\hooks\\codex.json",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\plugins\\cache\\skill-collection-guard\\command-guard\\0.1.0\\rules\\core.json"
+  ],
+  "unrelated": {
+    ".claude/settings.json": {
+      "identical": false,
+      "unrelatedHookKept": true,
+      "guardRemaining": true
+    },
+    ".codex/config.toml": {
+      "identical": false,
+      "unrelatedHookKept": false,
+      "guardRemaining": true
+    },
+    ".codex/hooks.json": {
+      "identical": true,
+      "unrelatedHookKept": true,
+      "guardRemaining": false
+    }
+  },
+  "codexConfig": {
+    "before": {
+      "bytes": 932,
+      "crlf": false,
+      "bom": false,
+      "sha256": "ae8f8b11602d76cf5866185be6204b87a36f30aac5d519cb2fa26bdde67cc602",
+      "ordinarySha256": "645674e2b54c75240d29019a21b793b2f5cf33ea0acd44c4bb3ba4d318c829de",
+      "trustSha256": "55f80eb8a61e2521d16fe3ac21033d4ca359c8b305a05a512dc1ee41b7fef1aa",
+      "ordinaryTables": [
+        "[marketplaces.skill-collection-guard]",
+        "[plugins.\"command-guard@skill-collection-guard\"]",
+        "[tui]",
+        "[windows]"
+      ],
+      "trustExcerpt": "[hooks.state]\n\n[hooks.state.\"command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0\"]\ntrusted_hash = \"sha256:<64hex>\"\ntrusted_content_hash = \"sha256:<64hex>\"\nenabled = true\n\n[hooks.state.'C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\hooks.json:pre_tool_use:0:0']\ntrusted_hash = \"sha256:<64hex>\"\nenabled = true\n"
+    },
+    "after": {
+      "bytes": 932,
+      "crlf": false,
+      "bom": false,
+      "sha256": "ae8f8b11602d76cf5866185be6204b87a36f30aac5d519cb2fa26bdde67cc602",
+      "ordinarySha256": "645674e2b54c75240d29019a21b793b2f5cf33ea0acd44c4bb3ba4d318c829de",
+      "trustSha256": "55f80eb8a61e2521d16fe3ac21033d4ca359c8b305a05a512dc1ee41b7fef1aa",
+      "ordinaryTables": [
+        "[marketplaces.skill-collection-guard]",
+        "[plugins.\"command-guard@skill-collection-guard\"]",
+        "[tui]",
+        "[windows]"
+      ],
+      "trustExcerpt": "[hooks.state]\n\n[hooks.state.\"command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0\"]\ntrusted_hash = \"sha256:<64hex>\"\ntrusted_content_hash = \"sha256:<64hex>\"\nenabled = true\n\n[hooks.state.'C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\hooks.json:pre_tool_use:0:0']\ntrusted_hash = \"sha256:<64hex>\"\nenabled = true\n"
+    },
+    "ordinaryMatchesFixture": false,
+    "trustTablesPreserved": true
+  },
+  "journal": {
+    "beforeSha256": "2540d5d19f3e89efe49ca338f4588987cb9597b6cc74001ab2006c1f957f1254",
+    "afterSha256": "2540d5d19f3e89efe49ca338f4588987cb9597b6cc74001ab2006c1f957f1254"
+  },
+  "userConfigUnchanged": false,
+  "changed": [
+    "C:\\Users\\<user>\\.claude\\plugins\\known_marketplaces.json"
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "description": "Native Windows trusted lifecycle acceptance at ea843fc: two measured cycles (c1, c2) of installer and hooks/list steps. Report: ../windows-guard-followup.md.",
+  "consolidatedFrom": "docs/evidence/windows-lifecycle-final-2026-10-31 at a640892606c001b1ab1ddbe8e1232948dc67f66c: each <step>-argv.json or -invocation.json is kept verbatim under commands (byte-identical ones once); <step>-status.json becomes exit; an empty stdout or stderr is recorded as ''; a byte-identical stdout points at the first kept copy and names the removed file in stdoutDeduplicated; stdoutSha256 hashes the original stdout bytes; plain-text stdout saved as .jsonl or .stdout is renamed .log.",
+  "commands": {
+    "doctor": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "doctor",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    },
+    "hooks-list": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\project",
+      "argv": [
+        "node",
+        "scripts/install/codex-hook-status.js"
+      ],
+      "env": {}
+    },
+    "install": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "install",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home",
+        "--source",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\source"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    },
+    "uninstall": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "uninstall",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    }
+  },
+  "steps": {
+    "c1-doctor": {
+      "command": "doctor",
+      "exit": 0,
+      "stdoutSha256": "bedf905352040360d04f08d08762cefd6be3ffe0ee1a1b798002b176a42043be",
+      "stdout": "c1-doctor.log",
+      "stderr": ""
+    },
+    "c1-doctor-reinstalled": {
+      "command": "doctor",
+      "exit": 0,
+      "stdoutSha256": "bedf905352040360d04f08d08762cefd6be3ffe0ee1a1b798002b176a42043be",
+      "stdout": "c1-doctor.log",
+      "stdoutDeduplicated": "c1-doctor-reinstalled.jsonl",
+      "stderr": ""
+    },
+    "c1-doctor-same": {
+      "command": "doctor",
+      "exit": 0,
+      "stdoutSha256": "bedf905352040360d04f08d08762cefd6be3ffe0ee1a1b798002b176a42043be",
+      "stdout": "c1-doctor.log",
+      "stdoutDeduplicated": "c1-doctor-same.jsonl",
+      "stderr": ""
+    },
+    "c1-hooks-list": {
+      "command": "hooks-list",
+      "exit": 0,
+      "stdoutSha256": "763ff9d9dbf95834bcda81b33cd4fe1fe2f1fee71b6e8941a5de6e4b755ba9a3",
+      "stdout": "c1-hooks-list.jsonl",
+      "stderr": ""
+    },
+    "c1-hooks-list-same": {
+      "command": "hooks-list",
+      "exit": 0,
+      "stdoutSha256": "763ff9d9dbf95834bcda81b33cd4fe1fe2f1fee71b6e8941a5de6e4b755ba9a3",
+      "stdout": "c1-hooks-list.jsonl",
+      "stdoutDeduplicated": "c1-hooks-list-same.jsonl",
+      "stderr": ""
+    },
+    "c1-install": {
+      "command": "install",
+      "exit": 0,
+      "stdoutSha256": "7be31ddb50880eae893aeb4d7d68f9c984e36ef5dc8e484feee009638bd44a3c",
+      "stdout": "c1-install.log",
+      "stderr": ""
+    },
+    "c1-install-same": {
+      "command": "install",
+      "exit": 0,
+      "stdoutSha256": "7be31ddb50880eae893aeb4d7d68f9c984e36ef5dc8e484feee009638bd44a3c",
+      "stdout": "c1-install.log",
+      "stdoutDeduplicated": "c1-install-same.jsonl",
+      "stderr": ""
+    },
+    "c1-reinstall": {
+      "command": "install",
+      "exit": 0,
+      "stdoutSha256": "7be31ddb50880eae893aeb4d7d68f9c984e36ef5dc8e484feee009638bd44a3c",
+      "stdout": "c1-install.log",
+      "stdoutDeduplicated": "c1-reinstall.jsonl",
+      "stderr": ""
+    },
+    "c1-uninstall": {
+      "command": "uninstall",
+      "exit": 0,
+      "stdoutSha256": "7b992cf51941ab1c0e20d9b4a8d6bcbe78efed2a591de7c1cbb2ecc469d2f929",
+      "stdout": "c1-uninstall.log",
+      "stderr": ""
+    },
+    "c1-uninstall-same": {
+      "command": "uninstall",
+      "exit": 0,
+      "stdoutSha256": "7b992cf51941ab1c0e20d9b4a8d6bcbe78efed2a591de7c1cbb2ecc469d2f929",
+      "stdout": "c1-uninstall.log",
+      "stdoutDeduplicated": "c1-uninstall-same.jsonl",
+      "stderr": ""
+    },
+    "c2-doctor": {
+      "command": "doctor",
+      "exit": 0,
+      "stdoutSha256": "bedf905352040360d04f08d08762cefd6be3ffe0ee1a1b798002b176a42043be",
+      "stdout": "c1-doctor.log",
+      "stdoutDeduplicated": "c2-doctor.jsonl",
+      "stderr": ""
+    },
+    "c2-doctor-reinstalled": {
+      "command": "doctor",
+      "exit": 0,
+      "stdoutSha256": "bedf905352040360d04f08d08762cefd6be3ffe0ee1a1b798002b176a42043be",
+      "stdout": "c1-doctor.log",
+      "stdoutDeduplicated": "c2-doctor-reinstalled.jsonl",
+      "stderr": ""
+    },
+    "c2-doctor-same": {
+      "command": "doctor",
+      "exit": 0,
+      "stdoutSha256": "bedf905352040360d04f08d08762cefd6be3ffe0ee1a1b798002b176a42043be",
+      "stdout": "c1-doctor.log",
+      "stdoutDeduplicated": "c2-doctor-same.jsonl",
+      "stderr": ""
+    },
+    "c2-hooks-list": {
+      "command": "hooks-list",
+      "exit": 0,
+      "stdoutSha256": "763ff9d9dbf95834bcda81b33cd4fe1fe2f1fee71b6e8941a5de6e4b755ba9a3",
+      "stdout": "c1-hooks-list.jsonl",
+      "stdoutDeduplicated": "c2-hooks-list.jsonl",
+      "stderr": ""
+    },
+    "c2-hooks-list-same": {
+      "command": "hooks-list",
+      "exit": 0,
+      "stdoutSha256": "763ff9d9dbf95834bcda81b33cd4fe1fe2f1fee71b6e8941a5de6e4b755ba9a3",
+      "stdout": "c1-hooks-list.jsonl",
+      "stdoutDeduplicated": "c2-hooks-list-same.jsonl",
+      "stderr": ""
+    },
+    "c2-install": {
+      "command": "install",
+      "exit": 0,
+      "stdoutSha256": "7be31ddb50880eae893aeb4d7d68f9c984e36ef5dc8e484feee009638bd44a3c",
+      "stdout": "c1-install.log",
+      "stdoutDeduplicated": "c2-install.jsonl",
+      "stderr": ""
+    },
+    "c2-install-same": {
+      "command": "install",
+      "exit": 0,
+      "stdoutSha256": "7be31ddb50880eae893aeb4d7d68f9c984e36ef5dc8e484feee009638bd44a3c",
+      "stdout": "c1-install.log",
+      "stdoutDeduplicated": "c2-install-same.jsonl",
+      "stderr": ""
+    },
+    "c2-reinstall": {
+      "command": "install",
+      "exit": 0,
+      "stdoutSha256": "7be31ddb50880eae893aeb4d7d68f9c984e36ef5dc8e484feee009638bd44a3c",
+      "stdout": "c1-install.log",
+      "stdoutDeduplicated": "c2-reinstall.jsonl",
+      "stderr": ""
+    },
+    "c2-uninstall": {
+      "command": "uninstall",
+      "exit": 0,
+      "stdoutSha256": "7b992cf51941ab1c0e20d9b4a8d6bcbe78efed2a591de7c1cbb2ecc469d2f929",
+      "stdout": "c1-uninstall.log",
+      "stdoutDeduplicated": "c2-uninstall.jsonl",
+      "stderr": ""
+    },
+    "c2-uninstall-same": {
+      "command": "uninstall",
+      "exit": 0,
+      "stdoutSha256": "7b992cf51941ab1c0e20d9b4a8d6bcbe78efed2a591de7c1cbb2ecc469d2f929",
+      "stdout": "c1-uninstall.log",
+      "stdoutDeduplicated": "c2-uninstall-same.jsonl",
+      "stderr": ""
+    }
+  }
+}

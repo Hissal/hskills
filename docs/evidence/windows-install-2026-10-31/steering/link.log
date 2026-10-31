@@ -1,0 +1,84 @@
+$ install.js install --owner-steering
+exit 1
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/link-home/.claude/CLAUDE.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+STEERING symlink: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.claude\CLAUDE.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\source\steering.md
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/link-home/.codex/AGENTS.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+STEERING symlink: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.codex\AGENTS.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\source\steering.md
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/link-home/.config/opencode/AGENTS.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+STEERING symlink: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.config\opencode\AGENTS.md -> C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\source\steering.md
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.claude\CLAUDE.md (symlink)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.codex\AGENTS.md (symlink)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.config\opencode\AGENTS.md (symlink)
+Snapshot copied to C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.agents\command-guard
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+ok   codex.js denies a force-push to main
+ok   codex.js is silent on git status
+Claude Code: PreToolUse hook registered in C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.claude\settings.json
+Codex: PreToolUse hook written to C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.codex\hooks.json. It does not run until you trust it: open Codex and run /hooks.
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status
+OpenCode: plugin installed at C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.config\opencode\plugins\command-guard.js. Running OpenCode servers pick it up on restart.
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
+ok   codex.js denies a force-push to main
+ok   codex.js is silent on git status
+PENDING Codex human trust: review the current hook in /hooks; trust is unverified.
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: codex.js
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status
+
+$ install.js install
+exit 1
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/link-home/.claude/CLAUDE.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/link-home/.codex/AGENTS.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/link-home/.config/opencode/AGENTS.md)"
+ALLOW: "Read(//c/Users/<user>/AppData/Local/Temp/steering-win-Prw2NK/source/steering.md)"
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.claude\CLAUDE.md (symlink)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.codex\AGENTS.md (symlink)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.config\opencode\AGENTS.md (symlink)
+Snapshot copied to C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.agents\command-guard
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+ok   codex.js denies a force-push to main
+ok   codex.js is silent on git status
+Claude Code: PreToolUse hook registered in C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.claude\settings.json
+Codex: PreToolUse hook written to C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.codex\hooks.json. It does not run until you trust it: open Codex and run /hooks.
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status
+OpenCode: plugin installed at C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.config\opencode\plugins\command-guard.js. Running OpenCode servers pick it up on restart.
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
+ok   codex.js denies a force-push to main
+ok   codex.js is silent on git status
+PENDING Codex human trust: review the current hook in /hooks; trust is unverified.
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: codex.js
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status
+
+$ install.js doctor
+exit 1
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.claude\CLAUDE.md (symlink)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.codex\AGENTS.md (symlink)
+DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\link-home\.config\opencode\AGENTS.md (symlink)
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
+ok   codex.js denies a force-push to main
+ok   codex.js is silent on git status
+PENDING Codex human trust: review the current hook in /hooks; trust is unverified.
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: codex.js
+ok   opencode plugin rejects a force-push to main
+ok   opencode plugin denies its shell permission
+ok   opencode plugin is silent on git status

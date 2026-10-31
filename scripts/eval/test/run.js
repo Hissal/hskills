@@ -65,6 +65,19 @@ try {
    config.models[0].command = [process.execPath,fake,mode];
    assert.equal(run().status,2,mode);
  }
+ // Plugin callable names may differ from the entry point's bare name.
+ config.models[0].command = [process.execPath,fake,'codex'];
+ config.skills[0].name = 'fixture-pack:fixture';
+ config.skills[0].readName = 'fixture';
+ config.models[1].harness = 'codex';
+ config.models[1].command = [process.execPath,fake,'codex'];
+ const plugin = run();
+ assert.equal(plugin.status,0,plugin.stdout);
+ assert.match(plugin.stdout,/RESULT: fixture-pack:fixture Opus q1 fired/);
+ config.skills[0].name = 'fixture';
+ delete config.skills[0].readName;
+ config.models[1].harness = 'claude';
+ config.models[1].command = [process.execPath,fake];
  config.models[0].harness = 'opencode';
  config.models[0].command = [process.execPath,fake,'opencode'];
  assert.equal(run().status,0);
@@ -73,5 +86,16 @@ try {
  assert.equal(run().status,1);
  config.skills[0].queries.push({prompt:'extra',fire:false});
  assert.equal(run().status,2);
+ const evidence = path.join(dir,'evidence');
+ const capture = spawnSync(process.execPath,[path.join(__dirname,'plugin-fixture/capture.js'),evidence,'probe',process.execPath,'-e',"console.log('stdout'); console.error('stderr'); process.exitCode=3"],{encoding:'utf8'});
+ assert.equal(capture.status,3);
+ assert.equal(capture.stdout,'stdout\n');
+ assert.equal(capture.stderr,'stderr\n');
+ const metadata = fs.readdirSync(evidence).find(name=>name.endsWith('.json'));
+ const prefix = path.join(evidence,metadata.slice(0,-5));
+ assert.equal(JSON.parse(fs.readFileSync(prefix+'.json','utf8')).status,3);
+ assert.equal(fs.readFileSync(prefix+'.stdout','utf8'),'stdout\n');
+ assert.equal(fs.readFileSync(prefix+'.stderr','utf8'),'stderr\n');
+ assert.equal(fs.statSync(prefix+'.stdout').mode & 0o777,0o600);
  console.log('ok: modes, advisory tiers, repeat noise, failures, OpenCode and validation');
 } finally { fs.rmSync(dir,{recursive:true,force:true}); }

@@ -1,0 +1,110 @@
+{
+  "description": "Native Windows legacy-first guard migration at 3a50d50: installer commands, exit statuses and outputs. Report: ../../windows-guard-followup.md.",
+  "consolidatedFrom": "docs/evidence/windows-install-2026-10-31/guard-migration at a640892606c001b1ab1ddbe8e1232948dc67f66c: each <step>-argv.json or -invocation.json is kept verbatim under commands (byte-identical ones once); <step>-status.json becomes exit; an empty stdout or stderr is recorded as ''; a byte-identical stdout points at the first kept copy and names the removed file in stdoutDeduplicated; stdoutSha256 hashes the original stdout bytes; plain-text stdout saved as .jsonl or .stdout is renamed .log.",
+  "commands": {
+    "codex-hooks-list": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy\\project",
+      "argv": [
+        "node",
+        "scripts/install/codex-hook-status.js"
+      ],
+      "env": {}
+    },
+    "doctor": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "doctor",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy\\home",
+        "--source",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy\\source"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    },
+    "install": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "install",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy\\home",
+        "--source",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy\\source"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    },
+    "legacy-install": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy\\source\\hooks\\command-guard\\install.js",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy\\home"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    },
+    "uninstall": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "uninstall",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-SYQyoy\\home"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    }
+  },
+  "steps": {
+    "codex-hooks-list": {
+      "command": "codex-hooks-list",
+      "exit": 0,
+      "stdoutSha256": "1e6c43114af898f15ecb4e101d5d9f753b689eec3bcd1bf2bd3fd291158d415e",
+      "stdout": "codex-hooks-list.jsonl",
+      "stderr": ""
+    },
+    "doctor": {
+      "command": "doctor",
+      "exit": 1,
+      "stdoutSha256": "b436db7333d9154c76ad2ebfe155228e24e6c56b7f9c200bc37bac7ffc751207",
+      "stdout": "doctor.log",
+      "stderr": ""
+    },
+    "install": {
+      "command": "install",
+      "exit": 1,
+      "stdoutSha256": "8658e7a67c4f8ea2ef646087b37334d500b065ea70181604e7e15695d8b32b63",
+      "stdout": "install.log",
+      "stderr": ""
+    },
+    "legacy-install": {
+      "command": "legacy-install",
+      "exit": 1,
+      "stdoutSha256": "6ca196ad2f577231c7757bb3c28920e401794b19248dad06271bfa5581138bb0",
+      "stdout": "legacy-install.log",
+      "stderr": ""
+    },
+    "uninstall": {
+      "command": "uninstall",
+      "exit": 0,
+      "stdoutSha256": "7b992cf51941ab1c0e20d9b4a8d6bcbe78efed2a591de7c1cbb2ecc469d2f929",
+      "stdout": "uninstall.log",
+      "stderr": ""
+    }
+  }
+}

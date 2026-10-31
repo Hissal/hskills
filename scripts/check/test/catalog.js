@@ -26,13 +26,46 @@ try {
   assert.strictEqual(stale.status, 1);
   assert.match(stale.stdout, /FAIL docs\/catalog.md \[dependency-catalog\].*node scripts\/catalog\/generate.js/);
   assert.strictEqual(run(writer).status, 0);
+  const json = fs.readFileSync(path.join(root, 'catalog.json'), 'utf8');
+  assert.strictEqual(json, `{
+  "hissal.skill-collection/alpha": {
+    "path": "skills/core/z-renamed",
+    "requires": [
+      "hissal.skill-collection/zeta"
+    ]
+  },
+  "hissal.skill-collection/zeta": {
+    "path": "skills/packs/web/a-renamed",
+    "requires": []
+  }
+}
+`);
   const result = fs.readFileSync(path.join(root, 'docs/catalog.md'), 'utf8');
   assert.strictEqual(result, '# Blueprint\n\nOptional routes stay here.\n\n<!-- BEGIN GENERATED DEPENDENCIES -->\n| Skill ID | Callable / source | Hard requirements |\n|---|---|---|\n| `hissal.skill-collection/alpha` | [`z-renamed`](../skills/core/z-renamed/SKILL.md) | `hissal.skill-collection/zeta` [`a-renamed`](../skills/packs/web/a-renamed/SKILL.md) |\n| `hissal.skill-collection/zeta` | [`a-renamed`](../skills/packs/web/a-renamed/SKILL.md) | — |\n<!-- END GENERATED DEPENDENCIES -->\n\nTail stays here.\n');
   assert.strictEqual(run(writer).status, 0);
   assert.strictEqual(fs.readFileSync(path.join(root, 'docs/catalog.md'), 'utf8'), result);
+  assert.strictEqual(fs.readFileSync(path.join(root, 'catalog.json'), 'utf8'), json);
   assert.strictEqual(run(check).status, 0);
+  fs.mkdirSync(path.join(root, 'skills/packs/study'), { recursive: true });
+  fs.renameSync(path.join(root, 'skills/packs/web/a-renamed'), path.join(root, 'skills/packs/study/a-renamed'));
+  assert.strictEqual(run(check).status, 1);
+  assert.strictEqual(run(writer).status, 0);
+  assert.strictEqual(fs.readFileSync(path.join(root, 'catalog.json'), 'utf8'), json.replace('skills/packs/web/a-renamed', 'skills/packs/study/a-renamed'));
+  assert.strictEqual(run(check).status, 0);
+  fs.renameSync(path.join(root, 'skills/packs/study/a-renamed'), path.join(root, 'skills/packs/web/a-renamed'));
+  assert.strictEqual(run(writer).status, 0);
+  fs.unlinkSync(path.join(root, 'catalog.json'));
+  assert.match(run(check).stdout, /FAIL catalog.json \[release-catalog\]/);
+  assert.strictEqual(run(writer).status, 0);
+  write('catalog.json', '{}\n');
+  const staleJson = run(check);
+  assert.strictEqual(staleJson.status, 1);
+  assert.match(staleJson.stdout, /FAIL catalog.json \[release-catalog\].*node scripts\/catalog\/generate.js/);
+  assert.strictEqual(fs.readFileSync(path.join(root, 'catalog.json'), 'utf8'), '{}\n');
+  assert.strictEqual(run(writer).status, 0);
   write('skills/packs/web/a-renamed/SKILL.md', skill('a-renamed', 'alpha', []));
   assert.strictEqual(run(writer).status, 1);
   assert.strictEqual(fs.readFileSync(path.join(root, 'docs/catalog.md'), 'utf8'), result);
+  assert.strictEqual(fs.readFileSync(path.join(root, 'catalog.json'), 'utf8'), json);
   console.log('ok: catalog writer/check fixture');
 } finally { fs.rmSync(root, { recursive: true, force: true }); }

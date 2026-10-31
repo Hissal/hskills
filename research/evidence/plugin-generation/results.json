@@ -1,0 +1,53 @@
+[
+  {
+    "run": "claude",
+    "skillCalls": [
+      {
+        "skill": "collection-pack-demo:fixture-work"
+      },
+      {
+        "skill": "collection-core:fixture-required"
+      }
+    ],
+    "returnedToken": true,
+    "stoppedForMissing": false
+  },
+  {
+    "run": "codex",
+    "successfulReadCommands": [
+      "/bin/bash -lc 'cat <fixture>/codex/plugins/cache/fixture-124/collection-pack-demo/0.1.0/fixture-work/SKILL.md'",
+      "/bin/bash -lc 'cat <fixture>/codex/plugins/cache/fixture-124/collection-core/0.1.0/fixture-required/SKILL.md'",
+      "/bin/bash -lc 'cat <fixture>/codex/plugins/cache/fixture-124/collection-core/0.1.0/fixture-required/references/token.md'"
+    ],
+    "returnedToken": true,
+    "stoppedForMissing": false
+  },
+  {
+    "run": "codex-project",
+    "successfulReadCommands": [
+      "/bin/bash -lc 'cat <fixture>/codex/plugins/cache/fixture-124/collection-pack-demo/0.1.0/fixture-work/SKILL.md'",
+      "/bin/bash -lc 'cat <fixture>/codex/plugins/cache/fixture-124/collection-core/0.1.0/fixture-required/SKILL.md'",
+      "/bin/bash -lc 'cat <fixture>/codex/plugins/cache/fixture-124/collection-core/0.1.0/fixture-required/references/token.md'"
+    ],
+    "returnedToken": true,
+    "stoppedForMissing": false
+  },
+  {
+    "run": "claude-missing",
+    "skillCalls": [
+      {
+        "skill": "collection-pack-demo:fixture-work"
+      }
+    ],
+    "returnedToken": false,
+    "stoppedForMissing": true
+  },
+  {
+    "run": "codex-absent",
+    "successfulReadCommands": [
+      "/bin/bash -lc 'cat <fixture>/codex/plugins/cache/fixture-124/collection-pack-demo/0.1.0/fixture-work/SKILL.md'"
+    ],
+    "returnedToken": false,
+    "stoppedForMissing": true
+  }
+]

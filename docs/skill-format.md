@@ -3,6 +3,8 @@
 What a skill folder in this collection holds, and the check that keeps the tree sound. Specs and tickets that build skills use this format and do not restate it. Decided in [#42](https://github.com/Hissal/skill-collection/issues/42#issuecomment-6191540887) (disclosure, modes, scripts), [#74](https://github.com/Hissal/skill-collection/issues/74#issuecomment-6442601759) (reachability) and [#18](https://github.com/Hissal/skill-collection/issues/18#issuecomment-6108951944) (layout); specified in [#77](https://github.com/Hissal/skill-collection/issues/77).
 
 - [Skill tree](#skill-tree)
+- [Collection manifest](#collection-manifest)
+- [Personal steering source](#personal-steering-source)
 - [Skill folder](#skill-folder)
 - [Frontmatter](#frontmatter)
 - [Harness gates](#harness-gates)
@@ -24,6 +26,60 @@ One skill tree serves both install routes (folder and plugin):
 - pack skills: `skills/packs/<pack>/<skill>/`
 
 Vendor baselines, licences and scripts sit outside the skill tree; the manifest and the always-on source sit at the root.
+
+## Collection manifest
+
+The authored root `collection.json` names membership using repository-relative
+skill-folder paths, independent of stable IDs and hard requirements. It is JSON
+with exactly these three required fields:
+
+```json
+{
+  "core": ["skills/core/example"],
+  "packs": {
+    "onboarding": ["skills/packs/onboarding/automatic-guide"]
+  },
+  "expensive": ["skills/core/example"]
+}
+```
+
+- `core`: an array of core skill paths.
+- `packs`: an object mapping pack names to arrays of skill paths. A pack is a
+  named list; onboarding is a one-skill list containing the automatic guide.
+- `expensive`: an array of skill paths whose specs allow the expensive
+  description budget. It grants no membership or invocation authority.
+
+Pack names and path segments are lowercase kebab-case (letters and digits).
+Paths use forward slashes and exactly `skills/core/<skill>` or
+`skills/packs/<pack>/<skill>`, without a trailing slash. Every entry must name
+a skill folder in the checked tree, including untracked skills. Empty arrays and
+an empty packs object support the tree before skills are authored. Requirements
+stay in skill metadata (ADR 0004), never in this manifest.
+
+The `collection-manifest` rule rejects invalid JSON, any other shape, and
+entries without a skill. It is silent when the manifest is absent in a fixture
+collection. Membership completeness and exclusivity (core or exactly one pack),
+onboarding cardinality and plugin-list agreement belong to #110; expensive-list
+policy belongs to #111.
+
+## Personal steering source
+
+[`steering.md`](../steering.md) at the repository root is the owner's personal
+always-on steering source, shared by Claude Code and Codex. It is separate
+from this repository's contributor instructions in `AGENTS.md`.
+
+For owner installation, conflicts or drift verification, read
+[Owner-only personal steering](user-install.md#owner-only-personal-steering).
+
+Attribution belongs to the comment and PR skills, per [the superseding owner
+decision](https://github.com/Hissal/skill-collection/issues/88#issuecomment-6512311352),
+and is absent from this source. For line admission and the measured source snapshot, read
+[#118 evidence](../research/steering-source-118.md). To recover the unresolved
+tooling notes, read the [recovery search](../research/steering-notes-recovery.md),
+which records coverage and the next authoritative-source lead.
+The 500-token tripwire measurement belongs to #92; command and path validation
+belongs to #112. Until the measurement uses this path by default, run
+`COLLECTION_ALWAYS_ON_PATH=steering.md node scripts/check/check.js` to include it.
 
 ## Skill folder
 
@@ -131,6 +187,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 
 | Rule | Level | Finding |
 |---|---|---|
+| `collection-manifest` | fail | invalid manifest JSON or shape, or an entry naming no skill folder |
 | `utf8-bom` | fail | a text file starts with a UTF-8 BOM |
 | `crlf-line-ending` | fail | a text file has a CRLF line ending |
 | `description-colon` | fail | an unquoted `description` contains `: ` |
@@ -143,6 +200,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `requirement-reference` | fail | a Markdown link names a missing file in a required skill's folder |
 | `guide-needs-target` | fail | a guide needs-table target is not its own file, a skill in the same pack (core for core guides), or explicitly project-selected vendor guidance |
 | `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
+| `install-cases` | fail | the temporary-filesystem user installer cases fail or crash |
 | `guard-cases` | fail | a [command guard case](../hooks/command-guard/test/run.js) fails, or the harness exits non-zero; a passing harness prints only its `guard:` summary line |
 | `requirement-body-id` | fail | a required ID is absent from the requiring skill's body |
 | `vendor-lock` | fail | `vendor.lock.json` is not valid against [Copied skills](#copied-skills), or an entry names no skill folder; the other `vendor-*` rules wait until the lock is valid |
@@ -150,6 +208,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `vendor-licence` | fail | a lock entry's source has no licence file |
 | `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` sits in a skill with no lock entry |
 | `dependency-catalog` | fail | the catalog's marked dependency section differs from fresh metadata output; names the regenerate command |
+| `release-config` | fail | invalid single-version release settings or a plugin manifest missing its JSON version stamp entry |
 | `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
 | `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
 | `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
@@ -190,7 +249,7 @@ Run `npm ci` before the check and its fixtures to install pinned agnix; real-agn
 3. Add its row to the table above.
 4. Add its fixtures (next section).
 
-`c` is the collection view from `scripts/check/collection.js`; read it there rather than re-listing files or re-parsing frontmatter in the rule. It carries every checked file (`files`, `bytes`, `text`, `isText`, `exists`), the skills under `skills/` (`dir`, `name`, `skillMd`, `files`, `frontmatter` lines, `body` lines and their line numbers), `references(skill)` and `links(file)`. A rule that needs another shared fact (the manifest, git history) adds it to the view so later rules reuse it.
+`c` is the collection view from `scripts/check/collection.js`; read it there rather than re-listing files or re-parsing frontmatter in the rule. It exposes `manifest` (`exists`, parsed `data`, shape/parse `errors`) and carries every checked file (`files`, `bytes`, `text`, `isText`, `exists`), the skills under `skills/` (`dir`, `name`, `skillMd`, `files`, `frontmatter` lines, `body` lines and their line numbers), `references(skill)` and `links(file)`. A rule that needs another shared fact (the manifest, git history) adds it to the view so later rules reuse it.
 
 ## Adding a fixture
 
@@ -473,6 +532,41 @@ The rule checks trees containing `docs/catalog.md`; fixture or subset trees
 without that artifact skip it. Malformed or duplicate markers fail. Text outside
 the markers remains byte-for-byte unchanged. The fixture runner also exercises
 the writer CLI, idempotence, renamed identities and the failure message.
+
+### Release-local JSON catalog
+
+The same command writes root `catalog.json`. Commit both generated outputs; generation is complete when the collection
+check accepts both artifacts as current.
+Edit skill metadata and regenerate rather than hand-editing the JSON. Every
+release tag carries the mapping for that revision. Its top-level object maps
+each stable skill ID to exactly a repository-relative skill folder `path`
+(with forward slashes, containing `SKILL.md`) and a `requires` array of
+direct skill IDs:
+
+```json
+{
+  "hissal.skill-collection/example": {
+    "path": "skills/core/example",
+    "requires": ["hissal.skill-collection/knowledge"]
+  },
+  "hissal.skill-collection/knowledge": {
+    "path": "skills/packs/study/knowledge",
+    "requires": []
+  }
+}
+```
+
+IDs and requirement arrays sort lexically; output uses two-space indentation,
+LF and a final newline. Skills without requirements have an empty array.
+Paths follow folder moves while IDs remain stable. Requirements are direct;
+resolvers expand the graph at the same immutable revision.
+
+The `release-catalog` rule fails on missing or byte-stale JSON when
+`docs/catalog.md` is present, and also checks JSON-only trees. Subset fixtures
+with neither artifact skip it. Failures name `node scripts/catalog/generate.js`.
+The writer validates both outputs before writing either; the human document
+outside its dependency markers stays unchanged.
+
 ## Skill ID stability
 
 A skill keeps its `agent-skills-sync.id` across renames and moves. The check
@@ -514,3 +608,19 @@ regenerate: only frontmatter (the gate and the description) may differ.
 The Codex gate file (`agents/openai.yaml`) is generated from frontmatter, so it
 differs with the gate and the sync skips it; `harness-gates` checks it against
 `disable-model-invocation`. Every other bundled file must match byte for byte.
+
+## Generated plugin lists
+
+After changing `collection.json` or `version.txt`, run
+`node scripts/plugins/generate.js`. Commit its manifests, marketplace and release
+configuration together. `plugin-output` reports missing, stale and retired
+outputs. It compares generated bytes; pack membership, inert `paths:` and
+requirement closure are separate rules owned by #110.
+
+Each nonempty group publishes two host manifests at its skill-tree root:
+`skills/core` or `skills/packs/<pack>`. Paths stay inside that root; a selection
+from another root is rejected before writes. Skill source files remain the same
+files used by folder installs. Empty groups publish no plugin, and onboarding
+publishes only when its one actual manifest entry exists. The fixture CLI suite
+runs through `scripts/check/test/run.js`; run it directly with
+`node scripts/plugins/test/run.js` when changing the generator.

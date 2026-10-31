@@ -1,0 +1,43 @@
+{
+  "extract": "EXTRACT, not the raw response. Source: https://github.com/Hissal/skill-collection/blob/a640892606c001b1ab1ddbe8e1232948dc67f66c/docs/evidence/windows-install-2026-10-31/cross-scope-junction/duplicate-codex-list.jsonl (sha256 95303056de929a2f0d73fdf7fb3515e04a9d1a5a905134437257eacaad2dac11). Kept verbatim: the initialize result (id 1) and every skills/list entry for the scope-* fixture skills (id 2). Omitted and counted per cwd: every other entry, including Codex system skills and ambient user skills outside the fixture.",
+  "initialize": {
+    "userAgent": "scope-evidence/0.166.0 (Windows 10.0.26200; x86_64) unknown (scope-evidence; 1)",
+    "codexHome": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\duplicate\\home\\.agents",
+    "platformFamily": "windows",
+    "platformOs": "windows"
+  },
+  "skillsList": [
+    {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\duplicate\\project",
+      "skillCount": 51,
+      "fixtureEntries": [
+        {
+          "name": "scope-caller",
+          "description": "Isolated cross-scope install evidence fixture.",
+          "path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\duplicate\\source\\skills\\packs\\fixture\\scope-caller\\SKILL.md",
+          "scope": "repo",
+          "enabled": true,
+          "pluginId": null
+        },
+        {
+          "name": "scope-caller",
+          "description": "Isolated cross-scope install evidence fixture.",
+          "path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\duplicate\\source\\personal\\skills\\packs\\fixture\\scope-caller\\SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": null
+        },
+        {
+          "name": "scope-rules",
+          "description": "Isolated cross-scope install evidence fixture.",
+          "path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-Ah7GX3\\duplicate\\source\\skills\\packs\\fixture\\scope-rules\\SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": null
+        }
+      ],
+      "omittedEntries": 48,
+      "errors": []
+    }
+  ]
+}

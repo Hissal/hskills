@@ -1,0 +1,15 @@
+{
+  "path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\project\\.agents\\config\\command-guard.json",
+  "beforeSha256": "9bf8d73befcc3579d6779633d06362e586b972119139c222b857b7bb8774536e",
+  "afterSha256": "7f685c10f1cf905b491a355af79d2da6957c12607730524c3c36671686598f89",
+  "rule": {
+    "id": "project.smoke",
+    "family": "smoke",
+    "tier": "human-required",
+    "command": [
+      "node"
+    ],
+    "anyArg": "PROJECT_BLOCK_120",
+    "effect": "harmless marker"
+  }
+}

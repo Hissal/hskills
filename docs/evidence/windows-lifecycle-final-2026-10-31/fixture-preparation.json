@@ -1,0 +1,24 @@
+{
+  "kind": "one-time fixture preparation (not acceptance, not production adoption)",
+  "at": "2026-10-31T12:01:21.003Z",
+  "reason": "prior diagnostic left an unrecorded empty snapshot tree; production refuses unrecorded trees by design",
+  "verifiedBefore": {
+    "files": 0,
+    "reparsePoints": 0,
+    "directories": 7,
+    "journalWrites": 0,
+    "journalHosts": 0,
+    "journalDirectoriesField": "absent"
+  },
+  "method": "fs.rmdirSync (non-recursive), children then snapshot root; plugin-cache parent kept",
+  "removed": [
+    "0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3/.claude-plugin",
+    "0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3/.codex-plugin",
+    "0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3/adapters",
+    "0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3/engine",
+    "0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3/hooks",
+    "0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3/rules",
+    "0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3"
+  ],
+  "cacheEntriesAfter": []
+}

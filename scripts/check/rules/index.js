@@ -4,6 +4,7 @@
 // list it here.
 
 module.exports = [
+  require('./collection-manifest'),
   require('./utf8-bom'),
   require('./crlf-line-ending'),
   require('./description-colon'),
@@ -18,6 +19,7 @@ module.exports = [
   require('./guide-needs-target'),
   require('./guide-routes-paths'),
   require('./guard-cases'),
+  require('./install-cases'),
   require('./requirement-body-id'),
   // copied skills (#102)
   require('./vendor-lock'),
@@ -25,6 +27,9 @@ module.exports = [
   require('./vendor-licence'),
   require('./vendor-notice'),
   require('./dependency-catalog'),
+  require('./release-catalog'),
+  require('./release-config'),
+  require('./plugin-output'),
 
   require('./harness-gates'),
 

@@ -53,7 +53,24 @@ const tree = (...parts) => Object.assign({}, ...parts);
 // A stand-in guard harness that prints `out` and exits with `code`.
 const guard = (out, code) => ({ 'hooks/command-guard/test/run.js': 'console.log(' + JSON.stringify(out.join('\n')) + ');\nprocess.exit(' + code + ');\n' });
 
+const releaseConfig = (extra) => JSON.stringify({ packages: { '.': {
+  'release-type': 'simple', 'initial-version': '0.1.0',
+  'bump-minor-pre-major': true, 'bump-patch-for-minor-pre-major': true,
+  'include-component-in-tag': false, 'extra-files': extra,
+} } });
+const pluginPath = 'plugins/example/.codex-plugin/plugin.json';
+const stamp = { type: 'json', path: pluginPath, jsonpath: '$.version' };
+
 module.exports = [
+  { name: 'release covers every plugin', files: {
+    'release-please-config.json': releaseConfig([stamp]),
+    [pluginPath]: '{"version":"0.1.0"}\n',
+  }, expect: [] },
+  { name: 'new plugin needs a release stamp', files: {
+    'release-please-config.json': releaseConfig([]),
+    [pluginPath]: '{"version":"0.1.0"}\n',
+  }, expect: ['fail release-config ' + pluginPath] },
+
   // ---- the check itself ------------------------------------------------------
   ...[['bare', 'ID is not publisher-qualified'], ['another.publisher/alpha', "another publisher's ID"]].map(([id, message]) => ({ name: 'invalid ID diagnostic ' + id, files: skill('skills/core/alpha', { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "' + id + '"' } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'], output: [message] })),
   { name: 'core guide resolves core skills', files: tree(skill('skills/core/guide', { body: '| Need | Target |\n|---|---|\n| Tests | `skill: alpha` |\n' }), skill('skills/core/alpha')), expect: [] },
@@ -259,8 +276,8 @@ module.exports.push({
 module.exports.push(...require('./vendoring-cases')({ skill, skillMd }));
 // ---- generated dependency catalog (#96) ------------------------------------
 module.exports.push(
-  { name: 'stale dependency catalog fails', files: { 'docs/catalog.md': '# Catalog\n' }, expect: ['fail dependency-catalog docs/catalog.md'] },
-  { name: 'fresh empty dependency catalog passes', files: { 'docs/catalog.md': '# Catalog\n\n<!-- BEGIN GENERATED DEPENDENCIES -->\n| Skill ID | Callable / source | Hard requirements |\n|---|---|---|\n<!-- END GENERATED DEPENDENCIES -->\n' }, expect: [] }
+  { name: 'stale dependency catalog fails', files: { 'catalog.json': '{}\n', 'docs/catalog.md': '# Catalog\n' }, expect: ['fail dependency-catalog docs/catalog.md'] },
+  { name: 'fresh empty dependency catalog passes', files: { 'catalog.json': '{}\n', 'docs/catalog.md': '# Catalog\n\n<!-- BEGIN GENERATED DEPENDENCIES -->\n| Skill ID | Callable / source | Hard requirements |\n|---|---|---|\n<!-- END GENERATED DEPENDENCIES -->\n' }, expect: [] }
 );
 // #97: ID stability against the last release tag (v<version>).
 const withId = (dir, id) => skill(dir, { fm: { metadata: metadata('hissal.skill-collection/' + id) } });
@@ -295,3 +312,64 @@ module.exports.push(
   { name: 'a stale automatic guide gate fails harness-gates, not the sync', files: tree(coreGuide(), autoGuide({ openai: 'policy:\n  allow_implicit_invocation: false\n' })), expect: ['fail harness-gates skills/packs/onboarding/auto-guide/agents/openai.yaml'] },
   { name: 'an automatic guide with an extra file fails', files: tree(coreGuide(), autoGuide({ files: { 'SUPPORT.md': '# Support\n', 'scripts/extra.js': 'x\n' } })), expect: ['fail automatic-guide-sync skills/packs/onboarding/auto-guide/scripts/extra.js'] }
 );
+
+// #114: the manifest's data contract, independent of membership policy (#110).
+module.exports.push({
+  name: 'a manifest with invalid JSON fails',
+  files: { 'collection.json': '{' },
+  expect: ['fail collection-manifest collection.json'],
+});
+for (const data of [
+  null, [], {}, { core: [], packs: {}, expensive: [], requires: [] },
+  { core: 'alpha', packs: {}, expensive: [] },
+  { core: [], packs: [], expensive: [] },
+  { core: [], packs: { web: 'alpha' }, expensive: [] },
+  { core: [], packs: { 'Bad Pack': [] }, expensive: [] },
+  { core: [], packs: {}, expensive: [7] },
+  { core: ['../alpha'], packs: {}, expensive: [] },
+  { core: ['skills/core/alpha/'], packs: {}, expensive: [] },
+]) module.exports.push({
+  name: 'a manifest outside its documented shape fails: ' + JSON.stringify(data),
+  files: { 'collection.json': JSON.stringify(data) },
+  expect: ['fail collection-manifest collection.json'],
+});
+module.exports.push({
+  name: 'an empty manifest passes before skills are authored',
+  files: { 'collection.json': '{"core":[],"packs":{},"expensive":[]}' },
+  expect: [],
+});
+for (const data of [
+  { core: ['skills/core/missing'], packs: {}, expensive: [] },
+  { core: [], packs: { web: ['skills/packs/web/missing'] }, expensive: [] },
+  { core: [], packs: {}, expensive: ['skills/core/missing'] },
+]) module.exports.push({
+  name: 'a manifest entry must name a skill in the tree: ' + JSON.stringify(data),
+  files: { 'collection.json': JSON.stringify(data) },
+  expect: ['fail collection-manifest collection.json'],
+});
+module.exports.push({
+  name: 'a manifest names core, pack and expensive skills',
+  files: tree(skill('skills/core/alpha'), skill('skills/packs/onboarding/beta'), {
+    'collection.json': JSON.stringify({
+      core: ['skills/core/alpha'],
+      packs: { onboarding: ['skills/packs/onboarding/beta'] },
+      expensive: ['skills/core/alpha'],
+    }),
+  }),
+  expect: [],
+});
+
+for (const [name, body, expect] of [
+  ['passing', 'console.log("1 install cases, 0 failures");', []],
+  ['case failure', 'console.log("FAIL fixture"); process.exitCode = 1;', ['fail install-cases scripts/install/test/run.js']],
+  ['crash', 'throw new Error("fixture");', ['fail install-cases scripts/install/test/run.js']],
+]) module.exports.push({
+  name: 'collection check runs install harness: ' + name,
+  files: { 'scripts/install/test/run.js': body },
+  expect,
+});
+module.exports.push({
+  name: 'an installer without its case harness fails the collection check',
+  files: { 'scripts/install/install.js': '// fixture installer' },
+  expect: ['fail install-cases scripts/install/test/run.js'],
+});

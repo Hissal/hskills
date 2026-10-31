@@ -1,0 +1,14 @@
+Snapshot copied to C:\Users\<user>\AppData\Local\Temp\plugin-live-win-SYQyoy\home\.agents\command-guard
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+ok   codex.js denies a force-push to main
+ok   codex.js is silent on git status
+Claude Code: PreToolUse hook registered in C:\Users\<user>\AppData\Local\Temp\plugin-live-win-SYQyoy\home\.claude\settings.json
+Codex: PreToolUse hook written to C:\Users\<user>\AppData\Local\Temp\plugin-live-win-SYQyoy\home\.codex\hooks.json. It does not run until you trust it: open Codex and run /hooks.
+ok   claude-code.js denies a force-push to main
+ok   claude-code.js is silent on git status
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: claude-code.js
+ok   codex.js denies a force-push to main
+ok   codex.js is silent on git status
+PENDING Codex human trust: review the current hook in /hooks; trust is unverified.
+Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: codex.js

@@ -2,11 +2,7 @@
 'use strict';
 // Installs a snapshot of the command guard at ~/.agents/command-guard and
 // registers its hooks at user scope. A human runs this; agents do not.
-//   node hooks/command-guard/install.js              install or update, then doctor
-//   node hooks/command-guard/install.js --no-codex   skip Codex
-//   node hooks/command-guard/install.js --no-opencode  skip OpenCode
-//   node hooks/command-guard/install.js --doctor     fire each installed hook once
-//   node hooks/command-guard/install.js --uninstall  remove hooks and snapshot
+// Internal delegate of scripts/install/install.js; see docs/user-install.md.
 
 const fs = require('fs');
 const os = require('os');
@@ -14,8 +10,12 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { pathToFileURL } = require('url');
 
-const SRC = __dirname;
-const HOME = os.homedir();
+const sourceIndex = process.argv.indexOf('--source');
+const SRC = sourceIndex < 0 ? __dirname : path.resolve(process.argv[sourceIndex + 1]);
+const homeIndex = process.argv.indexOf('--home');
+const HOME = homeIndex < 0 ? os.homedir() : path.resolve(process.argv[homeIndex + 1]);
+process.env.COMMAND_GUARD_HOME = process.env.COMMAND_GUARD_HOME || path.join(HOME, '.agents', 'command-guard');
+process.env.COMMAND_GUARD_STATE = path.join(HOME, '.agents', 'command-guard', 'state');
 const DEST = path.join(HOME, '.agents', 'command-guard');
 const PARTS = ['engine', 'rules', 'adapters'];
 const CLAUDE_SETTINGS = path.join(HOME, '.claude', 'settings.json');
@@ -23,9 +23,16 @@ const CODEX_DIR = path.join(HOME, '.codex');
 const CODEX_HOOKS = path.join(CODEX_DIR, 'hooks.json');
 const OPENCODE_DIR = path.join(HOME, '.config', 'opencode');
 const OPENCODE_PLUGIN = path.join(OPENCODE_DIR, 'plugins', 'command-guard.js');
-const MARK = 'command-guard/adapters/';
 const args = new Set(process.argv.slice(2));
+const RECORD = path.join(HOME, '.skill-collection', 'guard.json');
+let record = readJson(RECORD, { groups: [], files: [] });
+function save() { fs.mkdirSync(path.dirname(RECORD), { recursive: true }); fs.writeFileSync(RECORD, JSON.stringify(record, null, 2) + '\n'); }
 const fwd = (p) => p.replace(/\\/g, '/');
+
+function entryStat(file) {
+  try { return fs.lstatSync(file); }
+  catch (e) { if (e.code === 'ENOENT') return null; throw e; }
+}
 
 function readJson(file, fallback) {
   if (!fs.existsSync(file)) return fallback;
@@ -34,17 +41,22 @@ function readJson(file, fallback) {
 
 function writeJson(file, data) {
   if (fs.existsSync(file) && !fs.existsSync(file + '.before-command-guard')) fs.copyFileSync(file, file + '.before-command-guard');
+  record.settings = record.settings || [];
+  if (!record.settings.some(s => s.path === file)) record.settings.push({ path: file, backup: fs.existsSync(file + '.before-command-guard') ? file + '.before-command-guard' : null });
+  save();
+  fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
-}
-
-function isOurs(group) {
-  return (group.hooks || []).some((h) => fwd([h.command || ''].concat(h.args || []).join(' ')).includes(MARK));
 }
 
 // Replace our PreToolUse group, leaving every other hook as it is.
 function setGroup(config, group) {
   config.hooks = config.hooks || {};
-  const rest = (config.hooks.PreToolUse || []).filter((g) => !isOurs(g));
+  const rest = [];
+  for (const existing of config.hooks.PreToolUse || []) {
+    const hooks = (existing.hooks || []).filter(h => !record.groups.some(g => g.matcher === existing.matcher && g.hooks.some(owned => JSON.stringify(owned) === JSON.stringify(h))));
+    if (hooks.length) rest.push({ ...existing, hooks });
+    else if (!(existing.hooks || []).length) rest.push(existing);
+  }
   if (group) rest.push(group);
   if (rest.length) config.hooks.PreToolUse = rest;
   else delete config.hooks.PreToolUse;
@@ -64,10 +76,10 @@ function codexGroup() {
 }
 
 function probe(adapter, tool, command) {
-  const res = spawnSync('node', [path.join(DEST, 'adapters', adapter)], {
+  const res = spawnSync(process.execPath, [path.join(DEST, 'adapters', adapter)], {
     input: JSON.stringify({ session_id: 'doctor', cwd: os.tmpdir(), hook_event_name: 'PreToolUse', tool_name: tool, tool_input: { command } }),
     encoding: 'utf8',
-    shell: false,
+    shell: false, timeout: 10000,
   });
   return { status: res.status, out: res.stdout || '', err: res.stderr || (res.error ? String(res.error) : '') };
 }
@@ -126,32 +138,39 @@ async function doctorOpenCode() {
 }
 
 function uninstall() {
-  const claude = readJson(CLAUDE_SETTINGS, null);
-  if (claude) { setGroup(claude, null); writeJson(CLAUDE_SETTINGS, claude); }
-  const codex = readJson(CODEX_HOOKS, null);
-  if (codex) {
-    setGroup(codex, null);
-    if (Object.keys(codex).every((k) => k === 'description')) fs.rmSync(CODEX_HOOKS);
-    else writeJson(CODEX_HOOKS, codex);
+  for (const file of [CLAUDE_SETTINGS, CODEX_HOOKS]) {
+    if (!record.groups.length) continue;
+    const config = readJson(file, null);
+    if (config) { setGroup(config, null); writeJson(file, config); }
   }
-  fs.rmSync(OPENCODE_PLUGIN, { force: true });
-  for (const part of PARTS.concat(['state', 'installed.json'])) fs.rmSync(path.join(DEST, part), { recursive: true, force: true });
-  console.log('Command guard removed. New sessions have no guard protection.');
+  for (const entry of record.files) {
+    const info = entryStat(entry.path);
+    if (!info) continue;
+    if (info.isFile() && fs.readFileSync(entry.path, 'base64') === entry.content) fs.unlinkSync(entry.path);
+    else throw new Error('overridden installed file preserved: ' + entry.path);
+  }
+  record = { groups: [], files: [] }; save();
+  console.log('Command guard removed. New sessions have no guard protection. Removal is not approval for any command.');
 }
 
 async function install() {
   const withOpenCode = !args.has('--no-opencode') && fs.existsSync(OPENCODE_DIR);
   const withCodex = !args.has('--no-codex') && fs.existsSync(CODEX_DIR);
+  // Refuse unrecorded destinations before copying or registering anything.
+  function copy(file, dest) {
+    const content = fs.readFileSync(file, 'base64');
+    const previous = record.files.find(f => f.path === dest);
+    const info = entryStat(dest);
+    if (info && (!info.isFile() || !previous || fs.readFileSync(dest, 'base64') !== previous.content)) throw new Error('CONFLICT unrecorded or overridden guard file: ' + dest);
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(file, dest);
+    record.files = record.files.filter(f => f.path !== dest);
+    record.files.push({ path: dest, content }); save();
+  }
   fs.mkdirSync(DEST, { recursive: true });
   for (const part of PARTS) {
-    // Overwrite in place: a hook may be running from these files right now,
-    // and a half-removed guard would stop every shell call.
-    fs.cpSync(path.join(SRC, part), path.join(DEST, part), { recursive: true, force: true });
-    for (const name of fs.readdirSync(path.join(DEST, part))) {
-      if (!fs.existsSync(path.join(SRC, part, name))) fs.rmSync(path.join(DEST, part, name), { recursive: true, force: true });
-    }
+    for (const name of fs.readdirSync(path.join(SRC, part))) copy(path.join(SRC, part, name), path.join(DEST, part, name));
   }
-  fs.writeFileSync(path.join(DEST, 'installed.json'), JSON.stringify({ source: fwd(SRC), installedAt: new Date().toISOString() }, null, 2) + '\n');
   console.log('Snapshot copied to ' + DEST);
 
   const adapters = ['claude-code.js'].concat(withCodex ? ['codex.js'] : []);
@@ -159,19 +178,25 @@ async function install() {
     console.log('Doctor failed: hooks were NOT registered.');
     process.exit(1);
   }
+  if (!args.has('--plugin-mode')) {
   const claude = readJson(CLAUDE_SETTINGS, {});
   setGroup(claude, claudeGroup());
+  record.groups = record.groups.filter(g => JSON.stringify(g) !== JSON.stringify(claudeGroup()));
+  record.groups.push(claudeGroup()); save();
   writeJson(CLAUDE_SETTINGS, claude);
   console.log('Claude Code: PreToolUse hook registered in ' + CLAUDE_SETTINGS);
   if (withCodex) {
     const codex = readJson(CODEX_HOOKS, {});
     setGroup(codex, codexGroup());
+    record.groups = record.groups.filter(g => JSON.stringify(g) !== JSON.stringify(codexGroup()));
+    record.groups.push(codexGroup()); save();
     writeJson(CODEX_HOOKS, codex);
     console.log('Codex: PreToolUse hook written to ' + CODEX_HOOKS + '. It does not run until you trust it: open Codex and run /hooks.');
   }
+  }
   if (withOpenCode) {
     fs.mkdirSync(path.dirname(OPENCODE_PLUGIN), { recursive: true });
-    fs.copyFileSync(path.join(SRC, 'adapters', 'opencode-plugin.js'), OPENCODE_PLUGIN);
+    copy(path.join(SRC, 'adapters', 'opencode-plugin.js'), OPENCODE_PLUGIN);
     if (!(await doctorOpenCode())) {
       fs.rmSync(OPENCODE_PLUGIN, { force: true });
       console.log('Doctor failed: the OpenCode plugin was NOT installed.');
@@ -184,11 +209,26 @@ async function install() {
 async function main() {
   if (args.has('--uninstall')) return uninstall();
   if (args.has('--doctor')) {
-    let ok = doctor(['claude-code.js'].concat(fs.existsSync(CODEX_HOOKS) ? ['codex.js'] : []));
-    if (fs.existsSync(OPENCODE_PLUGIN)) ok = (await doctorOpenCode()) && ok;
+    let ok = true;
+    for (const [file, group, adapter] of [[CLAUDE_SETTINGS, claudeGroup(), 'claude-code.js'], [CODEX_HOOKS, codexGroup(), 'codex.js']]) {
+      if (args.has('--plugin-mode')) continue;
+      if (adapter === 'codex.js' && !record.groups.some(g => JSON.stringify(g) === JSON.stringify(group))) continue;
+      const config = readJson(file, {});
+      const groups = (config.hooks || {}).PreToolUse || [];
+      if (config.disableAllHooks || config.enabled === false) { console.log('FAIL disabled: ' + file); ok = false; continue; }
+      if (!groups.some(g => JSON.stringify(g) === JSON.stringify(group))) { console.log('FAIL missing registration or overridden: ' + file); ok = false; continue; }
+      ok = doctor([adapter]) && ok;
+      if (args.has('--plugin-mode')) continue;
+      if (adapter === 'codex.js') { console.log('PENDING Codex human trust: review the current hook in /hooks; trust is unverified.'); ok = false; }
+      console.log('Host invocation unverified; trust/untrusted, host bypass and project overrides require a live hand run: ' + adapter);
+    }
+    if (record.files.some(f => f.path === OPENCODE_PLUGIN)) ok = (await doctorOpenCode()) && ok;
+    if (process.env.COMMAND_GUARD_HOME !== DEST) { console.log('FAIL override: COMMAND_GUARD_HOME'); ok = false; }
     process.exit(ok ? 0 : 1);
   }
   await install();
+  args.add('--doctor');
+  return main();
 }
 
 main().catch((e) => {

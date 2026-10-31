@@ -1,0 +1,11 @@
+{
+  "observedDate": "2026-10-31",
+  "method": "Read-only Claude Opus 5.5 delegate on ChadGamer; transcribed from its completion report, not a raw config or hash capture",
+  "source": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\config.toml",
+  "versionSource": "Original Windows report: Codex 0.166.0; version command not rerun",
+  "file": { "bytes": 932, "bom": false, "lf": 25, "crlf": 0, "terminalNewline": true },
+  "trustExcerpt": "[hooks.state]\n\n[hooks.state.\"command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0\"]\ntrusted_hash = \"sha256:<64hex>\"\ntrusted_content_hash = \"sha256:<64hex>\"\nenabled = true\n\n[hooks.state.'C:\\Users\\<user>\\AppData\\Local\\Temp\\<fixture>\\home\\.codex\\hooks.json:pre_tool_use:0:0']\ntrusted_hash = \"sha256:<64hex>\"\nenabled = true\n",
+  "redactions": "Username and temporary path replaced; hashes represented by <64hex>; unrelated config omitted",
+  "powershell": { "command": "node -e \"console.log('ALLOW_120')\"", "stdout": "ALLOW_120", "exit": 0 },
+  "limits": "No model or guard invocation; no native lifecycle rerun; journal base64 not decoded, so trust-only delta not established by this observation"
+}

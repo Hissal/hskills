@@ -37,7 +37,7 @@ with exactly these three required fields:
 {
   "core": ["skills/core/example"],
   "packs": {
-    "onboarding": ["skills/packs/onboarding/automatic-guide"]
+    "onboarding": ["skills/packs/onboarding/onboarding-guide"]
   },
   "expensive": ["skills/core/example"]
 }
@@ -45,7 +45,8 @@ with exactly these three required fields:
 
 - `core`: an array of core skill paths.
 - `packs`: an object mapping pack names to arrays of skill paths. A pack is a
-  named list; onboarding is a one-skill list containing the automatic guide.
+  named list; onboarding is a one-skill list containing the automatic guide,
+  `onboarding-guide`.
 - `expensive`: an array of skill paths of expensive workflows (see
   [GLOSSARY.md](../GLOSSARY.md)), each set by the skill's own spec. It grants no
   membership. An expensive workflow is user-invoked unless it is `code-review`
@@ -227,7 +228,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
 | `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
 | `copied-file-safety` | fail | a text file in a lock-listed copied skill contains hidden Unicode controls or a Windows, macOS or Linux personal home path; reports the line and, for Unicode, the code point |
-| `automatic-guide-sync` | fail | the automatic guide's `SKILL.md` body, or a bundled file other than the Codex gate file, differs from the core guide's, or one guide bundles a file the other lacks; silent until both guides exist |
+| `automatic-guide-sync` | fail | a skill in the onboarding pack's folder differs from what `node scripts/onboarding/generate.js` writes from the core guide: its `SKILL.md` body or a bundled file differs from the core guide's, one guide bundles a file the other lacks, or its frontmatter or Codex gate file is not the generated one; silent until both guides exist |
 
 Test the check with its fixture runner:
 
@@ -276,7 +277,7 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 ```
 
 - `files` is written untracked into a scratch git repository; `committed` (same shape) is committed first.
-- `before` (optional) lists repository scripts run as `node <script> <fixture>` before the check, such as the `NOTICE.md` generator; `clean: true` also requires them to leave every committed file unchanged.
+- `before` (optional) lists repository scripts run as `node <script> <fixture>` before the check, such as the `NOTICE.md` generator. A script that exits nonzero fails the case, and a file one deletes is not compared afterwards; `clean: true` also requires them to leave every committed file unchanged.
 - `history` is a list of earlier commits, `{ files, tag? }`, each a whole tree, optionally tagged. `committed` then replaces the last tree. Use it for rules that read git history.
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
@@ -621,15 +622,31 @@ collection's existing NUL-byte exclusion. An invalid lock is reported by
 ## Automatic guide
 
 The automatic guide is the core guide (`skills/core/guide/`) published
-model-invoked. It is the onboarding pack's one skill
-(`skills/packs/onboarding/<name>/`); its callable name is not yet decided, so
-the check finds it by that folder. Generate it from the core guide and commit
-the output; the generator belongs to spec 12. Edit the core guide, then
-regenerate: only frontmatter (the gate and the description) may differ.
+model-invoked as `onboarding-guide`
+([#88, owner answer 13](https://github.com/Hissal/skill-collection/issues/88#issuecomment-6512311352)),
+the onboarding pack's one skill (`skills/packs/onboarding/onboarding-guide/`).
+Never edit it: edit the core guide, then regenerate and commit the output:
 
-The Codex gate file (`agents/openai.yaml`) is generated from frontmatter, so it
-differs with the gate and the sync skips it; `harness-gates` checks it against
-`disable-model-invocation`. Every other bundled file must match byte for byte.
+```
+node scripts/onboarding/generate.js
+```
+
+The generator rewrites only frontmatter: the name, the description, the
+`agent-skills-sync.id` and the gate (it drops `disable-model-invocation` and any
+`when_to_use`, so the skill is model-invoked and its description is its whole
+trigger). The Codex gate file (`agents/openai.yaml`) is the core guide's with
+its gate flipped. Every other file, the `SKILL.md` body included, is copied byte
+for byte, and files the core guide does not bundle are removed. A second run
+changes nothing. The description is fixed in
+[`guide.js`](../scripts/onboarding/guide.js); the core guide keeps its own.
+
+`automatic-guide-sync` compares the committed automatic guide with the
+generator's output, so the check fails until it is regenerated. The guide is
+a one-skill pack: install it at user scope with
+`node scripts/install/install.js install --pack onboarding`, or as the
+`collection-pack-onboarding` plugin. Core installs never include it, and its
+description counts against the onboarding pack's
+[idle-cost tripwire](#idle-cost-tripwires), not core's.
 
 ## Generated plugin lists
 

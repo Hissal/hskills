@@ -34,12 +34,17 @@ Before merging a release PR, run:
 
 ```
 npm ci
+node scripts/onboarding/generate.js
 node scripts/release/dry-run.js
 node scripts/check/test/run.js
 node scripts/check/check.js
 ```
 
-Use Node 22 or newer (also used by CI). The offline dry run builds release-please
+Use Node 22 or newer (also used by CI). The onboarding generator regenerates
+the automatic guide from the core guide so the release tag carries it
+([#175](https://github.com/Hissal/skill-collection/issues/175)); when it changes
+a file, commit the change to the release PR before merging. The check fails on
+a stale automatic guide either way. The offline dry run builds release-please
 candidates from synthetic Conventional Commits and applies the actual proposed
 manifest updaters in memory. It verifies the initial version, pack feature, fix
 and breaking bumps, plus preservation of other manifest fields. It makes no
@@ -58,9 +63,8 @@ the default branch changes.
 Merging a release PR allows the next workflow run to create its GitHub release
 and `v<version>` tag. A tag identifies the committed catalog at that revision;
 verify generated catalog and automatic guide outputs before approving the PR.
-The automatic guide remains dependent on its separate implementation. Guard
-plugin acceptance remains incomplete under #121; release stamping does not
-establish live hook trust or cross-platform behavior.
+Guard plugin acceptance remains incomplete under #121; release stamping does
+not establish live hook trust or cross-platform behavior.
 
 Implementation evidence: [#122 offline dry run](../research/release-122.md).
 Configuration semantics: [release-please manifest documentation](https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md)

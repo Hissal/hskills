@@ -23,6 +23,16 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity"
+    },
+    {
+      "name": "collection-pack-onboarding",
+      "source": "./skills/packs/onboarding",
+      "description": "Generated onboarding skill list from collection.json.",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     }
   ],
   "metadata": {

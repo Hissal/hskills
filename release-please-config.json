@@ -27,6 +27,16 @@
           "type": "json",
           "path": "skills/core/.codex-plugin/plugin.json",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "skills/packs/onboarding/.claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "skills/packs/onboarding/.codex-plugin/plugin.json",
+          "jsonpath": "$.version"
         }
       ]
     }

@@ -2,5 +2,9 @@
   "hissal.skill-collection/guide": {
     "path": "skills/core/guide",
     "requires": []
+  },
+  "hissal.skill-collection/onboarding-guide": {
+    "path": "skills/packs/onboarding/onboarding-guide",
+    "requires": []
   }
 }

@@ -2,6 +2,10 @@
   "core": [
     "skills/core/guide"
   ],
-  "packs": {},
+  "packs": {
+    "onboarding": [
+      "skills/packs/onboarding/onboarding-guide"
+    ]
+  },
   "expensive": []
 }

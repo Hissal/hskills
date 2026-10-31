@@ -425,3 +425,5 @@ module.exports.push(
   { name: 'an onboarding pack of two skills fails plugin output', files: tree(skill('skills/packs/onboarding/alpha'), skill('skills/packs/onboarding/beta'), manifest([], { onboarding: ['skills/packs/onboarding/alpha', 'skills/packs/onboarding/beta'] }), published({ onboarding: ['alpha', 'beta'] })), expect: ['fail plugin-output collection.json'] },
   { name: 'an onboarding pack of one skill passes plugin output', files: tree(skill('skills/packs/onboarding/alpha'), manifest([], { onboarding: ['skills/packs/onboarding/alpha'] }), published({ onboarding: ['alpha'] })), expect: [] },
 );
+// ---- release versions and steering paths (#112) ------------------------------
+module.exports.push(...require('./release-steering-cases')({ skill }));

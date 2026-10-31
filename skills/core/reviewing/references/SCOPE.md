@@ -16,7 +16,7 @@ A scope the user names, or one a caller supplies exactly, is used as named.
 - **Commit range**: exactly the named revisions, read as written (`A..B` and `A...B` differ).
 - **Files or a subsystem**: those files in their current state, whole. No base unless the user names one.
 - **Session only**: needs reliable evidence of what this session changed: a starting snapshot (the commit, status or stash recorded when the session began) and the edits this session made, tracked in this conversation. A dirty tree alone is not that evidence: it may hold work from before the session. Without the evidence, offer a concrete alternative scope instead, such as "the 3 uncommitted files against `HEAD`" or "commits since `<sha>`", and wait for the user's choice.
-- **Recent activity** ("what changed most lately"): the hotspot survey is not available yet. Say so and ask for an area, a branch or a range.
+- **Recent activity** ("what changed most lately"): the [hotspot survey](HOTSPOTS.md), even when work is pending.
 
 ## Bare invocation
 
@@ -29,7 +29,9 @@ With no explicit or caller scope, the review is a review of current work: the co
    - When history cannot settle whether work has landed (rewritten commits, no PR record, `git cherry` unclear), ask rather than guess.
    - A detached checkout follows the same rules: find its PR or target from the commit itself (`gh pr list --search <sha>`, `git branch -a --contains <sha>`).
 4. **Local changes.** On the default branch, or on a fully merged branch, the local changes are the pending work, against `HEAD`.
-5. **Nothing pending.** The hotspot survey is not available yet. Say so, and ask for an area, a branch or a range.
+5. **Nothing pending.** Run the [hotspot survey](HOTSPOTS.md).
+
+When the pending work clearly does not bear on the calling review's concern, the [hotspot survey](HOTSPOTS.md#when-the-survey-runs) says what to offer instead.
 
 ## Current work
 

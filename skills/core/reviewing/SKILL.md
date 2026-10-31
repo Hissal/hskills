@@ -1,6 +1,6 @@
 ---
 name: reviewing
-description: "Use when a review's scope needs settling before reviewing: exactly which changes a branch adds over its merge target, or only this session's changes."
+description: "Use when a review's scope needs settling before reviewing: exactly which changes a branch adds over its merge target, only this session's changes, or which modules changed most recently and deserve review."
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/reviewing"
@@ -23,7 +23,7 @@ Take the scope from the first source that gives one:
 2. **An exact scope your caller supplies.**
 3. **The bare-invocation default.**
 
-Resolve each through the [scope contract](references/SCOPE.md). When the user's request and an inherited scope disagree, settle it with the user before the review starts. Subordinate reviewers inherit the resolved scope and snapshot as given.
+Resolve each through the [scope contract](references/SCOPE.md). Read the [hotspot survey](references/HOTSPOTS.md) when nothing is pending, when the user asks for recent hotspots, or when the pending work is off the calling review's concern. When the user's request and an inherited scope disagree, settle it with the user before the review starts. Subordinate reviewers inherit the resolved scope and snapshot as given.
 
 A genuinely ambiguous target gets one focused question naming the candidates. The scope stays exactly what was resolved: widen or substitute it only when the user says so.
 
@@ -33,7 +33,7 @@ Done when target, base and snapshot each have one concrete value, or one questio
 
 ## 2. Announce
 
-Before reviewing, state the scope in this shape:
+Before reviewing, state the scope in this shape (a survey uses its own):
 
 ```md
 **Target:** <PR #N / branch / range / files / session>

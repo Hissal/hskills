@@ -36,6 +36,8 @@ module.exports = [
   require('./plugin-requirements'),
 
   require('./harness-gates'),
+  require('./expensive-workflow'),
+  require('./core-names-pack'),
 
   require('./id-stability'),
   require('./agnix'),

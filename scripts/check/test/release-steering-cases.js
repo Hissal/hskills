@@ -22,6 +22,8 @@ module.exports = ({ skill }) => [
 
   { name: 'a relative steering link fails even when its target exists', files: steering('Follow [the format](docs/format.md#rules).\n', { 'docs/format.md': '# Format\n' }), expect: ['fail steering-paths steering.md'] },
   { name: 'a relative steering reference definition fails', files: steering('Follow [the format].\n\n[the format]: docs/format.md\n', { 'docs/format.md': '# Format\n' }), expect: ['fail steering-paths steering.md'] },
+  { name: 'a root-absolute steering link fails', files: steering('Follow [the format](/docs/format.md).\n', { 'docs/format.md': '# Format\n' }), expect: ['fail steering-paths steering.md'] },
+  { name: 'an in-page steering anchor passes', files: steering('## Rules\n\nSee [the rules](#rules).\n'), expect: [] },
   { name: 'absolute URL steering links pass', files: steering('Follow [the format](https://github.com/Hissal/skill-collection/blob/main/docs/skill-format.md#rules).\n'), expect: [] },
   { name: 'paths in steering code are not checked', files: steering('Run `node scripts/gone.js --fix`, read `docs/gone.md`.\n\n```sh\nnode scripts/gone.js\n```\n', { 'scripts/present.js': '// present\n', 'docs/format.md': '# Format\n' }), expect: [] },
 

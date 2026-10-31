@@ -41,8 +41,9 @@ function splitFrontmatter(text) {
 // Relative Markdown link targets in a file: inline links, images and
 // reference definitions. Fenced code blocks and code spans are skipped, so
 // examples never count. URLs, absolute paths and in-page anchors are dropped;
-// `#anchor` and `?query` are stripped. Returns [{ target, line }].
-function links(text) {
+// `#anchor` and `?query` are stripped. `rooted` keeps root-absolute paths.
+// Returns [{ target, line }].
+function links(text, { rooted = false } = {}) {
   const out = [];
   let fence = null;
   text.split(/\r?\n/).forEach((raw, i) => {
@@ -60,7 +61,7 @@ function links(text) {
     if (def) found.push(def[1]);
     for (let t of found) {
       t = t.replace(/^<|>$/g, '').replace(/[#?].*$/, '');
-      if (!t || /^[a-z][a-z0-9+.-]*:/i.test(t) || t.startsWith('/') || t.startsWith('\\')) continue;
+      if (!t || /^[a-z][a-z0-9+.-]*:/i.test(t) || (!rooted && (t.startsWith('/') || t.startsWith('\\')))) continue;
       try { t = decodeURIComponent(t); } catch (e) { /* keep as written */ }
       out.push({ target: t, line: i + 1 });
     }

@@ -114,14 +114,18 @@ frontmatter name when `name` is plugin-qualified. Claude still matches the exact
 
 ## Required case: core guide discovery
 
-Proves that the core guide asks a listed pack guide for routes and flags an
-unlisted one ([#145](https://github.com/Hissal/skill-collection/issues/145)).
-Rerun it when the guide's discovery step changes, when a harness pin is bumped,
-and when a new frontier model ships. The fixture pack is
+Proves that the core guide asks a listed pack guide for routes and flags every
+unlisted one, relevant or not
+([#145](https://github.com/Hissal/skill-collection/issues/145)).
+Rerun it when the guide's discovery or skill lookup steps change, when a harness
+pin is bumped, and when a new frontier model ships. The fixture pack is
 [`orbit-guide`](../scripts/eval/test/guide-discovery/pack/orbit-guide/SKILL.md)
 with routes, plus its user-invoked route
 [`orbit-replay`](../scripts/eval/test/guide-discovery/pack/orbit-replay/SKILL.md).
-The pack is fictional, so its route can only come from its guide.
+A second pack guide,
+[`ledger-guide`](../scripts/eval/test/guide-discovery/pack/ledger-guide/SKILL.md),
+is never listed and touches none of the requests. Both packs are fictional, so
+a route can only come from its guide.
 
 ```sh
 node scripts/eval/test/guide-discovery/prepare.js
@@ -130,8 +134,8 @@ node scripts/eval/trigger.js <root>/unlisted.json --repeat 2
 ```
 
 `prepare.js` prints a scratch root holding two committed projects, each with the
-core guide and the pack at project scope (`.claude/skills/`, `.agents/skills/`),
-and one config per project. `listed` names `orbit-guide` in its `### Packs`
+core guide and both packs at project scope (`.claude/skills/`, `.agents/skills/`),
+and one config per project. `listed` names only `orbit-guide` in its `### Packs`
 list; `unlisted` has no pack list. `CLAUDE_BIN`, `CODEX_BIN` and `SOL_MODEL`
 override the defaults. Each prompt invokes the guide (`/guide` on Claude,
 `$guide` on Codex) with a telemetry request. Both harnesses may read anywhere
@@ -139,9 +143,14 @@ and write in the project, so starting nothing is the agent's choice. Raw
 sessions stay under `<root>/evidence/`, kept by the plugin fixture's `capture.js`.
 
 - **listed**: `orbit-guide` fires, and the answer says the route's invocation
-  (`/orbit-replay`; `$orbit-replay` on Codex).
+  (`/orbit-replay`; `$orbit-replay` on Codex), `ledger-guide` and
+  `installed, not set up`.
 - **unlisted**: `orbit-guide` does not fire, and the answer says `orbit-guide`,
-  `installed, not set up` and the setup invocation.
-- **Both**: every frontier model passes, and afterwards neither project has a
-  changed or new file (no `replay/` folder). The script cannot see files: check
-  them, and record that check with the results.
+  `ledger-guide`, `installed, not set up` and the setup invocation.
+- **Both**: every frontier model passes; afterwards neither project has a
+  changed or new file (no `replay/` folder); and no session enumerates an
+  installation folder (listing or searching a skill, plugin or home folder,
+  such as `ls .claude/skills` or `rg --files .agents`). Direct reads and
+  existence checks of exact paths are expected. The script sees neither files
+  nor commands: check both in the raw sessions, and record them with the
+  results.

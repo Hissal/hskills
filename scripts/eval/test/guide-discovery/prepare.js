@@ -15,6 +15,9 @@ const skills = {
   guide: path.join(repo, 'skills/core/guide'),
   'orbit-guide': path.join(__dirname, 'pack/orbit-guide'),
   'orbit-replay': path.join(__dirname, 'pack/orbit-replay'),
+  // Installed in both projects, never listed, and unrelated to the requests:
+  // it still gets the "not set up" line.
+  'ledger-guide': path.join(__dirname, 'pack/ledger-guide'),
 };
 const packList = `
 ### Packs
@@ -27,10 +30,11 @@ const requests = [
   'The decoder mangles frames from recorded pass 2310. What should I run to reproduce that?',
 ];
 const cases = {
-  // The pack list names the installed pack guide: its route comes back.
-  listed: {fire: true, says: sigil => [sigil + 'orbit-replay']},
-  // The pack guide is installed but unlisted: one "not set up" line, no lookup.
-  unlisted: {fire: false, says: sigil => ['orbit-guide', 'installed, not set up', sigil + 'setup-project']},
+  // The pack list names the orbit guide: its route comes back, and the
+  // unlisted ledger guide still gets its "not set up" line.
+  listed: {fire: true, says: sigil => [sigil + 'orbit-replay', 'ledger-guide', 'installed, not set up']},
+  // Both pack guides are installed but unlisted: a "not set up" line each, no lookup.
+  unlisted: {fire: false, says: sigil => ['orbit-guide', 'ledger-guide', 'installed, not set up', sigil + 'setup-project']},
 };
 
 function write(file, text) {

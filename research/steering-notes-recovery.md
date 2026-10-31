@@ -3,6 +3,9 @@
 Recovery investigation for [#118](https://github.com/Hissal/skill-collection/issues/118)
 under [spec 2 (#78)](https://github.com/Hissal/skill-collection/issues/78).
 Researched 2026-10-30. Result: **the wording of neither note was recovered**. No policy is inferred from generic tool instructions or unrelated project rules.
+The investigation is closed: the unidentifiable requirement was
+[retired on 2026-10-31](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
+The recovery leads below are historical, not outstanding #118 work.
 
 ## What the primary record establishes
 
@@ -59,8 +62,7 @@ repeat the investigation; the temporary files may no longer exist.
 - /tmp/steering-collection-history.txt — collection steering-file patch history
 - /tmp/steering-fork-history.txt — fork AGENTS.md / CLAUDE.md patch history
 
-Recovery is complete only when an authoritative owner source supplies both
-notes verbatim with its date and location recorded. Until then, #118's source
-content criterion remains partial. For the implemented naming source, line
-admission and historical size/check results, read
+No further recovery is required for #118. Any concrete instruction identified
+later can be assessed separately. For the implemented naming source, line
+admission and size/check results, read
 [#118 implementation evidence](steering-source-118.md).

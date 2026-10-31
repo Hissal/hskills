@@ -1,7 +1,8 @@
 {
   "core": [
     "skills/core/guide",
-    "skills/core/verifying"
+    "skills/core/verifying",
+    "skills/core/hillclimb"
   ],
   "packs": {
     "csharp": [

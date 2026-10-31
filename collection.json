@@ -3,6 +3,9 @@
     "skills/core/guide"
   ],
   "packs": {
+    "csharp": [
+      "skills/packs/csharp/csharp-guide"
+    ],
     "onboarding": [
       "skills/packs/onboarding/onboarding-guide"
     ]

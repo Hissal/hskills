@@ -171,6 +171,7 @@ A skill copied from a source keeps its provenance in plain files (ADR 0002, [#17
   ```
 
   `NOTICE.md` is not a reference: it needs no link from `SKILL.md`.
+- **Adapted skills**: a skill whose files rewrite a source in our own words, copying no text, has no lock entry. When its ticket asks for provenance pointers, keep them out of the files an agent reads: a link to the source invites the agent to fetch it. Write them in a hand-written `NOTICE.md` in the skill folder instead. It names each adapted source with a GitHub link pinned to a full commit SHA, travels with installs and is never loaded ([#157](https://github.com/Hissal/skill-collection/issues/157)).
 
 Scripts read the lock through `scripts/vendor/lock.js`, never by parsing it themselves.
 
@@ -214,7 +215,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `vendor-lock` | fail | `vendor.lock.json` is not valid against [Copied skills](#copied-skills), or an entry names no skill folder; the other `vendor-*` rules wait until the lock is valid |
 | `vendor-baseline` | fail | a lock entry has no baseline `SKILL.md`, or a file under `vendor/` is in no entry's baseline |
 | `vendor-licence` | fail | a lock entry's source has no licence file |
-| `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` sits in a skill with no lock entry |
+| `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` in a skill with no lock entry is a generated copy notice or links a source not pinned to a full commit SHA (or none) |
 | `dependency-catalog` | fail | the catalog's marked dependency section differs from fresh metadata output; names the regenerate command |
 | `release-config` | fail | invalid single-version release settings or a plugin manifest missing its JSON version stamp entry |
 | `pack-membership` | fail | a skill in neither core nor a pack, or in more than one |

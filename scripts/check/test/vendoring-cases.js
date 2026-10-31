@@ -17,6 +17,8 @@ module.exports = ({ skill, skillMd }) => {
   const lock = (...entries) => ({ 'vendor.lock.json': JSON.stringify({ skills: entries }, null, 2) + '\n' });
   const baselineDir = (e) => 'vendor/' + e.source + '/' + e.skill.split('/').pop();
   const licenceFile = (e) => 'licenses/' + e.source + '.txt';
+  // A hand-written provenance notice for a skill adapted in its own words.
+  const adapted = (...urls) => '# Notice\n\nAdapted in our own words from:\n\n' + urls.map((u) => '- [source](' + u + ')\n').join('');
 
   // A copied skill that passes every rule: its folder (with NOTICE.md), its
   // baseline and its source's licence. `omit` drops one part:
@@ -69,6 +71,9 @@ module.exports = ({ skill, skillMd }) => {
     { name: 'a NOTICE.md older than its lock entry is stale', files: tree(lock(entry(a.skill, { sha: 'f'.repeat(40) })), copied(entry(a.skill, { sha: 'f'.repeat(40) }), { omit: 'notice' }), { 'skills/core/alpha/NOTICE.md': renderNotice(a, MIT) }), expect: ['fail vendor-notice skills/core/alpha/NOTICE.md'] },
     { name: 'a NOTICE.md older than its licence file is stale', files: tree(lock(a), copied(a), { 'licenses/acme/skills.txt': MIT + 'more terms\n' }), expect: ['fail vendor-notice skills/core/alpha/NOTICE.md'] },
     { name: 'a NOTICE.md with no lock entry fails', files: skill('skills/core/alpha', { files: { 'NOTICE.md': '# Notice\n' } }), expect: ['fail vendor-notice skills/core/alpha/NOTICE.md'] },
+    { name: 'an adapted skill NOTICE.md with pinned source links passes', files: skill('skills/core/alpha', { files: { 'NOTICE.md': adapted('https://github.com/acme/skills/blob/' + SHA + '/skills/x/SKILL.md') } }), expect: [] },
+    { name: 'an adapted skill NOTICE.md with an unpinned source link fails', files: skill('skills/core/alpha', { files: { 'NOTICE.md': adapted('https://github.com/acme/skills/blob/' + SHA + '/a.md', 'https://github.com/acme/skills/blob/main/b.md') } }), expect: ['fail vendor-notice skills/core/alpha/NOTICE.md'] },
+    { name: 'a generated NOTICE.md left after its lock entry is removed fails', files: skill('skills/core/alpha', { files: { 'NOTICE.md': renderNotice(a, MIT) } }), expect: ['fail vendor-notice skills/core/alpha/NOTICE.md'] },
 
     // ---- the generator ---------------------------------------------------------
     { name: 'the generator writes a missing NOTICE.md', files: tree(lock(a, b), copied(a, { omit: 'notice' }), copied(b, { omit: 'notice' })), before: ['scripts/vendor/notice.js'], expect: [] },

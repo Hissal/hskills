@@ -30,6 +30,16 @@
         },
         {
           "type": "json",
+          "path": "skills/packs/csharp/.claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "skills/packs/csharp/.codex-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
           "path": "skills/packs/onboarding/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },

@@ -25,6 +25,16 @@
       "category": "Productivity"
     },
     {
+      "name": "collection-pack-csharp",
+      "source": "./skills/packs/csharp",
+      "description": "Generated csharp skill list from collection.json.",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
       "name": "collection-pack-onboarding",
       "source": "./skills/packs/onboarding",
       "description": "Generated onboarding skill list from collection.json.",

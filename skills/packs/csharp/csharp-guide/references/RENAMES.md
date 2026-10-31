@@ -1,6 +1,6 @@
 # C# renames and moves
 
-What a rename or move can break in SDK-style .NET, and how to prove it did not. Adapted in our own words from `dotnet/skills` [`csharp-refactoring`](https://github.com/dotnet/skills/blob/1d40f95ed0f2cdedfa4c9b2614b7c2035a4323cb/plugins/dotnet/skills/csharp-refactoring/SKILL.md#L59-L118) (MIT). A rename of a shipped public member also follows the [compatibility rules](COMPATIBILITY.md).
+What a rename or move can break in SDK-style .NET, and how to prove it did not. A rename of a shipped public member also follows the [compatibility rules](COMPATIBILITY.md).
 
 - [Tool ladder](#tool-ladder)
 - [Names the compiler cannot see](#names-the-compiler-cannot-see)

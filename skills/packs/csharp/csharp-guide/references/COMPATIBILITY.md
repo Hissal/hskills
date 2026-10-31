@@ -1,6 +1,6 @@
 # C# compatibility
 
-Rules for changing a .NET library's public surface and its persisted data without breaking the people who consume it. Adapted in our own words from Aaronontheweb `dotnet-skills` [`api-design`](https://github.com/Aaronontheweb/dotnet-skills/blob/46003affea00e602a0c2112375d6f0217e90962d/skills/csharp-api-design/SKILL.md) and the cross-boundary hazards of `dotnet/skills` [`csharp-refactoring`](https://github.com/dotnet/skills/blob/1d40f95ed0f2cdedfa4c9b2614b7c2035a4323cb/plugins/dotnet/skills/csharp-refactoring/SKILL.md#L148-L156), both MIT.
+Rules for changing a .NET library's public surface and its persisted data without breaking the people who consume it.
 
 - [Which compatibility is at stake](#which-compatibility-is-at-stake)
 - [Changing a shipped surface](#changing-a-shipped-surface)

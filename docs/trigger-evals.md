@@ -207,6 +207,12 @@ are as in the core guide discovery case.
     There, Sol reads it alongside the guide, so the firing would not show
     the guide's lookup. That an unlisted guide relevant to the request is not
     asked is the core guide discovery case's job.
+
+    Known model limit: with the core guide at `46d3fa3`, Sol drops the
+    **Not set up** line for an unrelated unlisted pack guide in about 1 of
+    6 sessions (2026-10-31, Codex 0.166.0, `gpt-6.1-sol`), so expect
+    `unlisted` to be borderline on Sol. Follow-up:
+    [#215](https://github.com/Hissal/skill-collection/issues/215).
 - **All**: every frontier model passes. In the raw sessions, no `onboarding-guide`
   session that fired, and no `guide` session, writes or edits a file, starts a
   recommended skill (a Skill call to anything but the guides), or enumerates

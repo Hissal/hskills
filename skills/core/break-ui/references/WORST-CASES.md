@@ -26,7 +26,7 @@ Use reserved domains (`example.com`, `example.org`, `.test`) for addresses and l
 | `李明` / `佐藤 花子` | CJK, with and without a space: "first and last word" logic, line breaks anywhere |
 | `يوسف بن خالد` | Right-to-left: punctuation and icons land on the wrong side |
 | `Aoife Ní Mhaoláin` / `Jean-Luc d'Aubigné` | Lowercase particles and apostrophes: initials, sorting by surname, escaping, search |
-| `🌻 Marisol` / `👨🏿‍🍳 Kofi` | Emoji first, or a joined emoji sequence: the first "character" is half a code point, slicing splits the sequence |
+| `🌻 Marisol` / a joined emoji sequence (several emoji linked by U+200D) before `Kofi` | Emoji first, or a joined emoji sequence: the first "character" is half a code point, slicing splits the sequence |
 | ` Ana   Ruiz ` | Leading, trailing and repeated spaces: empty words, odd gaps |
 | `ANA RUIZ` / `ana ruiz` | Case as typed: case-sensitive sorting, initials that should still be capitals |
 | *(missing)* | No name, only an address or ID: the UI needs a fallback |

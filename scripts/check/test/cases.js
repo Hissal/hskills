@@ -185,7 +185,19 @@ module.exports = [
 module.exports.push({
   name: 'tripwire figures print even for an empty collection',
   files: {}, expect: [],
-  output: ['TRIPWIRE core: 0 tokens', 'TRIPWIRE always-on: not measured (COLLECTION_ALWAYS_ON_PATH unset)'],
+  output: ['TRIPWIRE core: 0 tokens', 'TRIPWIRE always-on: not measured (file absent from collection: steering.md)'],
+});
+module.exports.push({
+  name: 'the steering source crossing 500 tokens warns by default',
+  files: { 'steering.md': 'x'.repeat(2001) },
+  expect: ['warn idle-cost steering.md'],
+  output: ['TRIPWIRE always-on: 500.25 tokens'],
+});
+module.exports.push({
+  name: 'the steering source within 500 tokens is measured by default and passes',
+  files: { 'steering.md': 'x'.repeat(2000) },
+  expect: [],
+  output: ['TRIPWIRE always-on: 500 tokens'],
 });
 module.exports.push({
   name: 'core description and when_to_use cross 1000 tokens and only warn',

@@ -1,8 +1,9 @@
 'use strict';
 
 const { value } = require('./frontmatter-value');
-// Set by spec 2, #118/#114; repository-relative, unset until then.
-const alwaysOnPath = process.env.COLLECTION_ALWAYS_ON_PATH || null;
+// The personal steering source (spec 2, #118); repository-relative.
+// COLLECTION_ALWAYS_ON_PATH overrides it.
+const alwaysOnPath = process.env.COLLECTION_ALWAYS_ON_PATH || 'steering.md';
 
 function report(c) {
   const layers = new Map([['core', 0]]);
@@ -26,8 +27,7 @@ function report(c) {
   for (const [layer, tokens] of [...layers].sort()) {
     figure(layer, tokens, 1000, layer === 'core' ? 'skills/core' : 'skills/packs/' + layer.slice(5));
   }
-  if (!alwaysOnPath) console.log('TRIPWIRE always-on: not measured (COLLECTION_ALWAYS_ON_PATH unset)');
-  else if (!c.files.includes(alwaysOnPath)) console.log('TRIPWIRE always-on: not measured (file absent from collection: ' + alwaysOnPath + ')');
+  if (!c.files.includes(alwaysOnPath)) console.log('TRIPWIRE always-on: not measured (file absent from collection: ' + alwaysOnPath + ')');
   else figure('always-on', Array.from(c.text(alwaysOnPath)).length / 4, 500, alwaysOnPath);
   return findings;
 }

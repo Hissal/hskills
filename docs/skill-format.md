@@ -84,9 +84,8 @@ global `AGENTS.md` and loaded in every project, so no path in it resolves
 against this repository. The `steering-paths` rule therefore fails any relative
 Markdown link (link with an absolute URL instead) and does not check paths in
 code. It also fails a `/skill` or `$skill` command for a skill that any release
-tag carried and no skill carries now. The 500-token tripwire measurement belongs to #92. Until the
-measurement uses this path by default, run
-`COLLECTION_ALWAYS_ON_PATH=steering.md node scripts/check/check.js` to include it.
+tag carried and no skill carries now. The always-on tripwire (#92) measures
+this file by default; see [Idle-cost tripwires](#idle-cost-tripwires).
 
 ## Skill folder
 
@@ -294,10 +293,11 @@ excludes a skill. Bodies, reference files and skills outside the collection's
 core and pack tree contribute nothing. Quoting and block-scalar markers are
 syntax rather than listing text.
 
-`COLLECTION_ALWAYS_ON_PATH` is the single setting for the repository-relative
-always-on source path, **set by spec 2, #118/#114**. It is unset by default.
-When unset or when the file is absent from the checked collection, the check
-prints “not measured” with the reason and continues successfully.
+The always-on source is `steering.md` by default, the
+[personal steering source](#personal-steering-source).
+`COLLECTION_ALWAYS_ON_PATH` overrides it with another repository-relative path.
+When the file is absent from the checked collection, the check prints “not
+measured” with the reason and continues successfully.
 
 The `idle-cost` warning fires above 500 tokens for the always-on source,
 1,000 for core descriptions, or 1,000 for one pack's descriptions. Equality

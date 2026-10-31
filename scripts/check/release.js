@@ -1,6 +1,7 @@
 'use strict';
 // Reads the skills at the last release tag from git history, for checks that
-// compare the working tree with the last release (#77, owner answer 4).
+// compare the working tree with the last release (#77, owner answer 4), and
+// the skill names every release tag carried (#112).
 // A release tag is release-please's `v<version>`; the last one is the nearest
 // reachable from HEAD. No tag (before the first release, or a checkout
 // without tags) yields null.
@@ -48,4 +49,21 @@ function lastRelease(root) {
   return { tag, skills };
 }
 
-module.exports = { lastRelease };
+// Map of skill folder name to the latest release tag carrying it, over every
+// release tag (not only the last), so a name removed in one release and
+// reintroduced after the next is still known. Names only: one ls-tree per tag.
+function releasedNames(root) {
+  const names = new Map();
+  const tags = git(root, ['tag', '--list', '--sort=v:refname', RELEASE_TAG]);
+  if (tags.status !== 0) return names;
+  for (const tag of tags.stdout.toString('utf8').split('\n').filter(Boolean)) {
+    const ls = git(root, ['ls-tree', '-r', '-z', '--name-only', tag + '^{commit}', '--', 'skills']);
+    if (ls.status !== 0) throw new Error('git ls-tree failed at ' + tag + ': ' + ls.stderr.toString('utf8').trim());
+    for (const f of ls.stdout.toString('utf8').split('\0')) {
+      if (/^skills\/(.+\/)?SKILL\.md$/.test(f)) names.set(path.posix.basename(path.posix.dirname(f)), tag);
+    }
+  }
+  return names;
+}
+
+module.exports = { lastRelease, releasedNames };

@@ -100,6 +100,7 @@ function load(root) {
   let manifest;
   let release;
   let releaseLoaded = false;
+  let releasedNames;
   return {
     get manifest() {
       if (!manifest) manifest = files.includes(require('./manifest').FILE)
@@ -112,6 +113,10 @@ function load(root) {
     get release() {
       if (!releaseLoaded) { release = require('./release').lastRelease(root); releaseLoaded = true; }
       return release;
+    },
+    get releasedNames() {
+      if (!releasedNames) releasedNames = require('./release').releasedNames(root);
+      return releasedNames;
     },
     files,
     skills,

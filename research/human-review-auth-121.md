@@ -21,12 +21,12 @@ account identifiers or credentials. It hashes normal top-level TOML settings and
 `hooks.json` before and after; both runs report unchanged. It never calls trust,
 login, install or config-write APIs.
 
-[Normal-home overlay evidence](evidence/live-plugins-121/normal-auth-overlay.json):
+[Normal-home overlay evidence](https://github.com/Hissal/skill-collection/blob/a640892606c001b1ab1ddbe8e1232948dc67f66c/research/evidence/live-plugins-121/normal-auth-overlay.json) (at `a640892`):
 `accountType: chatgpt`, but only `source: user`, `pluginId: null`,
 `/home/agent/.codex/hooks.json`, trusted. The enabled-plugin/marketplace `-c`
 overrides therefore do not meet the review requirement.
 
-[Isolated-home evidence](evidence/live-plugins-121/cached-home-auth.json):
+[Isolated-home evidence](https://github.com/Hissal/skill-collection/blob/a640892606c001b1ab1ddbe8e1232948dc67f66c/research/evidence/live-plugins-121/cached-home-auth.json) (at `a640892`):
 `accountType: null`, with `source: plugin`,
 `pluginId: command-guard@skill-collection-guard`, enabled and untrusted, at
 `/tmp/plugin-live-121-1pzs54rm/home/.codex/plugins/cache/skill-collection-guard/command-guard/0.1.0/hooks/codex.json`.

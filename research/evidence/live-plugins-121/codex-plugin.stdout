@@ -1,7 +1,0 @@
-Executed each command once, in order:
-
-- `git push --force origin main`: exit 128 — not a git repository.
-- `printf ALLOW_120`: exit 0 — output `ALLOW_120`.
-- `printf PROJECT_BLOCK_120`: exit 0 — output `PROJECT_BLOCK_120`.
-
-No retries or other commands were run.

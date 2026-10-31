@@ -46,10 +46,10 @@ Claude API retries; it was stopped and corrected. An initial Codex selector
 
 ## Results and retained transcripts
 
-Evidence files in [issue-127](issue-127/) retain tool calls/results, skill body
-injection, model identity, result usage and status. Assistant thinking and
-unrelated initialization metadata are omitted. Invocation specs retain exact
-arguments and mount mappings. These are actual host tool reads, distinct from
+Transcripts in [issue-127](issue-127/) retain tool calls/results, skill body
+injection, model identity and result usage. Assistant thinking and
+unrelated initialization metadata are omitted. Its [manifest](issue-127/manifest.json)
+retains exact arguments, mount mappings and exit statuses. These are actual host tool reads, distinct from
 the builder's Node filesystem assertions.
 
 | Scenario | Claude Code | Codex |
@@ -75,55 +75,27 @@ they do not establish deterministic Codex selection across versions or prompts.
 
 ## Windows boundary and automated checks
 
-This Linux run had no Windows executor; Linux namespace or filesystem results
-cannot establish Windows harness behavior. The later native Windows matrix
-(12 authenticated cells, actual symlinks and fixture-injected junction fallback)
-is in [Windows install acceptance](windows-install-2026-10-31.md).
+Linux namespace or filesystem results cannot establish Windows harness behavior.
+The native Windows matrix (12 authenticated cells, actual symlinks and
+fixture-injected junction fallback) is in [Windows install acceptance](windows-install-2026-10-31.md).
 
-The installer test runner now includes Windows-only cases for directory symlinks
+The installer test runner includes Windows-only cases for directory symlinks
 and junction fallback after simulated `EPERM` on directory symlink creation.
-Both exercise the real installer, independently inspect the Windows LinkType and canonical target,
-resolve the installed destination, read a reference token through both harness
-folders, and run doctor. Existing steering-copy coverage denies file symlinks,
-checks copied bytes and detects drift. These checks run in the existing Windows
-collection CI job without authentication. They are filesystem evidence only;
-CI requires a later authorized push; this local-only task does not launch it. They were not executed on Windows here.
+Both exercise the real installer, independently inspect the Windows LinkType and
+canonical target, resolve the installed destination, read a reference token
+through both harness folders, and run doctor. Steering-copy coverage denies file
+symlinks, checks copied bytes and detects drift. These run in the Windows
+collection CI job without authentication; they are filesystem evidence only.
+An actual OS refusal (rather than injected) remains open. Plugin reachability
+is separate.
 
-CI filesystem results alone never close #127; the harness reads are in the
-Windows report above. An actual OS refusal (rather than injected) remains
-open there. Plugin reachability remains separate.
+## Validation history
 
-## Recovery validation
-
-Recovered tracked changes and the untracked live runner from the preserved
-`t3-351c8e18` checkout without changing its files. The Windows cases were applied
-as a patch so the newer integration installer tests remain intact.
-
-Validation on the recovered branch: `npm ci` completed (zero vulnerabilities;
-Node 20 emitted engine warnings for release tooling that requires Node 22).
-`node scripts/check/check.js` passed: 611 guard cases, 36 installer cases,
-237 checked files, zero failures. Its four existing agnix warnings concern
-fixture naming and marketplace metadata. `node scripts/check/test/run.js`
-passed all 218 cases. `git diff --check` and the Python syntax check passed.
-The gate writer and vendoring scripts were unchanged.
-`git merge --no-edit feat/implement-issue-78` reported already up to date at
-`6815c9627fe5ee83ea584c2acbb773e74b1fc698`. No integration-branch merge or push
-was performed. Windows-only cases are pending Windows execution, not Linux passes.
-
-## Integration merge validation
-
-Merged `524c6fa0e6959bfffbea7b91b2ce3895a5144554` into integration
-`6815c9627fe5ee83ea584c2acbb773e74b1fc698` with `--no-ff`. The merge
-preserves the integration registration, live-plugin and authenticated OpenCode
-evidence without changes.
-
-On Linux, `npm ci`, the collection check (238 files, zero failures, four
-existing agnix warnings), 611 guard cases, 36 installer cases and 218 check
-fixtures passed. All three fresh cross-scope filesystem scenarios passed.
-The retained six live transcripts and Codex listing parsed; all six status
-files report zero. Inspection found no secret values or assistant thinking
-payloads; usage counters remain. The Codex duplicate transcript includes
-successful caller, requirement and reference reads. Python syntax and
-`git diff --check` passed. These are retained live-run evidence checks, not
-new authenticated executions. Windows symlink/junction CI and Windows host
-reads remain pending. No agents, PR or push were used.
+This report was recovered from the preserved `t3-351c8e18` checkout; its branch
+`524c6fa0e6959bfffbea7b91b2ce3895a5144554` was merged into integration
+`6815c9627fe5ee83ea584c2acbb773e74b1fc698`. At both steps `npm ci`, the collection
+check (611 guard and 36 installer cases, four existing agnix warnings) and 218
+check fixtures passed on Linux, and the retained transcripts were re-parsed; at
+the merge they were also inspected for secrets and assistant thinking. Those were checks of
+retained evidence, not new authenticated executions. The full validation log is in the
+[report at `a640892`](https://github.com/Hissal/skill-collection/blob/a640892606c001b1ab1ddbe8e1232948dc67f66c/docs/evidence/issue-127-cross-scope.md#recovery-validation).

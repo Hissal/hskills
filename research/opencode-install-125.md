@@ -1,44 +1,26 @@
 # OpenCode verification: #125
 
-Rechecked 2026-10-30 on Linux, OpenCode **v2.2.2**, starting from
-`a37ed41` (the integration branch included the authenticated #120 evidence).
-Status: discovery controls verified on v2.2.3; the owner approved native global
+Linux, 2026-10-30/31, under [#78](https://github.com/Hissal/skill-collection/issues/78).
+Status: discovery controls verified on OpenCode v2.2.3; the owner approved native global
 steering at `~/.config/opencode/AGENTS.md` through `--owner-steering`.
 The native global present/absent control passed; see the approval section below.
-The v2.2.2 observations remain historical evidence.
-The paid Console observation below is historical, not a Go account diagnosis.
-
-## Existing authenticated runtime
-
-Normal `models` succeeds and lists `opencode/gpt-6.1-sol`. Normal `auth list`
-reports stored OpenCode Console accounts. Safe `debug config` retains the
-Personal / OpenCode provider configuration. No credential file was read or
-copied, no login was attempted, and no real settings were changed.
-
-The normal-runtime control, without any home override or standalone flag,
-ran `run --format json --model opencode/gpt-6.1-sol#medium 'Reply with hello.'`.
-It returned exit 1, `provider.quota`, HTTP **402**, and the exact message
-`Upstream request failed: Insufficient account funds`.
-[Saved error event](evidence/opencode-125/normal-control.jsonl).
-The normal runtime `api GET /api/model` also confirms this exact active, enabled
-model and its `medium` variant with `reasoningEffort: medium`
-([sanitized model record](evidence/opencode-125/model.json)). Actual response
-reasoning remains unobservable because the provider returns quota failure. No alternative model was substituted.
-
-This supersedes the earlier copied-database experiment, whose selector and
-account context were unverified. Claude/Codex's successful authenticated runs
-in [#120 evidence](live-hooks-120.md) do not establish OpenCode Console funds.
+The earlier v2.2.2 runs, including a paid Console quota failure, are [history](#history-v222-2026-10-30).
 
 ## Isolated fixture probes
 
-Reproduce with `python3 scripts/install/evidence/opencode-125.py --model <provider/model>` (manual,
-authenticated and potentially token-spending). It prints the temporary evidence
-directory. HOME, XDG roots, provider/model configuration and auth stay inherited.
-`OPENCODE_TEST_HOME` redirects OpenCode's home-scoped skills and steering to a
-scratch tree; each isolated probe uses `--standalone` so an existing service
-cannot ignore the process override. This runtime-specific test override was
-located in the installed binary's embedded Global implementation; it leaves
-XDG config/data paths unchanged. No secret-bearing database is copied.
+Reproduce with:
+
+```sh
+python3 scripts/install/evidence/opencode-125.py --model opencode-go/claude-haiku-5-5
+```
+
+This is manual, authenticated and potentially token-spending. It prints the
+temporary evidence directory. HOME, XDG roots, provider/model configuration and
+auth stay inherited. `OPENCODE_TEST_HOME` redirects OpenCode's home-scoped skills
+and steering to a scratch tree; each isolated probe uses `--standalone` so an
+existing service cannot ignore the process override. This runtime-specific test
+override was located in the installed binary's embedded Global implementation;
+it leaves XDG config/data paths unchanged. No secret-bearing database is copied.
 
 The installer and doctor pass. Both `.claude/skills/fixture` and
 `.agents/skills/fixture` resolve to the same source. The source contains
@@ -50,76 +32,13 @@ negative firing results. Inspect completed skill events under the
 [trigger evidence rules](../docs/trigger-evals.md); this runner saves observations,
 not automatic acceptance verdicts.
 
-Observed on this run:
-
-| Probe | Result |
-| --- | --- |
-| `api GET /api/skill --standalone`, both roots linked | Exit 0, `data: []`: zero registered entries, zero fixture entries. [API response](evidence/opencode-125/listing.json). |
-| Ungated fixture, fresh standalone skill API | Exit 0, also `data: []`; discovery control fails, so zero gated entries cannot prove suppression. |
-| `debug agents --standalone` | First diagnostic attempt failed with `ServiceUnavailableError: Location plugins did not finish activating`; fixture-run attempt succeeded. Intermittent startup failure. Agent listing is not a skill listing. |
-| Gated vowel request | Exit 1, same HTTP 402 [error](evidence/opencode-125/gate-q1.jsonl); no completed skill invocation. |
-| Claude steering present | Exit 1, same HTTP 402 [error](evidence/opencode-125/steering-present.jsonl). |
-| Claude steering absent | Exit 1, same HTTP 402 [error](evidence/opencode-125/steering-absent.jsonl). |
-
-Steering is the unique instruction `For every reply append the exact marker
-STEERING_125_CLAUDE.` only in the scratch `.claude/CLAUDE.md`, followed by a
-fresh process after removing that file. No project steering file is created.
-Quota failures in both arms establish no fallback verdict.
-
-## Go correction and rerun (2026-10-30)
-
-The earlier funds diagnosis applied only to paid Console
-`opencode/gpt-6.1-sol#medium`. It did not test the user's Go subscription.
-[Official Go documentation](https://opencode.ai/v2/docs/console/go/) (read
-2026-10-30) lists Claude Haiku 5.5 among Go models. Installed `models` lists
-`opencode-go/claude-haiku-5-5`. These are separate provider selections;
-restoring Console funds is not a prerequisite for this Go test.
-
-Reran from integration `3a50d50` on Linux, OpenCode v2.2.2, using exactly
-`opencode-go/claude-haiku-5-5`, provider `opencode-go`, without a variant.
-The neutral normal-runtime request returned exit 0 and `Hello!`.
-All 18 model requests returned exit 0: neutral, initial gated request,
-six prompts repeated twice, explicit and ungated controls, and two steering
-arms. [Exact selection](evidence/opencode-125/go/selection.json),
-[transcripts and counts](evidence/opencode-125/go/summary.json).
-No authentication, real settings or subscription changes were made.
-
-Both gated and ungated API listings still returned `data: []`.
-All 13 gated requests had zero completed skill events. Explicit invocation
-reported it could not find `fixture`. The ungated control did load the body:
-[its transcript](evidence/opencode-125/go/model-control.jsonl) records one
-completed skill event and `FIXTURE_125_LOADED`. Empty API listings and the
-failed gated explicit control still leave gate and duplicate verdicts
-inconclusive.
-The steering marker was absent in both successful replies; this does not
-establish successful Claude-file fallback.
-
-Discovery diagnosis: `debug paths home` with the override resolves to the
-scratch home, and standalone server trace watches that scratch path. Thus the
-override is recognized; zero entries cannot be attributed to Console funds.
-Adding real project `.agents/skills/fixture` and `.opencode/skills/fixture`
-copies, then initializing the scratch project with Git, still returned zero
-entries. A native-scope explicit request also produced no completed skill
-event. These diagnostic copies were added after the saved matrix and changed
-only scratch files. Root cause of registration remains unresolved; investigate
-configuration compatibility/plugin activation before interpreting suppression.
-No install policy was changed and no meaningful duplicate count was obtained.
-
-Reproduce with:
-
-```sh
-python3 scripts/install/evidence/opencode-125.py --model opencode-go/claude-haiku-5-5
-```
-
 The model argument is required and includes the provider; an absent model or
 failed neutral request stops the runner without selecting a replacement.
-An empty ungated discovery control makes the runner exit nonzero after saving
-the matrix, explicitly marking gate and duplicate verdicts inconclusive.
-CLI fixture tests cover required model selection, exact Go selection with failed
-neutral access, and empty discovery (each substantive change observed red first).
-#125 remains open for successful gated explicit-load/discovery controls, gate enforcement,
-once-versus-twice discovery, and Claude steering fallback. The historical paid
-Sol 402 above remains evidence about that specific request only.
+Steering arms write the unique instruction `For every reply append the exact marker
+STEERING_125_CLAUDE.` only in the scratch `.claude/CLAUDE.md`, then rerun in a fresh
+process after removing that file. CLI fixture tests cover required model selection,
+exact Go selection with failed neutral access, and empty discovery (each
+substantive change observed red first).
 
 ## Resolved discovery controls (2026-10-31)
 
@@ -243,3 +162,25 @@ Guard cases passed 611/611. `git diff --check` passed. Integration tip
 `096a9ea4a01ad77d62236d541fbf00aac191444e` was already included; merging
 `feat/implement-issue-78` reported already up to date. No agents, PR, push or
 merge into integration was performed.
+
+## History (v2.2.2, 2026-10-30)
+
+Superseded by the controls above; these runs do not establish v2.2.3 behavior.
+Pruned records are at [`a640892`](https://github.com/Hissal/skill-collection/tree/a640892606c001b1ab1ddbe8e1232948dc67f66c/research/evidence/opencode-125).
+
+- **Paid Console selection.** From `a37ed41`, `opencode/gpt-6.1-sol#medium` (active and enabled
+  with a `medium` variant, per `api GET /api/model`) failed every request with exit 1,
+  `provider.quota`, HTTP 402 `Upstream request failed: Insufficient account funds`: the
+  neutral control, the gated request and both steering arms. That diagnosed this one paid
+  selection only, not the user's Go subscription. The first standalone `/api/skill`
+  listings, gated and ungated, returned `data: []`.
+- **Go rerun.** From `3a50d50`, exactly `opencode-go/claude-haiku-5-5` (a Go model per the
+  [Go documentation](https://opencode.ai/v2/docs/console/go/), read 2026-10-30): all 18 requests
+  exited 0. Both listings still returned `data: []`; the 13 gated requests had zero completed
+  skill events; explicit invocation reported it could not find `fixture`; the ungated control
+  loaded the body (`FIXTURE_125_LOADED`); the Claude steering marker was absent in both arms.
+  [Per-request counts](evidence/opencode-125/go/summary.json). Follow-up scratch copies under
+  project `.agents/skills` and `.opencode/skills`, and `git init`, still listed nothing, and a
+  native-scope explicit request completed no skill event. The
+  [resolved controls](#resolved-discovery-controls-2026-10-31) later traced the empty listings to
+  the probe reading an unactivated registry.

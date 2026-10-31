@@ -1,6 +1,6 @@
 'use strict';
 // Repeated trusted lifecycles through the CLI: disposable HOME, CLI host doubles,
-// real journal and filesystem. Shapes follow docs/evidence/windows-guard-followup-2026-10-31.md.
+// real journal and filesystem. Shapes follow docs/evidence/windows-guard-followup.md.
 const fs = require('fs');
 const os = require('os');
 const path = require('path');

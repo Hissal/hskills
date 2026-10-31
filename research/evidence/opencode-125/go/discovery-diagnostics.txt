@@ -1,9 +1,0 @@
-OpenCode v2.2.2; Linux; 2026-10-30
-OPENCODE_TEST_HOME=/tmp/opencode-live-125-gxp8yml2/home
-debug paths home: /tmp/opencode-live-125-gxp8yml2/home
-Standalone server trace: watcher started on scratch home (21:03:14.555Z).
-Project .agents/skills/fixture copy: API data [] (exit 0).
-Project .opencode/skills/fixture copy: explicit native-control.jsonl has no skill event.
-After git init in project: API data [] (exit 0).
-These follow-up scratch modifications were made after the saved Go matrix.
-Root cause remains unresolved; no gate/dedup pass.

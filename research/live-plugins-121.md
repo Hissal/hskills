@@ -45,7 +45,7 @@ Codex 0.166.0 normal-auth `exec --ignore-user-config` with invocation-only
 marketplace and enabled-plugin settings did execute all three probes, but did
 **not** fire the temporary plugin. This attempt is a failed loading overlay,
 not a guard pass and not sufficient evidence of trust refusal. Its exact argv
-and [trace](evidence/live-plugins-121/codex-plugin.stderr) are retained.
+and [trace](https://github.com/Hissal/skill-collection/blob/a640892606c001b1ab1ddbe8e1232948dc67f66c/research/evidence/live-plugins-121/codex-plugin.stderr) are at `a640892`.
 The temporary home's actual installed registration was then inspected through
 `hooks/list`. That returned `source: plugin`, plugin ID
 `command-guard@skill-collection-guard`, enabled true, and `trustStatus: untrusted`.
@@ -75,8 +75,8 @@ validation/Codex trust, rather than claiming runtime verification. Uninstall
 exited 0; none of the newly recorded plugin files remained. This is actual CLI
 registration and filesystem lifecycle evidence; it does not claim uninstall
 stops an already running session. User guard settings were outside all targets.
-[Lifecycle outputs and exact argv](evidence/live-plugins-121/install-argv.json)
-are beside the host evidence. The prerequisite's automated real-filesystem cases
+Lifecycle outputs are beside the host evidence; the [manifest](evidence/live-plugins-121/manifest.json)
+holds exact argv. The prerequisite's automated real-filesystem cases
 cover preservation of unrelated hooks and migration ownership.
 
 Linux evidence establishes no macOS or Windows result. No agents, PR, push,

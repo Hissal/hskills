@@ -1,9 +1,0 @@
-{
-  "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\project",
-  "argv": [
-    "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe",
-    "app-server",
-    "-c",
-    "windows.sandbox=\"elevated\""
-  ]
-}

@@ -1,0 +1,16 @@
+{
+  "originalTrustSha256": "55f80eb8a61e2521d16fe3ac21033d4ca359c8b305a05a512dc1ee41b7fef1aa",
+  "currentTrustSha256": "6bbbfbdf5fa9e12e911c635764a561961ded635375115d9d2add3a86fb0d1cea",
+  "currentTrustWithoutTrailingSeparatorSha256": "55f80eb8a61e2521d16fe3ac21033d4ca359c8b305a05a512dc1ee41b7fef1aa",
+  "trustLinesEqualOriginalAfterSeparator": true,
+  "trustValueLines": 5,
+  "ordinaryText": "hide_agent_reasoning = true\n[tui]\nscreen_reader_detection_done = true\n\n[windows]\nsandbox = \"unelevated\"\n",
+  "ordinaryOrder": "fixture line, then trust tables, then [tui], [windows]",
+  "fileOrderTables": [
+    "[hooks.state]",
+    "[hooks.state.\"command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0\"]",
+    "[hooks.state.'C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\hooks.json:pre_tool_use:0:0']",
+    "[tui]",
+    "[windows]"
+  ]
+}

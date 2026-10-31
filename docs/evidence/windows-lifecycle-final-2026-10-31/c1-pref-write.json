@@ -1,0 +1,39 @@
+{
+  "kind": "native writer-input variant (authorized fixture preparation; not untouched human config)",
+  "codex": "spec78-pref-writer/0.166.0 (Windows 10.0.26200; x86_64) xterm-256color (spec78-pref-writer; 1)",
+  "method": "config/batchWrite",
+  "edits": [
+    {
+      "keyPath": "tui.screen_reader_detection_done",
+      "value": true,
+      "mergeStrategy": "replace"
+    },
+    {
+      "keyPath": "windows.sandbox",
+      "value": "unelevated",
+      "mergeStrategy": "replace"
+    }
+  ],
+  "response": {
+    "id": 2,
+    "result": {
+      "status": "ok",
+      "version": "sha256:1b47849bc70f1d3d8b456516fab11a875a6d63179fefb7a33897ddb64891e7a2",
+      "filePath": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\config.toml",
+      "overriddenMetadata": null
+    }
+  },
+  "config": {
+    "beforeBytes": 854,
+    "beforeSha256": "11cd9aaf326bb1cb6155c28df730b68540e1ff17ff24a7a98335713eca345bec",
+    "afterBytes": 931,
+    "afterSha256": "1c68d970b84e8df3c97277c0de8491859aeac768e9ccb802c5175a2126782c1e",
+    "crlf": false,
+    "bom": false
+  },
+  "preferenceTablesAfter": [
+    "[tui]\nscreen_reader_detection_done = true",
+    "[windows]\nsandbox = \"unelevated\""
+  ],
+  "hooksStateLinesChanged": false
+}

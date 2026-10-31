@@ -230,8 +230,9 @@ read [live plugin evidence](../research/live-plugins-121.md). For actual Windows
 Claude/Codex plugin events and checkout independence, read
 [Windows guard evidence](evidence/windows-install-2026-10-31.md#guard-lifecycle-and-live-plugin-probes-120-121),
 including the trusted uninstall conflict and nonportable allow command found there.
-For repair regressions and remaining native acceptance, read the
-[guard follow-up](evidence/windows-guard-followup.md).
+For repair regressions, read the [guard follow-up](evidence/windows-guard-followup.md);
+the trusted reinstall, uninstall and same-snapshot reinstall now pass natively
+([lifecycle acceptance](evidence/windows-lifecycle-final-2026-10-31.md)).
 OpenCode host acceptance on Windows remains unrun.
 
 ## Register the guard plugin

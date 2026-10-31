@@ -1,0 +1,15 @@
+{
+  "bytes": 931,
+  "crlf": false,
+  "bom": false,
+  "sha256": "bc413542254f9e639b7dfe8673647ab85053e2c27dc77a6525b8bf805cf6451e",
+  "ordinarySha256": "04b8b92b0c1c44e8a2944f1b6a4a88f535453870c093e1a1834571694c02668d",
+  "trustSha256": "6bbbfbdf5fa9e12e911c635764a561961ded635375115d9d2add3a86fb0d1cea",
+  "ordinaryTables": [
+    "[tui]",
+    "[windows]",
+    "[marketplaces.skill-collection-guard]",
+    "[plugins.\"command-guard@skill-collection-guard\"]"
+  ],
+  "trustExcerpt": "[hooks.state]\n\n[hooks.state.\"command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0\"]\ntrusted_hash = \"sha256:<64hex>\"\ntrusted_content_hash = \"sha256:<64hex>\"\nenabled = true\n\n[hooks.state.'C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\hooks.json:pre_tool_use:0:0']\ntrusted_hash = \"sha256:<64hex>\"\nenabled = true\n\n"
+}

@@ -1,0 +1,43 @@
+{
+  "journalHosts": [
+    {
+      "host": "claude",
+      "snapshot": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3"
+    },
+    {
+      "host": "codex",
+      "snapshot": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.skill-collection\\plugin-cache\\0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3"
+    }
+  ],
+  "writes": 46,
+  "directories": 7,
+  "configRecord": {
+    "beforeSha256": "dd8692e1f7b3ff3d286d4923ae9f4ef4054b26dbcb35fd0accc4cfc20d184873",
+    "afterSha256": "11cd9aaf326bb1cb6155c28df730b68540e1ff17ff24a7a98335713eca345bec",
+    "recordBefore": {
+      "tui": false,
+      "windows": false,
+      "screenReaderKey": false,
+      "sandboxKey": false,
+      "animationsKey": false
+    },
+    "recordAfter": {
+      "tui": false,
+      "windows": false,
+      "screenReaderKey": false,
+      "sandboxKey": false,
+      "animationsKey": false
+    }
+  },
+  "currentConfig": {
+    "sha256": "1c68d970b84e8df3c97277c0de8491859aeac768e9ccb802c5175a2126782c1e",
+    "prefs": {
+      "tui": true,
+      "windows": true,
+      "screenReaderKey": true,
+      "sandboxKey": true,
+      "animationsKey": false
+    },
+    "equalsRecordAfter": false
+  }
+}

@@ -50,6 +50,8 @@ Accepted forms:
   treats as personal edits: the [native rerun](windows-guard-followup-2026-10-31.md#findings-for-owners)
   found that the whole file conflicts. A later repair accepts those two tables when they
   hold only known preference fields ([repairs after the rerun](windows-guard-followup-2026-10-31.md#repairs-after-this-rerun-native-rerun-pending)).
+  **Native**: [lifecycle acceptance](windows-lifecycle-final-2026-10-31.md) passed with these
+  tables written by Codex 0.166.0's own `config/batchWrite` after registration.
   Codex 0.166.0 is the version in the original report; the reading itself did not run
   `codex --version`.
 - **Source**: at Codex [`6ff1e1ca`](https://github.com/openai/codex/blob/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/core/config.schema.json)
@@ -105,6 +107,13 @@ with their inner parentheses, and both hosts ran the allow probe with exit 0.
 
 These results come from Linux, Node 22.23.4. The authenticated native Windows rerun
 is in [the follow-up rerun report](windows-guard-followup-2026-10-31.md). Live probes and
-preserved-trust recognition pass there. Trusted reinstall and uninstall still **fail** on
-the unmodified config, and reinstalling after uninstall conflicts on the empty snapshot
-directory. macOS and the report's actual OS symlink-refusal cases are not covered.
+preserved-trust recognition pass there. In that run, trusted reinstall and uninstall
+failed on the unmodified config, and reinstalling after uninstall conflicted on the empty
+snapshot directory.
+
+**Current native status.** On `ea843fc`, the [lifecycle acceptance](windows-lifecycle-final-2026-10-31.md)
+passes two trusted cycles natively without manual cleanup: install, doctor, `hooks/list` trusted,
+reinstall, uninstall, then a same-snapshot install, doctor, `hooks/list` trusted and uninstall. Trust
+and the Codex preference tables survive each uninstall, and no owned files or snapshot entries remain.
+Native checks pass, including real-junction ancestor cases. The busy-removal case injects `EBUSY` and
+does not hold a real OS lock. macOS and the report's actual OS symlink-refusal cases are not covered.

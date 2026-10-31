@@ -98,7 +98,7 @@ fs.symlinkSync = function(target, dest, type) {
     f.env = { ...process.env, COMMAND_GUARD_CLAUDE: '/does-not-exist' };
     fs.cpSync(path.resolve(__dirname, '../../../hooks/command-guard'), path.join(f.repo, 'hooks/command-guard'), { recursive: true });
     f.run(1, 'prepare-plugin');
-    assert.match(f.last.stderr, /FAIL install/);
+    assert.match(f.last.stderr, /FAIL prepare-plugin/);
     assert.equal(fs.readFileSync(settings, 'utf8'), before);
     const cache = path.join(f.home, '.skill-collection/plugin-cache');
     const versions = fs.readdirSync(cache);
@@ -460,6 +460,9 @@ fs.symlinkSync = function(target, dest, type) {
 const plugins = spawnSync(process.execPath, [path.join(__dirname, 'plugin.js')], { encoding: 'utf8', timeout: 180000 });
 process.stdout.write(plugins.stdout || ''); process.stderr.write(plugins.stderr || '');
 let failures = plugins.status === 0 ? 0 : 1;
+const trust = spawnSync(process.execPath, [path.join(__dirname, 'trust.js')], { encoding: 'utf8', timeout: 60000 });
+process.stdout.write(trust.stdout || ''); process.stderr.write(trust.stderr || '');
+if (trust.status !== 0) { console.log('FAIL trust delta regression (trust.js)'); failures++; }
 for (const [name, test] of cases) {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'collection-install-'));
   try {

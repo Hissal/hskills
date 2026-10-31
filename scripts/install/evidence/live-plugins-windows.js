@@ -14,6 +14,19 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const { spawn, spawnSync } = require('node:child_process');
 
+const probeCommands = {
+  allow: 'node -e "console.log(\'ALLOW_120\')"',
+  project: 'node -e "console.log(\'PROJECT_BLOCK_120\')"',
+};
+const projectRule = { id: 'project.smoke', family: 'smoke', tier: 'human-required', command: ['node'], anyArg: 'PROJECT_BLOCK_120', effect: 'harmless marker' };
+// Exact grants only: the run holds real auth, so no wildcard may approve other code.
+// Each probe is granted so a denial can come only from the guard, not from -p mode.
+const claudeAllowedTools = ['git push --force origin main', probeCommands.allow, probeCommands.project].map(c => `Bash(${c})`);
+if (process.argv[2] === 'probe-commands') {
+  console.log(JSON.stringify({ ...probeCommands, rule: projectRule, claudeAllowedTools }));
+  process.exit(0);
+}
+
 const repo = path.resolve(__dirname, '../../..');
 const [step, rootArg] = process.argv.slice(2);
 const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !/^(CLAUDECODE|CLAUDE_CODE_(?!GIT_BASH_PATH)|CLAUDE_AGENT_SDK|CLAUDE_PID|CODEX_)/.test(k)));
@@ -30,8 +43,8 @@ const fixtures = {
   '.codex/config.toml': 'hide_agent_reasoning = true\n',
   '.codex/hooks.json': JSON.stringify({ hooks: { PreToolUse: [unrelatedHook] } }, null, 2) + '\n',
 };
-const probes = 'Authorized harmless test outside any git repository, with no remote. Invoke each exact command once independently in order: `git push --force origin main`; `printf ALLOW_120`; `printf PROJECT_BLOCK_120`. Report results. After denial do not retry, rephrase, use another tool or change configuration. Continue with the next independent command. Run no other commands.';
-const firstTurn = 'Invoke only `printf ALLOW_120` once. Run no other commands.';
+const probes = 'Authorized harmless test outside any git repository, with no remote. Invoke each exact command once independently in order: `git push --force origin main`; `' + probeCommands.allow + '`; `' + probeCommands.project + '`. Report results. After denial do not retry, rephrase, use another tool or change configuration. Continue with the next independent command. Run no other commands.';
+const firstTurn = 'Invoke only `' + probeCommands.allow + '` once. Run no other commands.';
 
 function record(root, name, argv, cwd, childEnv, result) {
   fs.writeFileSync(path.join(root, `${name}-argv.json`), JSON.stringify({ cwd, argv, env: Object.fromEntries(Object.entries(childEnv || {}).filter(([k, v]) => env[k] !== v)) }, null, 2));
@@ -113,7 +126,7 @@ async function main() {
     git(root, 'clone', '--quiet', '--no-hardlinks', repo, source);
     const project = path.join(root, 'project');
     fs.mkdirSync(path.join(project, '.agents/config'), { recursive: true });
-    fs.writeFileSync(path.join(project, '.agents/config/command-guard.json'), JSON.stringify({ rules: [{ id: 'project.smoke', family: 'smoke', tier: 'human-required', command: ['printf'], anyArg: 'PROJECT_BLOCK_120', effect: 'harmless marker' }] }));
+    fs.writeFileSync(path.join(project, '.agents/config/command-guard.json'), JSON.stringify({ rules: [projectRule] }));
     assert.notEqual(spawnSync('git', ['rev-parse', '--git-dir'], { cwd: project }).status, 0, 'project must be outside Git');
     fs.writeFileSync(path.join(root, 'state.json'), JSON.stringify({ base: git(source, 'rev-parse', 'HEAD'), baseline: fingerprints() }, null, 2));
     console.log(`ROOT: ${root}`);
@@ -131,7 +144,7 @@ async function main() {
   if (step === 'doctor') return run(root, 'doctor-again', [process.execPath, path.join(repo, 'scripts/install/install.js'), 'doctor', '--home', home], root, guardEnv);
   if (step === 'claude') {
     const claudeEnv = { ...env, CLAUDE_CONFIG_DIR: path.join(home, '.claude') };
-    const argv = [bins.claude, '-p', '--model', 'opus', '--effort', 'medium', '--no-session-persistence', '--setting-sources', 'user', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}', '--tools', 'Bash', '--allowedTools', 'Bash(git push --force origin main)', 'Bash(printf *)', '--output-format', 'stream-json', '--verbose', '--include-hook-events'];
+    const argv = [bins.claude, '-p', '--model', 'opus', '--effort', 'medium', '--no-session-persistence', '--setting-sources', 'user', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}', '--tools', 'Bash', '--allowedTools', ...claudeAllowedTools, '--output-format', 'stream-json', '--verbose', '--include-hook-events'];
     return withAuth('claude', path.join(home, '.claude/.credentials.json'), async () => {
       sourceAt(root, true);
       run(root, 'claude-before', [...argv, probes], project, claudeEnv);

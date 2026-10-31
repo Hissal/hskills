@@ -1,0 +1,14 @@
+{
+  "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN",
+  "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+    "doctor",
+    "--home",
+    "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home"
+  ],
+  "env": {
+    "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+    "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+  }
+}

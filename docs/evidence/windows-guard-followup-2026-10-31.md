@@ -12,6 +12,10 @@ preserved trust is recognized with no new approval. The trusted lifecycle still 
 native config: reinstall and uninstall both refuse with a conflict. A labelled diagnostic variant isolates two
 remaining defects ([findings](#findings-for-owners)).
 
+**Later native acceptance.** The repairs below passed the trusted lifecycle natively, including same-snapshot
+reinstall after uninstall: see [lifecycle acceptance](windows-lifecycle-final-2026-10-31.md). The results
+recorded here are unchanged.
+
 ## Environment
 
 | Item | Value |
@@ -125,7 +129,8 @@ original run's baseline in `state.json`. That file had already changed before th
 ## Repairs after this rerun (native rerun pending)
 
 Added after this run; the results above are unchanged. These repairs are covered by Linux regressions
-through the installer CLI, with CLI doubles for the hosts. **No native Windows rerun has tested them yet.**
+through the installer CLI, with CLI doubles for the hosts. At the time of this report, no native Windows rerun
+had tested them. The [native lifecycle acceptance](windows-lifecycle-final-2026-10-31.md) has since run them.
 
 1. **Known Codex preference tables.** Reinstall and uninstall now accept `[tui]` and `[windows]` tables
    beside the trust tables when every line is a known field with a valid value. At Codex

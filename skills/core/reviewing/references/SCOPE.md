@@ -20,7 +20,7 @@ A scope the user names, or one a caller supplies exactly, is used as named.
 
 ## Bare invocation
 
-With no explicit or caller scope, the review is a review of current work: the committed pending work plus every local change, judged as described in [Current work](#current-work). Find the base and the pending commits in this order. Stop at the first step that settles it.
+With no explicit or caller scope, the review is a review of current work: the committed pending work plus every local change, judged as described in [Current work](#current-work). Settle the base with step 1, or step 2 when there is no open PR. Then always work through steps 3 to 5 in order: they decide what is pending, and the base alone never does.
 
 1. **Open PR.** When the current head has an open PR (`gh pr view --json number,baseRefName,baseRefOid,headRefOid`, or `gh pr list --head <branch>`), compare against the PR's actual base from its merge base with the head. Local changes stay in: only an explicit PR scope leaves them out. Several open PRs for one head: ask which.
 2. **Merge target.** With no PR, take the intended merge target from the request, the project's conventions (contributing docs, agent instructions, branch-naming rules), or reliable branch or PR context such as a stacked branch's recorded parent. The repository's default branch is the conventional target when nothing names another. A branch's own remote copy (`origin/<same-branch>`) tracks the branch and is never its merge target. Several plausible targets: ask one question naming them.
@@ -44,6 +44,7 @@ The announcement keeps the three kinds apart, with counts; findings judge the cu
 Record what was inspected before reviewing:
 
 - the base, merge-base and head SHAs, or the range's revisions;
-- the local state: `git status --porcelain` counts of staged, unstaged and untracked files, and whether they are in scope.
+- the local state: counts of staged, unstaged and untracked files, and whether they are in scope;
+- for in-scope local files, a content fingerprint: for example a hash of `git diff HEAD` plus `git hash-object` of each untracked file. Status alone misses a second edit to a file that was already modified.
 
-Before reporting, check `HEAD` and `git status` again. A new commit, a moved base or a changed in-scope file is a material change: say what changed and refresh the findings it touches.
+Before reporting, resolve the base ref again, check `HEAD`, and recompute the fingerprint. A new commit, a moved base or a changed fingerprint is a material change: say what changed and refresh the findings it touches.

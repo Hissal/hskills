@@ -10,5 +10,9 @@
   "hissal.skill-collection/onboarding-guide": {
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []
+  },
+  "hissal.skill-collection/risky-changes": {
+    "path": "skills/core/risky-changes",
+    "requires": []
   }
 }

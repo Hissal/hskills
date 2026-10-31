@@ -1,6 +1,7 @@
 {
   "core": [
-    "skills/core/guide"
+    "skills/core/guide",
+    "skills/core/risky-changes"
   ],
   "packs": {
     "csharp": [

@@ -647,4 +647,5 @@ changing skill identity or requirements with
 | `hissal.skill-collection/csharp-guide` | [`csharp-guide`](../skills/packs/csharp/csharp-guide/SKILL.md) | — |
 | `hissal.skill-collection/guide` | [`guide`](../skills/core/guide/SKILL.md) | — |
 | `hissal.skill-collection/onboarding-guide` | [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md) | — |
+| `hissal.skill-collection/risky-changes` | [`risky-changes`](../skills/core/risky-changes/SKILL.md) | — |
 <!-- END GENERATED DEPENDENCIES -->

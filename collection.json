@@ -1,5 +1,7 @@
 {
-  "core": [],
+  "core": [
+    "skills/core/guide"
+  ],
   "packs": {},
   "expensive": []
 }

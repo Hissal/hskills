@@ -75,6 +75,16 @@ function registration(home, source, action = 'install') {
     try { info = fs.lstatSync(p); } catch (e) { if (e.code === 'ENOENT') return null; throw e; }
     return info.isFile() && !info.isSymbolicLink() ? fs.readFileSync(p, 'base64') : undefined;
   }
+  function validatedWrites() {
+    return data.writes.map(w => {
+      const current = currentBytes(w.path);
+      if (current === w.after) return w;
+      const delta = w.path === path.join(home, '.codex/config.toml')
+        ? require('./codex-trust-delta')(w, current) : null;
+      if (!delta) throw new Error('CONFLICT changed registration preserved: ' + w.path);
+      return delta;
+    });
+  }
   function restore(writes) {
     let ok = true;
     for (const w of [...writes].reverse()) {
@@ -87,10 +97,7 @@ function registration(home, source, action = 'install') {
     return ok;
   }
   if (action === 'uninstall') {
-    for (const w of data.writes) {
-      const current = currentBytes(w.path);
-      if (current !== w.after) { console.log('CONFLICT changed registration preserved: ' + w.path); return false; }
-    }
+    data.writes = validatedWrites();
     const ok = restore(data.writes); if (ok) data.hosts = []; save(); return ok;
   }
   const env = { ...process.env, HOME: home, USERPROFILE: home, CLAUDE_CONFIG_DIR: path.join(home, '.claude'), CODEX_HOME: path.join(home, '.codex'), XDG_CONFIG_HOME: path.join(home, '.config') };
@@ -108,16 +115,18 @@ function registration(home, source, action = 'install') {
     const effective = entry && (entry.readFromFolder || entry.source?.path || entry.installPath);
     if (!entry || !entry.enabled || !effective || fs.realpathSync(effective) !== fs.realpathSync(snapshot)) throw new Error('missing, disabled or overridden plugin: ' + host);
   }
+  let codexGroups = [];
   function ready(host) {
     if (host === 'claude') return true; // inspect verifies enabled effective registration.
     const r = spawnSync(process.execPath, [path.join(__dirname, 'codex-hook-status.js')], { env, cwd: home, encoding: 'utf8', timeout: 15000 });
     try {
       const groups = JSON.parse(r.stdout).result.data;
+      codexGroups = groups;
       return groups.length > 0 && groups.every(group => {
         const hooks = group.hooks.filter(h => h.source === 'plugin' && h.pluginId === 'command-guard@skill-collection-guard');
         return !(group.errors || []).length && hooks.length > 0 && hooks.every(h => h.enabled && h.trustStatus === 'trusted');
       });
-    } catch { return false; }
+    } catch { codexGroups = []; return false; }
   }
   function probeSnapshot(snapshot) {
   const probeState = fs.mkdtempSync(path.join(require('os').tmpdir(), 'guard-probe-'));
@@ -139,14 +148,20 @@ function registration(home, source, action = 'install') {
     let pending = false;
     for (const h of data.hosts) { inspect(h.host, h.snapshot); probeSnapshot(h.snapshot); console.log('REGISTERED ' + h.host + ': ' + h.snapshot); }
     for (const h of data.hosts) {
-      if (!ready(h.host)) { console.log('PENDING Codex human trust: review the current hook in /hooks.'); pending = true; }
+      if (!ready(h.host)) { console.log('PENDING Codex human trust: review the current hook in /hooks.');
+        const legacyFile = path.join(home, '.skill-collection/guard.json');
+        const legacy = fs.existsSync(legacyFile) ? JSON.parse(fs.readFileSync(legacyFile)) : {};
+        const commands = (legacy.groups || []).flatMap(g => g.hooks || []).map(h => h.command);
+        const fallback = codexGroups.flatMap(g => g.hooks || []).filter(h => h.source === 'user' && commands.includes(h.command));
+        const protectedFallback = codexGroups.length > 0 && codexGroups.every(g => !(g.errors || []).length && g.hooks.some(h => fallback.includes(h) && h.enabled && h.trustStatus === 'trusted'));
+        console.log('Codex legacy fallback: ' + (fallback.length ? fallback.map(h => (h.enabled ? 'enabled/' : 'disabled/') + h.trustStatus).join(', ') : 'absent or unverified'));
+        console.log(protectedFallback ? 'PROTECTED by trusted legacy fallback while plugin trust is pending.' : 'UNPROTECTED: no verified trusted legacy fallback; human /hooks review required.');
+        pending = true; }
     }
     return !pending;
   }
   // Validate the complete journal before preparation, backups or host commands.
-  for (const w of data.writes) {
-    if (currentBytes(w.path) !== w.after) throw new Error('CONFLICT changed registration preserved: ' + w.path);
-  }
+  data.writes = validatedWrites();
   const snapshot = prepare(home, source, data.writes);
   for (const dir of ['.claude-plugin', '.codex-plugin', 'hooks', 'engine', 'rules', 'adapters']) {
     for (const name of fs.readdirSync(path.join(snapshot, dir))) {

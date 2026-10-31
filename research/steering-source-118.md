@@ -2,11 +2,11 @@
 
 Read and implemented 2026-10-30 for [#118](https://github.com/Hissal/skill-collection/issues/118)
 under [spec 2 (#78)](https://github.com/Hissal/skill-collection/issues/78).
-Status at this implementation snapshot: evidenced naming policy implemented;
-tooling-note requirement unresolved. For the subsequent search and recovery
-lead, read [Recovery search](steering-notes-recovery.md).
-This is implementation evidence for a later issue comment, not a new owner policy.
-No issue comment was posted.
+Current scope: the naming-only source completes #118. The unidentifiable historical
+tooling-note requirement was [retired on 2026-10-31](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
+The implementation snapshot below predates that correction. Its unsuccessful
+recovery investigation is preserved in [Recovery search](steering-notes-recovery.md).
+Admission reasons and the size figure are now recorded on #118.
 
 ## Sources and limits
 
@@ -31,12 +31,11 @@ No issue comment was posted.
   without preserving their wording. The [loading-mechanics research](loading-mechanics.md)
   describes steering loading, not the missing owner instructions.
 
-**Missing requirement:** neither current owner file nor the inspected decision,
+**Historical missing content:** neither current owner file nor the inspected decision,
 repo, history or research evidence supplies the content of the two tooling
-notes. They are omitted rather than guessed. #118's first acceptance criterion
-is therefore only partially satisfied; recovering the notes requires an
-additional authoritative owner source. No claim is made that the historical
-notes were revoked or that unrelated harness tool instructions replace them.
+notes. They were omitted rather than guessed. This left the original acceptance
+criterion partial at the implementation snapshot; the later scope correction
+retired that requirement rather than inventing replacement instructions.
 
 ## Always-on admission reasons
 

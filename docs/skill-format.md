@@ -74,9 +74,9 @@ For owner installation, conflicts or drift verification, read
 Attribution belongs to the comment and PR skills, per [the superseding owner
 decision](https://github.com/Hissal/skill-collection/issues/88#issuecomment-6512311352),
 and is absent from this source. For line admission and the measured source snapshot, read
-[#118 evidence](../research/steering-source-118.md). To recover the unresolved
-tooling notes, read the [recovery search](../research/steering-notes-recovery.md),
-which records coverage and the next authoritative-source lead.
+[#118 evidence](../research/steering-source-118.md). The current naming-only text
+is authoritative; the historical tooling-note requirement was
+[retired](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
 The 500-token tripwire measurement belongs to #92; command and path validation
 belongs to #112. Until the measurement uses this path by default, run
 `COLLECTION_ALWAYS_ON_PATH=steering.md node scripts/check/check.js` to include it.

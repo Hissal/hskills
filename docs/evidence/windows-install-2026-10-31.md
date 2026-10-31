@@ -151,6 +151,9 @@ homes describe the isolation method; they do not extend the retained hash eviden
 
 ## Findings for owners
 
+These are the outcomes observed in this run. For the current repair state, read the
+[guard follow-up](windows-guard-followup.md).
+
 1. **Codex trust makes uninstall conflict.** The required human `/hooks` approval rewrites the recorded
    `.codex/config.toml`, so `uninstall` refuses with a conflict and removes nothing. This matches the documented
    conflict rule but leaves every trusted Codex install needing manual recovery. A production policy decision

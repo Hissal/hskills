@@ -145,6 +145,46 @@ const failures = cases(
     f.ok('doctor');
     f.ok('uninstall');
   }],
+  ['ancestor directory links preserve matching external files and the journal', f => {
+    f.ok('install');
+    const snapshot = f.snapshot();
+    for (const original of [path.join(snapshot, 'adapters'), path.join(f.home, '.claude/plugins')]) {
+      const outside = path.join(f.home, 'external-' + path.basename(original));
+      fs.renameSync(original, outside);
+      fs.symlinkSync(outside, original, process.platform === 'win32' ? 'junction' : 'dir');
+      const bytes = new Map();
+      function capture(dir) {
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+          const p = path.join(dir, entry.name);
+          if (entry.isDirectory()) capture(p); else bytes.set(p, fs.readFileSync(p));
+        }
+      }
+      capture(outside);
+      const journal = fs.readFileSync(f.journal);
+      for (const command of ['install', 'uninstall']) {
+        const result = f.run(command);
+        assert.equal(result.status, 1, result.output);
+        assert.match(result.output, /CONFLICT/);
+        assert.ok(fs.lstatSync(original).isSymbolicLink());
+        assert.deepEqual(fs.readFileSync(f.journal), journal);
+        for (const [p, content] of bytes) assert.deepEqual(fs.readFileSync(p), content);
+      }
+      fs.unlinkSync(original);
+      fs.renameSync(outside, original);
+    }
+    f.ok('uninstall');
+  }],
+  ['a dangling ownership-record link never creates its external target', f => {
+    if (process.platform === 'win32') return;
+    fs.mkdirSync(path.dirname(f.journal), { recursive: true });
+    const outside = path.join(f.home, 'external-record');
+    fs.symlinkSync(outside, f.journal);
+    const result = f.run('install');
+    assert.equal(result.status, 1, result.output);
+    assert.match(result.output, /CONFLICT plugin ownership record/);
+    assert.ok(fs.lstatSync(f.journal).isSymbolicLink());
+    assert.equal(fs.existsSync(outside), false);
+  }],
   ['an unrecorded empty snapshot tree is never adopted', f => {
     f.ok('install');
     const snapshot = f.snapshot();

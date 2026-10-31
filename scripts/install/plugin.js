@@ -3,6 +3,24 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
+// A regular file can still be redirected by a replaced parent directory.
+// The caller-selected home is the boundary; every parent below it must be real.
+function replacedParent(file, home) {
+  const relative = path.relative(home, file);
+  if (path.isAbsolute(relative) || relative === '..' || relative.startsWith('..' + path.sep)) return true;
+  if (!relative) return false;
+  for (let dir = path.dirname(file); path.relative(home, dir); dir = path.dirname(dir)) {
+    try {
+      const info = fs.lstatSync(dir);
+      if (!info.isDirectory() || info.isSymbolicLink()) return true;
+    } catch (e) {
+      if (e.code === 'ENOTDIR') return true;
+      if (e.code !== 'ENOENT') throw e;
+    }
+  }
+  return false;
+}
+
 // Removes an installer-created tree only when it holds nothing but recorded,
 // real, empty directories. Never follows a link or deletes another entry.
 function reclaim(dest, directories) {
@@ -32,6 +50,7 @@ function prepare(home, source = path.resolve(__dirname, '../../hooks/command-gua
   for (const [name, content] of files) hash.update(name).update('\0').update(content).update('\0');
   const version = JSON.parse(fs.readFileSync(path.join(source, '.claude-plugin/plugin.json'))).version;
   const dest = path.join(home, '.skill-collection/plugin-cache', version + '-' + hash.digest('hex'));
+  if (replacedParent(dest, home)) throw new Error('CONFLICT replaced snapshot parent preserved: ' + dest);
   if (fs.existsSync(dest) && !reclaim(dest, directories)) {
     if (!fs.lstatSync(dest).isDirectory() || fs.lstatSync(dest).isSymbolicLink()) throw new Error('CONFLICT plugin snapshot entry: ' + dest);
     const expected = new Set(files.map(([name]) => path.join(dest, name)));
@@ -74,8 +93,11 @@ module.exports = { prepare };
 const { spawnSync } = require('child_process');
 function registration(home, source, action = 'install') {
   const file = path.join(home, '.skill-collection/plugins.json');
-  if (fs.existsSync(file) && (!fs.lstatSync(file).isFile() || fs.lstatSync(file).isSymbolicLink())) throw new Error('CONFLICT plugin ownership record');
-  const data = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file)) : { hosts: [], writes: [] };
+  if (replacedParent(file, home)) throw new Error('CONFLICT plugin ownership record parent');
+  let record;
+  try { record = fs.lstatSync(file); } catch (e) { if (e.code !== 'ENOENT') throw e; }
+  if (record && (!record.isFile() || record.isSymbolicLink())) throw new Error('CONFLICT plugin ownership record');
+  const data = record ? JSON.parse(fs.readFileSync(file)) : { hosts: [], writes: [] };
   // Journals from before directory provenance: a recorded snapshot file the
   // installer created proves it also created that snapshot's directories.
   const cache = path.join(home, '.skill-collection/plugin-cache');
@@ -106,6 +128,7 @@ function registration(home, source, action = 'install') {
     return entries;
   }
   function currentBytes(p) {
+    if (replacedParent(p, home)) return undefined;
     let info;
     try { info = fs.lstatSync(p); } catch (e) { if (e.code === 'ENOENT') return null; throw e; }
     return info.isFile() && !info.isSymbolicLink() ? fs.readFileSync(p, 'base64') : undefined;
@@ -135,6 +158,7 @@ function registration(home, source, action = 'install') {
   function removeDirectories() {
     let ok = true;
     for (const dir of [...data.directories].sort((a, b) => b.length - a.length)) {
+      if (replacedParent(dir, home)) { console.log('CONFLICT replaced directory parent preserved: ' + dir); ok = false; continue; }
       let info;
       try { info = fs.lstatSync(dir); } catch (e) { if (e.code !== 'ENOENT') throw e; }
       if (info && (!info.isDirectory() || info.isSymbolicLink())) { console.log('CONFLICT replaced directory preserved: ' + dir); ok = false; continue; }

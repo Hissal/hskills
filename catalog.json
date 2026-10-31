@@ -3,6 +3,10 @@
     "path": "skills/packs/csharp/csharp-guide",
     "requires": []
   },
+  "hissal.skill-collection/dependency-audit": {
+    "path": "skills/core/dependency-audit",
+    "requires": []
+  },
   "hissal.skill-collection/guide": {
     "path": "skills/core/guide",
     "requires": []

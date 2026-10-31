@@ -463,6 +463,9 @@ let failures = plugins.status === 0 ? 0 : 1;
 const trust = spawnSync(process.execPath, [path.join(__dirname, 'trust.js')], { encoding: 'utf8', timeout: 60000 });
 process.stdout.write(trust.stdout || ''); process.stderr.write(trust.stderr || '');
 if (trust.status !== 0) { console.log('FAIL trust delta regression (trust.js)'); failures++; }
+const lifecycle = spawnSync(process.execPath, [path.join(__dirname, 'lifecycle.js')], { encoding: 'utf8', timeout: 180000 });
+process.stdout.write(lifecycle.stdout || ''); process.stderr.write(lifecycle.stderr || '');
+if (lifecycle.status !== 0) { console.log('FAIL guard lifecycle regressions (lifecycle.js)'); failures++; }
 for (const [name, test] of cases) {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'collection-install-'));
   try {

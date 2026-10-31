@@ -3,9 +3,25 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
+// Removes an installer-created tree only when it holds nothing but recorded,
+// real, empty directories. Never follows a link or deletes another entry.
+function reclaim(dest, directories) {
+  const found = [];
+  function walk(dir) {
+    const info = fs.lstatSync(dir);
+    if (!info.isDirectory() || info.isSymbolicLink() || !directories.includes(dir)) return false;
+    found.push(dir);
+    return fs.readdirSync(dir).every(name => walk(path.join(dir, name)));
+  }
+  if (!walk(dest)) return false;
+  for (const dir of found.reverse()) fs.rmdirSync(dir);
+  return true;
+}
+
 // Preparation is independent of registration: never remove a functioning hook
-// merely because its replacement's files exist.
-function prepare(home, source = path.resolve(__dirname, '../../hooks/command-guard'), writes = []) {
+// merely because its replacement's files exist. Directories it creates are
+// appended to `directories`, the journal's directory provenance.
+function prepare(home, source = path.resolve(__dirname, '../../hooks/command-guard'), writes = [], directories = []) {
   const files = [];
   for (const dir of ['.claude-plugin', '.codex-plugin', 'hooks', 'engine', 'rules', 'adapters']) {
     for (const name of fs.readdirSync(path.join(source, dir)).sort()) {
@@ -16,7 +32,7 @@ function prepare(home, source = path.resolve(__dirname, '../../hooks/command-gua
   for (const [name, content] of files) hash.update(name).update('\0').update(content).update('\0');
   const version = JSON.parse(fs.readFileSync(path.join(source, '.claude-plugin/plugin.json'))).version;
   const dest = path.join(home, '.skill-collection/plugin-cache', version + '-' + hash.digest('hex'));
-  if (fs.existsSync(dest)) {
+  if (fs.existsSync(dest) && !reclaim(dest, directories)) {
     if (!fs.lstatSync(dest).isDirectory() || fs.lstatSync(dest).isSymbolicLink()) throw new Error('CONFLICT plugin snapshot entry: ' + dest);
     const expected = new Set(files.map(([name]) => path.join(dest, name)));
     const manifest = path.join(dest, '.claude-plugin/marketplace.json');
@@ -35,8 +51,9 @@ function prepare(home, source = path.resolve(__dirname, '../../hooks/command-gua
       if (!fs.lstatSync(path.join(dest, name)).isFile() || fs.lstatSync(path.join(dest, name)).isSymbolicLink() || !fs.readFileSync(path.join(dest, name)).equals(content)) throw new Error('CONFLICT modified plugin snapshot: ' + dest);
     }
   } else {
-    fs.mkdirSync(path.dirname(dest), { recursive: true });
-    const stage = fs.mkdtempSync(path.join(path.dirname(dest), '.prepare-'));
+    const cache = path.dirname(dest);
+    if (fs.mkdirSync(cache, { recursive: true }) && !directories.includes(cache)) directories.push(cache);
+    const stage = fs.mkdtempSync(path.join(cache, '.prepare-'));
     try {
       for (const [name, content] of files) {
         const target = path.join(stage, name);
@@ -45,6 +62,9 @@ function prepare(home, source = path.resolve(__dirname, '../../hooks/command-gua
       }
       fs.renameSync(stage, dest);
     } finally { fs.rmSync(stage, { recursive: true, force: true }); }
+    for (const dir of [dest, ...new Set(files.map(([name]) => path.dirname(path.join(dest, name))))]) {
+      if (!directories.includes(dir)) directories.push(dir);
+    }
   }
   console.log('Prepared plugin snapshot: ' + dest);
   return dest;
@@ -56,6 +76,21 @@ function registration(home, source, action = 'install') {
   const file = path.join(home, '.skill-collection/plugins.json');
   if (fs.existsSync(file) && (!fs.lstatSync(file).isFile() || fs.lstatSync(file).isSymbolicLink())) throw new Error('CONFLICT plugin ownership record');
   const data = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file)) : { hosts: [], writes: [] };
+  // Journals from before directory provenance: a recorded snapshot file the
+  // installer created proves it also created that snapshot's directories.
+  const cache = path.join(home, '.skill-collection/plugin-cache');
+  if (data.directories === undefined) {
+    data.directories = [];
+    for (const w of data.writes.filter(w => w.before === null)) {
+      const parts = path.relative(cache, w.path).split(path.sep);
+      if (parts.length < 2 || parts[0] === '..' || path.isAbsolute(parts[0])) continue;
+      for (let i = 1; i < parts.length; i++) {
+        const dir = path.join(cache, ...parts.slice(0, i));
+        if (!data.directories.includes(dir)) data.directories.push(dir);
+      }
+    }
+  }
+  if (!Array.isArray(data.directories) || data.directories.some(d => typeof d !== 'string' || (d !== cache && !d.startsWith(cache + path.sep)))) throw new Error('CONFLICT plugin ownership record');
   const save = () => { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n'); };
   const roots = ['.claude/plugins', '.codex/plugins', '.claude/settings.json', '.codex/config.toml'];
   function inventory() {
@@ -96,9 +131,27 @@ function registration(home, source, action = 'install') {
     }
     return ok;
   }
+  // Deepest first; rmdir never removes a non-empty directory, and lstat never follows a link.
+  function removeDirectories() {
+    let ok = true;
+    for (const dir of [...data.directories].sort((a, b) => b.length - a.length)) {
+      let info;
+      try { info = fs.lstatSync(dir); } catch (e) { if (e.code !== 'ENOENT') throw e; }
+      if (info && (!info.isDirectory() || info.isSymbolicLink())) { console.log('CONFLICT replaced directory preserved: ' + dir); ok = false; continue; }
+      if (info) {
+        try { fs.rmdirSync(dir); } catch (e) {
+          if (!['ENOTEMPTY', 'EEXIST'].includes(e.code)) throw e;
+          console.log('CONFLICT non-empty directory preserved: ' + dir); ok = false; continue;
+        }
+      }
+      data.directories.splice(data.directories.indexOf(dir), 1);
+    }
+    return ok;
+  }
   if (action === 'uninstall') {
     data.writes = validatedWrites();
-    const ok = restore(data.writes); if (ok) data.hosts = []; save(); return ok;
+    const ok = restore(data.writes); if (ok) data.hosts = [];
+    const removed = ok && removeDirectories(); save(); return removed;
   }
   const env = { ...process.env, HOME: home, USERPROFILE: home, CLAUDE_CONFIG_DIR: path.join(home, '.claude'), CODEX_HOME: path.join(home, '.codex'), XDG_CONFIG_HOME: path.join(home, '.config') };
   function call(host, args) {
@@ -165,7 +218,7 @@ function registration(home, source, action = 'install') {
   }
   // Validate the complete journal before preparation, backups or host commands.
   data.writes = validatedWrites();
-  const snapshot = prepare(home, source, data.writes);
+  const snapshot = prepare(home, source, data.writes, data.directories);
   for (const dir of ['.claude-plugin', '.codex-plugin', 'hooks', 'engine', 'rules', 'adapters']) {
     for (const name of fs.readdirSync(path.join(snapshot, dir))) {
       const p = path.join(snapshot, dir, name);

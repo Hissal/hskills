@@ -121,11 +121,41 @@ original run's baseline in `state.json`. That file had already changed before th
    existing snapshot directory without journal records as unrecorded ([`plugin.js:19-34`](../../scripts/install/plugin.js#L19-L34)).
    This reading is not Windows-specific. The fixture again holds an empty snapshot tree after the final uninstall.
 
+## Repairs after this rerun (native rerun pending)
+
+Added after this run; the results above are unchanged. These repairs are covered by Linux regressions
+through the installer CLI, with CLI doubles for the hosts. **No native Windows rerun has tested them yet.**
+
+1. **Known Codex preference tables.** Reinstall and uninstall now accept `[tui]` and `[windows]` tables
+   beside the trust tables when every line is a known field with a valid value. At Codex
+   [`6ff1e1ca`](https://github.com/openai/codex/blob/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/core/config.schema.json)
+   (`rust-v0.166.0`), `Tui.screen_reader_detection_done` is a boolean that
+   [`screen_reader.rs`](https://github.com/openai/codex/blob/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/tui/src/screen_reader.rs)
+   sets after its one-time detection. The same code sets `animations = false` when it detects a screen reader.
+   `WindowsToml.sandbox` is `elevated`, `unelevated` or `mxc`, set by `set_windows_sandbox_mode` in
+   [`edit.rs`](https://github.com/openai/codex/blob/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/core/src/config/edit.rs).
+   The installer keeps these tables' current bytes. It records no claim about who wrote them, and never
+   sets, resets or applies them. Any other field, value form, comment or duplicate leaves the whole file
+   a conflict, as before. Regressions: `scripts/install/test/lifecycle.js` (this run's 77-byte chunk
+   with both trust key forms over three install, reinstall, doctor and uninstall cycles; an unknown
+   `allow_mxc` field still conflicts) and `scripts/install/test/trust.js` (field, type and form edges).
+2. **Snapshot directory provenance.** The journal records the snapshot directories the installer creates.
+   Uninstall removes them deepest first with `rmdir`, after `lstat` without following links. A non-empty
+   or replaced directory is reported as a conflict and kept with its contents. A recorded tree of empty
+   directories is reused on the next install. A journal without directory records derives them from its
+   recorded snapshot files. This fixture's tree is unrecorded, since its files were already uninstalled, so
+   it remains a conflict until the fixture is prepared again. Regressions: `scripts/install/test/lifecycle.js`
+   (same-snapshot install, uninstall, install, doctor, uninstall; user-added files and empty directories;
+   a symlink replacement; a legacy journal; an unrecorded empty tree) and `scripts/install/test/plugin.js`.
+3. **Runner summary.** The uninstall summary replaces `trustTablesPreserved` with `trustBytesIdentical`
+   and `trustLinesPreserved`, which ignores blank lines. It also adds `preferenceTables` and
+   `snapshotEntriesRemaining`. The summaries retained above keep the old field.
+
 ## Not covered
 
 | Case | Status |
 | --- | --- |
-| Trusted reinstall and uninstall on the unmodified native config | **Failed**, finding 1 |
-| Reinstall of the same snapshot after uninstall without manual recovery | **Failed**, finding 2 |
+| Trusted reinstall and uninstall on the unmodified native config | **Failed**, finding 1; repair pending native rerun |
+| Reinstall of the same snapshot after uninstall without manual recovery | **Failed**, finding 2; repair pending native rerun |
 | Claude run without the exact grant (negative control) | Not run |
 | OpenCode on Windows, actual OS symlink refusal, macOS | Outside this follow-up |

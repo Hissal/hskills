@@ -43,6 +43,18 @@ try {
     nativeTrust + '# note\n', nativeTrust + 'other = 1\n', '\n[hooks.state]\n"k" = { enabled = true }\n',
     '\n[hooks.state."k"]\nenabled = true # note\n', '\n[hooks.state.\'k\']\nenabled = true\n[hooks.state."k"]\nenabled = false\n'];
   for (const extra of extras) assert.equal(uninstall(before, after, after + extra), false, extra);
+  // Only the known Codex preference fields, types and writer forms are metadata.
+  const preferenceExtras = ['\n[tui]\ntheme = "dark"\n', '\n[tui]\nscreen_reader_detection_done = 1\n',
+    '\n[tui]\nscreen_reader_detection_done = true # note\n', '\n[tui]\nanimations = true\nanimations = false\n',
+    '\n[windows]\nsandbox = "none"\n', "\n[windows]\nsandbox = 'unelevated'\n", '\n[windows]\nallow_mxc = false\n',
+    '\n[tui.keymap]\n', '\ntui.animations = false\n', '\n[tui]\nanimations = false\n[tui]\nscreen_reader_detection_done = true\n'];
+  for (const extra of preferenceExtras) assert.equal(uninstall(before, after, after + nativeTrust + extra), false, extra);
+  // A personal [tui] table is ordinary bytes: a writer adding a known field to it still conflicts.
+  const themed = before + '\n[tui]\ntheme = "dark"\n';
+  assert.equal(uninstall(themed, themed + plugin, themed.replace('[tui]\n', '[tui]\nscreen_reader_detection_done = true\n') + plugin), false);
+  // Unchanged, it stays exact beside a trust change.
+  assert.equal(uninstall(themed, themed + plugin, themed + plugin + nativeTrust), true);
+  assert.equal(fs.readFileSync(config, 'utf8'), themed + nativeTrust.trimStart());
   // Changed personal multiline bytes conflict even beside valid trust tables.
   assert.equal(uninstall(before, after, after.replace('Keep it short.', 'Keep it shorter.') + nativeTrust), false);
   // An unterminated multiline string makes every later header unreadable.
@@ -89,5 +101,15 @@ try {
   const changedTrust = human.replace('enabled = false', 'enabled = true');
   assert.equal(uninstall(existing, existing + plugin, existing.replace(human, changedTrust) + plugin), true);
   assert.equal(fs.readFileSync(config, 'utf8'), existing.replace(human, changedTrust));
+  // Known preferences alone, or written before the trust tables, keep their current bytes.
+  const preferences = '\n[tui]\nscreen_reader_detection_done = true\nanimations = false\n\n[windows]\nsandbox = "unelevated"\n';
+  assert.equal(uninstall(before, after, after + preferences), true);
+  assert.equal(fs.readFileSync(config, 'utf8'), before + preferences.trimStart());
+  assert.equal(uninstall(before, after, after + preferences + nativeTrust), true);
+  assert.equal(fs.readFileSync(config, 'utf8'), before + preferences.trimStart() + nativeTrust);
+  // A changed preference value is preserved as found, never reset to the journal's bytes.
+  const elevated = preferences.replace('unelevated', 'elevated');
+  assert.equal(uninstall(before + preferences, after + preferences, after + elevated), true);
+  assert.equal(fs.readFileSync(config, 'utf8'), before + elevated);
   console.log('trust delta uninstall preserves human trust and personal settings');
 } finally { fs.rmSync(home, { recursive: true, force: true }); }

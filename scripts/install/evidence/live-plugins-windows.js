@@ -239,6 +239,9 @@ async function main() {
     const status = run(out, name, [process.execPath, path.join(repo, 'scripts/install/install.js'), 'uninstall', '--home', home], root, guardEnv);
     const configAfter = codexConfig(home);
     const trimmed = s => s.replace(/\n+$/, '');
+    const lines = s => s.split('\n').filter(l => l.trim()).join('\n');
+    // Codex runtime preference tables ([tui], [windows]), verbatim: they hold no secrets.
+    const preferenceTables = c => c && (c.ordinary.match(/^\[(?:tui|windows)\]\n(?:[^\[\n].*\n|\n)*/gm) || []).map(t => t.trim());
     const remaining = writes.filter(w => w.before === null && fs.existsSync(w.path)).map(w => w.path);
     const unrelated = Object.fromEntries(Object.keys(fixtures).map(rel => {
       const p = path.join(home, rel);
@@ -249,9 +252,23 @@ async function main() {
     const after = fingerprints();
     const codex = { before: trustView(configBefore), after: trustView(configAfter),
       ordinaryMatchesFixture: !!configAfter && trimmed(configAfter.ordinary) === trimmed(fixtures['.codex/config.toml']),
-      trustTablesPreserved: !!configAfter && configAfter.trust === configBefore.trust };
+      // Byte identity and the trust lines are separate claims: re-registration may move
+      // one blank separator line while every key and hash stays the same.
+      trustBytesIdentical: !!configAfter && configAfter.trust === configBefore.trust,
+      trustLinesPreserved: !!configAfter && lines(configAfter.trust) === lines(configBefore.trust),
+      preferenceTables: { before: preferenceTables(configBefore), after: preferenceTables(configAfter) } };
+    // Every directory still under the snapshot cache, empty or not, by relative path.
+    const cache = path.join(home, '.skill-collection/plugin-cache');
+    const snapshotEntriesRemaining = [];
+    (function walk(dir) {
+      for (const name of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
+        const p = path.join(dir, name);
+        snapshotEntriesRemaining.push(path.relative(cache, p).split(path.sep).join('/'));
+        if (fs.lstatSync(p).isDirectory()) walk(p);
+      }
+    })(cache);
     const journalAfter = fs.existsSync(journal) ? sha(fs.readFileSync(journal)) : null;
-    const summary = { status, remainingOwned: remaining.map(scrub), unrelated, codexConfig: codex, journal: { beforeSha256: journalBefore, afterSha256: journalAfter }, userConfigUnchanged: JSON.stringify(after) === JSON.stringify(baseline), changed: Object.keys(after).filter(k => after[k] !== baseline[k]) };
+    const summary = { status, remainingOwned: remaining.map(scrub), snapshotEntriesRemaining, unrelated, codexConfig: codex, journal: { beforeSha256: journalBefore, afterSha256: journalAfter }, userConfigUnchanged: JSON.stringify(after) === JSON.stringify(baseline), changed: Object.keys(after).filter(k => after[k] !== baseline[k]) };
     fs.writeFileSync(path.join(out, `${name}-summary.json`), JSON.stringify(summary, null, 2));
     console.log(JSON.stringify(summary, null, 2));
     return;

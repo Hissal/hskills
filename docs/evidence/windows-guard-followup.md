@@ -48,7 +48,8 @@ Accepted forms:
   No `[hooks]` header was present. The backup taken before install had no hook tables.
   The full file also holds Codex-written `[tui]` and `[windows]` tables, which the repair
   treats as personal edits: the [native rerun](windows-guard-followup-2026-10-31.md#findings-for-owners)
-  found that the whole file conflicts.
+  found that the whole file conflicts. A later repair accepts those two tables when they
+  hold only known preference fields ([repairs after the rerun](windows-guard-followup-2026-10-31.md#repairs-after-this-rerun-native-rerun-pending)).
   Codex 0.166.0 is the version in the original report; the reading itself did not run
   `codex --version`.
 - **Source**: at Codex [`6ff1e1ca`](https://github.com/openai/codex/blob/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/core/config.schema.json)

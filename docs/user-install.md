@@ -246,10 +246,15 @@ prepared snapshot. Enabled listings must report that snapshot as effective sourc
 `HOME/.skill-collection/plugins.json` journals snapshot files and host configuration
 writes. Failed host registration rolls back its writes and retains legacy hooks.
 Before registration mutates host files, every recorded write must still match its
-last installed bytes, except narrowly verified Codex hook trust-table changes.
-Conflicts preserve current bytes and the journal. Existing
+last installed bytes, except narrowly verified Codex hook trust-table and runtime
+preference changes (below). Conflicts preserve current bytes and the journal. Existing
 snapshots must contain only recorded files; byte-identical unrecorded snapshots
-are conflicts, not adopted installations.
+are conflicts, not adopted installations. The journal also records the snapshot
+directories the installer created; journals written before that derive them from
+recorded snapshot files. Uninstall removes only those directories, deepest first,
+and only when empty; a non-empty or replaced directory is a conflict and stays,
+with its contents. An unrecorded snapshot directory, even an empty one, stays a
+conflict.
 
 Once the replacement is ready, only exact recorded legacy handlers with the
 adapter marker are removed from that host's settings; unrelated handlers survive.
@@ -261,9 +266,13 @@ trust. Claude readiness requires an enabled
 registration at the expected snapshot and successful adapter probes.
 Settings keep their first-write backup. Uninstall restores recorded configuration
 only while its bytes still match, allowing syntactically validated changes to Codex
-`hooks.state` hash tables. Those tables survive reinstall and uninstall. Unknown
-trust syntax and unrelated personal edits are conflicts and remain owned
-for recovery. Resolve conflicts manually before retrying uninstall.
+`hooks.state` hash tables and to two Codex runtime preference tables: `[tui]` holding
+only `screen_reader_detection_done` or `animations` booleans, and `[windows]` holding
+only `sandbox = "elevated"`, `"unelevated"` or `"mxc"`. These tables survive reinstall
+and uninstall as their current bytes, whoever wrote them; the installer never sets,
+resets or applies them. A `[tui]` or `[windows]` table with any other field is an
+ordinary personal table, compared exactly. Unknown trust syntax and unrelated
+personal edits are conflicts and remain owned for recovery. Resolve conflicts manually before retrying uninstall.
 
 Doctor checks registration and snapshot block/allow probes. Claude-only
 registration can pass these checks. Codex returns pending while its current hook

@@ -1,4 +1,8 @@
 {
+  "hissal.skill-collection/csharp-guide": {
+    "path": "skills/packs/csharp/csharp-guide",
+    "requires": []
+  },
   "hissal.skill-collection/guide": {
     "path": "skills/core/guide",
     "requires": []

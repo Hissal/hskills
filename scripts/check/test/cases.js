@@ -296,6 +296,7 @@ module.exports.push(
 );
 // ---- copied file safety (#103) ----------------------------------------------
 module.exports.push(...require('./copied-safety-cases')({ skill, skillMd }));
+module.exports.push(...require('./manifest-policy-cases')({ skill, tree }));
 
 // #101: the automatic guide (the onboarding pack's skill) matches the core
 // guide (skills/core/guide) outside frontmatter.
@@ -349,7 +350,7 @@ for (const data of [
 });
 module.exports.push({
   name: 'a manifest names core, pack and expensive skills',
-  files: tree(skill('skills/core/alpha'), skill('skills/packs/onboarding/beta'), {
+  files: tree(skill('skills/core/alpha', { fm: { 'disable-model-invocation': ' true' } }), skill('skills/packs/onboarding/beta'), {
     'collection.json': JSON.stringify({
       core: ['skills/core/alpha'],
       packs: { onboarding: ['skills/packs/onboarding/beta'] },

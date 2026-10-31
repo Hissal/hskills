@@ -32,6 +32,7 @@ module.exports = [
   require('./plugin-output'),
 
   require('./harness-gates'),
+  require('./expensive-workflow'),
 
   require('./id-stability'),
   require('./agnix'),

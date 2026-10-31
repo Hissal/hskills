@@ -185,7 +185,19 @@ module.exports = [
 module.exports.push({
   name: 'tripwire figures print even for an empty collection',
   files: {}, expect: [],
-  output: ['TRIPWIRE core: 0 tokens', 'TRIPWIRE always-on: not measured (COLLECTION_ALWAYS_ON_PATH unset)'],
+  output: ['TRIPWIRE core: 0 tokens', 'TRIPWIRE always-on: not measured (file absent from collection: steering.md)'],
+});
+module.exports.push({
+  name: 'the steering source crossing 500 tokens warns by default',
+  files: { 'steering.md': 'x'.repeat(2001) },
+  expect: ['warn idle-cost steering.md'],
+  output: ['TRIPWIRE always-on: 500.25 tokens'],
+});
+module.exports.push({
+  name: 'the steering source within 500 tokens is measured by default and passes',
+  files: { 'steering.md': 'x'.repeat(2000) },
+  expect: [],
+  output: ['TRIPWIRE always-on: 500 tokens'],
 });
 module.exports.push({
   name: 'core description and when_to_use cross 1000 tokens and only warn',
@@ -296,6 +308,7 @@ module.exports.push(
 );
 // ---- copied file safety (#103) ----------------------------------------------
 module.exports.push(...require('./copied-safety-cases')({ skill, skillMd }));
+module.exports.push(...require('./manifest-policy-cases')({ skill, tree }));
 
 // #101: the automatic guide (the onboarding pack's skill) matches the core
 // guide (skills/core/guide) outside frontmatter.
@@ -349,7 +362,7 @@ for (const data of [
 });
 module.exports.push({
   name: 'a manifest names core, pack and expensive skills',
-  files: tree(skill('skills/core/alpha'), skill('skills/packs/onboarding/beta'), {
+  files: tree(skill('skills/core/alpha', { fm: { 'disable-model-invocation': ' true' } }), skill('skills/packs/onboarding/beta'), {
     'collection.json': JSON.stringify({
       core: ['skills/core/alpha'],
       packs: { onboarding: ['skills/packs/onboarding/beta'] },
@@ -373,3 +386,59 @@ module.exports.push({
   files: { 'scripts/install/install.js': '// fixture installer' },
   expect: ['fail install-cases scripts/install/test/run.js'],
 });
+
+// #110: membership policy and plugin closure, read from the manifest (#114)
+// and the generated plugin lists (#124).
+const manifest = (core, packs) => ({ 'collection.json': JSON.stringify({ core, packs: packs || {}, expensive: [] }) });
+module.exports.push(
+  { name: 'a skill in neither core nor a pack fails', files: tree(skill('skills/core/alpha'), skill('skills/core/beta'), manifest(['skills/core/alpha'])), expect: ['fail pack-membership skills/core/beta/SKILL.md'] },
+  { name: 'a skill in both core and a pack fails', files: tree(skill('skills/packs/web/alpha'), manifest(['skills/packs/web/alpha'], { web: ['skills/packs/web/alpha'] })), expect: ['fail pack-membership collection.json'] },
+  { name: 'a skill in two packs fails', files: tree(skill('skills/packs/web/alpha'), manifest([], { web: ['skills/packs/web/alpha'], api: ['skills/packs/web/alpha'] })), expect: ['fail pack-membership collection.json'] },
+  { name: 'each skill in core or exactly one pack passes', files: tree(skill('skills/core/alpha'), skill('skills/packs/web/beta'), manifest(['skills/core/alpha'], { web: ['skills/packs/web/beta'] })), expect: [] },
+);
+module.exports.push(
+  { name: 'paths on a skill listed in a plugin fails', files: tree(skill('skills/packs/web/alpha', { fm: { paths: ' ["**/*.js"]' } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: ['fail plugin-paths skills/packs/web/alpha/SKILL.md'] },
+  { name: 'paths on a core skill listed in a plugin fails', files: tree(skill('skills/core/alpha', { fm: { paths: '\n  - "**/*.js"' } }), manifest(['skills/core/alpha'])), expect: ['fail plugin-paths skills/core/alpha/SKILL.md'] },
+  { name: 'a single-quoted paths key on a skill listed in a plugin fails', files: tree(skill('skills/packs/web/alpha', { fm: { "'paths'": " ['**/*.cs']" } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: ['fail plugin-paths skills/packs/web/alpha/SKILL.md'] },
+  { name: 'a double-quoted paths key on a skill listed in a plugin fails', files: tree(skill('skills/packs/web/alpha', { fm: { '"paths"': ' ["**/*.cs"]' } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: ['fail plugin-paths skills/packs/web/alpha/SKILL.md'] },
+  { name: 'a quoted key that only starts with paths passes', files: tree(skill('skills/packs/web/alpha', { fm: { "'paths-note'": ' kept' } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: [] },
+  { name: 'a plugin-listed skill without paths passes', files: tree(skill('skills/packs/web/alpha', { fm: { when_to_use: ' "paths: are mentioned here only"' } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: [] },
+);
+// requiring(dir, id): a skill that requires `id` and names it in its body
+const requiring = (dir, id) => skill(dir, { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/' + dir.split('/').pop() + '"\n  agent-skills-sync.requires: \'["hissal.skill-collection/' + id + '"]\'' }, body: '# x\n\nLoad hissal.skill-collection/' + id + ' first.\n' });
+module.exports.push(
+  { name: 'a pack requirement in its own pack or core passes', files: tree(requiring('skills/packs/web/alpha', 'beta'), requiring('skills/packs/web/beta', 'gamma'), skill('skills/core/gamma'), manifest(['skills/core/gamma'], { web: ['skills/packs/web/alpha', 'skills/packs/web/beta'] })), expect: [] },
+  { name: 'a pack requirement in another pack fails', files: tree(requiring('skills/packs/web/alpha', 'beta'), skill('skills/packs/api/beta'), manifest([], { web: ['skills/packs/web/alpha'], api: ['skills/packs/api/beta'] })), expect: ['fail plugin-requirements skills/packs/web/alpha/SKILL.md'] },
+  // The pack skill's ID slug differs from its callable name, so the core skill
+  // names only the ID and core-names-pack stays out of this case.
+  { name: 'a core requirement in a pack fails', files: tree(requiring('skills/core/alpha', 'web-knowledge'), skill('skills/packs/web/beta', { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/web-knowledge"' } }), manifest(['skills/core/alpha'], { web: ['skills/packs/web/beta'] })), expect: ['fail plugin-requirements skills/core/alpha/SKILL.md'] },
+  { name: 'an unresolved requirement is skill-requirements, not plugin closure', files: tree(requiring('skills/core/alpha', 'missing'), manifest(['skills/core/alpha'])), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
+);
+// published(lists): generated plugin outputs, written out by hand, for
+// { core: [...], web: [...] } callable-name lists; `plugin-output` compares them.
+const json = (data) => JSON.stringify(data, null, 2) + '\n';
+const published = (lists) => {
+  const out = { 'version.txt': '0.1.0\n' };
+  const plugins = [];
+  for (const [group, names] of Object.entries(lists)) {
+    const root = group === 'core' ? 'skills/core' : 'skills/packs/' + group;
+    const name = group === 'core' ? 'collection-core' : 'collection-pack-' + group;
+    const description = 'Generated ' + group + ' skill list from collection.json.';
+    for (const host of ['claude', 'codex']) out[root + '/.' + host + '-plugin/plugin.json'] = json({ name, version: '0.1.0', description, skills: names.map((n) => './' + n) });
+    plugins.push({ name, source: './' + root, description, policy: { installation: 'AVAILABLE', authentication: 'ON_INSTALL' }, category: 'Productivity' });
+  }
+  out['.claude-plugin/marketplace.json'] = json({ name: 'fixture', plugins });
+  return out;
+};
+const listed = tree(skill('skills/core/alpha'), skill('skills/core/beta'), skill('skills/packs/web/gamma'), manifest(['skills/core/alpha', 'skills/core/beta'], { web: ['skills/packs/web/gamma'] }));
+module.exports.push(
+  { name: 'plugin lists matching the manifest pass', files: tree(listed, published({ core: ['alpha', 'beta'], web: ['gamma'] })), expect: [] },
+  { name: 'a plugin list missing a manifest skill fails', files: tree(listed, published({ core: ['alpha', 'beta'], web: ['gamma'] }), { 'skills/core/.codex-plugin/plugin.json': published({ core: ['alpha'] })['skills/core/.codex-plugin/plugin.json'] }), expect: ['fail plugin-output skills/core/.codex-plugin/plugin.json'] },
+  { name: 'a plugin list naming a skill outside its manifest list fails', files: tree(listed, published({ core: ['alpha', 'beta'], web: ['gamma'] }), { 'skills/packs/web/.claude-plugin/plugin.json': published({ web: ['beta', 'gamma'] })['skills/packs/web/.claude-plugin/plugin.json'] }), expect: ['fail plugin-output skills/packs/web/.claude-plugin/plugin.json'] },
+);
+module.exports.push(
+  { name: 'an onboarding pack of two skills fails plugin output', files: tree(skill('skills/packs/onboarding/alpha'), skill('skills/packs/onboarding/beta'), manifest([], { onboarding: ['skills/packs/onboarding/alpha', 'skills/packs/onboarding/beta'] }), published({ onboarding: ['alpha', 'beta'] })), expect: ['fail plugin-output collection.json'] },
+  { name: 'an onboarding pack of one skill passes plugin output', files: tree(skill('skills/packs/onboarding/alpha'), manifest([], { onboarding: ['skills/packs/onboarding/alpha'] }), published({ onboarding: ['alpha'] })), expect: [] },
+);
+// ---- release versions and steering paths (#112) ------------------------------
+module.exports.push(...require('./release-steering-cases')({ skill }));

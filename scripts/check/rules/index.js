@@ -29,9 +29,17 @@ module.exports = [
   require('./dependency-catalog'),
   require('./release-catalog'),
   require('./release-config'),
+  require('./release-version'),
+  require('./steering-paths'),
   require('./plugin-output'),
+  // pack membership and plugin closure (#110)
+  require('./pack-membership'),
+  require('./plugin-paths'),
+  require('./plugin-requirements'),
 
   require('./harness-gates'),
+  require('./expensive-workflow'),
+  require('./core-names-pack'),
 
   require('./id-stability'),
   require('./agnix'),

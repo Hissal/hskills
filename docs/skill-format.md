@@ -46,8 +46,10 @@ with exactly these three required fields:
 - `core`: an array of core skill paths.
 - `packs`: an object mapping pack names to arrays of skill paths. A pack is a
   named list; onboarding is a one-skill list containing the automatic guide.
-- `expensive`: an array of skill paths whose specs allow the expensive
-  description budget. It grants no membership or invocation authority.
+- `expensive`: an array of skill paths of expensive workflows (see
+  [GLOSSARY.md](../GLOSSARY.md)), each set by the skill's own spec. It grants no
+  membership. An expensive workflow is user-invoked unless it is `code-review`
+  or `research`; the `expensive-workflow` rule fails otherwise.
 
 Pack names and path segments are lowercase kebab-case (letters and digits).
 Paths use forward slashes and exactly `skills/core/<skill>` or
@@ -58,9 +60,9 @@ stay in skill metadata (ADR 0004), never in this manifest.
 
 The `collection-manifest` rule rejects invalid JSON, any other shape, and
 entries without a skill. It is silent when the manifest is absent in a fixture
-collection. Membership completeness and exclusivity (core or exactly one pack),
-onboarding cardinality and plugin-list agreement belong to #110; expensive-list
-policy belongs to #111.
+collection. `pack-membership` fails a skill listed in neither core nor a pack, or
+in more than one; plugin-list agreement and onboarding cardinality are
+`plugin-output`'s (see [Generated plugin lists](#generated-plugin-lists)).
 
 ## Personal steering source
 
@@ -77,9 +79,14 @@ and is absent from this source. For line admission and the measured source snaps
 [#118 evidence](../research/steering-source-118.md). The current naming-only text
 is authoritative; the historical tooling-note requirement was
 [retired](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
-The 500-token tripwire measurement belongs to #92; command and path validation
-belongs to #112. Until the measurement uses this path by default, run
-`COLLECTION_ALWAYS_ON_PATH=steering.md node scripts/check/check.js` to include it.
+The source is user scope: it is linked into `~/.claude/CLAUDE.md` and the
+global `AGENTS.md` and loaded in every project, so no path in it resolves
+against this repository. The `steering-paths` rule therefore fails any relative
+or root-absolute Markdown link (link with an absolute URL instead; in-page
+`#anchors` pass) and does not check paths in
+code. It also fails a `/skill` or `$skill` command for a skill that any release
+tag carried and no skill carries now. The always-on tripwire (#92) measures
+this file by default; see [Idle-cost tripwires](#idle-cost-tripwires).
 
 ## Skill folder
 
@@ -209,7 +216,14 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` sits in a skill with no lock entry |
 | `dependency-catalog` | fail | the catalog's marked dependency section differs from fresh metadata output; names the regenerate command |
 | `release-config` | fail | invalid single-version release settings or a plugin manifest missing its JSON version stamp entry |
+| `pack-membership` | fail | a skill in neither core nor a pack, or in more than one |
+| `plugin-paths` | fail | a skill listed in a plugin declares `paths:` |
+| `plugin-requirements` | fail | a plugin skill's requirement resolves outside its plugin (plus core, for a pack) |
+| `release-version` | fail | a plugin manifest version differs from the last release tag, or from the newer version a release PR records in `.release-please-manifest.json`; silent until the first release tag |
+| `steering-paths` | fail | `steering.md` has a relative or root-absolute Markdown link (it is user scope, so links must be absolute URLs), or names a `/skill` or `$skill` command (optionally `<plugin>:`-qualified) for a skill that any `v*` release tag carried and no skill carries now |
 | `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
+| `expensive-workflow` | fail | a skill on the manifest's `expensive` list is model-invoked and is not `code-review` or `research` |
+| `core-names-pack` | fail | a text file in a core skill other than `setup-project` and the core guide names a pack skill from the manifest (see [Extension points](#extension-points)) |
 | `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
 | `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
 | `copied-file-safety` | fail | a text file in a lock-listed copied skill contains hidden Unicode controls or a Windows, macOS or Linux personal home path; reports the line and, for Unicode, the code point |
@@ -280,10 +294,11 @@ excludes a skill. Bodies, reference files and skills outside the collection's
 core and pack tree contribute nothing. Quoting and block-scalar markers are
 syntax rather than listing text.
 
-`COLLECTION_ALWAYS_ON_PATH` is the single setting for the repository-relative
-always-on source path, **set by spec 2, #118/#114**. It is unset by default.
-When unset or when the file is absent from the checked collection, the check
-prints “not measured” with the reason and continues successfully.
+The always-on source is `steering.md` by default, the
+[personal steering source](#personal-steering-source).
+`COLLECTION_ALWAYS_ON_PATH` overrides it with another repository-relative path.
+When the file is absent from the checked collection, the check prints “not
+measured” with the reason and continues successfully.
 
 The `idle-cost` warning fires above 500 tokens for the always-on source,
 1,000 for core descriptions, or 1,000 for one pack's descriptions. Equality
@@ -468,6 +483,13 @@ listed pack guides; it never names a particular pack or pack skill. Example:
 The caller keeps its current job while obtaining that knowledge; a lookup never
 starts another workflow. See [core extension points](agents/core-extension-points.md).
 
+The `core-names-pack` rule fails when any text file in a core skill's folder
+names a skill listed under the manifest's `packs`, pack guides included, as a
+whole callable-name token (case-sensitive; `web-testing` matches in
+`/web-testing` and `skills/packs/web/web-testing`, not in `web-testing-style`).
+`setup-project` and the core guide (`skills/core/guide`) are exempt, since they
+name packs by design.
+
 ## Hard requirements at runtime
 
 Before doing any work, load every skill declared in `requires` and the
@@ -614,8 +636,12 @@ differs with the gate and the sync skips it; `harness-gates` checks it against
 After changing `collection.json` or `version.txt`, run
 `node scripts/plugins/generate.js`. Commit its manifests, marketplace and release
 configuration together. `plugin-output` reports missing, stale and retired
-outputs. It compares generated bytes; pack membership, inert `paths:` and
-requirement closure are separate rules owned by #110.
+outputs. It compares generated bytes, so a plugin list that disagrees with the
+manifest fails. Two rules read the same lists: `plugin-paths` fails `paths:` on a
+listed skill, since plugin installs ignore it and the skill would be silently
+unlisted; `plugin-requirements` fails a requirement that resolves outside its
+plugin, where core resolves within core and a pack within itself plus core
+([#77, owner answer 2](https://github.com/Hissal/skill-collection/issues/77#issuecomment-6509966712)).
 
 Each nonempty group publishes two host manifests at its skill-tree root:
 `skills/core` or `skills/packs/<pack>`. Paths stay inside that root; a selection

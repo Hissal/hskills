@@ -387,6 +387,9 @@ module.exports.push(
 module.exports.push(
   { name: 'paths on a skill listed in a plugin fails', files: tree(skill('skills/packs/web/alpha', { fm: { paths: ' ["**/*.js"]' } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: ['fail plugin-paths skills/packs/web/alpha/SKILL.md'] },
   { name: 'paths on a core skill listed in a plugin fails', files: tree(skill('skills/core/alpha', { fm: { paths: '\n  - "**/*.js"' } }), manifest(['skills/core/alpha'])), expect: ['fail plugin-paths skills/core/alpha/SKILL.md'] },
+  { name: 'a single-quoted paths key on a skill listed in a plugin fails', files: tree(skill('skills/packs/web/alpha', { fm: { "'paths'": " ['**/*.cs']" } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: ['fail plugin-paths skills/packs/web/alpha/SKILL.md'] },
+  { name: 'a double-quoted paths key on a skill listed in a plugin fails', files: tree(skill('skills/packs/web/alpha', { fm: { '"paths"': ' ["**/*.cs"]' } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: ['fail plugin-paths skills/packs/web/alpha/SKILL.md'] },
+  { name: 'a quoted key that only starts with paths passes', files: tree(skill('skills/packs/web/alpha', { fm: { "'paths-note'": ' kept' } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: [] },
   { name: 'a plugin-listed skill without paths passes', files: tree(skill('skills/packs/web/alpha', { fm: { when_to_use: ' "paths: are mentioned here only"' } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: [] },
 );
 // requiring(dir, id): a skill that requires `id` and names it in its body

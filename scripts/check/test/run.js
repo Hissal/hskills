@@ -64,9 +64,11 @@ try {
     // before: repository scripts run on the fixture first, as
     // `node <script> <fixture>` (e.g. a generator); clean: they must leave
     // the committed files unchanged
+    // a script that exits nonzero fails the case
+    const preFailed = [];
     for (const script of c.before || []) {
       const pre = spawnSync(process.execPath, [path.join(REPO, script), dir], { encoding: 'utf8' });
-      if (pre.status !== 0) console.log('     ' + script + ' exited ' + pre.status + ': ' + (pre.stdout + pre.stderr).trim());
+      if (pre.status !== 0) preFailed.push(script + ' exited ' + pre.status + ': ' + (pre.stdout + pre.stderr).trim().split('\n').slice(0, 6).join('\n     '));
     }
     const dirty = c.clean ? spawnSync('git', ['status', '--porcelain'], { cwd: dir, encoding: 'utf8' }).stdout.trim() : '';
 
@@ -75,7 +77,8 @@ try {
     else if (c.agnix === 'missing') env.COLLECTION_CHECK_AGNIX = path.join(dir, 'no-agnix-here.js');
     else if (c.agnix) env.AGNIX_STUB = JSON.stringify(c.agnix);
 
-    const written = Object.fromEntries(Object.keys(Object.assign({}, c.committed, c.files)).map((f) => [f, fs.readFileSync(path.join(dir, ...f.split('/')))]));
+    // a file a before script deleted is not compared
+    const written = Object.fromEntries(Object.keys(Object.assign({}, c.committed, c.files)).filter((f) => fs.existsSync(path.join(dir, ...f.split('/')))).map((f) => [f, fs.readFileSync(path.join(dir, ...f.split('/')))]));
     const res = spawnSync(process.execPath, [CHECK, dir], { encoding: 'utf8', env });
     const got = res.stdout.split('\n').map((l) => l.match(FINDING)).filter(Boolean).map((m) => key(m[1], m[3], m[2])).sort();
     const want = (c.expect || []).slice().sort();
@@ -86,13 +89,14 @@ try {
       : other.some((line) => expected.test(line))) &&
       (!(c.output || []).some((expected) => expected instanceof RegExp) || other.length === c.output.length);
     const changed = Object.keys(written).filter((f) => !fs.readFileSync(path.join(dir, ...f.split('/'))).equals(Buffer.from(written[f])));
-    const ok = outputOk && res.status === exit && JSON.stringify(got) === JSON.stringify(want) && !changed.length && !dirty;
+    const ok = outputOk && res.status === exit && JSON.stringify(got) === JSON.stringify(want) && !changed.length && !dirty && !preFailed.length;
     if (ok) { passed++; return; }
     failed++;
     console.log('FAIL ' + c.name);
     console.log('     expected exit ' + exit + ': ' + JSON.stringify(want));
     console.log('     got exit ' + res.status + ': ' + JSON.stringify(got));
     if (!outputOk) console.log('     stdout: ' + res.stdout);
+    for (const p of preFailed) console.log('     ' + p);
     if (dirty) console.log('     changed committed files: ' + dirty.replace(/\n/g, ', '));
     if (changed.length) console.log('     the check changed: ' + changed.join(', '));
     if (res.stderr) console.log('     stderr: ' + res.stderr.trim().split('\n').slice(0, 6).join('\n     '));

@@ -54,7 +54,7 @@ _Avoid_: router, hub, mode, dispatcher, index, map (that is the wayfinder map)
 The guide to core's workflows. It holds routes and a continuation aid (continue, clear, hand off, delegate or compact), is user-invoked, and consults a pack guide when the situation touches that pack.
 
 **Automatic guide**:
-The core guide published model-invoked, so the agent can suggest a workflow unasked. Part of the onboarding pack, not of core.
+The core guide published model-invoked, so the agent can suggest a workflow unasked. Its callable name is `onboarding-guide`. Part of the onboarding pack, not of core.
 
 **Pack guide**:
 A pack's model-invoked guide, named `<pack>-guide`.

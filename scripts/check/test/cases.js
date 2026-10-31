@@ -310,20 +310,32 @@ module.exports.push(
 module.exports.push(...require('./copied-safety-cases')({ skill, skillMd }));
 module.exports.push(...require('./manifest-policy-cases')({ skill, tree }));
 
-// #101: the automatic guide (the onboarding pack's skill) matches the core
-// guide (skills/core/guide) outside frontmatter.
+// #101, #175: the automatic guide (the onboarding pack's skill,
+// onboarding-guide) is the core guide (skills/core/guide) as the generator
+// writes it: only frontmatter and the Codex gate differ.
+const GENERATOR = 'scripts/onboarding/generate.js';
+const AUTO = 'skills/packs/onboarding/onboarding-guide';
+const AUTO_DESCRIPTION = ' Use before starting work when no workflow has been invoked and a collection workflow could help, or when an invoked workflow is clearly a poor fit.';
 const coreGuide = (o) => skill('skills/core/guide', Object.assign({ fm: { 'disable-model-invocation': ' true' }, body: '# Guide\n\nRead [support](SUPPORT.md).\n', files: { 'SUPPORT.md': '# Support\n' } }, o));
-const autoGuide = (o) => skill('skills/packs/onboarding/auto-guide', Object.assign({ fm: { description: ' Use at the start of a task to suggest a workflow.' }, body: '# Guide\n\nRead [support](SUPPORT.md).\n', files: { 'SUPPORT.md': '# Support\n' } }, o));
+const autoGuide = (o) => skill(AUTO, Object.assign({ fm: { description: AUTO_DESCRIPTION }, body: '# Guide\n\nRead [support](SUPPORT.md).\n', files: { 'SUPPORT.md': '# Support\n' } }, o));
 module.exports.push(
-  { name: 'an automatic guide body differing from the core guide fails', files: tree(coreGuide(), autoGuide({ body: '# Guide\n\nRead [support](SUPPORT.md) first.\n' })), expect: ['fail automatic-guide-sync skills/packs/onboarding/auto-guide/SKILL.md'] },
-  { name: 'an automatic guide differing only in frontmatter and description passes', files: tree(coreGuide(), autoGuide()), expect: [] },
+  { name: 'an automatic guide body differing from the core guide fails', files: tree(coreGuide(), autoGuide({ body: '# Guide\n\nRead [support](SUPPORT.md) first.\n' })), expect: ['fail automatic-guide-sync ' + AUTO + '/SKILL.md'] },
+  { name: 'an automatic guide as the generator writes it passes', files: tree(coreGuide(), autoGuide()), expect: [] },
   { name: 'an automatic guide without a core guide is silent', files: autoGuide({ body: '# Other\n', files: {} }), expect: [] },
   { name: 'a core guide without an automatic guide is silent', files: tree(coreGuide(), skill('skills/packs/web/web-review')), expect: [] },
-  { name: 'an automatic guide bundled file differing from the core guide fails', files: tree(coreGuide(), autoGuide({ files: { 'SUPPORT.md': '# Support\n\nEdited.\n' } })), expect: ['fail automatic-guide-sync skills/packs/onboarding/auto-guide/SUPPORT.md'] },
-  { name: 'an automatic guide missing a core guide file fails', files: tree(coreGuide({ body: '# Guide\n\nRead [support](SUPPORT.md) and [more](refs/MORE.md).\n', files: { 'SUPPORT.md': '# Support\n', 'refs/MORE.md': '# More\n' } }), autoGuide({ body: '# Guide\n\nRead [support](SUPPORT.md) and [more](refs/MORE.md).\n', files: { 'SUPPORT.md': '# Support\n' } })), expect: ['fail missing-file skills/packs/onboarding/auto-guide/SKILL.md', 'fail automatic-guide-sync skills/packs/onboarding/auto-guide/SKILL.md'] },
-  { name: 'guides differing only in frontmatter and gate files pass', files: tree(coreGuide(), autoGuide({ openai: 'interface:\n  display_name: "Guide"\npolicy:\n  allow_implicit_invocation: true\n' })), expect: [] },
-  { name: 'a stale automatic guide gate fails harness-gates, not the sync', files: tree(coreGuide(), autoGuide({ openai: 'policy:\n  allow_implicit_invocation: false\n' })), expect: ['fail harness-gates skills/packs/onboarding/auto-guide/agents/openai.yaml'] },
-  { name: 'an automatic guide with an extra file fails', files: tree(coreGuide(), autoGuide({ files: { 'SUPPORT.md': '# Support\n', 'scripts/extra.js': 'x\n' } })), expect: ['fail automatic-guide-sync skills/packs/onboarding/auto-guide/scripts/extra.js'] }
+  { name: 'an automatic guide bundled file differing from the core guide fails', files: tree(coreGuide(), autoGuide({ files: { 'SUPPORT.md': '# Support\n\nEdited.\n' } })), expect: ['fail automatic-guide-sync ' + AUTO + '/SUPPORT.md'] },
+  { name: 'an automatic guide missing a core guide file fails', files: tree(coreGuide({ body: '# Guide\n\nRead [support](SUPPORT.md) and [more](refs/MORE.md).\n', files: { 'SUPPORT.md': '# Support\n', 'refs/MORE.md': '# More\n' } }), autoGuide({ body: '# Guide\n\nRead [support](SUPPORT.md) and [more](refs/MORE.md).\n', files: { 'SUPPORT.md': '# Support\n' } })), expect: ['fail missing-file ' + AUTO + '/SKILL.md', 'fail automatic-guide-sync ' + AUTO + '/SKILL.md'] },
+  { name: 'guides differing only in the Codex gate pass', files: tree(coreGuide({ openai: 'interface:\n  display_name: "Guide"\npolicy:\n  allow_implicit_invocation: false\n' }), autoGuide({ openai: 'interface:\n  display_name: "Guide"\npolicy:\n  allow_implicit_invocation: true\n' })), expect: [] },
+  { name: 'a stale automatic guide gate fails harness-gates and the sync', files: tree(coreGuide(), autoGuide({ openai: 'policy:\n  allow_implicit_invocation: false\n' })), expect: ['fail harness-gates ' + AUTO + '/agents/openai.yaml', 'fail automatic-guide-sync ' + AUTO + '/agents/openai.yaml'] },
+  { name: 'an automatic guide Codex file edited outside its gate fails', files: tree(coreGuide(), autoGuide({ openai: 'interface:\n  display_name: "Guide"\npolicy:\n  allow_implicit_invocation: true\n' })), expect: ['fail automatic-guide-sync ' + AUTO + '/agents/openai.yaml'] },
+  { name: 'an automatic guide with an extra file fails', files: tree(coreGuide(), autoGuide({ files: { 'SUPPORT.md': '# Support\n', 'scripts/extra.js': 'x\n' } })), expect: ['fail automatic-guide-sync ' + AUTO + '/scripts/extra.js'] },
+  { name: 'an automatic guide with a hand-edited description fails', files: tree(coreGuide(), autoGuide({ fm: { description: ' Use at the start of a task to suggest a workflow.' } })), expect: ['fail automatic-guide-sync ' + AUTO + '/SKILL.md'] },
+  { name: 'an automatic guide keeping the core guide ID fails', files: tree(coreGuide(), autoGuide({ fm: { description: AUTO_DESCRIPTION, metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/guide"' } })), expect: ['fail skill-metadata ' + AUTO + '/SKILL.md', 'fail automatic-guide-sync ' + AUTO + '/SKILL.md'] },
+  { name: 'a block-scalar core description is replaced whole', files: tree(coreGuide({ fm: { 'disable-model-invocation': ' true', description: ' |\n  Find the next workflow.' } }), autoGuide()), expect: [] },
+  { name: 'a core guide the generator cannot read fails on the core guide', files: tree(coreGuide({ fm: { 'disable-model-invocation': ' true', metadata: '\n  agent-skills-sync.schema: "1"' } }), autoGuide()), expect: ['fail skill-metadata skills/core/guide/SKILL.md', 'fail automatic-guide-sync skills/core/guide/SKILL.md'] },
+  { name: 'the generator writes the automatic guide from the core guide', files: tree({ 'collection.json': JSON.stringify({ core: ['skills/core/guide'], packs: { onboarding: [AUTO] }, expensive: [] }) }, coreGuide({ files: { 'SUPPORT.md': '# Support\n', 'refs/MORE.md': '# More\n' }, body: '# Guide\n\nRead [support](SUPPORT.md) and [more](refs/MORE.md).\n' })), before: [GENERATOR], expect: [] },
+  { name: 'the generator reproduces a committed automatic guide', committed: tree(coreGuide(), autoGuide()), before: [GENERATOR], clean: true, expect: [] },
+  { name: 'the generator repairs a stale automatic guide and removes extra files', committed: tree(coreGuide(), autoGuide({ fm: { description: ' Stale.' }, body: '# Old\n', files: { 'SUPPORT.md': '# Old support\n', 'OLD.md': '# Old\n' } })), before: [GENERATOR], expect: [] }
 );
 
 // #114: the manifest's data contract, independent of membership policy (#110).

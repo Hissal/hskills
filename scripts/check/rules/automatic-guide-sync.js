@@ -1,29 +1,40 @@
 'use strict';
-// The automatic guide is the core guide published model-invoked (#77, #101).
-// It is generated from the core guide and committed, and may differ only in
-// frontmatter (the gate and the description). The generated Codex gate file
-// is frontmatter-derived, so it is skipped like frontmatter; harness-gates
-// checks it against its source. The core guide is
-// skills/core/guide; the automatic guide's callable name is not decided, so it
-// is the onboarding pack's skill, which ships nothing else. Silent until both
-// exist.
+// The automatic guide is the core guide published model-invoked (#77, #101):
+// onboarding-guide, the onboarding pack's one skill (#175). It is generated
+// from the core guide (skills/core/guide) by scripts/onboarding/generate.js
+// and committed. Only frontmatter and the Codex gate file may differ from
+// the core guide, and both must be what the generator writes. Every skill in
+// the onboarding pack's folder is held to this, so a renamed or second skill
+// there fails too. Silent until both guides exist.
 
 const gates = require('../../gates/gates');
+const guide = require('../../onboarding/guide');
 
-const CORE = 'skills/core/guide';
 const AUTOMATIC = /^skills\/packs\/onboarding\/[^/]+$/;
 
 module.exports = {
   id: 'automatic-guide-sync',
   level: 'fail',
   check(c) {
-    const core = c.skills.find((s) => s.dir === CORE);
+    const core = c.skills.find((s) => s.dir === guide.CORE);
     if (!core) return [];
-    const fix = 'regenerate the automatic guide from ' + CORE + '; only frontmatter may differ';
-    return c.skills.filter((s) => AUTOMATIC.test(s.dir)).flatMap((auto) => {
+    const fix = 'run ' + guide.COMMAND + '; edit the core guide, never the automatic guide';
+    const autos = c.skills.filter((s) => AUTOMATIC.test(s.dir));
+    if (!autos.length) return [];
+    const coreCodex = core.dir + '/' + gates.CODEX_FILE;
+    let expected;
+    try {
+      expected = guide.generate(c.text(core.skillMd), c.exists(coreCodex) ? c.text(coreCodex) : null);
+    } catch (e) {
+      return [{ file: core.skillMd, message: 'cannot generate the automatic guide: ' + e.message }];
+    }
+    return autos.flatMap((auto) => {
       const out = [];
       const i = firstDifference(core.body, auto.body);
       if (i >= 0) out.push({ file: auto.skillMd, line: auto.bodyLine + i, message: 'body differs from ' + core.skillMd + '; ' + fix });
+      else if (c.text(auto.skillMd) !== expected.skillMd) out.push({ file: auto.skillMd, message: 'frontmatter differs from what the generator writes; ' + fix });
+      const autoCodex = auto.dir + '/' + gates.CODEX_FILE;
+      if (c.exists(autoCodex) && c.text(autoCodex) !== expected.codex) out.push({ file: autoCodex, message: 'differs from what the generator writes from ' + coreCodex + '; ' + fix });
       const coreFiles = bundled(core);
       const autoFiles = bundled(auto);
       for (const [rel, file] of coreFiles) {
@@ -36,8 +47,8 @@ module.exports = {
   },
 };
 
-// a skill's files other than SKILL.md and its generated gate file, keyed by
-// path inside its folder
+// a skill's files other than SKILL.md and its Codex gate file (compared
+// above), keyed by path inside its folder
 function bundled(s) {
   return new Map(s.files.filter((f) => f !== s.skillMd).map((f) => [f.slice(s.dir.length + 1), f]).filter(([rel]) => rel !== gates.CODEX_FILE));
 }

@@ -286,10 +286,9 @@ in [the plugin investigation](../research/live-plugins-121.md).
 
 Use the plugin route for a whole core or named pack; use the folder route above
 for individual selection. Plugin skill lists are generated from `collection.json`
-by `node scripts/plugins/generate.js`. Empty lists publish no plugin. Production
-membership is currently empty; these commands become useful when the content
-specs add manifest entries. Core never includes onboarding. When its actual
-entry arrives, onboarding publishes as a separate one-skill plugin.
+by `node scripts/plugins/generate.js`. Empty lists publish no plugin. Core never
+includes onboarding; onboarding publishes as a separate one-skill plugin,
+`collection-pack-onboarding`, holding `onboarding-guide`.
 
 Register this checkout with `claude plugin marketplace add <checkout>` or
 `codex plugin marketplace add <checkout>`. Install `collection-core@skill-collection`

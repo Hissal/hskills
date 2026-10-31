@@ -645,4 +645,5 @@ changing skill identity or requirements with
 | Skill ID | Callable / source | Hard requirements |
 |---|---|---|
 | `hissal.skill-collection/guide` | [`guide`](../skills/core/guide/SKILL.md) | — |
+| `hissal.skill-collection/onboarding-guide` | [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md) | — |
 <!-- END GENERATED DEPENDENCIES -->

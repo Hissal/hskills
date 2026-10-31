@@ -12,7 +12,7 @@ metadata:
 
 Recommend the workflow that clears the immediate obstacle, and hand back the exact invocation. You recommend; the human starts. Your tool use here is reading: the conversation, project files, skill files and the project's pack guides. You never invoke a recommended skill, model-invoked ones included, and never edit, build, test or delegate. After the answer, the next move is the human's.
 
-Done when every relevant pack guide has been asked for routes or flagged as not set up, and the answer names one recommended invocation, says why it fits this obstacle in terms taken from the skill's own file (or says the skill is not installed), and nothing has started.
+Done when every listed pack guide whose domain touches the obstacle has been asked for routes, every unlisted pack guide in your skill listing has its **Not set up** line, and the answer names one recommended invocation, says why it fits this obstacle in terms taken from the skill's own file (or its listing entry when no exact path reaches the file, or says the skill is not installed), and nothing has started.
 
 ## 1. Name the obstacle
 
@@ -23,7 +23,7 @@ State, in one sentence, what is in the way right now: not the whole project, the
 The project's packs add workflows core does not know; their guides hold them. Take pack routes only from the guides, by these two sources:
 
 - **The pack list**: the `### Packs` section of the `## Agent skills` block in the project's `AGENTS.md` or `CLAUDE.md`, one line per pack with its guide's callable name, its domain and its config file. For each listed guide whose domain touches the obstacle, load it by that name through the skill tool (on a harness without one, read the `SKILL.md` at the path your skill listing gives) and ask for its routes as it instructs. A pack guide is knowledge, never a workflow: loading it is how you ask, and each route it returns is a candidate to recommend.
-- **The skill listing**: a pack guide is named `<pack>-guide`, with a plugin prefix when a plugin installed it. One in your listing that touches the obstacle but is missing from the pack list is not asked for routes; it gets the answer's **Not set up** line, worded exactly as the template gives it.
+- **The skill listing**: a pack guide is named `<pack>-guide`, with a plugin prefix when a plugin installed it. Every one in your listing that is missing from the pack list gets the answer's **Not set up** line, worded exactly as the template gives it, whatever its domain: an installed pack that is not set up matters even when this obstacle is elsewhere. It is not asked for routes. Relevance decides only which listed guides you ask.
 
 With no pack list and no such guide in the listing, carry on with the core routes. The list and the listing are the whole search.
 
@@ -75,11 +75,21 @@ The larger route, for an effort that starts unclear: `/wayfinder` or `/grill-wit
 
 ## 4. Read the recommended skill
 
-Look for the recommended skill's `SKILL.md` in this harness's skill locations only, project scope first: on Claude Code `.claude/skills/<name>/` then `~/.claude/skills/<name>/`, on Codex `.agents/skills/<name>/` then `~/.agents/skills/<name>/`, or the `skills/` folder of the plugin that installed it. The first one found is the installed skill. Read it with a file read, as a document to describe: its steps are the human's to start. Invoking it through the skill tool would start it. Read an alternative's file too when you describe it beyond its table situation. A pack route's skill is read the same way; only pack guides are loaded through the skill tool, in step 2.
+Find the recommended skill's `SKILL.md` by its installed name, in this order:
+
+1. **Your skill listing.** When the listing gives the skill's file path, read that file.
+2. **This harness's documented locations.** Otherwise try these exact paths in order, project scope (from the project root) first; the first that exists is the installed skill:
+   - Claude Code: `.claude/skills/<name>/SKILL.md`, `~/.claude/skills/<name>/SKILL.md`.
+   - Codex: `.agents/skills/<name>/SKILL.md`, `~/.agents/skills/<name>/SKILL.md`.
+   - OpenCode: `.opencode/skills/<name>/SKILL.md`, `.claude/skills/<name>/SKILL.md`, `.agents/skills/<name>/SKILL.md`, `~/.config/opencode/skills/<name>/SKILL.md`, `~/.claude/skills/<name>/SKILL.md`, `~/.agents/skills/<name>/SKILL.md`.
+
+Each try is a direct read of one exact path, or an existence check on it. Never enumerate an installation folder, whether a skill folder, a plugin folder or a home directory: no listing its contents, no searching it for files. The listing and these paths are the whole lookup. When neither reaches the file but the skill is in your listing (a plugin skill with no path given, say), it is installed: describe it from its listing entry.
+
+Read the file as a document to describe: its steps are the human's to start. Invoking it through the skill tool would start it. Read an alternative's file too when you describe it beyond its table situation. A pack route's skill is read the same way; only pack guides are loaded through the skill tool, in step 2.
 
 From the file, take what it does first, what it needs from the human (an issue, a path, a running app) and its argument form.
 
-When the skill is not installed, say so, describe it only by its route's situation, and point to `/setup-project` to equip the project.
+A skill neither in your listing nor at any of those paths is not installed: say so, describe it only by its route's situation, and point to `/setup-project` to equip the project.
 
 ## 5. Answer
 

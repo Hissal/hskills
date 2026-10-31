@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// Writes only into a new disposable directory: three Git projects with real
+// Writes only into a new disposable directory: four Git projects with real
 // collection skills installed at project scope, and one trigger-eval config
 // per project. Installs nothing elsewhere and touches no auth.
 const fs = require('node:fs');
@@ -14,7 +14,7 @@ const skill = folder => path.join(repo, 'skills', folder);
 const guide = skill('core/guide');
 
 function config(variant, name, queries) {
-  const models = frontierModels(path.join(root, 'evidence', variant));
+  const models = frontierModels(path.join(root, 'evidence', variant), {reset: true});
   fs.writeFileSync(path.join(root, variant + '.json'), JSON.stringify({cwd: variant, models, skills: [{name, queries}]}, null, 2) + '\n');
 }
 // Each request invokes the core guide, which may or may not load csharp-guide.
@@ -66,36 +66,51 @@ function storefront(project) {
 
 // The core guide finding an installed pack guide, with the C# pack installed
 // beside core. `listed` is an SDK-style .NET library that names csharp-guide
-// in its pack list: /guide loads it. `unlisted` is the web shop, with no pack
-// list and requests outside C#: /guide only flags it as not set up.
-// csharp-guide's own description fires on .NET work and on choosing a C#
-// workflow, and its body handles being loaded unlisted. In a .NET project
-// that trigger, not the guide's lookup, may load it (Sol does), so the
-// unlisted case keeps it out of reach.
+// in its pack list: /guide loads it. csharp-guide's own description fires on
+// .NET work and on choosing a C# workflow, so a load in a .NET project may be
+// that trigger rather than the guide's lookup (Sol's is). `listed-control` is
+// the same library before setup, with no pack list or pack config, given the
+// same requests: there csharp-guide must stay quiet and only be flagged as not
+// set up. Together they pass only when the load needs the pack list. Neither
+// the requests nor the project's description name C# or .NET. `unlisted` is
+// the web shop, with no pack list and requests outside C#: /guide only flags
+// csharp-guide as not set up.
 const csharp = {guide, 'csharp-guide': skill('packs/csharp/csharp-guide')};
+const notSetUp = sigil => ['Recommended:', 'csharp-guide', 'installed, not set up', sigil + 'setup-project'];
+const libraryRequests = [
+  'I need to rename the public `Quantity` type without breaking the apps that consume it.',
+  'We want to add an optional `culture` parameter to the public `Quantity.Parse` method. How should I go about it?',
+  'Apps built against our previous release crash when they run against the latest one without being rebuilt. Where do I start?',
+];
+// The units library, committed; `packs` is its pack list section, if set up.
+function library(project, packs = '') {
+  install(project, csharp);
+  agents(project, '# Acme.Units\n\nA library for parsing and converting physical quantities, published as a package.', packs);
+  write(path.join(project, 'src/Acme.Units/Acme.Units.csproj'), '<Project Sdk="Microsoft.NET.Sdk">\n  <PropertyGroup>\n    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>\n    <PackageId>Acme.Units</PackageId>\n    <Version>2.3.0</Version>\n  </PropertyGroup>\n</Project>\n');
+  write(path.join(project, 'src/Acme.Units/Quantity.cs'), 'namespace Acme.Units;\n\npublic readonly struct Quantity\n{\n    public Quantity(double value, string unit) { Value = value; Unit = unit; }\n    public double Value { get; }\n    public string Unit { get; }\n    public static Quantity Parse(string text) => throw new System.NotImplementedException();\n}\n');
+}
 {
   const project = path.join(root, 'listed');
-  install(project, csharp);
-  agents(project, '# Acme.Units\n\nA NuGet library for parsing and converting physical quantities.', `
+  library(project, `
 ### Packs
 
 - \`csharp-guide\`: SDK-style .NET libraries. Config: \`docs/agents/csharp.md\`.
 `);
   write(path.join(project, 'docs/agents/csharp.md'), "# C#\n\nA missing field means the owning skill's default.\n");
-  write(path.join(project, 'src/Acme.Units/Acme.Units.csproj'), '<Project Sdk="Microsoft.NET.Sdk">\n  <PropertyGroup>\n    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>\n    <PackageId>Acme.Units</PackageId>\n    <Version>2.3.0</Version>\n  </PropertyGroup>\n</Project>\n');
-  write(path.join(project, 'src/Acme.Units/Quantity.cs'), 'namespace Acme.Units;\n\npublic readonly struct Quantity\n{\n    public Quantity(double value, string unit) { Value = value; Unit = unit; }\n    public double Value { get; }\n    public string Unit { get; }\n    public static Quantity Parse(string text) => throw new System.NotImplementedException();\n}\n');
   commit(project);
-  guideConfig('listed', true, () => ['Recommended:'], [
-    'I need to rename the public `Quantity` type in our NuGet package without breaking the apps that consume it.',
-    'We want to add an optional `culture` parameter to the public `Quantity.Parse` method. How should I go about it?',
-    'Consumers on .NET Framework report a MissingMethodException after our last package release. Where do I start?',
-  ]);
+  guideConfig('listed', true, () => ['Recommended:'], libraryRequests);
+}
+{
+  const project = path.join(root, 'listed-control');
+  library(project);
+  commit(project);
+  guideConfig('listed-control', false, notSetUp, libraryRequests);
 }
 {
   const project = path.join(root, 'unlisted');
   install(project, csharp);
   storefront(project);
-  guideConfig('unlisted', false, sigil => ['Recommended:', 'csharp-guide', 'installed, not set up', sigil + 'setup-project'], [
+  guideConfig('unlisted', false, notSetUp, [
     'Checkout sometimes charges a cart twice when the customer double-clicks Pay.',
     'I want to split src/search.js into indexing and ranking without changing any results.',
     'We need to decide how discount codes should stack before anyone builds them.',

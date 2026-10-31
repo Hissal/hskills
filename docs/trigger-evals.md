@@ -171,14 +171,19 @@ model ships.
 node scripts/eval/test/required-cases/prepare.js
 node scripts/eval/trigger.js <root>/automatic.json --repeat 2
 node scripts/eval/trigger.js <root>/listed.json --repeat 2
+node scripts/eval/trigger.js <root>/listed-control.json --repeat 2
 node scripts/eval/trigger.js <root>/unlisted.json --repeat 2
 ```
 
 [`prepare.js`](../scripts/eval/test/required-cases/prepare.js) prints a
-scratch root holding three committed projects with the skills copied from this
+scratch root holding four committed projects with the skills copied from this
 repo at project scope (`.claude/skills/`, `.agents/skills/`), and one config
-per project. Overrides, permissions and the `<root>/evidence/` raw sessions
-are as in the core guide discovery case.
+per project. Overrides and permissions are as in the core guide discovery case.
+Each session runs through the evidence capture with `--reset`: its raw
+streams go to `<root>/evidence/<case>/`, its project changes (`git status
+--porcelain`) are recorded as `changes` in its `.json`, and then the project
+is restored to its commit. No session sees another's writes, so a write shows
+up in that session's `changes` rather than in the tree after the run.
 
 - **automatic**: a web shop with `guide` and `onboarding-guide`. The prompts
   are plain requests with no invocation. `onboarding-guide` fires, and the
@@ -195,8 +200,20 @@ are as in the core guide discovery case.
   each prompt invokes the guide (`/guide`, `$guide`) with a request.
   - **listed** is an SDK-style .NET library that names `csharp-guide` in its
     `### Packs` list. The requests rename a public type, add an optional
-    parameter to a public method, and chase a `MissingMethodException` after a
-    release. `csharp-guide` fires, and the answer says `Recommended:`.
+    parameter to a public method, and chase a crash in apps that were not rebuilt
+    after a release. `csharp-guide` fires, and the answer says `Recommended:`.
+  - **listed-control** is the same library before setup, with no pack list
+    and no pack config, given the same requests. `csharp-guide` does not
+    fire, and the answer says `Recommended:`, `csharp-guide`, `installed, not
+    set up` and the setup invocation. `csharp-guide`'s own description
+    fires on .NET work and on choosing a C# workflow. So in a .NET project, a
+    firing in **listed** alone could be that trigger rather than the core
+    guide's lookup. The control rules that out: the two projects differ only in
+    the pack list, so passing both means the load needed the pack list.
+    Neither the requests nor the project's description name C# or .NET, so
+    the trigger has no cue before the project's files are read. If the
+    control fires on a model, that model's **listed** pass does not show the
+    lookup, and the pair fails.
   - **unlisted** is the web shop, with no pack list and requests outside C#:
     a double charge at checkout, splitting a module without changing results,
     and deciding how discount codes stack. `csharp-guide` does not fire, and

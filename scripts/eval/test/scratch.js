@@ -29,13 +29,14 @@ function commit(project) {
 }
 // Reads anywhere and writes in the project are granted, so a run that starts
 // no workflow does so by choice; check the tree after the runs. Raw sessions
-// go to `evidence`.
-function frontierModels(evidence) {
+// go to `evidence`. With `reset`, each session's project changes are recorded
+// in its evidence metadata, then undone, so sessions cannot see each other's.
+function frontierModels(evidence, {reset = false} = {}) {
   const models = [
     {label: 'Opus', harness: 'claude', model: 'opus', tier: 'frontier', command: [process.env.CLAUDE_BIN || 'claude', '--permission-mode', 'acceptEdits', '--allowedTools', 'Read', 'Bash']},
     {label: 'Sol', harness: 'codex', model: process.env.SOL_MODEL || 'gpt-6.1-sol', tier: 'frontier', command: [process.env.CODEX_BIN || 'codex', '-c', 'sandbox_mode="workspace-write"']},
   ];
-  for (const model of models) model.command = [process.execPath, capture, evidence, model.harness, ...model.command];
+  for (const model of models) model.command = [process.execPath, capture, ...(reset ? ['--reset'] : []), evidence, model.harness, ...model.command];
   return models;
 }
 

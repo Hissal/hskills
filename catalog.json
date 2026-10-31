@@ -1,1 +1,6 @@
-{}
+{
+  "hissal.skill-collection/guide": {
+    "path": "skills/core/guide",
+    "requires": []
+  }
+}

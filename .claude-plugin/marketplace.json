@@ -13,6 +13,16 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity"
+    },
+    {
+      "name": "collection-core",
+      "source": "./skills/core",
+      "description": "Generated core skill list from collection.json.",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     }
   ],
   "metadata": {

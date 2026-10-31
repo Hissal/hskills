@@ -25,7 +25,18 @@ Each skill has a callable `name` (including plugin namespace where applicable)
 and at most six queries: up to three `fire: true` and three `fire: false`.
 Use three of each for initial proof. Prompts are passed unchanged: no explicit
 skill invocation, detection instruction or grading prompt is added. The sample
-contains the fixture's six queries. Only use model-invoked skills.
+contains the fixture's six queries. Only use model-invoked skills as the observed
+skill; a prompt may invoke a user-invoked skill that reaches it, as in the
+[guide discovery case](#required-case-core-guide-discovery).
+
+A query's `prompt` is one string, or an object with one per selected harness
+(`{"claude": "/guide ...", "codex": "$guide ..."}`), since invocation forms
+differ. An optional `says` lists texts the final answer must contain, as one
+array or one array per harness; the query then passes only when its firing
+matches and every text appears, and its result line adds `says all` or
+`says missing "<text>"`. Claude's answer is the `result` event's text and
+Codex's is the last `agent_message`; OpenCode's answer event is unverified, so
+`says` is rejected for it.
 
 Models have unique labels, a harness (`claude`, `codex`, `opencode`), an exact
 model selector and tier (`frontier`, `lower`). Frontier labels `Opus` and `Sol`
@@ -64,16 +75,22 @@ Primary sources inspected 2026-10-30; source reading, not a live runtime proof:
   `--output-format stream-json --verbose`, streamed assistant tool-use blocks,
   Skill calls and final result/error handling. [Skills permissions](https://code.claude.com/docs/en/skills#restrict-claudes-skill-access)
   document the `skill` input parameter. We match `Skill` tool calls with that exact
-  input, not prose mentioning a name. Errors and denied calls are inconclusive.
+  input, not prose mentioning a name. Denied calls and errored `Skill` calls are
+  inconclusive; another tool's error (a failed `ls` of a missing folder) is not
+  evidence either way and is ignored.
 - [Codex non-interactive docs](https://developers.openai.com/codex/noninteractive/)
   confirm `exec --json --model`, JSONL command events and `turn.completed`.
   A live Codex CLI 0.166.0 fixture run on 2026-10-30 emitted an
   `item.completed` command execution with `status: completed`, exit code zero,
   a simple `cat` of the installed `skills/<name>/SKILL.md`, and the frontmatter
   body in `aggregated_output`. The evaluator counts this narrow read pattern
-  with matching `name:` as fired. Mentions in prose or filename searches do not
-  count; other commands naming that entry point are inconclusive. This is
-  observed CLI behavior, not a dedicated skill event guaranteed by the docs.
+  with matching `name:` as fired. Live runs on 2026-10-31 (CLI 0.166.0) also
+  read the entry point with other files in one `cat`, or in plain `cat`s joined
+  by `;` or `&&`; those count too when the output carries the frontmatter.
+  Mentions in prose or filename searches do not count; other commands naming
+  that entry point, and failed commands naming its folder, are inconclusive.
+  Other failed commands are ignored. This is observed CLI behavior, not a
+  dedicated skill event guaranteed by the docs.
 - [OpenCode CLI](https://opencode.ai/docs/cli/#run) confirms `run --format json
   --model` and provider/model selectors. [Agent Skills](https://opencode.ai/docs/skills/)
   confirms native `skill` loading. The pinned
@@ -94,3 +111,46 @@ For the isolated plugin guide gate, use the
 An optional skill `readName` specifies the bare Codex entry-point directory and
 frontmatter name when `name` is plugin-qualified. Claude still matches the exact
 `name` Skill input. This option does not resolve aliases or certify guide loads.
+
+## Required case: core guide discovery
+
+Proves that the core guide asks a listed pack guide for routes and flags every
+unlisted one, relevant or not
+([#145](https://github.com/Hissal/skill-collection/issues/145)).
+Rerun it when the guide's discovery or skill lookup steps change, when a harness
+pin is bumped, and when a new frontier model ships. The fixture pack is
+[`orbit-guide`](../scripts/eval/test/guide-discovery/pack/orbit-guide/SKILL.md)
+with routes, plus its user-invoked route
+[`orbit-replay`](../scripts/eval/test/guide-discovery/pack/orbit-replay/SKILL.md).
+A second pack guide,
+[`ledger-guide`](../scripts/eval/test/guide-discovery/pack/ledger-guide/SKILL.md),
+is never listed and touches none of the requests. Both packs are fictional, so
+a route can only come from its guide.
+
+```sh
+node scripts/eval/test/guide-discovery/prepare.js
+node scripts/eval/trigger.js <root>/listed.json --repeat 2
+node scripts/eval/trigger.js <root>/unlisted.json --repeat 2
+```
+
+`prepare.js` prints a scratch root holding two committed projects, each with the
+core guide and both packs at project scope (`.claude/skills/`, `.agents/skills/`),
+and one config per project. `listed` names only `orbit-guide` in its `### Packs`
+list; `unlisted` has no pack list. `CLAUDE_BIN`, `CODEX_BIN` and `SOL_MODEL`
+override the defaults. Each prompt invokes the guide (`/guide` on Claude,
+`$guide` on Codex) with a telemetry request. Both harnesses may read anywhere
+and write in the project, so starting nothing is the agent's choice. Raw
+sessions stay under `<root>/evidence/`, kept by the plugin fixture's `capture.js`.
+
+- **listed**: `orbit-guide` fires, and the answer says the route's invocation
+  (`/orbit-replay`; `$orbit-replay` on Codex), `ledger-guide` and
+  `installed, not set up`.
+- **unlisted**: `orbit-guide` does not fire, and the answer says `orbit-guide`,
+  `ledger-guide`, `installed, not set up` and the setup invocation.
+- **Both**: every frontier model passes; afterwards neither project has a
+  changed or new file (no `replay/` folder); and no session enumerates an
+  installation folder (listing or searching a skill, plugin or home folder,
+  such as `ls .claude/skills` or `rg --files .agents`). Direct reads and
+  existence checks of exact paths are expected. The script sees neither files
+  nor commands: check both in the raw sessions, and record them with the
+  results.

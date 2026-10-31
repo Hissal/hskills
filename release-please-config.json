@@ -17,6 +17,16 @@
           "type": "json",
           "path": "hooks/command-guard/.codex-plugin/plugin.json",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "skills/core/.claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "skills/core/.codex-plugin/plugin.json",
+          "jsonpath": "$.version"
         }
       ]
     }

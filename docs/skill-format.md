@@ -212,6 +212,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `release-config` | fail | invalid single-version release settings or a plugin manifest missing its JSON version stamp entry |
 | `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
 | `expensive-workflow` | fail | a skill on the manifest's `expensive` list is model-invoked and is not `code-review` or `research` |
+| `core-names-pack` | fail | a text file in a core skill other than `setup-project` and the core guide names a pack skill from the manifest (see [Extension points](#extension-points)) |
 | `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
 | `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
 | `copied-file-safety` | fail | a text file in a lock-listed copied skill contains hidden Unicode controls or a Windows, macOS or Linux personal home path; reports the line and, for Unicode, the code point |
@@ -469,6 +470,13 @@ listed pack guides; it never names a particular pack or pack skill. Example:
 “Ask the project's listed pack guides for this stack's test idioms and fixtures.”
 The caller keeps its current job while obtaining that knowledge; a lookup never
 starts another workflow. See [core extension points](agents/core-extension-points.md).
+
+The `core-names-pack` rule fails when any text file in a core skill's folder
+names a skill listed under the manifest's `packs`, pack guides included, as a
+whole callable-name token (case-sensitive; `web-testing` matches in
+`/web-testing` and `skills/packs/web/web-testing`, not in `web-testing-style`).
+`setup-project` and the core guide (`skills/core/guide`) are exempt, since they
+name packs by design.
 
 ## Hard requirements at runtime
 

@@ -19,5 +19,26 @@ module.exports = ({ skill, tree }) => {
     { name: '#111 a model-invoked skill not on the expensive list passes',
       files: tree(skill('skills/core/alpha'), manifest({ core: ['skills/core/alpha'] })),
       expect: [] },
+
+    // ADR 0003: extension points name the need, never a pack's guide or skill.
+    { name: '#111 a core skill naming a pack skill fails',
+      files: tree(skill('skills/core/alpha', { body: '# alpha\n\nFor tests, call the `web-testing` skill.\n' }), skill('skills/packs/web/web-testing'),
+        manifest({ core: ['skills/core/alpha'], packs: { web: ['skills/packs/web/web-testing'] } })),
+      expect: ['fail core-names-pack skills/core/alpha/SKILL.md'] },
+    { name: '#111 a core reference naming a pack guide fails',
+      files: tree(skill('skills/core/alpha', { body: 'Read [ref](REF.md).\n', files: { 'REF.md': '# Ref\n\nAsk /web-guide for idioms.\n' } }), skill('skills/packs/web/web-guide'),
+        manifest({ core: ['skills/core/alpha'], packs: { web: ['skills/packs/web/web-guide'] } })),
+      expect: ['fail core-names-pack skills/core/alpha/REF.md'] },
+    { name: '#111 setup-project and the core guide may name packs',
+      files: tree(skill('skills/core/setup-project', { body: '# setup\n\nList `web-guide` in the pack list.\n' }),
+        skill('skills/core/guide', { fm: { 'disable-model-invocation': ' true' }, body: '# guide\n\nInstalled guides include web-guide.\n' }),
+        skill('skills/packs/web/web-guide'),
+        manifest({ core: ['skills/core/setup-project', 'skills/core/guide'], packs: { web: ['skills/packs/web/web-guide'] } })),
+      expect: [] },
+    { name: '#111 extension points that name only the need pass',
+      files: tree(skill('skills/core/alpha', { body: "# alpha\n\nAsk the project's listed pack guides for web-testing-style idioms, not my-web-testing.\n" }),
+        skill('skills/packs/web/web-testing', { body: '# web-testing\n\nSee web-guide.\n' }), skill('skills/packs/web/web-guide'),
+        manifest({ core: ['skills/core/alpha'], packs: { web: ['skills/packs/web/web-testing', 'skills/packs/web/web-guide'] } })),
+      expect: [] },
   ];
 };

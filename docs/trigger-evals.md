@@ -154,3 +154,93 @@ sessions stay under `<root>/evidence/`, kept by the plugin fixture's `capture.js
   existence checks of exact paths are expected. The script sees neither files
   nor commands: check both in the raw sessions, and record them with the
   results.
+
+## Required cases: the two discovery paths on real skills
+
+Proves both discovery paths with the collection's own skills
+([#113](https://github.com/Hissal/skill-collection/issues/113)): the automatic
+guide [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md)
+fires at task start, and the core [`guide`](../skills/core/guide/SKILL.md)
+finds the installed pack guide
+[`csharp-guide`](../skills/packs/csharp/csharp-guide/SKILL.md). Rerun them when
+either guide's description or discovery steps change, when `csharp-guide`'s
+description changes, when a harness pin is bumped, and when a new frontier
+model ships.
+
+```sh
+node scripts/eval/test/required-cases/prepare.js
+node scripts/eval/trigger.js <root>/automatic.json --repeat 2
+node scripts/eval/trigger.js <root>/listed.json --repeat 2
+node scripts/eval/trigger.js <root>/listed-control.json --repeat 2
+node scripts/eval/trigger.js <root>/unlisted.json --repeat 2
+```
+
+[`prepare.js`](../scripts/eval/test/required-cases/prepare.js) prints a
+scratch root holding four committed projects with the skills copied from this
+repo at project scope (`.claude/skills/`, `.agents/skills/`), and one config
+per project. Overrides and permissions are as in the core guide discovery case.
+Each session runs through the evidence capture with `--reset`: its raw
+streams go to `<root>/evidence/<case>/`, its project changes (`git status
+--porcelain`) are recorded as `changes` in its `.json`, and then the project
+is restored to its commit. No session sees another's writes, so a write shows
+up in that session's `changes` rather than in the tree after the run.
+
+- **automatic**: a web shop with `guide` and `onboarding-guide`. The prompts
+  are plain requests with no invocation. `onboarding-guide` fires, and the
+  answer says `Recommended:`, on three task starts with no workflow chosen:
+  - "I want shoppers to keep their cart across devices, but I am not sure where to start."
+  - "We should add discount codes to checkout. How should we approach it?"
+  - "Product search feels slow and clunky and I have a few vague ideas to fix it. Help me work out what to do first."
+
+  It stays quiet on three requests that need no workflow:
+  - "What is two plus two?"
+  - "Keep going with the cart changes you already started; the tests are next."
+  - "What does cartTotal in src/cart.js return for an empty cart?"
+- **listed** and **unlisted**: `guide` and `csharp-guide` are installed, and
+  each prompt invokes the guide (`/guide`, `$guide`) with a request.
+  - **listed** is an SDK-style .NET library that names `csharp-guide` in its
+    `### Packs` list. The requests rename a public type, add an optional
+    parameter to a public method, and chase a crash in apps that were not rebuilt
+    after a release. `csharp-guide` fires, and the answer says `Recommended:`.
+  - **listed-control** is the same library before setup, with no pack list
+    and no pack config, given the same requests. `csharp-guide` does not
+    fire, and the answer says `Recommended:`, `csharp-guide`, `installed, not
+    set up` and the setup invocation. `csharp-guide`'s own description
+    fires on .NET work and on choosing a C# workflow. So in a .NET project, a
+    firing in **listed** alone could be that trigger rather than the core
+    guide's lookup. The control rules that out: the two projects differ only in
+    the pack list, so passing both means the load needed the pack list.
+    Neither the requests nor the project's description name C# or .NET, so
+    the trigger has no cue before the project's files are read. If the
+    control fires on a model, that model's **listed** pass does not show the
+    lookup, and the pair fails.
+  - **unlisted** is the web shop, with no pack list and requests outside C#:
+    a double charge at checkout, splitting a module without changing results,
+    and deciding how discount codes stack. `csharp-guide` does not fire, and
+    the answer says `Recommended:`, `csharp-guide`, `installed, not set up`
+    and the setup invocation (`/setup-project`, `$setup-project`). It is not a
+    .NET project because `csharp-guide`'s own description fires on .NET work
+    and on choosing a C# workflow, and its body handles being loaded unlisted.
+    There, Sol reads it alongside the guide, so the firing would not show
+    the guide's lookup. That an unlisted guide relevant to the request is not
+    asked is the core guide discovery case's job.
+
+    Known Sol results (2026-10-31, Codex 0.166.0, `gpt-6.1-sol`, core
+    guide at `46d3fa3`). Expect `listed-control` and `unlisted` to fail or
+    be inconclusive on Sol.
+
+    - **Measurement limit, not a defect.** Sol reads `csharp-guide` with
+      `AGENTS.md`, before it checks the pack list (4 of 6 `listed-control`
+      sessions, one web-shop request). In a .NET project this matches
+      `csharp-guide`'s own trigger, and Sol takes no routes from it. On Sol,
+      the firing therefore cannot show the guide's lookup. Opus proves it.
+    - **Minor defect.** Sol leaves out the **Not set up** line for an
+      unlisted pack guide in about 1 of 3 sessions (8 of 12 had it across two
+      runs). The project still works; the user is not told the pack is
+      not set up. Follow-up:
+      [#215](https://github.com/Hissal/skill-collection/issues/215).
+- **All**: every frontier model passes. In the raw sessions, no `onboarding-guide`
+  session that fired, and no `guide` session, writes or edits a file, starts a
+  recommended skill (a Skill call to anything but the guides), or enumerates
+  an installation folder, as in the core guide discovery case. Record these
+  checks with the results.

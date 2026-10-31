@@ -144,6 +144,24 @@ try {
  assert.equal(fs.readFileSync(prefix+'.stdout','utf8'),'stdout\n');
  assert.equal(fs.readFileSync(prefix+'.stderr','utf8'),'stderr\n');
  assert.equal(fs.statSync(prefix+'.stdout').mode & 0o777,0o600);
+ // With --reset, the session's changes to its committed Git project are
+ // recorded, then undone, so the next session starts from the baseline.
+ const project = path.join(dir,'reset-project');
+ fs.mkdirSync(project);
+ fs.writeFileSync(path.join(project,'tracked.txt'),'baseline\n');
+ const git = (...args) => assert.equal(spawnSync('git',['-c','user.name=t','-c','user.email=t@example.invalid',...args],{cwd:project}).status,0);
+ git('init','-q'); git('add','-A'); git('commit','-q','-m','baseline');
+ const resetEvidence = path.join(dir,'reset-evidence');
+ const session = spawnSync(process.execPath,[path.join(__dirname,'plugin-fixture/capture.js'),'--reset',resetEvidence,'probe',process.execPath,'-e',"const fs=require('fs'); fs.writeFileSync('tracked.txt','changed\\n'); fs.mkdirSync('src'); fs.writeFileSync('src/new.txt','x'); console.log('ran')"],{cwd:project,encoding:'utf8'});
+ assert.equal(session.status,0,session.stderr);
+ assert.equal(session.stdout,'ran\n');
+ const resetMeta = fs.readdirSync(resetEvidence).find(name=>name.endsWith('.json'));
+ assert.deepEqual(JSON.parse(fs.readFileSync(path.join(resetEvidence,resetMeta),'utf8')).changes,[' M tracked.txt','?? src/']);
+ assert.equal(spawnSync('git',['status','--porcelain'],{cwd:project,encoding:'utf8'}).stdout,'');
+ assert.equal(fs.readFileSync(path.join(project,'tracked.txt'),'utf8'),'baseline\n');
+ // Without --reset, the project is left as the session left it.
+ spawnSync(process.execPath,[path.join(__dirname,'plugin-fixture/capture.js'),resetEvidence,'probe',process.execPath,'-e',"require('fs').writeFileSync('kept.txt','x')"],{cwd:project});
+ assert.ok(fs.existsSync(path.join(project,'kept.txt')));
  console.log('ok: modes, advisory tiers, repeat noise, failures, OpenCode and validation');
  // A user-invoked skill needs a per-harness prompt, and a case may require
  // text in the final answer as well as a firing outcome.
@@ -180,3 +198,4 @@ try {
  assert.match(says.stderr,/says is not supported for opencode/);
  console.log('ok: per-harness prompts and required answer text');
 } finally { fs.rmSync(dir,{recursive:true,force:true}); }
+require('./required-cases/test.js');

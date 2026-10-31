@@ -1,4 +1,8 @@
 {
+  "hissal.skill-collection/break-ui": {
+    "path": "skills/core/break-ui",
+    "requires": []
+  },
   "hissal.skill-collection/csharp-guide": {
     "path": "skills/packs/csharp/csharp-guide",
     "requires": []

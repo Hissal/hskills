@@ -1,6 +1,6 @@
 ---
 name: onboarding-guide
-description: Use before starting work when no workflow has been invoked and a collection workflow could help, or when an invoked workflow is clearly a poor fit.
+description: Use before any work starts to choose a workflow, when none has been invoked and the request needs one (an unclear goal, or a design or planning problem rather than a direct edit), or when an invoked workflow is clearly a poor fit. Not for continuing or resuming work already asked for or underway.
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/onboarding-guide"

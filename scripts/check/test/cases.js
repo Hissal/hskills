@@ -316,7 +316,7 @@ module.exports.push(...require('./manifest-policy-cases')({ skill, tree }));
 // writes it: only frontmatter and the Codex gate differ.
 const GENERATOR = 'scripts/onboarding/generate.js';
 const AUTO = 'skills/packs/onboarding/onboarding-guide';
-const AUTO_DESCRIPTION = ' Use before starting work when no workflow has been invoked and a collection workflow could help, or when an invoked workflow is clearly a poor fit.';
+const AUTO_DESCRIPTION = ' Use before any work starts to choose a workflow, when none has been invoked and the request needs one (an unclear goal, or a design or planning problem rather than a direct edit), or when an invoked workflow is clearly a poor fit. Not for continuing or resuming work already asked for or underway.';
 const coreGuide = (o) => skill('skills/core/guide', Object.assign({ fm: { 'disable-model-invocation': ' true' }, body: '# Guide\n\nRead [support](SUPPORT.md).\n', files: { 'SUPPORT.md': '# Support\n' } }, o));
 const autoGuide = (o) => skill(AUTO, Object.assign({ fm: { description: AUTO_DESCRIPTION }, body: '# Guide\n\nRead [support](SUPPORT.md).\n', files: { 'SUPPORT.md': '# Support\n' } }, o));
 module.exports.push(

@@ -242,7 +242,8 @@ prepared snapshot. Enabled listings must report that snapshot as effective sourc
 `HOME/.skill-collection/plugins.json` journals snapshot files and host configuration
 writes. Failed host registration rolls back its writes and retains legacy hooks.
 Before registration mutates host files, every recorded write must still match its
-last installed bytes. Conflicts preserve current bytes and the journal. Existing
+last installed bytes, except narrowly verified Codex hook trust-table changes.
+Conflicts preserve current bytes and the journal. Existing
 snapshots must contain only recorded files; byte-identical unrecorded snapshots
 are conflicts, not adopted installations.
 
@@ -250,10 +251,14 @@ Once the replacement is ready, only exact recorded legacy handlers with the
 adapter marker are removed from that host's settings; unrelated handlers survive.
 Codex readiness is read through the host's app-server `hooks/list` API: enabled
 plugin hooks must report trusted. Pending or unavailable trust retains the legacy
-fallback; the installer never writes trust. Claude readiness requires an enabled
+handler. Doctor reports its actual enabled/trust status: retaining an untrusted
+handler leaves Codex UNPROTECTED until human review. The installer never grants
+trust. Claude readiness requires an enabled
 registration at the expected snapshot and successful adapter probes.
 Settings keep their first-write backup. Uninstall restores recorded configuration
-only while its bytes still match; changed files are conflicts and remain owned
+only while its bytes still match, allowing verified human changes to Codex
+`hooks.state` hash tables. Those tables survive reinstall and uninstall. Unknown
+trust syntax and unrelated personal edits are conflicts and remain owned
 for recovery. Resolve conflicts manually before retrying uninstall.
 
 Doctor checks registration and snapshot block/allow probes. Claude-only

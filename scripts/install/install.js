@@ -18,13 +18,14 @@ function readRule(file, directory = true) {
   const normalized = file.replace(/\\/g, '/').replace(/^([A-Za-z]):/, (_, drive) => '/' + drive.toLowerCase());
   return JSON.stringify('Read(/' + normalized + (directory ? '/**' : '') + ')');
 }
+let command = 'install';
 function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help')) {
     console.log('Usage: node scripts/install/install.js [install|doctor|uninstall|prepare-plugin] [--owner-steering] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR] [--pack NAME] [--skill NAME [--project DIR]]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.skill-collection/install.json. Prints Claude Read rules; writes no permissions.');
     return;
   }
-  const command = args[0] && !args[0].startsWith('--') ? args.shift() : 'install';
+  command = args[0] && !args[0].startsWith('--') ? args.shift() : 'install';
   if (!['install', 'doctor', 'uninstall', 'prepare-plugin'].includes(command)) throw new Error('unknown command: ' + command);
   const options = {};
   while (args.length) {
@@ -229,4 +230,4 @@ function main() {
   }
   if (failed) process.exitCode = 1;
 }
-try { main(); } catch (e) { console.error('FAIL install: ' + e.message); process.exitCode = 1; }
+try { main(); } catch (e) { console.error('FAIL ' + command + ': ' + e.message); process.exitCode = 1; }

@@ -19,8 +19,11 @@ const probeCommands = {
   project: 'node -e "console.log(\'PROJECT_BLOCK_120\')"',
 };
 const projectRule = { id: 'project.smoke', family: 'smoke', tier: 'human-required', command: ['node'], anyArg: 'PROJECT_BLOCK_120', effect: 'harmless marker' };
+// Exact grants only: the run holds real auth, so no wildcard may approve other code.
+// Each probe is granted so a denial can come only from the guard, not from -p mode.
+const claudeAllowedTools = ['git push --force origin main', probeCommands.allow, probeCommands.project].map(c => `Bash(${c})`);
 if (process.argv[2] === 'probe-commands') {
-  console.log(JSON.stringify({ ...probeCommands, rule: projectRule }));
+  console.log(JSON.stringify({ ...probeCommands, rule: projectRule, claudeAllowedTools }));
   process.exit(0);
 }
 
@@ -141,7 +144,7 @@ async function main() {
   if (step === 'doctor') return run(root, 'doctor-again', [process.execPath, path.join(repo, 'scripts/install/install.js'), 'doctor', '--home', home], root, guardEnv);
   if (step === 'claude') {
     const claudeEnv = { ...env, CLAUDE_CONFIG_DIR: path.join(home, '.claude') };
-    const argv = [bins.claude, '-p', '--model', 'opus', '--effort', 'medium', '--no-session-persistence', '--setting-sources', 'user', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}', '--tools', 'Bash', '--allowedTools', 'Bash(git push --force origin main)', 'Bash(node -e *)', '--output-format', 'stream-json', '--verbose', '--include-hook-events'];
+    const argv = [bins.claude, '-p', '--model', 'opus', '--effort', 'medium', '--no-session-persistence', '--setting-sources', 'user', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}', '--tools', 'Bash', '--allowedTools', ...claudeAllowedTools, '--output-format', 'stream-json', '--verbose', '--include-hook-events'];
     return withAuth('claude', path.join(home, '.claude/.credentials.json'), async () => {
       sourceAt(root, true);
       run(root, 'claude-before', [...argv, probes], project, claudeEnv);

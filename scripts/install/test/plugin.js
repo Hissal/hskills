@@ -8,14 +8,14 @@ const { spawnSync } = require('child_process');
 const home = fs.mkdtempSync(path.join(os.tmpdir(), 'guard-plugin-test-'));
 try {
   fs.mkdirSync(path.join(home, '.codex'));
-  const trustRegression = spawnSync(process.execPath, [path.join(__dirname, 'trust.js')], { encoding: 'utf8' });
-  assert.equal(trustRegression.status, 0, trustRegression.stdout + trustRegression.stderr);
-
-  fs.writeFileSync(path.join(home, '.codex/config.toml'), 'hide_agent_reasoning = true\n');
+  const personalConfig = 'hide_agent_reasoning = true\ndeveloper_instructions = """\n[hooks.state."fake"]\nenabled = true\n"""\n';
+  fs.writeFileSync(path.join(home, '.codex/config.toml'), personalConfig);
   const real = process.argv.includes('--real');
   const commands = spawnSync(process.execPath, [path.resolve(__dirname, '../evidence/live-plugins-windows.js'), 'probe-commands'], { encoding: 'utf8' });
   assert.equal(commands.status, 0, commands.stderr);
   const probes = JSON.parse(commands.stdout);
+  // Live Claude runs hold real auth: grant only the exact probe commands.
+  assert.deepEqual(probes.claudeAllowedTools, ['git push --force origin main', probes.allow, probes.project].map(c => 'Bash(' + c + ')'));
   const allow = spawnSync(probes.allow, { shell: true, encoding: 'utf8' });
   assert.equal(allow.status, 0, allow.stderr);
   assert.equal(allow.stdout.trim(), 'ALLOW_120');
@@ -110,7 +110,9 @@ try {
   if (!real) {
     const saved = fs.mkdtempSync(path.join(os.tmpdir(), 'trust-baseline-'));
     fs.cpSync(home, saved, { recursive: true });
-    const trust = '[hooks.state."command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = "sha256:' + 'a'.repeat(64) + '"\ntrusted_content_hash = "sha256:' + 'b'.repeat(64) + '"\n';
+    // Native Windows writer shape: bare parent, basic plugin key, literal backslash key.
+    const trust = '[hooks.state]\n\n[hooks.state."command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = "sha256:' + 'a'.repeat(64) + '"\ntrusted_content_hash = "sha256:' + 'b'.repeat(64) + '"\nenabled = true\n'
+      + "\n[hooks.state.'C:\\Users\\human\\.codex\\hooks.json:pre_tool_use:0:0']\ntrusted_hash = \"sha256:" + 'c'.repeat(64) + '"\nenabled = true\n';
     fs.appendFileSync(config, '\n' + trust);
     const trustedAgain = run();
     assert.doesNotMatch(trustedAgain.stdout + trustedAgain.stderr, /CONFLICT/);
@@ -118,7 +120,7 @@ try {
     assert.equal(removed.status, 0, removed.stdout + removed.stderr);
     assert.ok(fs.readFileSync(config, 'utf8').includes(trust));
     assert.doesNotMatch(fs.readFileSync(config, 'utf8'), /\[plugins\./);
-    assert.match(fs.readFileSync(config, 'utf8'), /hide_agent_reasoning = true/);
+    assert.ok(fs.readFileSync(config, 'utf8').startsWith(personalConfig));
     fs.rmSync(home, { recursive: true, force: true });
     fs.cpSync(saved, home, { recursive: true });
     fs.rmSync(saved, { recursive: true, force: true });
@@ -127,6 +129,7 @@ try {
   fs.appendFileSync(config, '\n# personal change\n');
   const refused = spawnSync(process.execPath, [cli, 'uninstall', '--home', home], { encoding: 'utf8' });
   assert.equal(refused.status, 1);
+  assert.match(refused.stderr, /^FAIL uninstall: CONFLICT changed registration preserved: /m);
   assert.match(fs.readFileSync(config, 'utf8'), /personal change/);
   const personal = fs.readFileSync(config);
   const journal = fs.readFileSync(path.join(home, '.skill-collection/plugins.json'));

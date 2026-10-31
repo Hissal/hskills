@@ -115,6 +115,9 @@ function registration(home, source, action = 'install') {
     const effective = entry && (entry.readFromFolder || entry.source?.path || entry.installPath);
     if (!entry || !entry.enabled || !effective || fs.realpathSync(effective) !== fs.realpathSync(snapshot)) throw new Error('missing, disabled or overridden plugin: ' + host);
   }
+  // The previous installer's record of its own settings handlers, if any.
+  const legacyFile = path.join(home, '.skill-collection/guard.json');
+  function legacyRecord() { return fs.existsSync(legacyFile) ? JSON.parse(fs.readFileSync(legacyFile)) : null; }
   let codexGroups = [];
   function ready(host) {
     if (host === 'claude') return true; // inspect verifies enabled effective registration.
@@ -149,9 +152,7 @@ function registration(home, source, action = 'install') {
     for (const h of data.hosts) { inspect(h.host, h.snapshot); probeSnapshot(h.snapshot); console.log('REGISTERED ' + h.host + ': ' + h.snapshot); }
     for (const h of data.hosts) {
       if (!ready(h.host)) { console.log('PENDING Codex human trust: review the current hook in /hooks.');
-        const legacyFile = path.join(home, '.skill-collection/guard.json');
-        const legacy = fs.existsSync(legacyFile) ? JSON.parse(fs.readFileSync(legacyFile)) : {};
-        const commands = (legacy.groups || []).flatMap(g => g.hooks || []).map(h => h.command);
+        const commands = (legacyRecord()?.groups || []).flatMap(g => g.hooks || []).map(h => h.command);
         const fallback = codexGroups.flatMap(g => g.hooks || []).filter(h => h.source === 'user' && commands.includes(h.command));
         const protectedFallback = codexGroups.length > 0 && codexGroups.every(g => !(g.errors || []).length && g.hooks.some(h => fallback.includes(h) && h.enabled && h.trustStatus === 'trusted'));
         console.log('Codex legacy fallback: ' + (fallback.length ? fallback.map(h => (h.enabled ? 'enabled/' : 'disabled/') + h.trustStatus).join(', ') : 'absent or unverified'));
@@ -214,9 +215,8 @@ function registration(home, source, action = 'install') {
     }
     save();
     // Remove only handlers recorded by the old installer, and only for this host.
-    const legacyFile = path.join(home, '.skill-collection/guard.json');
-    if (fs.existsSync(legacyFile) && ready(host)) {
-      const legacy = JSON.parse(fs.readFileSync(legacyFile));
+    const legacy = legacyRecord();
+    if (legacy && ready(host)) {
       const settings = path.join(home, host === 'claude' ? '.claude/settings.json' : '.codex/hooks.json');
       if (fs.existsSync(settings)) {
         const config = JSON.parse(fs.readFileSync(settings));

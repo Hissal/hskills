@@ -225,14 +225,20 @@ up in that session's `changes` rather than in the tree after the run.
     the guide's lookup. That an unlisted guide relevant to the request is not
     asked is the core guide discovery case's job.
 
-    Known model limits on Sol (2026-10-31, Codex 0.166.0, `gpt-6.1-sol`,
-    core guide at `46d3fa3`). Sol drops the **Not set up** line for an
-    unrelated unlisted pack guide in 1 to 3 of 6 sessions. It also reads
-    unlisted `csharp-guide` before any project file in 4 of 6
-    `listed-control` sessions, and on one web-shop `unlisted` request, so
-    its `listed` pass does not show the guide's lookup. Expect
-    `listed-control` and `unlisted` to fail or be inconclusive on Sol.
-    Follow-up: [#215](https://github.com/Hissal/skill-collection/issues/215).
+    Known Sol results (2026-10-31, Codex 0.166.0, `gpt-6.1-sol`, core
+    guide at `46d3fa3`). Expect `listed-control` and `unlisted` to fail or
+    be inconclusive on Sol.
+
+    - **Measurement limit, not a defect.** Sol reads `csharp-guide` with
+      `AGENTS.md`, before it checks the pack list (4 of 6 `listed-control`
+      sessions, one web-shop request). In a .NET project this matches
+      `csharp-guide`'s own trigger, and Sol takes no routes from it. On Sol,
+      the firing therefore cannot show the guide's lookup. Opus proves it.
+    - **Minor defect.** Sol leaves out the **Not set up** line for an
+      unlisted pack guide in about 1 of 3 sessions (8 of 12 had it across two
+      runs). The project still works; the user is not told the pack is
+      not set up. Follow-up:
+      [#215](https://github.com/Hissal/skill-collection/issues/215).
 - **All**: every frontier model passes. In the raw sessions, no `onboarding-guide`
   session that fired, and no `guide` session, writes or edits a file, starts a
   recommended skill (a Skill call to anything but the guides), or enumerates

@@ -78,5 +78,16 @@ try {
   assert.match(kept, /trusted_content_hash/);
   assert.match(kept, /\[personal\]\nvalue = true/);
   assert.doesNotMatch(kept, /\[plugins\./);
+
+  // Removing all hook-state tables retains the original ordinary bytes, even EOF whitespace.
+  for (const ordinary of ['', 'hide_agent_reasoning = true', 'hide_agent_reasoning = true\n\n\n']) {
+    assert.equal(uninstall(ordinary, ordinary + nativeTrust + plugin, ordinary + plugin), true);
+    assert.equal(fs.readFileSync(config, 'utf8'), ordinary);
+  }
+  // Trust preceding a personal table stays there; unrelated bytes keep their exact position.
+  const existing = 'hide_agent_reasoning = true\n' + human + '\n[personal]\nvalue = true\n\n\n';
+  const changedTrust = human.replace('enabled = false', 'enabled = true');
+  assert.equal(uninstall(existing, existing + plugin, existing.replace(human, changedTrust) + plugin), true);
+  assert.equal(fs.readFileSync(config, 'utf8'), existing.replace(human, changedTrust));
   console.log('trust delta uninstall preserves human trust and personal settings');
 } finally { fs.rmSync(home, { recursive: true, force: true }); }

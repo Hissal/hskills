@@ -230,7 +230,8 @@ read [live plugin evidence](../research/live-plugins-121.md). For actual Windows
 Claude/Codex plugin events and checkout independence, read
 [Windows guard evidence](evidence/windows-install-2026-10-31.md#guard-lifecycle-and-live-plugin-probes-120-121),
 including the trusted uninstall conflict and nonportable allow command found there.
-To verify their repair, read the [guard follow-up](evidence/windows-guard-followup.md).
+For repair regressions and remaining native acceptance, read the
+[guard follow-up](evidence/windows-guard-followup.md).
 OpenCode host acceptance on Windows remains unrun.
 
 ## Register the guard plugin
@@ -259,7 +260,7 @@ handler leaves Codex UNPROTECTED until human review. The installer never grants
 trust. Claude readiness requires an enabled
 registration at the expected snapshot and successful adapter probes.
 Settings keep their first-write backup. Uninstall restores recorded configuration
-only while its bytes still match, allowing verified human changes to Codex
+only while its bytes still match, allowing syntactically validated changes to Codex
 `hooks.state` hash tables. Those tables survive reinstall and uninstall. Unknown
 trust syntax and unrelated personal edits are conflicts and remain owned
 for recovery. Resolve conflicts manually before retrying uninstall.

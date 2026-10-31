@@ -40,6 +40,7 @@ function split(bytes) {
   const text = bytes === null ? '' : Buffer.from(bytes, 'base64').toString('utf8');
   const lines = text.match(/[^\n]*\n|[^\n]+$/g) || [];
   let ordinary = '', trust = '', active = false, fields = new Set(), open = null, parent = false;
+  const parts = [];
   const keys = new Set();
   for (const line of lines) {
     const header = !open && /^\s*\[/.test(line);
@@ -70,15 +71,28 @@ function split(bytes) {
       if (open === undefined) return null;
       ordinary += line;
     }
+    const last = parts[parts.length - 1];
+    if (last && last.trust === active) last.text += line;
+    else parts.push({ trust: active, text: line });
   }
   if (open) return null;
-  return { ordinary: ordinary.replace(/\n+$/, ''), trust };
+  return { ordinary: ordinary.replace(/\n+$/, ''), trust, parts };
 }
 module.exports = function reconcile(w, current) {
   if (current === undefined || current === null) return null;
   const old = split(w.after), next = split(current), before = split(w.before);
   if (!old || !next || !before || old.ordinary !== next.ordinary || old.trust === next.trust) return null;
   // Both sides receive only verified trust tables. Never absorb personal edits.
-  const restored = before.ordinary + (before.ordinary ? '\n\n' : '') + next.trust.replace(/^\n+/, '').replace(/\n+$/, '\n');
-  return { ...w, before: restored ? Buffer.from(restored).toString('base64') : null, after: current };
+  let inserted = false;
+  let restored = before.parts.map(part => {
+    if (!part.trust) return part.text;
+    if (inserted) return '';
+    inserted = true;
+    return next.trust;
+  }).join('');
+  if (!inserted && next.trust) {
+    restored += (restored && !restored.endsWith('\n') ? '\n' : '') + next.trust;
+  }
+  const restoredBefore = restored !== '' || w.before !== null ? Buffer.from(restored).toString('base64') : null;
+  return { ...w, before: restoredBefore, after: current };
 };

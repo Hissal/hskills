@@ -83,6 +83,12 @@ try {
   spawnSync(process.execPath, [cli, 'uninstall', '--home', occupiedHome]);
   assert.deepEqual(fs.readFileSync(path.join(occupied, 'adapters/codex.js')), existingAdapter);
   if (!real) {
+    fs.writeFileSync(path.join(home, '.codex/status-unavailable'), 'fixture status failure');
+    const unavailable = run();
+    assert.equal(unavailable.status, 1);
+    assert.match(unavailable.stdout, /legacy fallback: status unavailable/);
+    assert.match(unavailable.stdout, /UNPROTECTED/);
+    fs.unlinkSync(path.join(home, '.codex/status-unavailable'));
     fs.writeFileSync(path.join(home, '.codex/legacy-trusted'), 'human fixture decision');
     const protectedPending = run();
     assert.equal(protectedPending.status, 1);

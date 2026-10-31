@@ -11,6 +11,7 @@ const market = path.join(dir, 'market.json');
 const installed = path.join(dir, 'installed.json');
 const args = process.argv.slice(2);
 if (args[0] === 'app-server') {
+  if (fs.existsSync(path.join(root, 'status-unavailable'))) process.exit(1);
   require('readline').createInterface({ input: process.stdin }).on('line', line => {
     const request = JSON.parse(line);
     if (request.id === 1) console.log(JSON.stringify({ id: 1, result: {} }));

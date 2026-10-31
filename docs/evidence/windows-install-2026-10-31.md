@@ -156,8 +156,9 @@ These are the outcomes observed in this run. For the current repair state, read 
 
 1. **Codex trust makes uninstall conflict.** The required human `/hooks` approval rewrites the recorded
    `.codex/config.toml`, so `uninstall` refuses with a conflict and removes nothing. This matches the documented
-   conflict rule but leaves every trusted Codex install needing manual recovery. A production policy decision
-   for #120/#121; unchanged here.
+   conflict rule but left trusted Codex installs needing manual recovery at the time of this run.
+   The later [guard follow-up](windows-guard-followup.md) records the implementation repair
+   and its separate acceptance status; these original observations are unchanged.
 2. **Pending Codex trust leaves no effective Codex guard.** The retained legacy handler is itself untrusted.
 3. **Codex probe portability.** `printf` does not exist in Codex's Windows PowerShell; a portable allow probe
    would make the allow cell exit 0.
@@ -169,4 +170,4 @@ These are the outcomes observed in this run. For the current repair state, read 
 | Actual OS directory-symlink refusal → junction | Human: turn Developer Mode off, then `node scripts/install/evidence/live-cross-scope-windows.js symlink` should record `Junction` without injection |
 | Actual OS file-symlink refusal → steering copy | Same session: `node scripts/install/evidence/steering-windows.js` (its link arm expects symlinks and will stop at the first assertion; the copy is then in its log) |
 | OpenCode host reading its steering file, OpenCode guard on Windows | Outside this handoff's Claude/Codex scope; the steering link/copy/drift rows above cover the OpenCode target's files only |
-| Uninstall after Codex trust | Policy decision above |
+| Uninstall after Codex trust | Failed in this run; see the later [guard follow-up](windows-guard-followup.md) for the repair and rerun status |

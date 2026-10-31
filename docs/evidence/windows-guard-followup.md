@@ -2,28 +2,35 @@
 
 The [native Windows report](windows-install-2026-10-31.md#findings-for-owners) records three
 findings. Its outcomes stand as observed. This note records the current repair state and
-its evidence. Each claim is labelled by source: **native** (Windows run), **writer** (the
-actual Codex 0.166.0 writer on Linux, disposable home), **source** (pinned upstream code) or
+its evidence. Each claim is labelled by source: **native** (Windows observation),
+**source** (pinned upstream code) or
 **fixture** (synthetic test input).
 
-## Policy
+## Preservation contract
 
-Fixing the unblocked findings implements the user's instruction to fix every unblocked
-issue under the journal's preservation contract. It is not a separate owner decision.
+This repair implements [#116's recorded-ownership contract](https://github.com/Hissal/skill-collection/issues/116)
+and [#120's preservation of unrelated hooks](https://github.com/Hissal/skill-collection/issues/120).
 Registration adopts only Codex hook-state tables, and only when every other byte still
-matches the installation journal. It keeps all human trust tables, including tables for
+matches the installation journal. It preserves syntactically validated hook-state tables, including tables for
 unrelated user hooks, through uninstall and reinstall. Installation never grants trust.
 
 ## 1. Trust no longer makes uninstall conflict
 
 [`codex-trust-delta.js`](../../scripts/install/codex-trust-delta.js) splits the config into
 ordinary bytes and hook-state tables. Ordinary bytes must equal the journal exactly.
-Uninstall restores the pre-install ordinary bytes followed by the current hook-state tables.
+Uninstall preserves the pre-install ordinary sections verbatim, including EOF whitespace
+and empty files. Current hook-state tables replace the first prior hook-state section,
+or are appended when none existed; their placement can therefore change. The parser
+checks table syntax, not who made a change. Installation never grants trust.
 
 Accepted forms:
 
 - **Native**: the retained run's `home\.codex\config.toml` (932 bytes, no BOM, LF only)
-  after human `/hooks` approval, read later from the preserved fixture. Sanitized excerpt:
+  after human `/hooks` approval, read on 2026-10-31 from the preserved disposable fixture
+  `C:\Users\<user>\AppData\Local\Temp\plugin-live-win-AN63RN\home\.codex\config.toml`.
+  [Retained observation](windows-trust-writer-observation.json) records the read-only
+  delegate's report; it is a transcribed observation, not a raw config or hash capture.
+  Sanitized excerpt:
 
   ```toml
   [hooks.state]
@@ -41,14 +48,11 @@ Accepted forms:
   No `[hooks]` header was present. The backup taken before install had no hook tables.
   Codex 0.166.0 is the version in the original report; the reading itself did not run
   `codex --version`.
-- **Writer**: `config/batchWrite` on `hooks.state`, the request the TUI sends for `/hooks`,
-  produced the same layout on Linux. That means a bare `[hooks.state]` parent, basic quotes for the plugin key,
-  literal quotes for a key containing backslashes, and existing human tables kept in place.
-  Personal multiline strings stayed byte-exact.
 - **Source**: at Codex [`6ff1e1ca`](https://github.com/openai/codex/blob/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/core/config.schema.json)
   (`rust-v0.166.0`), `HookStateToml` allows `enabled`, `trusted_hash` and
-  `trusted_content_hash`. `config_manager_service.rs` rewrites the whole `hooks.state`
-  table as explicit tables. In toml_writer
+  `trusted_content_hash`. Its
+  [`config_manager_service.rs`](https://github.com/openai/codex/blob/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/app-server/src/config_manager_service.rs)
+  converts table values to explicit TOML tables. In toml_writer
   [`fcb84da5` `string.rs`](https://github.com/toml-rs/toml/blob/fcb84da544c2e191362452d0ae7b4ecb1d6fa5f7/crates/toml_writer/src/string.rs),
   `TomlKeyBuilder::as_default` picks a literal key when a basic key would need escapes.
 
@@ -71,12 +75,13 @@ Human review in `/hooks` remains required.
 
 ## 3. Probe portability
 
-The allow probe is `node -e "console.log('ALLOW_120')"`. **Native**: it printed the
+The allow probe is `node -e "console.log('ALLOW_120')"`. **Native**, recorded in the
+[read-only observation](windows-trust-writer-observation.json): it printed the
 marker and exited 0 in PowerShell. That shows portability only, not host guard acceptance.
 `node scripts/install/evidence/live-plugins-windows.js probe-commands` prints the probes, the
 project rule and the Claude grants. The Claude run grants only these exact commands, never
 a wildcard. The plugin suite asserts that. **Unverified**: whether Claude's `Bash(...)`
-rule parser accepts the inner parentheses as an exact match. The native rerun shows it.
+rule parser accepts the inner parentheses as an exact match. The native rerun must check it.
 
 ## Verification
 

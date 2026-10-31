@@ -118,18 +118,20 @@ function registration(home, source, action = 'install') {
   // The previous installer's record of its own settings handlers, if any.
   const legacyFile = path.join(home, '.skill-collection/guard.json');
   function legacyRecord() { return fs.existsSync(legacyFile) ? JSON.parse(fs.readFileSync(legacyFile)) : null; }
-  let codexGroups = [];
+  let codexGroups = null;
   function ready(host) {
     if (host === 'claude') return true; // inspect verifies enabled effective registration.
     const r = spawnSync(process.execPath, [path.join(__dirname, 'codex-hook-status.js')], { env, cwd: home, encoding: 'utf8', timeout: 15000 });
     try {
+      if (r.status !== 0) throw new Error('Codex hook status unavailable');
       const groups = JSON.parse(r.stdout).result.data;
+      if (!Array.isArray(groups)) throw new Error('Codex hook status unavailable');
       codexGroups = groups;
       return groups.length > 0 && groups.every(group => {
         const hooks = group.hooks.filter(h => h.source === 'plugin' && h.pluginId === 'command-guard@skill-collection-guard');
         return !(group.errors || []).length && hooks.length > 0 && hooks.every(h => h.enabled && h.trustStatus === 'trusted');
       });
-    } catch { codexGroups = []; return false; }
+    } catch { codexGroups = null; return false; }
   }
   function probeSnapshot(snapshot) {
   const probeState = fs.mkdtempSync(path.join(require('os').tmpdir(), 'guard-probe-'));
@@ -153,9 +155,9 @@ function registration(home, source, action = 'install') {
     for (const h of data.hosts) {
       if (!ready(h.host)) { console.log('PENDING Codex human trust: review the current hook in /hooks.');
         const commands = (legacyRecord()?.groups || []).flatMap(g => g.hooks || []).map(h => h.command);
-        const fallback = codexGroups.flatMap(g => g.hooks || []).filter(h => h.source === 'user' && commands.includes(h.command));
-        const protectedFallback = codexGroups.length > 0 && codexGroups.every(g => !(g.errors || []).length && g.hooks.some(h => fallback.includes(h) && h.enabled && h.trustStatus === 'trusted'));
-        console.log('Codex legacy fallback: ' + (fallback.length ? fallback.map(h => (h.enabled ? 'enabled/' : 'disabled/') + h.trustStatus).join(', ') : 'absent or unverified'));
+        const fallback = (codexGroups || []).flatMap(g => g.hooks || []).filter(h => h.source === 'user' && commands.includes(h.command));
+        const protectedFallback = !!codexGroups?.length && codexGroups.every(g => !(g.errors || []).length && g.hooks.some(h => fallback.includes(h) && h.enabled && h.trustStatus === 'trusted'));
+        console.log('Codex legacy fallback: ' + (codexGroups === null ? 'status unavailable' : fallback.length ? fallback.map(h => (h.enabled ? 'enabled/' : 'disabled/') + h.trustStatus).join(', ') : 'absent'));
         console.log(protectedFallback ? 'PROTECTED by trusted legacy fallback while plugin trust is pending.' : 'UNPROTECTED: no verified trusted legacy fallback; human /hooks review required.');
         pending = true; }
     }

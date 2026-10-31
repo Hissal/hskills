@@ -251,7 +251,8 @@ async function main() {
     const { baseline } = JSON.parse(fs.readFileSync(path.join(root, 'state.json')));
     const after = fingerprints();
     const codex = { before: trustView(configBefore), after: trustView(configAfter),
-      ordinaryMatchesFixture: !!configAfter && trimmed(configAfter.ordinary) === trimmed(fixtures['.codex/config.toml']),
+      // This includes preserved preferences; false can be correct after uninstall.
+      nonTrustConfigMatchesMinimalFixture: !!configAfter && trimmed(configAfter.ordinary) === trimmed(fixtures['.codex/config.toml']),
       // Byte identity and the trust lines are separate claims: re-registration may move
       // one blank separator line while every key and hash stays the same.
       trustBytesIdentical: !!configAfter && configAfter.trust === configBefore.trust,

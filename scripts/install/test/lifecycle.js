@@ -32,9 +32,9 @@ function fixture(name) {
     config: path.join(home, '.codex/config.toml'),
     journal: path.join(home, '.skill-collection/plugins.json'),
     cache: path.join(home, '.skill-collection/plugin-cache'),
-    run(command) {
+    run(command, extraEnv = {}) {
       const args = command === 'install' ? ['prepare-plugin', '--home', home, '--source', source] : [command, '--home', home];
-      const r = spawnSync(process.execPath, [cli, ...args], { encoding: 'utf8', env });
+      const r = spawnSync(process.execPath, [cli, ...args], { encoding: 'utf8', env: { ...env, ...extraEnv } });
       return { status: r.status, output: r.stdout + r.stderr };
     },
     ok(command) { const r = f.run(command); assert.equal(r.status, 0, command + '\n' + r.output); return r; },
@@ -54,6 +54,23 @@ function cases(...list) {
 }
 
 const failures = cases(
+  ['directory removal errors leave a journal that supports retry', f => {
+    f.ok('install');
+    const preload = path.join(f.home, 'busy-directory.cjs');
+    fs.writeFileSync(preload, `const fs = require('fs'); const remove = fs.rmdirSync;
+fs.rmdirSync = function(dir, ...args) {
+  if (String(dir).includes('plugin-cache')) throw Object.assign(new Error('fixture directory busy'), { code: 'EBUSY' });
+  return remove.call(this, dir, ...args);
+};\n`);
+    const result = f.run('uninstall', { NODE_OPTIONS: '--require ' + JSON.stringify(preload) });
+    assert.equal(result.status, 1, result.output);
+    assert.match(result.output, /fixture directory busy/);
+    const record = JSON.parse(fs.readFileSync(f.journal));
+    assert.deepEqual(record.writes, [], 'deleted files must no longer be recorded');
+    assert.ok(record.directories.length, 'failed directory removal remains recorded');
+    f.ok('uninstall');
+    assert.equal(fs.existsSync(f.cache), false);
+  }],
   ['native trust and Codex preferences survive repeated reinstall and uninstall', f => {
     for (let cycle = 0; cycle < 3; cycle++) {
       f.ok('install');

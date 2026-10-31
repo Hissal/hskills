@@ -39,7 +39,8 @@ remaining defects ([findings](#findings-for-owners)).
   (`project-rule.json`); nothing else in the project changed.
 - **Probes.** Unchanged runner prompts, run outside Git with no remote: force-push, then
   `node -e "console.log('ALLOW_120')"`, then `node -e "console.log('PROJECT_BLOCK_120')"`. Each host step ran once.
-- **Sanitizing.** As in the original report; the runner now also drops Claude `thinking_tokens` estimates and
+- **Sanitizing.** As in the original report; the runner now also drops Claude `thinking_tokens` events
+  (numeric result usage counts remain) and
   Codex moderation metadata. Fingerprint files keep only the five configuration files, not credential hashes.
 
 ## Lifecycle on the unmodified trusted config
@@ -146,10 +147,15 @@ through the installer CLI, with CLI doubles for the hosts. **No native Windows r
    recorded snapshot files. This fixture's tree is unrecorded, since its files were already uninstalled, so
    it remains a conflict until the fixture is prepared again. Regressions: `scripts/install/test/lifecycle.js`
    (same-snapshot install, uninstall, install, doctor, uninstall; user-added files and empty directories;
-   a symlink replacement; a legacy journal; an unrecorded empty tree) and `scripts/install/test/plugin.js`.
+   symlink and ancestor replacements; a legacy journal; an unrecorded empty tree;
+   retry after a directory-removal error) and `scripts/install/test/plugin.js`.
+   Completed removals are journaled even if a later filesystem operation throws, so
+   a temporarily busy directory can be retried without stale file records.
 3. **Runner summary.** The uninstall summary replaces `trustTablesPreserved` with `trustBytesIdentical`
    and `trustLinesPreserved`, which ignores blank lines. It also adds `preferenceTables` and
    `snapshotEntriesRemaining`. The summaries retained above keep the old field.
+   New summaries name the remaining comparison `nonTrustConfigMatchesMinimalFixture`:
+   it includes preserved preference tables, so `false` alone is not an uninstall failure.
 
 ## Not covered
 

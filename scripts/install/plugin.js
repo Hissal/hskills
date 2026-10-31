@@ -174,8 +174,13 @@ function registration(home, source, action = 'install') {
   }
   if (action === 'uninstall') {
     data.writes = validatedWrites();
-    const ok = restore(data.writes); if (ok) data.hosts = [];
-    const removed = ok && removeDirectories(); save(); return removed;
+    try {
+      const ok = restore(data.writes); if (ok) data.hosts = [];
+      return ok && removeDirectories();
+    } finally {
+      // Persist completed removals even when a later filesystem operation fails.
+      save();
+    }
   }
   const env = { ...process.env, HOME: home, USERPROFILE: home, CLAUDE_CONFIG_DIR: path.join(home, '.claude'), CODEX_HOME: path.join(home, '.codex'), XDG_CONFIG_HOME: path.join(home, '.config') };
   function call(host, args) {

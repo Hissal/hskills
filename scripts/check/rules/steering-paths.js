@@ -1,12 +1,11 @@
 'use strict';
 // The personal steering source (spec 2, #118) never points at nothing (#112).
-// Checked against this repository: relative Markdown links, and each word of
-// code (code spans and fenced blocks) that is a path under one of the
-// repository's top-level folders, so a command running a removed script fails
-// too. A skill command (`/name`, or Codex `$name`) fails when that skill was
-// in the last release and no skill carries the name now; other commands may
-// be harness built-ins. Other code (branch-name examples, paths in the
-// project a session works in) is left alone.
+// It is user-scope steering, linked into ~/.claude/CLAUDE.md and the global
+// AGENTS.md and loaded in every project, so no path in it resolves against
+// this repository: a relative Markdown link fails, because it breaks once
+// loaded from there, and paths in code are left alone. A skill command
+// (`/name`, or Codex `$name`) fails when that skill was in the last release
+// and no skill carries the name now; other commands may be harness built-ins.
 
 const path = require('path');
 
@@ -25,27 +24,14 @@ function codeWords(text) {
   return out;
 }
 
-// the repository path a word of code names, or null when it names none here
-function repoPath(c, word) {
-  const w = word.replace(/^["'(]+/, '').replace(/["'),.;:!?]+$/, '');
-  if (!/^[\w.\/-]+$/.test(w) || !w.includes('/') || w.startsWith('/')) return null;
-  const p = path.posix.normalize(w);
-  const first = p.split('/')[0];
-  return first !== '..' && first !== '.' && c.exists(first) && !c.files.includes(first) ? p : null;
-}
-
 module.exports = {
   id: 'steering-paths', level: 'fail',
   check(c) {
     if (!c.exists(STEERING)) return [];
-    const missing = (target) => 'names ' + target + ', which does not exist; fix the steering text or restore it';
-    const findings = c.links(STEERING).filter((l) => !c.exists(l.path))
-      .map((l) => ({ file: STEERING, line: l.line, message: missing(l.target) }));
+    const findings = c.links(STEERING).map((l) => ({ file: STEERING, line: l.line, message: 'links to ' + l.target + ' by a relative path, which breaks once steering loads from user scope; use an absolute URL' }));
     const released = new Set((c.release ? c.release.skills : []).map((s) => path.posix.basename(s.dir)));
     const present = new Set(c.skills.map((s) => s.name));
     for (const { word, line } of codeWords(c.text(STEERING))) {
-      const p = repoPath(c, word);
-      if (p && !c.exists(p)) findings.push({ file: STEERING, line, message: missing(p) });
       const command = word.match(/^([/$])([a-z0-9]+(?:-[a-z0-9]+)*)[,.;:!?)]*$/);
       if (command && released.has(command[2]) && !present.has(command[2])) {
         findings.push({ file: STEERING, line, message: 'names the command ' + command[1] + command[2] + ', but that skill is gone since ' + c.release.tag + '; fix the steering text' });

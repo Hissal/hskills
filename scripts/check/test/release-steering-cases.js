@@ -20,14 +20,11 @@ module.exports = ({ skill }) => [
   { name: 'a release manifest behind the tag is not a pending release', history: [{ files: plugin('0.1.0'), tag: 'v0.2.0' }], committed: Object.assign(plugin('0.1.0'), pending('0.1.0')), expect: ['fail release-version ' + claude] },
   { name: 'an unreadable plugin manifest fails the version rule', history: [{ files: plugin('0.1.0'), tag: 'v0.1.0' }], committed: { [claude]: '{ not json\n' }, expect: ['fail release-version ' + claude] },
 
-  { name: 'a steering link to a missing file fails', files: steering('Follow [the format](docs/format.md).\n'), expect: ['fail steering-paths steering.md'] },
+  { name: 'a relative steering link fails even when its target exists', files: steering('Follow [the format](docs/format.md#rules).\n', { 'docs/format.md': '# Format\n' }), expect: ['fail steering-paths steering.md'] },
+  { name: 'a relative steering reference definition fails', files: steering('Follow [the format].\n\n[the format]: docs/format.md\n', { 'docs/format.md': '# Format\n' }), expect: ['fail steering-paths steering.md'] },
+  { name: 'absolute URL steering links pass', files: steering('Follow [the format](https://github.com/Hissal/skill-collection/blob/main/docs/skill-format.md#rules).\n'), expect: [] },
+  { name: 'paths in steering code are not checked', files: steering('Run `node scripts/gone.js --fix`, read `docs/gone.md`.\n\n```sh\nnode scripts/gone.js\n```\n', { 'scripts/present.js': '// present\n', 'docs/format.md': '# Format\n' }), expect: [] },
 
-  { name: 'steering links to existing files pass', files: steering('Follow [the format](docs/format.md#rules).\n', { 'docs/format.md': '# Format\n' }), expect: [] },
-  { name: 'a steering command running a missing script fails', files: steering('Run `node scripts/gone.js --fix` first.\n', { 'scripts/present.js': '// present\n' }), expect: ['fail steering-paths steering.md'] },
-  { name: 'a missing steering path in a fenced block fails', files: steering('```\nnode scripts/gone.js\n```\n', { 'scripts/present.js': '// present\n' }), expect: ['fail steering-paths steering.md'] },
-  { name: 'steering commands and paths that exist pass', files: steering('Run `node scripts/present.js`, then read `scripts/`.\n\n```sh\nnode scripts/present.js\n```\n', { 'scripts/present.js': '// present\n' }), expect: [] },
-
-  { name: 'steering examples outside the repository folders pass', files: steering('Branch `fix/memory-leak`, `<type>/<kebab-case>`, type `docs`, project `.claude/settings.json`.\n', { 'docs/format.md': '# Format\n' }), expect: [] },
   { name: 'a steering command for a released skill that is gone fails', history: [{ files: skill('skills/core/tdd'), tag: 'v0.1.0' }], committed: steering('Build with `/tdd`.\n'), expect: ['fail steering-paths steering.md', 'warn id-stability skills/core/tdd/SKILL.md'] },
   { name: 'a Codex steering command for a released skill that is gone fails', history: [{ files: skill('skills/core/tdd'), tag: 'v0.1.0' }], committed: steering('Build with `$tdd`.\n'), expect: ['fail steering-paths steering.md', 'warn id-stability skills/core/tdd/SKILL.md'] },
   { name: 'steering commands for present skills and harness built-ins pass', history: [{ files: skill('skills/core/tdd'), tag: 'v0.1.0' }], committed: steering('Build with `/tdd`, then `/clear`.\n', skill('skills/packs/web/tdd')), expect: [] },

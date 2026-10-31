@@ -79,8 +79,13 @@ and is absent from this source. For line admission and the measured source snaps
 [#118 evidence](../research/steering-source-118.md). The current naming-only text
 is authoritative; the historical tooling-note requirement was
 [retired](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
-The 500-token tripwire measurement belongs to #92; the `steering-paths` rule
-checks the commands and paths it names. Until the measurement uses this path by default, run
+The source is user scope: it is linked into `~/.claude/CLAUDE.md` and the
+global `AGENTS.md` and loaded in every project, so no path in it resolves
+against this repository. The `steering-paths` rule therefore fails any relative
+Markdown link (link with an absolute URL instead) and does not check paths in
+code. It also fails a `/skill` or `$skill` command whose skill is gone since the
+last release tag. The 500-token tripwire measurement belongs to #92. Until the
+measurement uses this path by default, run
 `COLLECTION_ALWAYS_ON_PATH=steering.md node scripts/check/check.js` to include it.
 
 ## Skill folder
@@ -215,7 +220,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `plugin-paths` | fail | a skill listed in a plugin declares `paths:` |
 | `plugin-requirements` | fail | a plugin skill's requirement resolves outside its plugin (plus core, for a pack) |
 | `release-version` | fail | a plugin manifest version differs from the last release tag, or from the newer version a release PR records in `.release-please-manifest.json`; silent until the first release tag |
-| `steering-paths` | fail | `steering.md` links to a missing file, names in code a missing path under a top-level repository folder, or names a `/skill` or `$skill` command whose skill is gone since the last release tag |
+| `steering-paths` | fail | `steering.md` has a relative Markdown link (it is user scope, so links must be absolute URLs), or names a `/skill` or `$skill` command whose skill is gone since the last release tag |
 | `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
 | `expensive-workflow` | fail | a skill on the manifest's `expensive` list is model-invoked and is not `code-review` or `research` |
 | `core-names-pack` | fail | a text file in a core skill other than `setup-project` and the core guide names a pack skill from the manifest (see [Extension points](#extension-points)) |

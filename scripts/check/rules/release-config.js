@@ -1,5 +1,5 @@
 'use strict';
-// Coverage only: release-tag/version equality belongs to #112.
+// Coverage only: release-tag/version equality is release-version's.
 module.exports = {
   id: 'release-config', level: 'fail',
   check(c) {

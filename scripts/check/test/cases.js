@@ -373,3 +373,5 @@ module.exports.push({
   files: { 'scripts/install/install.js': '// fixture installer' },
   expect: ['fail install-cases scripts/install/test/run.js'],
 });
+// ---- release versions and steering paths (#112) ------------------------------
+module.exports.push(...require('./release-steering-cases')({ skill }));

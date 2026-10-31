@@ -4,8 +4,9 @@
 // AGENTS.md and loaded in every project, so no path in it resolves against
 // this repository: a relative Markdown link fails, because it breaks once
 // loaded from there, and paths in code are left alone. A skill command
-// (`/name`, or Codex `$name`) fails when that skill was in the last release
-// and no skill carries the name now; other commands may be harness built-ins.
+// (`/name` or Codex `$name`, optionally `<plugin>:`-qualified) fails when that
+// skill was in the last release and no skill carries the name now; other
+// commands may be harness built-ins.
 
 const path = require('path');
 
@@ -32,7 +33,7 @@ module.exports = {
     const released = new Set((c.release ? c.release.skills : []).map((s) => path.posix.basename(s.dir)));
     const present = new Set(c.skills.map((s) => s.name));
     for (const { word, line } of codeWords(c.text(STEERING))) {
-      const command = word.match(/^([/$])([a-z0-9]+(?:-[a-z0-9]+)*)[,.;:!?)]*$/);
+      const command = word.match(/^([/$](?:[a-z0-9]+(?:-[a-z0-9]+)*:)?)([a-z0-9]+(?:-[a-z0-9]+)*)[,.;:!?)]*$/);
       if (command && released.has(command[2]) && !present.has(command[2])) {
         findings.push({ file: STEERING, line, message: 'names the command ' + command[1] + command[2] + ', but that skill is gone since ' + c.release.tag + '; fix the steering text' });
       }

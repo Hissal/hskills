@@ -220,7 +220,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `plugin-paths` | fail | a skill listed in a plugin declares `paths:` |
 | `plugin-requirements` | fail | a plugin skill's requirement resolves outside its plugin (plus core, for a pack) |
 | `release-version` | fail | a plugin manifest version differs from the last release tag, or from the newer version a release PR records in `.release-please-manifest.json`; silent until the first release tag |
-| `steering-paths` | fail | `steering.md` has a relative Markdown link (it is user scope, so links must be absolute URLs), or names a `/skill` or `$skill` command whose skill is gone since the last release tag |
+| `steering-paths` | fail | `steering.md` has a relative Markdown link (it is user scope, so links must be absolute URLs), or names a `/skill` or `$skill` command (optionally `<plugin>:`-qualified) whose skill is gone since the last release tag |
 | `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
 | `expensive-workflow` | fail | a skill on the manifest's `expensive` list is model-invoked and is not `code-review` or `research` |
 | `core-names-pack` | fail | a text file in a core skill other than `setup-project` and the core guide names a pack skill from the manifest (see [Extension points](#extension-points)) |

@@ -27,5 +27,7 @@ module.exports = ({ skill }) => [
 
   { name: 'a steering command for a released skill that is gone fails', history: [{ files: skill('skills/core/tdd'), tag: 'v0.1.0' }], committed: steering('Build with `/tdd`.\n'), expect: ['fail steering-paths steering.md', 'warn id-stability skills/core/tdd/SKILL.md'] },
   { name: 'a Codex steering command for a released skill that is gone fails', history: [{ files: skill('skills/core/tdd'), tag: 'v0.1.0' }], committed: steering('Build with `$tdd`.\n'), expect: ['fail steering-paths steering.md', 'warn id-stability skills/core/tdd/SKILL.md'] },
+  { name: 'a plugin-qualified steering command for a released skill that is gone fails', history: [{ files: skill('skills/core/tdd'), tag: 'v0.1.0' }], committed: steering('Build with `/collection-core:tdd`, or `$collection-core:tdd`.\n'), expect: ['fail steering-paths steering.md', 'fail steering-paths steering.md', 'warn id-stability skills/core/tdd/SKILL.md'] },
+  { name: 'a plugin-qualified steering command for a present skill passes', history: [{ files: skill('skills/core/tdd'), tag: 'v0.1.0' }], committed: steering('Build with `/collection-pack-web:tdd`.\n', skill('skills/packs/web/tdd')), expect: [] },
   { name: 'steering commands for present skills and harness built-ins pass', history: [{ files: skill('skills/core/tdd'), tag: 'v0.1.0' }], committed: steering('Build with `/tdd`, then `/clear`.\n', skill('skills/packs/web/tdd')), expect: [] },
 ];

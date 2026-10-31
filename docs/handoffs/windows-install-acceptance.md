@@ -13,10 +13,10 @@ after it merges. A WSL run does not establish native Windows behavior.
 
 ## Scope and existing evidence
 
-For the completed native matrix, steering and live guard observations, read
-[Windows acceptance](../evidence/windows-install-2026-10-31.md). For the trust
-lifecycle repair and its remaining authenticated rerun, read the
-[guard follow-up](../evidence/windows-guard-followup.md). Use the steps below
+For the completed native matrix and steering, read
+[Windows acceptance](../evidence/windows-install-2026-10-31.md). For the guard lifecycle, its
+repairs and their native acceptance, read [Windows guard acceptance](../evidence/windows-guard-followup.md).
+The [evidence index](../evidence/README.md) maps each claim to its report. Use the steps below
 to reproduce or extend those results, recording only newly exercised cases.
 
 Finish the observations below using isolated fixture skills. Actual core/pack

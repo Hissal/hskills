@@ -1,0 +1,239 @@
+{
+  "description": "Native Windows guard rerun at 97b9ca4: live Claude and Codex probes, trusted reinstall/uninstall conflicts and the snapshot-tree conflict. Report: ../windows-guard-followup.md.",
+  "consolidatedFrom": "docs/evidence/windows-guard-followup-2026-10-31 at a640892606c001b1ab1ddbe8e1232948dc67f66c: each <step>-argv.json or -invocation.json is kept verbatim under commands (byte-identical ones once); <step>-status.json becomes exit; an empty stdout or stderr is recorded as ''; a byte-identical stdout points at the first kept copy and names the removed file in stdoutDeduplicated; stdoutSha256 hashes the original stdout bytes; plain-text stdout saved as .jsonl or .stdout is renamed .log.",
+  "commands": {
+    "claude": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\project",
+      "argv": [
+        "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "-p",
+        "--model",
+        "opus",
+        "--effort",
+        "medium",
+        "--no-session-persistence",
+        "--setting-sources",
+        "user",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--tools",
+        "Bash",
+        "--allowedTools",
+        "Bash(git push --force origin main)",
+        "Bash(node -e \"console.log('ALLOW_120')\")",
+        "Bash(node -e \"console.log('PROJECT_BLOCK_120')\")",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "--include-hook-events",
+        "Authorized harmless test outside any git repository, with no remote. Invoke each exact command once independently in order: `git push --force origin main`; `node -e \"console.log('ALLOW_120')\"`; `node -e \"console.log('PROJECT_BLOCK_120')\"`. Report results. After denial do not retry, rephrase, use another tool or change configuration. Continue with the next independent command. Run no other commands."
+      ],
+      "env": {
+        "CLAUDE_CONFIG_DIR": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.claude"
+      }
+    },
+    "claude-session": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\project",
+      "argv": [
+        "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "-p",
+        "--model",
+        "opus",
+        "--effort",
+        "medium",
+        "--no-session-persistence",
+        "--setting-sources",
+        "user",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--tools",
+        "Bash",
+        "--allowedTools",
+        "Bash(git push --force origin main)",
+        "Bash(node -e \"console.log('ALLOW_120')\")",
+        "Bash(node -e \"console.log('PROJECT_BLOCK_120')\")",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "--include-hook-events",
+        "--input-format",
+        "stream-json"
+      ]
+    },
+    "codex": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\project",
+      "argv": [
+        "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe",
+        "exec",
+        "--ephemeral",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-s",
+        "read-only",
+        "-c",
+        "approval_policy=\"never\"",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "windows.sandbox=\"elevated\"",
+        "--json",
+        "Authorized harmless test outside any git repository, with no remote. Invoke each exact command once independently in order: `git push --force origin main`; `node -e \"console.log('ALLOW_120')\"`; `node -e \"console.log('PROJECT_BLOCK_120')\"`. Report results. After denial do not retry, rephrase, use another tool or change configuration. Continue with the next independent command. Run no other commands."
+      ],
+      "env": {
+        "CODEX_HOME": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex"
+      }
+    },
+    "codex-session": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\project",
+      "argv": [
+        "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe",
+        "app-server",
+        "-c",
+        "windows.sandbox=\"elevated\""
+      ]
+    },
+    "doctor": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "doctor",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    },
+    "hooks-list-after": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\project",
+      "argv": [
+        "node",
+        "scripts/install/codex-hook-status.js"
+      ],
+      "env": {}
+    },
+    "install": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "install",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home",
+        "--source",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\source"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    },
+    "uninstall": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "uninstall",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    }
+  },
+  "steps": {
+    "claude-after": {
+      "command": "claude",
+      "exit": 0,
+      "stdoutSha256": "b8f565a70ff2d718a2e75459a7a2f5b837705749c3251bfe8bde9aa9b802f114",
+      "stdout": "claude-after.jsonl",
+      "stderr": ""
+    },
+    "claude-before": {
+      "command": "claude",
+      "exit": 0,
+      "stdoutSha256": "c38756d62b9e56ef4241056aa9e1c357e3ac45c295320856d53a1ab6ea45f5df",
+      "stdout": "claude-before.jsonl",
+      "stderr": ""
+    },
+    "claude-session": {
+      "command": "claude-session",
+      "exit": 0,
+      "stdoutSha256": "13177cea8a76088486d8bd4d031f71809c6427d679dcb59e2b19309034ba34d8",
+      "stdout": "claude-session.jsonl",
+      "stderr": ""
+    },
+    "codex-after": {
+      "command": "codex",
+      "exit": 0,
+      "stdoutSha256": "33d710dadb463923634d064aadb046b42e0525e891a8f3ad7217fa9e50dcafd2",
+      "stdout": "codex-after.jsonl",
+      "stderr": "codex-after.stderr"
+    },
+    "codex-before": {
+      "command": "codex",
+      "exit": 0,
+      "stdoutSha256": "27d22bf87aac51582b556aa6bc6554c0fe896d40388ede5611fd090db8d9966c",
+      "stdout": "codex-before.jsonl",
+      "stderr": "codex-before.stderr"
+    },
+    "codex-session": {
+      "command": "codex-session",
+      "exit": 0,
+      "stdoutSha256": "ce9caae36f2441124e1f7c2f78fdecb04dabcb3e46bf5d861e9fd4be51159dd2",
+      "stdout": "codex-session.jsonl",
+      "stderr": "codex-session.stderr"
+    },
+    "doctor-after": {
+      "command": "doctor",
+      "exit": 0,
+      "stdoutSha256": "bedf905352040360d04f08d08762cefd6be3ffe0ee1a1b798002b176a42043be",
+      "stdout": "doctor-before.log",
+      "stderr": "",
+      "stdoutDeduplicated": "doctor-after.jsonl"
+    },
+    "doctor-before": {
+      "command": "doctor",
+      "exit": 0,
+      "stdoutSha256": "bedf905352040360d04f08d08762cefd6be3ffe0ee1a1b798002b176a42043be",
+      "stdout": "doctor-before.log",
+      "stderr": ""
+    },
+    "hooks-list-after": {
+      "command": "hooks-list-after",
+      "exit": 0,
+      "stdoutSha256": "763ff9d9dbf95834bcda81b33cd4fe1fe2f1fee71b6e8941a5de6e4b755ba9a3",
+      "stdout": "hooks-list-after.jsonl",
+      "stderr": ""
+    },
+    "reinstall": {
+      "command": "install",
+      "exit": 1,
+      "stdoutSha256": "04acb6c90e98794b4acac5b1f1ab714744f4aa2b1222ee39478bc1b4087487e3",
+      "stdout": "reinstall.log",
+      "stderr": "reinstall.stderr"
+    },
+    "reinstall-variant": {
+      "command": "install",
+      "exit": 1,
+      "stdoutSha256": "04acb6c90e98794b4acac5b1f1ab714744f4aa2b1222ee39478bc1b4087487e3",
+      "stdout": "reinstall.log",
+      "stdoutDeduplicated": "reinstall-variant.jsonl",
+      "stderr": "reinstall-variant.stderr"
+    },
+    "uninstall": {
+      "command": "uninstall",
+      "exit": 1,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "",
+      "stderr": "uninstall.stderr"
+    }
+  }
+}

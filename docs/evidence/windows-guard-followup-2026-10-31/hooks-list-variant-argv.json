@@ -1,8 +1,0 @@
-{
-  "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\project",
-  "argv": [
-    "node",
-    "scripts/install/codex-hook-status.js"
-  ],
-  "env": {}
-}

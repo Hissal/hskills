@@ -1,0 +1,259 @@
+{
+  "description": "Linux cross-scope live runs (#127), 2026-10-30: commands, mounts, exit statuses and transcript files. Report: ../issue-127-cross-scope.md.",
+  "consolidatedFrom": "docs/evidence/issue-127 at a640892606c001b1ab1ddbe8e1232948dc67f66c: each <step>-argv.json or -invocation.json is kept verbatim under commands (byte-identical ones once); <step>-status.json becomes exit; an empty stdout or stderr is recorded as ''; a byte-identical stdout points at the first kept copy and names the removed file in stdoutDeduplicated; stdoutSha256 hashes the original stdout bytes; plain-text stdout saved as .jsonl or .stdout is renamed .log.",
+  "commands": {
+    "codex-list": {
+      "cwd": "/tmp/skill-scope-127-Y1mRqT/duplicate/project",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/agent/.t3/worktrees/skill-collection/t3-3cdc4806/scripts/install/evidence/live-cross-scope.py",
+        "--list"
+      ],
+      "mounts": [
+        [
+          "/tmp/skill-scope-127-Y1mRqT/duplicate/home/.claude/skills",
+          "/home/agent/.claude/skills"
+        ],
+        [
+          "/tmp/skill-scope-127-Y1mRqT/duplicate/home/.agents/skills",
+          "/home/agent/.agents/skills"
+        ]
+      ]
+    },
+    "duplicate-claude": {
+      "cwd": "/tmp/skill-scope-127-Y1mRqT/duplicate/project",
+      "argv": [
+        "/home/agent/.local/bin/claude",
+        "-p",
+        "--model",
+        "opus",
+        "--effort",
+        "medium",
+        "--setting-sources",
+        "user,project",
+        "--settings",
+        "/tmp/skill-scope-127-Y1mRqT/duplicate/live-settings.json",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--no-session-persistence",
+        "--tools",
+        "Read,Skill",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "Invoke /scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "mounts": [
+        [
+          "/tmp/skill-scope-127-Y1mRqT/duplicate/home/.claude/skills",
+          "/home/agent/.claude/skills"
+        ],
+        [
+          "/tmp/skill-scope-127-Y1mRqT/duplicate/home/.agents/skills",
+          "/home/agent/.agents/skills"
+        ]
+      ]
+    },
+    "duplicate-codex": {
+      "cwd": "/tmp/skill-scope-127-Y1mRqT/duplicate/project",
+      "argv": [
+        "/home/agent/.npm-global/bin/codex",
+        "exec",
+        "--ephemeral",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-s",
+        "read-only",
+        "-c",
+        "approval_policy=\"never\"",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "Invoke $scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "mounts": [
+        [
+          "/tmp/skill-scope-127-Y1mRqT/duplicate/home/.claude/skills",
+          "/home/agent/.claude/skills"
+        ],
+        [
+          "/tmp/skill-scope-127-Y1mRqT/duplicate/home/.agents/skills",
+          "/home/agent/.agents/skills"
+        ]
+      ]
+    },
+    "project-to-user-claude": {
+      "cwd": "/tmp/skill-scope-127-Y1mRqT/project-to-user/project",
+      "argv": [
+        "/home/agent/.local/bin/claude",
+        "-p",
+        "--model",
+        "opus",
+        "--effort",
+        "medium",
+        "--setting-sources",
+        "user,project",
+        "--settings",
+        "/tmp/skill-scope-127-Y1mRqT/project-to-user/live-settings.json",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--no-session-persistence",
+        "--tools",
+        "Read,Skill",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "Invoke /scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "mounts": [
+        [
+          "/tmp/skill-scope-127-Y1mRqT/project-to-user/home/.claude/skills",
+          "/home/agent/.claude/skills"
+        ],
+        [
+          "/tmp/skill-scope-127-Y1mRqT/project-to-user/home/.agents/skills",
+          "/home/agent/.agents/skills"
+        ]
+      ]
+    },
+    "project-to-user-codex": {
+      "cwd": "/tmp/skill-scope-127-Y1mRqT/project-to-user/project",
+      "argv": [
+        "/home/agent/.npm-global/bin/codex",
+        "exec",
+        "--ephemeral",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-s",
+        "read-only",
+        "-c",
+        "approval_policy=\"never\"",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "Invoke $scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "mounts": [
+        [
+          "/tmp/skill-scope-127-Y1mRqT/project-to-user/home/.claude/skills",
+          "/home/agent/.claude/skills"
+        ],
+        [
+          "/tmp/skill-scope-127-Y1mRqT/project-to-user/home/.agents/skills",
+          "/home/agent/.agents/skills"
+        ]
+      ]
+    },
+    "user-to-project-claude": {
+      "cwd": "/tmp/skill-scope-127-Y1mRqT/user-to-project/project",
+      "argv": [
+        "/home/agent/.local/bin/claude",
+        "-p",
+        "--model",
+        "opus",
+        "--effort",
+        "medium",
+        "--setting-sources",
+        "user,project",
+        "--settings",
+        "/tmp/skill-scope-127-Y1mRqT/user-to-project/live-settings.json",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--no-session-persistence",
+        "--tools",
+        "Read,Skill",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "Invoke /scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "mounts": [
+        [
+          "/tmp/skill-scope-127-Y1mRqT/user-to-project/home/.claude/skills",
+          "/home/agent/.claude/skills"
+        ],
+        [
+          "/tmp/skill-scope-127-Y1mRqT/user-to-project/home/.agents/skills",
+          "/home/agent/.agents/skills"
+        ]
+      ]
+    },
+    "user-to-project-codex": {
+      "cwd": "/tmp/skill-scope-127-Y1mRqT/user-to-project/project",
+      "argv": [
+        "/home/agent/.npm-global/bin/codex",
+        "exec",
+        "--ephemeral",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-s",
+        "read-only",
+        "-c",
+        "approval_policy=\"never\"",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "Invoke $scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "mounts": [
+        [
+          "/tmp/skill-scope-127-Y1mRqT/user-to-project/home/.claude/skills",
+          "/home/agent/.claude/skills"
+        ],
+        [
+          "/tmp/skill-scope-127-Y1mRqT/user-to-project/home/.agents/skills",
+          "/home/agent/.agents/skills"
+        ]
+      ]
+    }
+  },
+  "steps": {
+    "codex-list": {
+      "command": "codex-list",
+      "stdoutSha256": "fb69eb7c4e033aa17b17bec3b6d179f40d22bb5694bfa7ab3710a8e33901bbfa",
+      "stdout": "codex-list.jsonl"
+    },
+    "duplicate-claude": {
+      "command": "duplicate-claude",
+      "exit": 0,
+      "stdoutSha256": "d3905730dd686da83898ca2a41d4186ffb5ac4e09c45a656b35bf4e81ecb1b0d",
+      "stdout": "duplicate-claude.jsonl"
+    },
+    "duplicate-codex": {
+      "command": "duplicate-codex",
+      "exit": 0,
+      "stdoutSha256": "a79c9fd6f93c2470e4be93c15e69c903f5f71ecd0472ce278fa9ee2814296732",
+      "stdout": "duplicate-codex.jsonl"
+    },
+    "project-to-user-claude": {
+      "command": "project-to-user-claude",
+      "exit": 0,
+      "stdoutSha256": "08e7678173387aef746f9b49c07d86ae9f4487fcfc6bc3f03db04173645ccc37",
+      "stdout": "project-to-user-claude.jsonl"
+    },
+    "project-to-user-codex": {
+      "command": "project-to-user-codex",
+      "exit": 0,
+      "stdoutSha256": "f9e92f64d89c9e8e80366cbe76fd68446a33bf3e5e532489582b6d51d8cb4e3e",
+      "stdout": "project-to-user-codex.jsonl"
+    },
+    "user-to-project-claude": {
+      "command": "user-to-project-claude",
+      "exit": 0,
+      "stdoutSha256": "5db34af91afedc9fb0147f06b99b7c4a183581ba31a3bf7a9681cafadcfa8e98",
+      "stdout": "user-to-project-claude.jsonl"
+    },
+    "user-to-project-codex": {
+      "command": "user-to-project-codex",
+      "exit": 0,
+      "stdoutSha256": "81541967cbc2f1ecd68b9dab167a7f60b17d5def86aa57a50aa5929b9eb6e555",
+      "stdout": "user-to-project-codex.jsonl"
+    }
+  }
+}

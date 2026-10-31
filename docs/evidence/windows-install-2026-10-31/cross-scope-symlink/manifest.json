@@ -1,0 +1,219 @@
+{
+  "description": "Native Windows cross-scope live runs, symlink arm, at 3a50d50: commands, environment overrides, exit statuses and transcript files. Report: ../../windows-install-2026-10-31.md.",
+  "consolidatedFrom": "docs/evidence/windows-install-2026-10-31/cross-scope-symlink at a640892606c001b1ab1ddbe8e1232948dc67f66c: each <step>-argv.json or -invocation.json is kept verbatim under commands (byte-identical ones once); <step>-status.json becomes exit; an empty stdout or stderr is recorded as ''; a byte-identical stdout points at the first kept copy and names the removed file in stdoutDeduplicated; stdoutSha256 hashes the original stdout bytes; plain-text stdout saved as .jsonl or .stdout is renamed .log.",
+  "commands": {
+    "duplicate-claude": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\duplicate\\project",
+      "argv": [
+        "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "-p",
+        "--model",
+        "opus",
+        "--effort",
+        "medium",
+        "--setting-sources",
+        "user,project",
+        "--settings",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\duplicate\\live-settings.json",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--no-session-persistence",
+        "--tools",
+        "Read,Skill",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "Invoke /scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "env": {
+        "CLAUDE_CONFIG_DIR": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\duplicate\\home\\.claude"
+      }
+    },
+    "duplicate-codex": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\duplicate\\project",
+      "argv": [
+        "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe",
+        "exec",
+        "--ephemeral",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-s",
+        "read-only",
+        "-c",
+        "approval_policy=\"never\"",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "windows.sandbox=\"elevated\"",
+        "--json",
+        "Invoke $scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "env": {
+        "CODEX_HOME": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\duplicate\\home\\.agents"
+      }
+    },
+    "duplicate-codex-list": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\duplicate\\project",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\evidence\\live-cross-scope-windows.js",
+        "--list",
+        "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      ],
+      "env": {
+        "CODEX_HOME": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\duplicate\\home\\.agents"
+      }
+    },
+    "project-to-user-claude": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\project-to-user\\project",
+      "argv": [
+        "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "-p",
+        "--model",
+        "opus",
+        "--effort",
+        "medium",
+        "--setting-sources",
+        "user,project",
+        "--settings",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\project-to-user\\live-settings.json",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--no-session-persistence",
+        "--tools",
+        "Read,Skill",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "Invoke /scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "env": {
+        "CLAUDE_CONFIG_DIR": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\project-to-user\\home\\.claude"
+      }
+    },
+    "project-to-user-codex": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\project-to-user\\project",
+      "argv": [
+        "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe",
+        "exec",
+        "--ephemeral",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-s",
+        "read-only",
+        "-c",
+        "approval_policy=\"never\"",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "windows.sandbox=\"elevated\"",
+        "--json",
+        "Invoke $scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "env": {
+        "CODEX_HOME": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\project-to-user\\home\\.agents"
+      }
+    },
+    "user-to-project-claude": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\project",
+      "argv": [
+        "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "-p",
+        "--model",
+        "opus",
+        "--effort",
+        "medium",
+        "--setting-sources",
+        "user,project",
+        "--settings",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\live-settings.json",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--no-session-persistence",
+        "--tools",
+        "Read,Skill",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "Invoke /scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "env": {
+        "CLAUDE_CONFIG_DIR": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\home\\.claude"
+      }
+    },
+    "user-to-project-codex": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\project",
+      "argv": [
+        "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe",
+        "exec",
+        "--ephemeral",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-s",
+        "read-only",
+        "-c",
+        "approval_policy=\"never\"",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "windows.sandbox=\"elevated\"",
+        "--json",
+        "Invoke $scope-caller. Load the selected caller body and required skill body and reference using installed skill visibility. Report their exact paths, body markers and reference token. Also report every scope-caller entry visible in your installed skill listing with its path. Do not edit anything or invoke other skills."
+      ],
+      "env": {
+        "CODEX_HOME": "C:\\Users\\<user>\\AppData\\Local\\Temp\\skill-scope-127-1Ayu9Z\\user-to-project\\home\\.agents"
+      }
+    }
+  },
+  "steps": {
+    "duplicate-claude": {
+      "command": "duplicate-claude",
+      "exit": 0,
+      "stdoutSha256": "59c12810b070f952650666d72d7dfa70f213761c8c84d1c9c42b5c0252893c33",
+      "stdout": "duplicate-claude.jsonl"
+    },
+    "duplicate-codex": {
+      "command": "duplicate-codex",
+      "exit": 0,
+      "stdoutSha256": "624cdb73b453e5a7f217561c1bba85e5793506c8e46e93a1e96857caac0345ad",
+      "stdout": "duplicate-codex.jsonl"
+    },
+    "duplicate-codex-list": {
+      "command": "duplicate-codex-list",
+      "exit": 0,
+      "stdoutSha256": "3931d5f841b0aade6a5d8d831264854778c3cdba4e9d958600a8c6dea9caac8c",
+      "stdoutExtract": "duplicate-codex-list-extract.json",
+      "stdoutRemoved": "duplicate-codex-list.jsonl"
+    },
+    "project-to-user-claude": {
+      "command": "project-to-user-claude",
+      "exit": 0,
+      "stdoutSha256": "b8b24eb2bfd5291dd17038b1de828bc7e8da35b595c8160c8181a62fa0525301",
+      "stdout": "project-to-user-claude.jsonl"
+    },
+    "project-to-user-codex": {
+      "command": "project-to-user-codex",
+      "exit": 0,
+      "stdoutSha256": "0437270d96d95e3c0d01329545d62ed7ae15524eb7ddabaaed23fe19c39243dd",
+      "stdout": "project-to-user-codex.jsonl"
+    },
+    "user-to-project-claude": {
+      "command": "user-to-project-claude",
+      "exit": 0,
+      "stdoutSha256": "42596b4c4ac8f8ab178068a22cac7f286cc692de76710eb74340f8b6c8380d95",
+      "stdout": "user-to-project-claude.jsonl"
+    },
+    "user-to-project-codex": {
+      "command": "user-to-project-codex",
+      "exit": 0,
+      "stdoutSha256": "1cfed6e5adb02c88cc6feb20f95b9bfcdf618fc6029cd10fed2c0ff117d25e9a",
+      "stdout": "user-to-project-codex.jsonl"
+    }
+  }
+}

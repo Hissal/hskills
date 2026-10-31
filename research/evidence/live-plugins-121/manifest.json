@@ -1,0 +1,125 @@
+{
+  "description": "Linux live plugin runs (#121), 2026-10-30: exact argv of the lifecycle and Claude steps. Exit statuses are copied from the runner output run-summary.txt, which is kept. Report: ../../live-plugins-121.md.",
+  "consolidatedFrom": "research/evidence/live-plugins-121 at a640892606c001b1ab1ddbe8e1232948dc67f66c: each <step>-argv.json or -invocation.json is kept verbatim under commands (byte-identical ones once); <step>-status.json becomes exit; an empty stdout or stderr is recorded as ''; a byte-identical stdout points at the first kept copy and names the removed file in stdoutDeduplicated; stdoutSha256 hashes the original stdout bytes; plain-text stdout saved as .jsonl or .stdout is renamed .log.",
+  "commands": {
+    "claude-plugin": [
+      "/home/agent/.local/bin/claude",
+      "-p",
+      "--model",
+      "opus",
+      "--effort",
+      "medium",
+      "--no-session-persistence",
+      "--setting-sources",
+      "",
+      "--strict-mcp-config",
+      "--mcp-config",
+      "{\"mcpServers\":{}}",
+      "--tools",
+      "Bash",
+      "--allowedTools",
+      "Bash(git push --force origin main)",
+      "Bash(printf *)",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--include-hook-events",
+      "--plugin-dir",
+      "/tmp/plugin-live-121-7ripxpcz/home/.skill-collection/plugin-cache/0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3",
+      "Authorized harmless test outside any git repository, with no remote. Invoke each exact command once independently in order: `git push --force origin main`; `printf ALLOW_120`; `printf PROJECT_BLOCK_120`. Report results. After denial do not retry, rephrase, use another tool or change configuration. Continue with the next independent command. Run no other commands."
+    ],
+    "doctor": [
+      "node",
+      "/home/agent/.t3/worktrees/skill-collection/t3-d5993293/scripts/install/install.js",
+      "doctor",
+      "--home",
+      "/tmp/plugin-live-121-7ripxpcz/home",
+      "--source",
+      "/tmp/plugin-live-121-7ripxpcz/source"
+    ],
+    "install": [
+      "node",
+      "/home/agent/.t3/worktrees/skill-collection/t3-d5993293/scripts/install/install.js",
+      "install",
+      "--home",
+      "/tmp/plugin-live-121-7ripxpcz/home",
+      "--source",
+      "/tmp/plugin-live-121-7ripxpcz/source"
+    ],
+    "same-session": [
+      "/home/agent/.local/bin/claude",
+      "-p",
+      "--model",
+      "opus",
+      "--effort",
+      "medium",
+      "--no-session-persistence",
+      "--setting-sources",
+      "",
+      "--strict-mcp-config",
+      "--mcp-config",
+      "{\"mcpServers\":{}}",
+      "--tools",
+      "Bash",
+      "--allowedTools",
+      "Bash(git push --force origin main)",
+      "Bash(printf *)",
+      "--output-format",
+      "stream-json",
+      "--input-format",
+      "stream-json",
+      "--verbose",
+      "--include-hook-events",
+      "--plugin-dir",
+      "/tmp/plugin-live-121-7ripxpcz/home/.skill-collection/plugin-cache/0.1.0-b6f7f1ce186c06e64c7516b2ba1c56970a064490436d73921927ede5470aa9a3"
+    ],
+    "uninstall": [
+      "node",
+      "/home/agent/.t3/worktrees/skill-collection/t3-d5993293/scripts/install/install.js",
+      "uninstall",
+      "--home",
+      "/tmp/plugin-live-121-7ripxpcz/home"
+    ]
+  },
+  "steps": {
+    "claude-plugin-after": {
+      "command": "claude-plugin",
+      "exit": 0,
+      "stdoutSha256": "00e1c19d8e0cffce36d1c895beb4af9ebf7f97dd32e9daa70ef19d78514b2bf6",
+      "stdout": "claude-plugin-after.jsonl"
+    },
+    "claude-plugin-before": {
+      "command": "claude-plugin",
+      "exit": 0,
+      "stdoutSha256": "7ec6ab92e54dd0d9f6e5748de84275b0c7476334932d6354d618be03c14a3404",
+      "stdout": "claude-plugin-before.jsonl"
+    },
+    "doctor": {
+      "command": "doctor",
+      "exit": 1,
+      "stdoutSha256": "fa659f57fe7f21c073c2884dec3a0f3560ba91fd80bd7ce6bce8531c760a48dc",
+      "stdout": "doctor.log",
+      "stderr": ""
+    },
+    "install": {
+      "command": "install",
+      "exit": 1,
+      "stdoutSha256": "d13e5fd2ee85312d806e49f99c5369f81934cac72bbd58c24d31df5b75b8256f",
+      "stdout": "install.log",
+      "stderr": ""
+    },
+    "same-session": {
+      "command": "same-session",
+      "exit": 0,
+      "stdoutSha256": "808c9e4ec12ad8173e5196a88448a274f4545ca6b6d904586e17fb913cd19208",
+      "stdout": "same-session.jsonl"
+    },
+    "uninstall": {
+      "command": "uninstall",
+      "exit": 0,
+      "stdoutSha256": "7b992cf51941ab1c0e20d9b4a8d6bcbe78efed2a591de7c1cbb2ecc469d2f929",
+      "stdout": "uninstall.log",
+      "stderr": ""
+    }
+  }
+}

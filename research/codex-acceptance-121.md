@@ -25,8 +25,8 @@ No legacy setting was disabled or edited. No trust API or trust write was used.
 The supported `exec --ignore-user-config` flag skips `config.toml` while keeping
 normal authentication. With the now installed registry, an invocation-only
 plugin enablement and harmless `printf ISOLATION_121` completed successfully:
-[argv](evidence/codex-acceptance-121/ignore-argv.json),
-[events](evidence/codex-acceptance-121/ignore-events.json). Its JSON stream does
+[argv](https://github.com/Hissal/skill-collection/blob/a640892606c001b1ab1ddbe8e1232948dc67f66c/research/evidence/codex-acceptance-121/ignore-argv.json) and
+[events](https://github.com/Hissal/skill-collection/blob/a640892606c001b1ab1ddbe8e1232948dc67f66c/research/evidence/codex-acceptance-121/ignore-events.json) are at `a640892`. Its JSON stream does
 not expose hook provenance, so this is **inconclusive for isolation**. App-server
 help does not expose that exec flag. Acceptance instead uses the paired
 account/read + hooks/list configuration and source-labelled runtime events.

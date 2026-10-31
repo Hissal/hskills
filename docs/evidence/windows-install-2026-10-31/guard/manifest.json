@@ -1,0 +1,91 @@
+{
+  "description": "Native Windows guard lifecycle, original run at 3a50d50: installer commands, exit statuses and outputs before and after the human /hooks review. Report: ../../windows-guard-followup.md.",
+  "consolidatedFrom": "docs/evidence/windows-install-2026-10-31/guard at a640892606c001b1ab1ddbe8e1232948dc67f66c: each <step>-argv.json or -invocation.json is kept verbatim under commands (byte-identical ones once); <step>-status.json becomes exit; an empty stdout or stderr is recorded as ''; a byte-identical stdout points at the first kept copy and names the removed file in stdoutDeduplicated; stdoutSha256 hashes the original stdout bytes; plain-text stdout saved as .jsonl or .stdout is renamed .log.",
+  "commands": {
+    "codex-hooks-list": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\project",
+      "argv": [
+        "node",
+        "scripts/install/codex-hook-status.js"
+      ],
+      "env": {}
+    },
+    "doctor": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "doctor",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home",
+        "--source",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\source"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    },
+    "install": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "install",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home",
+        "--source",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\source"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    },
+    "uninstall": {
+      "cwd": "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\<user>\\.t3\\worktrees\\skill-collection\\test-windows-install-acceptance\\scripts\\install\\install.js",
+        "uninstall",
+        "--home",
+        "C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home"
+      ],
+      "env": {
+        "COMMAND_GUARD_CLAUDE": "C:\\Users\\<user>\\.local\\bin\\claude.exe",
+        "COMMAND_GUARD_CODEX": "C:\\Users\\<user>\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe"
+      }
+    }
+  },
+  "steps": {
+    "codex-hooks-list": {
+      "command": "codex-hooks-list",
+      "exit": 0,
+      "stdoutSha256": "763ff9d9dbf95834bcda81b33cd4fe1fe2f1fee71b6e8941a5de6e4b755ba9a3",
+      "stdout": "codex-hooks-list.jsonl",
+      "stderr": "",
+      "note": "Run after the human /hooks review. codex-hooks-list-pending.jsonl is the same command before that review; its exit status was not recorded."
+    },
+    "doctor": {
+      "command": "doctor",
+      "exit": 1,
+      "stdoutSha256": "92316577f051b8b0f4d8d24fa5312cabf7a37751afee70dd9b08b862a8492a8e",
+      "stdout": "doctor.log",
+      "stderr": ""
+    },
+    "install": {
+      "command": "install",
+      "exit": 1,
+      "stdoutSha256": "bebf18f296f43721d3609cf6c0f8cb1fb23fbe822492018f2e05680629c72473",
+      "stdout": "install.log",
+      "stderr": ""
+    },
+    "uninstall": {
+      "command": "uninstall",
+      "exit": 1,
+      "stdoutSha256": "788064eed765540a4af05cf7620b50150754d31c9bc12b55b797c607941a6cf5",
+      "stdout": "uninstall.log",
+      "stderr": ""
+    }
+  }
+}

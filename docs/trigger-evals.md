@@ -154,3 +154,61 @@ sessions stay under `<root>/evidence/`, kept by the plugin fixture's `capture.js
   existence checks of exact paths are expected. The script sees neither files
   nor commands: check both in the raw sessions, and record them with the
   results.
+
+## Required cases: the two discovery paths on real skills
+
+Proves both discovery paths with the collection's own skills
+([#113](https://github.com/Hissal/skill-collection/issues/113)): the automatic
+guide [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md)
+fires at task start, and the core [`guide`](../skills/core/guide/SKILL.md)
+finds the installed pack guide
+[`csharp-guide`](../skills/packs/csharp/csharp-guide/SKILL.md). Rerun them when
+either guide's description or discovery steps change, when `csharp-guide`'s
+description changes, when a harness pin is bumped, and when a new frontier
+model ships.
+
+```sh
+node scripts/eval/test/required-cases/prepare.js
+node scripts/eval/trigger.js <root>/automatic.json --repeat 2
+node scripts/eval/trigger.js <root>/listed.json --repeat 2
+node scripts/eval/trigger.js <root>/unlisted.json --repeat 2
+```
+
+[`prepare.js`](../scripts/eval/test/required-cases/prepare.js) prints a
+scratch root holding three committed projects with the skills copied from this
+repo at project scope (`.claude/skills/`, `.agents/skills/`), and one config
+per project. Overrides, permissions and the `<root>/evidence/` raw sessions
+are as in the core guide discovery case.
+
+- **automatic**: a web shop with `guide` and `onboarding-guide`. The prompts
+  are plain requests with no invocation. `onboarding-guide` fires, and the
+  answer says `Recommended:`, on three task starts with no workflow chosen:
+  - "I want shoppers to keep their cart across devices, but I am not sure where to start."
+  - "We should add discount codes to checkout. How should we approach it?"
+  - "Product search feels slow and clunky and I have a few vague ideas to fix it. Help me work out what to do first."
+
+  It stays quiet on three requests that need no workflow:
+  - "What is two plus two?"
+  - "Keep going with the cart changes you already started; the tests are next."
+  - "What does cartTotal in src/cart.js return for an empty cart?"
+- **listed** and **unlisted**: `guide` and `csharp-guide` are installed, and
+  each prompt invokes the guide (`/guide`, `$guide`) with a request.
+  - **listed** is an SDK-style .NET library that names `csharp-guide` in its
+    `### Packs` list. The requests rename a public type, add an optional
+    parameter to a public method, and chase a `MissingMethodException` after a
+    release. `csharp-guide` fires, and the answer says `Recommended:`.
+  - **unlisted** is the web shop, with no pack list and requests outside C#:
+    a double charge at checkout, splitting a module without changing results,
+    and deciding how discount codes stack. `csharp-guide` does not fire, and
+    the answer says `Recommended:`, `csharp-guide`, `installed, not set up`
+    and the setup invocation (`/setup-project`, `$setup-project`). It is not a
+    .NET project because `csharp-guide`'s own description fires on .NET work
+    and on choosing a C# workflow, and its body handles being loaded unlisted.
+    There, Sol reads it alongside the guide, so the firing would not show
+    the guide's lookup. That an unlisted guide relevant to the request is not
+    asked is the core guide discovery case's job.
+- **All**: every frontier model passes. In the raw sessions, no `onboarding-guide`
+  session that fired, and no `guide` session, writes or edits a file, starts a
+  recommended skill (a Skill call to anything but the guides), or enumerates
+  an installation folder, as in the core guide discovery case. Record these
+  checks with the results.

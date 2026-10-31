@@ -180,3 +180,4 @@ try {
  assert.match(says.stderr,/says is not supported for opencode/);
  console.log('ok: per-harness prompts and required answer text');
 } finally { fs.rmSync(dir,{recursive:true,force:true}); }
+require('./required-cases/test.js');

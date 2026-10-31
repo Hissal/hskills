@@ -39,7 +39,8 @@ remaining defects ([findings](#findings-for-owners)).
   (`project-rule.json`); nothing else in the project changed.
 - **Probes.** Unchanged runner prompts, run outside Git with no remote: force-push, then
   `node -e "console.log('ALLOW_120')"`, then `node -e "console.log('PROJECT_BLOCK_120')"`. Each host step ran once.
-- **Sanitizing.** As in the original report; the runner now also drops Claude `thinking_tokens` estimates and
+- **Sanitizing.** As in the original report; the runner now also drops Claude `thinking_tokens` events
+  (numeric result usage counts remain) and
   Codex moderation metadata. Fingerprint files keep only the five configuration files, not credential hashes.
 
 ## Lifecycle on the unmodified trusted config
@@ -146,10 +147,24 @@ through the installer CLI, with CLI doubles for the hosts. **No native Windows r
    recorded snapshot files. This fixture's tree is unrecorded, since its files were already uninstalled, so
    it remains a conflict until the fixture is prepared again. Regressions: `scripts/install/test/lifecycle.js`
    (same-snapshot install, uninstall, install, doctor, uninstall; user-added files and empty directories;
-   a symlink replacement; a legacy journal; an unrecorded empty tree) and `scripts/install/test/plugin.js`.
+   symlink and ancestor replacements; a legacy journal; an unrecorded empty tree;
+   retry after a directory-removal error) and `scripts/install/test/plugin.js`.
+   Completed removals are journaled even if a later filesystem operation throws, so
+   a temporarily busy directory can be retried without stale file records.
 3. **Runner summary.** The uninstall summary replaces `trustTablesPreserved` with `trustBytesIdentical`
    and `trustLinesPreserved`, which ignores blank lines. It also adds `preferenceTables` and
    `snapshotEntriesRemaining`. The summaries retained above keep the old field.
+   New summaries name the remaining comparison `nonTrustConfigMatchesMinimalFixture`:
+   it includes preserved preference tables, so `false` alone is not an uninstall failure.
+   Successful fixture acceptance requires exit 0, no owned files or snapshot entries
+   remaining, preserved personal settings, and preserved trust and preference values.
+   Neither this informational comparison nor trust byte identity alone decides a pass.
+4. **Redirected parents.** Before registration or cleanup, parents below the selected
+   home are checked without following links. Replacing a snapshot's `adapters` parent
+   or `.claude/plugins` with a symlink or junction conflicts before external files or
+   the journal change, even when the external files match the recorded content.
+   The `lifecycle.js` ancestor-link case exercises both paths; it uses directory
+   symlinks on Linux and junctions on Windows. Native execution remains pending.
 
 ## Not covered
 
@@ -157,5 +172,6 @@ through the installer CLI, with CLI doubles for the hosts. **No native Windows r
 | --- | --- |
 | Trusted reinstall and uninstall on the unmodified native config | **Failed**, finding 1; repair pending native rerun |
 | Reinstall of the same snapshot after uninstall without manual recovery | **Failed**, finding 2; repair pending native rerun |
+| Linked-parent rejection and retry after busy directory removal | Linux regressions only; pending native execution |
 | Claude run without the exact grant (negative control) | Not run |
 | OpenCode on Windows, actual OS symlink refusal, macOS | Outside this follow-up |

@@ -46,8 +46,10 @@ with exactly these three required fields:
 - `core`: an array of core skill paths.
 - `packs`: an object mapping pack names to arrays of skill paths. A pack is a
   named list; onboarding is a one-skill list containing the automatic guide.
-- `expensive`: an array of skill paths whose specs allow the expensive
-  description budget. It grants no membership or invocation authority.
+- `expensive`: an array of skill paths of expensive workflows (see
+  [GLOSSARY.md](../GLOSSARY.md)), each set by the skill's own spec. It grants no
+  membership. An expensive workflow is user-invoked unless it is `code-review`
+  or `research`; the `expensive-workflow` rule fails otherwise.
 
 Pack names and path segments are lowercase kebab-case (letters and digits).
 Paths use forward slashes and exactly `skills/core/<skill>` or
@@ -59,8 +61,7 @@ stay in skill metadata (ADR 0004), never in this manifest.
 The `collection-manifest` rule rejects invalid JSON, any other shape, and
 entries without a skill. It is silent when the manifest is absent in a fixture
 collection. Membership completeness and exclusivity (core or exactly one pack),
-onboarding cardinality and plugin-list agreement belong to #110; expensive-list
-policy belongs to #111.
+onboarding cardinality and plugin-list agreement belong to #110.
 
 ## Personal steering source
 
@@ -212,6 +213,8 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `release-version` | fail | a plugin manifest version differs from the last release tag, or from the newer version a release PR records in `.release-please-manifest.json`; silent until the first release tag |
 | `steering-paths` | fail | `steering.md` links to a missing file, names in code a missing path under a top-level repository folder, or names a `/skill` or `$skill` command whose skill is gone since the last release tag |
 | `harness-gates` | fail | a Codex or OpenCode gate is missing, unreadable or disagrees with `disable-model-invocation` |
+| `expensive-workflow` | fail | a skill on the manifest's `expensive` list is model-invoked and is not `code-review` or `research` |
+| `core-names-pack` | fail | a text file in a core skill other than `setup-project` and the core guide names a pack skill from the manifest (see [Extension points](#extension-points)) |
 | `id-stability` | warn | an ID at the last release tag is gone, or a folder at the tag now carries a different ID |
 | `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
 | `copied-file-safety` | fail | a text file in a lock-listed copied skill contains hidden Unicode controls or a Windows, macOS or Linux personal home path; reports the line and, for Unicode, the code point |
@@ -469,6 +472,13 @@ listed pack guides; it never names a particular pack or pack skill. Example:
 “Ask the project's listed pack guides for this stack's test idioms and fixtures.”
 The caller keeps its current job while obtaining that knowledge; a lookup never
 starts another workflow. See [core extension points](agents/core-extension-points.md).
+
+The `core-names-pack` rule fails when any text file in a core skill's folder
+names a skill listed under the manifest's `packs`, pack guides included, as a
+whole callable-name token (case-sensitive; `web-testing` matches in
+`/web-testing` and `skills/packs/web/web-testing`, not in `web-testing-style`).
+`setup-project` and the core guide (`skills/core/guide`) are exempt, since they
+name packs by design.
 
 ## Hard requirements at runtime
 

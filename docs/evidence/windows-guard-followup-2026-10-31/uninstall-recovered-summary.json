@@ -1,0 +1,56 @@
+{
+  "status": 0,
+  "remainingOwned": [],
+  "unrelated": {
+    ".claude/settings.json": {
+      "identical": true,
+      "unrelatedHookKept": true,
+      "guardRemaining": false
+    },
+    ".codex/config.toml": {
+      "identical": false,
+      "unrelatedHookKept": false,
+      "guardRemaining": true
+    },
+    ".codex/hooks.json": {
+      "identical": true,
+      "unrelatedHookKept": true,
+      "guardRemaining": false
+    }
+  },
+  "codexConfig": {
+    "before": {
+      "bytes": 854,
+      "crlf": false,
+      "bom": false,
+      "sha256": "11cd9aaf326bb1cb6155c28df730b68540e1ff17ff24a7a98335713eca345bec",
+      "ordinarySha256": "eef87f92b12026032aaed65c1c4ba54276c8d5186f9f88631fbed155c541f81d",
+      "trustSha256": "6bbbfbdf5fa9e12e911c635764a561961ded635375115d9d2add3a86fb0d1cea",
+      "ordinaryTables": [
+        "[marketplaces.skill-collection-guard]",
+        "[plugins.\"command-guard@skill-collection-guard\"]"
+      ],
+      "trustExcerpt": "[hooks.state]\n\n[hooks.state.\"command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0\"]\ntrusted_hash = \"sha256:<64hex>\"\ntrusted_content_hash = \"sha256:<64hex>\"\nenabled = true\n\n[hooks.state.'C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\hooks.json:pre_tool_use:0:0']\ntrusted_hash = \"sha256:<64hex>\"\nenabled = true\n\n"
+    },
+    "after": {
+      "bytes": 549,
+      "crlf": false,
+      "bom": false,
+      "sha256": "dd8692e1f7b3ff3d286d4923ae9f4ef4054b26dbcb35fd0accc4cfc20d184873",
+      "ordinarySha256": "6597f34c97d015488a8bb6a7c64be67391c57c44e5fcbbbda91dd3c397495138",
+      "trustSha256": "55f80eb8a61e2521d16fe3ac21033d4ca359c8b305a05a512dc1ee41b7fef1aa",
+      "ordinaryTables": [],
+      "trustExcerpt": "[hooks.state]\n\n[hooks.state.\"command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0\"]\ntrusted_hash = \"sha256:<64hex>\"\ntrusted_content_hash = \"sha256:<64hex>\"\nenabled = true\n\n[hooks.state.'C:\\Users\\<user>\\AppData\\Local\\Temp\\plugin-live-win-AN63RN\\home\\.codex\\hooks.json:pre_tool_use:0:0']\ntrusted_hash = \"sha256:<64hex>\"\nenabled = true\n"
+    },
+    "ordinaryMatchesFixture": true,
+    "trustTablesPreserved": false
+  },
+  "journal": {
+    "beforeSha256": "40df529de4fac500b9248208eabc91736986f507db643824bd17ba6b0771b639",
+    "afterSha256": "8f3f43f79e0c0f630b61fa0c68beed82debd5b33697e470afcde99da5c30667a"
+  },
+  "userConfigUnchanged": false,
+  "changed": [
+    "C:\\Users\\<user>\\.claude\\plugins\\known_marketplaces.json"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  ".claude/settings.json": "2d470f6fbb55d42c485f7598f5ff858a24bb86b68484041115057a5ca8a54335",
+  ".claude/plugins/installed_plugins.json": "37d271bccbdb6aab6bd97ebb444fe724df13fd594fdb8a42ef1f362c32a52cd1",
+  ".claude/plugins/known_marketplaces.json": "b9e2aba7898d3578973e410f5dafd080f4a009078c24642f346cd7265e15fec2",
+  ".codex/config.toml": "ff78038ebdb78dc52e19417fd8b8686ff58284cdec2cdd685999925f0f705d88",
+  ".codex/hooks.json": "39b893057c1090defaccbffa8c9c8bd73cfcd5b9c800ab84ab1e3c5d7f6d02a9"
+}

@@ -205,7 +205,7 @@ their group, and removes only unchanged recorded files. Replaced files survive.
 
 Doctor fails on missing registration, disabled Claude hooks, changed registration,
 or wrong block/allow verdicts. A probe denial is a successful guard verdict;
-missing or disabled hooks are absent protection, not a denial. Codex trust is **pending** and fails the doctor until host verification is available.
+missing or disabled hooks are absent protection, not a denial. Pending Codex trust fails the doctor; it passes once `hooks/list` reports the hook trusted.
 Host bypasses and project overrides are explicitly **unverified**:
 direct adapter probes cannot establish effective host invocation. An explicit
 `COMMAND_GUARD_HOME` override is reported if it differs from the installation.

@@ -30,6 +30,10 @@ module.exports = [
   require('./release-catalog'),
   require('./release-config'),
   require('./plugin-output'),
+  // pack membership and plugin closure (#110)
+  require('./pack-membership'),
+  require('./plugin-paths'),
+  require('./plugin-requirements'),
 
   require('./harness-gates'),
 

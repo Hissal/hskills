@@ -1,5 +1,6 @@
 'use strict';
-// Shared manifest view for checks and install tooling. Membership policy is #110.
+// Shared manifest view for checks and install tooling. Membership policy:
+// rules/pack-membership.js, plugin-paths.js and plugin-requirements.js (#110).
 const FILE = 'collection.json';
 
 function parse(text) {

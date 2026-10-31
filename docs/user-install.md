@@ -141,15 +141,14 @@ During migration, manually empty Claude Code's PR attribution setting
 Keep commit co-author trailers (`attribution.commit`) enabled.
 The installer does not change either setting.
 
-Windows actual validation remains missing for #119. Run isolated installs on
-Windows with file-symlink permission enabled and disabled, then record whether
-a symlink or copy was made and verify doctor drift detection on the copy.
-The automated permission-denial case uses real temporary files but does not
-establish actual Windows behavior.
+Native Windows verification covers all three file-symlink targets, remembered
+opt-in, conflicts, and copy drift after fixture-injected link refusal. For
+retained results and the unrun actual OS-refusal case, read
+[Windows owner-steering evidence](evidence/windows-install-2026-10-31.md#owner-steering-119).
 
 ## Isolated verification
 
-To finish native Windows host acceptance, follow the
+To reproduce native Windows acceptance or run its remaining cases, follow the
 [Windows agent handoff](handoffs/windows-install-acceptance.md).
 
 `--home DIR` changes the record home and default skill roots; `--source DIR`
@@ -160,11 +159,11 @@ The table-driven CLI cases run with real temporary directories through
 `node scripts/install/test/run.js` and inside the collection check. They
 exercise ownership, reconciliation, no-change reruns and doctor failures.
 
-Windows hand validation is still missing for #116. On Windows, run the cases
-and perform isolated installs with symlink permission enabled and disabled;
-record both the symlink and junction outcomes on #116, including doctor and
-permission-rule output. Linux automated results do not establish either
-Windows outcome, so #116 is not fully complete.
+Native Windows hosts read installed bodies and references through real directory
+symlinks and installer-created junctions in all 12 matrix cells. Junction creation
+used fixture-injected permission refusal; actual OS refusal remains unrun. Read
+[Windows link evidence](evidence/windows-install-2026-10-31.md#cross-scope-link-matrix-127-116)
+for the matrix, ambient skill context and reproduction limits.
 
 ## OpenCode verification
 
@@ -227,8 +226,11 @@ Automated temporary-home CLI tests cover installation, doctor and uninstall.
 For actual Claude/Codex adapter invocation and installed OpenCode validation on
 Linux, read [live hook evidence](../research/live-hooks-120.md);
 for Claude plugin sessions, checkout independence and the Codex trust barrier,
-read [live plugin evidence](../research/live-plugins-121.md). Windows harness
-reads remain outstanding; adapter probes alone do not establish those results.
+read [live plugin evidence](../research/live-plugins-121.md). For actual Windows
+Claude/Codex plugin events and checkout independence, read
+[Windows guard evidence](evidence/windows-install-2026-10-31.md#guard-lifecycle-and-live-plugin-probes-120-121),
+including the trusted uninstall conflict and nonportable allow command found there.
+OpenCode host acceptance on Windows remains unrun.
 
 ## Register the guard plugin
 

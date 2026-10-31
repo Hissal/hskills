@@ -12,4 +12,3 @@ STEERING symlink: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\conflic
 DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\conflict-home\.codex\AGENTS.md (symlink)
 DOCTOR ok: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\conflict-home\.config\opencode\AGENTS.md (symlink)
 FAIL missing registration or overridden: C:\Users\<user>\AppData\Local\Temp\steering-win-Prw2NK\conflict-home\.claude\settings.json
-

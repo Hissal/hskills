@@ -41,6 +41,12 @@ Existing auth is reached through a file symlink to the real credential file, cre
 after it; the runner fails if the link was replaced. No credential was copied, and no trust was written by an agent.
 The parent session's `CLAUDE_CODE_*`/`CODEX_*` variables are stripped from child processes.
 
+**Ambient skill context.** The retained `duplicate-codex-list.jsonl` files also list real user
+skills outside the fixture, including `C:\dev\skills\mattpocock-skills-unity\...` and
+`C:\Users\<user>\.agents\skills\find-skills`. The disposable config homes did not fully
+isolate skill discovery. The matrix establishes reads of the fixture bodies and references
+through installed paths within that ambient context.
+
 **Codex sandbox.** A fresh `CODEX_HOME` has no Windows sandbox mode. Read-only exec then rejected every
 shell command `blocked by policy` (retained as `*-codex-no-sandbox*`, failed attempts, not results).
 `windows.sandbox="unelevated"` failed `CreateProcessAsUserW ... Access is denied` on the Store `pwsh.exe`.
@@ -54,7 +60,7 @@ denials occurred. Exact argv and environment overrides are in each `*-invocation
 
 **Sanitizing.** Transcripts keep tool calls/results, skill injection, hook events, model identity and usage.
 Assistant thinking, Codex reasoning items, init/command listings and remote-control status are omitted;
-the account name is replaced with `<user>`.
+the account name is replaced with `<user>`. Trailing blank lines in the steering logs are trimmed.
 
 ## Cross-scope link matrix (#127, #116)
 
@@ -135,10 +141,13 @@ trust is pending. `hooks/list` reports that legacy handler **untrusted** too, so
 home has no effective Codex guard. Uninstall exits 0 with no owned files left; all three fixture files are
 byte-identical, unrelated hooks kept.
 
-**User configuration.** Real `settings.json`, both credential files, Codex `config.toml`/`hooks.json`,
-`installed_plugins.json` and every existing skill link hash identically before and after; no
-`~/.skill-collection` was created. `~/.claude.json` and `known_marketplaces.json` changed through the owner's own
-sessions (marketplace `lastUpdated` stamps, no fixture content).
+**User configuration.** The runner fingerprints five real files: Claude `settings.json`,
+`installed_plugins.json`, `known_marketplaces.json`, and Codex `config.toml`/`hooks.json`.
+The retained `guard/uninstall-summary.json` reports only `known_marketplaces.json` changed;
+`guard-migration/uninstall-summary.json` reports no changes to that set. These summaries
+do not establish credential or skill-link preservation, changes to `~/.claude.json`,
+or which process changed the marketplace file. Credential-file symlinks and disposable
+homes describe the isolation method; they do not extend the retained hash evidence.
 
 ## Findings for owners
 

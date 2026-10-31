@@ -380,7 +380,7 @@ module.exports.push({
 const manifest = (core, packs) => ({ 'collection.json': JSON.stringify({ core, packs: packs || {}, expensive: [] }) });
 module.exports.push(
   { name: 'a skill in neither core nor a pack fails', files: tree(skill('skills/core/alpha'), skill('skills/core/beta'), manifest(['skills/core/alpha'])), expect: ['fail pack-membership skills/core/beta/SKILL.md'] },
-  { name: 'a skill in both core and a pack fails', files: tree(skill('skills/core/alpha'), manifest(['skills/core/alpha'], { web: ['skills/core/alpha'] })), expect: ['fail pack-membership collection.json'] },
+  { name: 'a skill in both core and a pack fails', files: tree(skill('skills/packs/web/alpha'), manifest(['skills/packs/web/alpha'], { web: ['skills/packs/web/alpha'] })), expect: ['fail pack-membership collection.json'] },
   { name: 'a skill in two packs fails', files: tree(skill('skills/packs/web/alpha'), manifest([], { web: ['skills/packs/web/alpha'], api: ['skills/packs/web/alpha'] })), expect: ['fail pack-membership collection.json'] },
   { name: 'each skill in core or exactly one pack passes', files: tree(skill('skills/core/alpha'), skill('skills/packs/web/beta'), manifest(['skills/core/alpha'], { web: ['skills/packs/web/beta'] })), expect: [] },
 );
@@ -394,7 +394,9 @@ const requiring = (dir, id) => skill(dir, { fm: { metadata: '\n  agent-skills-sy
 module.exports.push(
   { name: 'a pack requirement in its own pack or core passes', files: tree(requiring('skills/packs/web/alpha', 'beta'), requiring('skills/packs/web/beta', 'gamma'), skill('skills/core/gamma'), manifest(['skills/core/gamma'], { web: ['skills/packs/web/alpha', 'skills/packs/web/beta'] })), expect: [] },
   { name: 'a pack requirement in another pack fails', files: tree(requiring('skills/packs/web/alpha', 'beta'), skill('skills/packs/api/beta'), manifest([], { web: ['skills/packs/web/alpha'], api: ['skills/packs/api/beta'] })), expect: ['fail plugin-requirements skills/packs/web/alpha/SKILL.md'] },
-  { name: 'a core requirement in a pack fails', files: tree(requiring('skills/core/alpha', 'beta'), skill('skills/packs/web/beta'), manifest(['skills/core/alpha'], { web: ['skills/packs/web/beta'] })), expect: ['fail plugin-requirements skills/core/alpha/SKILL.md'] },
+  // The pack skill's ID slug differs from its callable name, so the core skill
+  // names only the ID and core-names-pack stays out of this case.
+  { name: 'a core requirement in a pack fails', files: tree(requiring('skills/core/alpha', 'web-knowledge'), skill('skills/packs/web/beta', { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/web-knowledge"' } }), manifest(['skills/core/alpha'], { web: ['skills/packs/web/beta'] })), expect: ['fail plugin-requirements skills/core/alpha/SKILL.md'] },
   { name: 'an unresolved requirement is skill-requirements, not plugin closure', files: tree(requiring('skills/core/alpha', 'missing'), manifest(['skills/core/alpha'])), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
 );
 // published(lists): generated plugin outputs, written out by hand, for

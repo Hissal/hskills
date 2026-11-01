@@ -77,7 +77,7 @@ Ask `delegating` for one fresh-context reader under the personal delegation poli
 - **Diversity preferred**, in order: a different model family from the first opinion's, then a different line within that family. The same model through two harnesses is not diversity. A model too weak for the role stays out, whatever family it is.
 - **Transport:** host delegation first; a documented CLI transport only when it is the only way to reach an allowed choice. A CLI reader runs in its read-only mode, reads the brief from a file and writes its output to a file.
 
-When `delegating` is not installed, choose yourself: every installed, signed-in harness and model is allowed, ordered by the diversity preference above, through host delegation where it reaches the model and the harness's documented CLI where only that does. Say in the dispatch summary that no delegation policy was applied.
+When `delegating` is not installed, a harness being signed in does not make its models allowed. Use the reader the user named, if any. Otherwise list the installed, signed-in choices ordered by the diversity preference above, and ask the owner once which of them they allow before spending on any. Reach the chosen model through host delegation where it can, and the harness's documented CLI where only that does. Say in the dispatch summary that no delegation policy was applied.
 
 Walk the ordered choices:
 
@@ -104,7 +104,7 @@ Show the dispatch summary, then dispatch:
 
 The review is **incomplete** when the reader exits non-zero, returns nothing, returns output outside the return shape or without its last line, or asks to approve a plan or a question instead of reviewing. Report an incomplete review as missing coverage, never as zero findings. A quota failure at dispatch moves on as in step 4.
 
-Compare `git status --porcelain` and `HEAD` with their state before dispatch. Report any change the reader made, and leave it for the owner.
+Check the snapshot again as `reviewing`'s [scope contract](../reviewing/references/SCOPE.md#recording-the-snapshot) says: resolve the base again, check `HEAD`, and recompute the content fingerprint of in-scope local files. A change the reader made is reported and left for the owner. Any other material change is disclosed, and the patch is captured and read again before reporting.
 
 ## 6. Report
 

@@ -6,8 +6,11 @@ A second read of a change, told what the first review found and asked what it mi
 
 Capture the patch once, at the announced snapshot, into one file outside the checkout (the OS temp directory). Every reader of this target gets that same file, unchanged.
 
-- **Committed pending work:** `git diff <merge-base> <head>`, or the reused `code-review` range as recorded.
-- **Uncommitted work** is part of the patch: staged and unstaged changes (`git diff <base>`) plus untracked files (`git ls-files --others --exclude-standard`, each as `git diff --no-index /dev/null <file>`, whose exit status 1 means "differs").
+Capture what the resolved scope covers, and only that:
+
+- **A PR or commit range:** the committed diff of its recorded revisions (`git diff <merge-base> <head>`, or the reused `code-review` range as recorded). Local changes stay out unless the user asked for them.
+- **Current work** (a bare target with pending work): the committed pending work plus staged and unstaged changes (`git diff <base>`) plus untracked files (`git ls-files --others --exclude-standard`, each as `git diff --no-index /dev/null <file>`, whose exit status 1 means "differs").
+- **Named files or a subsystem with no base:** those files whole, in their current state, each under a header naming its path. An unchanged file is still the target; an empty diff never stands in for it.
 - **A git error is an error.** A git command that fails stops the capture: report the command and its message. An empty patch is a result only when every command succeeded.
 - **Oversized:** when the patch exceeds what the reader can take whole, ask the owner how to narrow it (paths, commits, a split into several reads) and capture again. Send it whole or narrowed by the owner, never cut.
 

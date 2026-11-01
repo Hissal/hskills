@@ -33,12 +33,84 @@
       "changes": "scope, shared evidence rules and the stop on a missing requirement come from reviewing; one captured patch with untracked files; spec and standards finding widened; Spec gains changed and unverifiable; a third axis, Failure, and the security-finding hook; smell baseline gains the duplication rule and a platform smell; extension points, handback suggestions and collection metadata replace the Unity line, the setup pointer and the word cap"
     },
     {
+      "skill": "skills/core/domain-modeling",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/domain-modeling",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; one sentence that a code name is not a domain term unless the user uses it that way"
+    },
+    {
+      "skill": "skills/core/grilling",
+      "source": "mattpocock/skills",
+      "path": "skills/productivity/grilling",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; fact-finding by a read-only helper on the host's own subagent tool, consulting delegating only for a stated model, harness or effort or a helper outside that tool, with the host-tool fallback; scope, one-decision-per-question, map-first and exit-check rules added; assumptions confirmed with the shared understanding; /to-questionnaire and /wayfinder suggestions and the parent-agent return added"
+    },
+    {
+      "skill": "skills/core/implement",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/implement",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; description names the pull request; done line; tracker, guidance pointer and check commands from project configuration, /setup-project when no tracker is named; pack-guide extension point for check cadence; reuse line and sizing test; diagnosing-bugs after two failed fixes for the same check; completion through verifying and review findings through receiving-review; commit to the current branch replaced by branch-fit rules and a ready or draft pull request written through pr, pushing to an existing PR or skipping it when none applies; process calls stated as not requirements; report step"
+    },
+    {
+      "skill": "skills/core/implement-spec",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/implement-spec",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; tracker from project configuration, /setup-project replacing the setup pointer; every dispatch through delegating, with the host subagent fallback and this workflow's roles; implementer brief carries the project-guidance pointer and the parallel-worktrees pack-guide extension point; implementer reports checked against the real diff through verifying before merging; review findings handled through receiving-review, with no automatic second-opinion; integration branch checked through verifying; draft PR links the spec and tickets and switches to closing them only once every criterion is verified, partial work on the Not done line and no ticket per unfixed finding; follow-up offers at handback"
+    },
+    {
+      "skill": "skills/core/research",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/research",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; trigger-only description limited to external research; scope set to external sources, with the local codebase left to how and history to why; a location the caller supplies wins; dispatch through delegating with the host-subagent fallback, and no peer researcher from a researcher role; the brief carries the researcher's job in full; sources pinned to commit SHAs; Direct, Supported and Inferred confidence tiers that a summary keeps, apart from verifying's evidence ladder (an idea, not text, from cursor/plugins pstack why at https://github.com/cursor/plugins/blob/ccb5507cec1546dc88135c1139c811e6c59115ba/pstack/skills/why/references/epistemics.md, MIT); a Coverage section where a URL alone is not coverage and an empty section is not proof of absence (an idea, not text, from davidondrej/skills deep-scrape at https://github.com/davidondrej/skills/blob/7874889bd037d411f6079e38ee8601557c4a8995/skills/research-and-web/deep-scrape/SKILL.md, MIT); a few-line return with the path"
+    },
+    {
       "skill": "skills/core/risky-changes",
       "source": "davidondrej/skills",
       "path": "skills/ops-and-setup/risky-changes",
       "sha": "7874889bd037d411f6079e38ee8601557c4a8995",
       "license": "MIT",
       "changes": "trigger narrowed to public APIs, data transforms or drops, pricing or quotas, defaults, and provider or model parameters; collection metadata; evidence path and approver from project configuration; verified, unvalidated and failed statuses; research step and fixed case count dropped; evidence record template; pack-guide extension point and people's reports as their own evidence; approval pending when unattended; post-deployment check kept only as a record line"
+    },
+    {
+      "skill": "skills/core/to-questionnaire",
+      "source": "mattpocock/skills",
+      "path": "skills/productivity/to-questionnaire",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; a line that preparing the questionnaire never authorises sending it, with recipients, sending and notification left to the owner's instructions"
+    },
+    {
+      "skill": "skills/core/to-spec",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/to-spec",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; tracker and label vocabulary from project configuration, with /setup-project for a missing tracker; reuse line in exploration; existing issues checked before publishing; pack-guide extension point for sketching test seams; completion bar; decisions marked chosen over X because Y; agent inferences kept under Assumptions; optional Do not touch and Open until implementation sections; writing-for-agents pointer; default, skippable fresh-context spec review through delegating with its own evidence rules and fact-checked absence claims; one playback confirmed in a batch before publishing, and no edit after; contextual suggestions and the subordinate return"
+    },
+    {
+      "skill": "skills/core/to-tickets",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/to-tickets",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; tracker, label strings and ticket folder from project configuration, with /setup-project when no tracker is named; existing issues searched to avoid duplicates; acceptance criteria pass/fail; optional Proof note per ticket; tickets sharing an exclusive surface block each other; pack-guide extension point for slicing work; /implement or /implement-spec offered at completion"
+    },
+    {
+      "skill": "skills/core/wayfinder",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/wayfinder",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; tracker and its wayfinding operations read from project configuration, with /setup-project for a missing tracker, replacing the setup pointer and the local-markdown default; resolution comments name what each decision was chosen over; research subagents dispatched through delegating with the host-subagent fallback, briefed with the throwaway research branch as their location and a short return; process calls are not requirements; /to-spec, /to-questionnaire and /handoff suggestions added"
     }
   ]
 }

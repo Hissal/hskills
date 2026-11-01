@@ -3,7 +3,14 @@
   "version": "0.1.0",
   "description": "Generated core skill list from collection.json.",
   "skills": [
+    "./architecture-review",
+    "./code-review",
+    "./commenting",
     "./guide",
+    "./receiving-review",
+    "./reviewing",
+    "./second-opinion",
+    "./test-review",
     "./verifying"
   ]
 }

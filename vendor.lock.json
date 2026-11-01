@@ -1,0 +1,7 @@
+{ "skills": [
+  { "skill": "skills/core/risky-changes",
+    "source": "davidondrej/skills",
+    "path": "skills/ops-and-setup/risky-changes",
+    "sha": "7874889bd037d411f6079e38ee8601557c4a8995",
+    "license": "MIT",
+    "changes": "trigger narrowed to public APIs, data transforms or drops, pricing or quotas, defaults, and provider or model parameters; collection metadata; evidence path and approver from project configuration; verified, unvalidated and failed statuses; research step and fixed case count dropped; evidence record template; pack-guide extension point and people's reports as their own evidence; approval pending when unattended; post-deployment check kept only as a record line" } ] }

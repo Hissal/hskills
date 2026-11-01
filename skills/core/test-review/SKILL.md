@@ -73,7 +73,7 @@ Look for each of these, in this order of how much false confidence it buys:
 - **Fails or passes for reasons other than the behaviour.** Fixed sleeps standing in for a condition; dependence on test order, shared mutable state, the clock, randomness, the network or the machine.
 - **Coupled to the implementation.** Mocks internal collaborators, inspects private state, verifies calls the outcome does not depend on, or reaches past the interface through a side channel; it breaks on a behaviour-preserving refactor.
 - **Weak oracle.** Asserts presence, type or count where the behaviour is a value: "not null", "has 3 items", "contains", where the exact result is known.
-- **Hard to maintain.** One test checking several unrelated behaviours; a name that does not say what behaviour is expected; setup so large the behaviour under test is lost; copy-pasted tests that differ in one value.
+- **Hard to maintain.** One test checking several unrelated behaviours; a name that does not say what behaviour is expected; setup so large the behaviour under test is lost; copy-pasted tests that differ in one value, or in none.
 
 ### Cheating
 

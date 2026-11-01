@@ -13,7 +13,7 @@ load, stop without partial work and print:
 
 Stopped: required skill tally-rules (hissal.skill-collection/eval-tally-rules)
 could not be loaded completely. Unavailable: <unloadable-material>. Ordinary
-installers such as `npx skills` do not install requirements; the Unity sync
+installers such as `npx skills` do not install requirements; `agent-skills-sync`
 resolves them from this metadata. Install or repair the requirement, then retry.
 
 Check only whether the required material loads; the installer verifies identity

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Receiving Review"
+  short_description: "Judge review findings as claims and verify each fix"
+policy:
+  allow_implicit_invocation: true

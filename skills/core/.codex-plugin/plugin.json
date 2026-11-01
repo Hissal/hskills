@@ -4,6 +4,7 @@
   "description": "Generated core skill list from collection.json.",
   "skills": [
     "./guide",
-    "./reviewing"
+    "./reviewing",
+    "./test-review"
   ]
 }

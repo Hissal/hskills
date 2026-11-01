@@ -14,5 +14,11 @@
   "hissal.skill-collection/reviewing": {
     "path": "skills/core/reviewing",
     "requires": []
+  },
+  "hissal.skill-collection/test-review": {
+    "path": "skills/core/test-review",
+    "requires": [
+      "hissal.skill-collection/reviewing"
+    ]
   }
 }

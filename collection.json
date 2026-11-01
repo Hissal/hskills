@@ -1,7 +1,8 @@
 {
   "core": [
     "skills/core/guide",
-    "skills/core/reviewing"
+    "skills/core/reviewing",
+    "skills/core/test-review"
   ],
   "packs": {
     "csharp": [

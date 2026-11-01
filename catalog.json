@@ -1,4 +1,10 @@
 {
+  "hissal.skill-collection/blast-radius": {
+    "path": "skills/core/blast-radius",
+    "requires": [
+      "hissal.skill-collection/verifying"
+    ]
+  },
   "hissal.skill-collection/code-review": {
     "path": "skills/core/code-review",
     "requires": [
@@ -55,6 +61,10 @@
   },
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",
+    "requires": []
+  },
+  "hissal.skill-collection/why": {
+    "path": "skills/core/why",
     "requires": []
   }
 }

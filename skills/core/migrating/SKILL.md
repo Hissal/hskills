@@ -91,3 +91,5 @@ Then offer, only when the condition was observed, the invocation as this harness
 - **`/wizard`**: at the blocker, when a sequence only the human can perform (running a production data migration, publishing a release, changing an outside system) blocks the next stage and an interactive procedure would materially help. A single approval or value is asked for directly.
 
 A suggestion is the human's to start; you never run it.
+
+When you run for a parent agent, hand back the evidence and any follow-up needs; the parent owns the recommendations the user sees.

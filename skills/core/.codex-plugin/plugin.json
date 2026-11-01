@@ -10,6 +10,7 @@
     "./commenting",
     "./dependency-audit",
     "./domain-modeling",
+    "./grilling",
     "./guide",
     "./hillclimb",
     "./migrating",

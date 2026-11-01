@@ -41,6 +41,14 @@
       "changes": "collection metadata and gates; one sentence that a code name is not a domain term unless the user uses it that way"
     },
     {
+      "skill": "skills/core/grill-with-docs",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/grill-with-docs",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; grilling and domain-modeling declared as hard requirements by ID with the shared stop template; /to-spec suggestion at completion and the parent-agent return added"
+    },
+    {
       "skill": "skills/core/grilling",
       "source": "mattpocock/skills",
       "path": "skills/productivity/grilling",

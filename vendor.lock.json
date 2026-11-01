@@ -71,6 +71,14 @@
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
       "changes": "collection metadata and gates; a line that preparing the questionnaire never authorises sending it, with recipients, sending and notification left to the owner's instructions"
+    },
+    {
+      "skill": "skills/core/to-tickets",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/to-tickets",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; tracker, label strings and ticket folder from project configuration, with /setup-project when no tracker is named; existing issues searched to avoid duplicates; acceptance criteria pass/fail; optional Proof note per ticket; tickets sharing an exclusive surface block each other; pack-guide extension point for slicing work; /implement or /implement-spec offered at completion"
     }
   ]
 }

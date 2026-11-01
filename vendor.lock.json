@@ -33,6 +33,14 @@
       "changes": "scope, shared evidence rules and the stop on a missing requirement come from reviewing; one captured patch with untracked files; spec and standards finding widened; Spec gains changed and unverifiable; a third axis, Failure, and the security-finding hook; smell baseline gains the duplication rule and a platform smell; extension points, handback suggestions and collection metadata replace the Unity line, the setup pointer and the word cap"
     },
     {
+      "skill": "skills/core/grilling",
+      "source": "mattpocock/skills",
+      "path": "skills/productivity/grilling",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; fact-finding by a read-only helper on the host's own subagent tool, consulting delegating only for a stated model, harness or effort or a helper outside that tool, with the host-tool fallback; scope, one-decision-per-question, map-first and exit-check rules added; assumptions confirmed with the shared understanding; /to-questionnaire and /wayfinder suggestions and the parent-agent return added"
+    },
+    {
       "skill": "skills/core/risky-changes",
       "source": "davidondrej/skills",
       "path": "skills/ops-and-setup/risky-changes",

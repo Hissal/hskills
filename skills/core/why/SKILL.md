@@ -22,7 +22,7 @@ A guess inside the question ("I assume it's for performance?") is one hypothesis
 
 ## 2. Dig through the record, git first
 
-Work outward from the anchor; each layer seeds the next. A shallow clone hides the origin: when `git rev-parse --is-shallow-repository` prints `true`, fetch the full history (`git fetch --unshallow`), or name the cut-off commit in the answer.
+Work outward from the anchor; each layer seeds the next. A shallow clone hides the origin: when `git rev-parse --is-shallow-repository` prints `true`, fetch the full history (`git fetch --unshallow`), or name the cut-off commit in the answer. Fetching only adds history and changes none of the repository's files, so it stays within reading the record.
 
 1. **Blame** the target lines: `git blame -L <start>,<end> -- <file>`. Blame shows the last touch, not the origin: when that commit is a move, rename, reformat or refactor, blame its parent (`git blame -L <range> <commit>^ -- <old path>`) and keep going until you reach the commit that introduced the shape.
 2. **History through renames**: `git log --follow -p -- <file>`.

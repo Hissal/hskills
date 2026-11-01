@@ -73,6 +73,14 @@
       "changes": "collection metadata and gates; a line that preparing the questionnaire never authorises sending it, with recipients, sending and notification left to the owner's instructions"
     },
     {
+      "skill": "skills/core/to-spec",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/to-spec",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; tracker and label vocabulary from project configuration, with /setup-project for a missing tracker; reuse line in exploration; existing issues checked before publishing; pack-guide extension point for sketching test seams; completion bar; decisions marked chosen over X because Y; agent inferences kept under Assumptions; optional Do not touch and Open until implementation sections; writing-for-agents pointer; default, skippable fresh-context spec review through delegating with its own evidence rules and fact-checked absence claims; one playback confirmed in a batch before publishing, and no edit after; contextual suggestions and the subordinate return"
+    },
+    {
       "skill": "skills/core/to-tickets",
       "source": "mattpocock/skills",
       "path": "skills/engineering/to-tickets",

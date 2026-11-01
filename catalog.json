@@ -91,6 +91,10 @@
     "path": "skills/core/to-questionnaire",
     "requires": []
   },
+  "hissal.skill-collection/to-spec": {
+    "path": "skills/core/to-spec",
+    "requires": []
+  },
   "hissal.skill-collection/to-tickets": {
     "path": "skills/core/to-tickets",
     "requires": []

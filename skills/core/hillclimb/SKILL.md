@@ -22,8 +22,8 @@ without partial work and print:
 
 Stopped: required skill verifying (hissal.skill-collection/verifying) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
-`npx skills` do not install requirements; the Unity sync resolves them from
-this metadata. Install or repair the requirement, then retry.
+`npx skills` do not install requirements; `agent-skills-sync` resolves them
+from this metadata. Install or repair the requirement, then retry.
 
 Check only whether the required material loads; the installer verifies identity
 and content. Loading this requirement grants no permission to invoke a

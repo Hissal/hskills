@@ -1,0 +1,12 @@
+# Notice
+
+This skill copies no source text. It is new synthesis in our own words from the ideas of these sources, each pinned to the commit that was read:
+
+- `SKILL.md`:
+  - obra/superpowers [`receiving-code-review`](https://github.com/obra/superpowers/blob/8ca22dba9a94f28898bbce59f2537ff4d87c747d/skills/receiving-code-review/SKILL.md) (MIT): verify each finding against the codebase, clarify every unclear item before implementing any, no performative agreement.
+  - EveryInc/compound-engineering-plugin [`ce-code-review` finish-review](https://github.com/EveryInc/compound-engineering-plugin/blob/51aa537383744736eb8ad30468d34420e9fb8ea8/skills/ce-code-review/references/finish-review.md) and [action-class rubric](https://github.com/EveryInc/compound-engineering-plugin/blob/51aa537383744736eb8ad30468d34420e9fb8ea8/skills/ce-code-review/references/action-class-rubric.md) (MIT): verify each fix and revert what fails, read the fix diff once, push back by keeping the finding and stating the disagreement.
+  - garrytan/gstack [`review/checklist.md`](https://github.com/garrytan/gstack/blob/20eb6202fa8ea83a882e7c0463b722cd8a31af1e/review/checklist.md) (MIT): mechanical fixes applied, judgement calls put to the user in one batch.
+  - pbakaus/impeccable [`hooks.md` triage](https://github.com/pbakaus/impeccable/blob/936867543ac2576920d663cc9803597f6044f3ac/plugin/skills/impeccable/reference/hooks.md) (Apache-2.0): fix a real problem, leave an unsure finding standing and ask once.
+- `references/SECURITY-FINDING.md`:
+  - openai/plugins codex-security [`attack-path-analysis`](https://github.com/openai/plugins/blob/0722921d5542fc593105c27bd52630babd8b8c2a/plugins/codex-security/skills/attack-path-analysis/SKILL.md) and [`fix-finding`](https://github.com/openai/plugins/blob/0722921d5542fc593105c27bd52630babd8b8c2a/plugins/codex-security/skills/fix-finding/SKILL.md) (Proprietary, as declared in the plugin's `plugin.json`; the repository has no licence file): attacker path and strongest counterevidence; sibling bypasses with malicious and legitimate controls.
+  - trailofbits/skills [`variant-analysis`](https://github.com/trailofbits/skills/blob/196a9073ab10d35bacf111f945e02c00b2c6883a/plugins/variant-analysis/skills/variant-analysis/SKILL.md) and [`fp-check`](https://github.com/trailofbits/skills/blob/196a9073ab10d35bacf111f945e02c00b2c6883a/plugins/fp-check/skills/fp-check/SKILL.md) (CC-BY-SA-4.0): a bounded same-root-cause search from the known instance; negative controls, with an inconclusive result kept apart from a refuted one.

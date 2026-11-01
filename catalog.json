@@ -47,6 +47,10 @@
     "path": "skills/core/reviewing",
     "requires": []
   },
+  "hissal.skill-collection/risky-changes": {
+    "path": "skills/core/risky-changes",
+    "requires": []
+  },
   "hissal.skill-collection/second-opinion": {
     "path": "skills/core/second-opinion",
     "requires": [

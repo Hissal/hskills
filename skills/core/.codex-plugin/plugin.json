@@ -11,6 +11,7 @@
     "./hillclimb",
     "./receiving-review",
     "./reviewing",
+    "./risky-changes",
     "./second-opinion",
     "./test-review",
     "./verifying",

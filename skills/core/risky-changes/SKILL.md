@@ -1,6 +1,6 @@
 ---
 name: risky-changes
-description: Use when a change touches a public API, transforms or drops data, or changes pricing, quotas, a default, or a provider or model parameter.
+description: Use when a change changes a public API, transforms or drops data, or changes pricing, quotas, a default, or a provider or model parameter.
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/risky-changes"
@@ -26,11 +26,11 @@ A missing file or a missing field takes its default.
 
 Write down every assumption the change's safety rests on: what the real data looks like (shapes, frequencies, nulls, edge cases), who relies on the current behaviour, what callers or customers will see or pay. Give each a status:
 
-- **verified**: name the evidence (a query result, a measurement, a log sample, a document).
-- **unvalidated**: no evidence yet. Step 3 measures it, or the record names it as a gap.
-- **contradicted**: the evidence shows it false; name the evidence.
+- **verified**: shown by a measurement or query you ran on named data; name the run and the data.
+- **unvalidated**: no such run backs it yet. Step 3 measures it, or the record names it as a gap.
+- **failed**: the evidence contradicts it; name the evidence.
 
-Update the statuses as step 3 produces evidence. A contradicted assumption reopens the change: rethink it, and put the options to the approver in the record's verdict.
+Update the statuses as step 3 produces evidence. A failed assumption reopens the change: rethink it, and put the options to the approver in the record's verdict.
 
 ## 3. Measure against real data
 

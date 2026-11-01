@@ -39,6 +39,14 @@
       "sha": "7874889bd037d411f6079e38ee8601557c4a8995",
       "license": "MIT",
       "changes": "trigger narrowed to public APIs, data transforms or drops, pricing or quotas, defaults, and provider or model parameters; collection metadata; evidence path and approver from project configuration; verified, unvalidated and failed statuses; research step and fixed case count dropped; evidence record template; pack-guide extension point and people's reports as their own evidence; approval pending when unattended; post-deployment check kept only as a record line"
+    },
+    {
+      "skill": "skills/core/to-spec",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/to-spec",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; tracker and label vocabulary from project configuration, with /setup-project for a missing tracker; reuse line in exploration; existing issues checked before publishing; pack-guide extension point for sketching test seams; completion bar; decisions marked chosen over X because Y; agent inferences kept under Assumptions; optional Do not touch and Open until implementation sections; writing-for-agents pointer; default, skippable fresh-context spec review through delegating with its own evidence rules and fact-checked absence claims; one playback confirmed in a batch before publishing, and no edit after; contextual suggestions and the subordinate return"
     }
   ]
 }

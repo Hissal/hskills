@@ -9,12 +9,28 @@
       "changes": "renamed architecture-review keeping the old ID; scope from reviewing; duplication lens; dark report; stops for the owner's pick and offers only a chosen continuation; subordinate mode; Unity line replaced by a pack-guide extension point"
     },
     {
+      "skill": "skills/core/blast-radius",
+      "source": "cursor/plugins",
+      "path": "pstack/skills/blast-radius",
+      "sha": "ccb5507cec1546dc88135c1139c811e6c59115ba",
+      "license": "MIT",
+      "changes": "collection metadata and gates; verifying declared as a hard requirement with the shared stop template; the own evidence ladder replaced by a link to verifying's, with its status words (unvalidated for unproven); arena step and the how, why and unslop references dropped; web timing examples made stack-neutral and the pack-guide extension point added; change scope, done line, capture rules for the proving script, a Not searched part, the /handoff offer and the subordinate-agent return added"
+    },
+    {
       "skill": "skills/core/code-review",
       "source": "mattpocock/skills",
       "path": "skills/engineering/code-review",
       "sha": "49dd158d1076134a641b33efb035946536778336",
       "license": "MIT",
       "changes": "scope, shared evidence rules and the stop on a missing requirement come from reviewing; one captured patch with untracked files; spec and standards finding widened; Spec gains changed and unverifiable; a third axis, Failure, and the security-finding hook; smell baseline gains the duplication rule and a platform smell; extension points, handback suggestions and collection metadata replace the Unity line, the setup pointer and the word cap"
+    },
+    {
+      "skill": "skills/core/risky-changes",
+      "source": "davidondrej/skills",
+      "path": "skills/ops-and-setup/risky-changes",
+      "sha": "7874889bd037d411f6079e38ee8601557c4a8995",
+      "license": "MIT",
+      "changes": "trigger narrowed to public APIs, data transforms or drops, pricing or quotas, defaults, and provider or model parameters; collection metadata; evidence path and approver from project configuration; verified, unvalidated and failed statuses; research step and fixed case count dropped; evidence record template; pack-guide extension point and people's reports as their own evidence; approval pending when unattended; post-deployment check kept only as a record line"
     }
   ]
 }

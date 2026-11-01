@@ -75,6 +75,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/to-questionnaire": {
+    "path": "skills/core/to-questionnaire",
+    "requires": []
+  },
   "hissal.skill-collection/triage": {
     "path": "skills/core/triage",
     "requires": []

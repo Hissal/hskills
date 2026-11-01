@@ -41,6 +41,14 @@
       "changes": "trigger narrowed to public APIs, data transforms or drops, pricing or quotas, defaults, and provider or model parameters; collection metadata; evidence path and approver from project configuration; verified, unvalidated and failed statuses; research step and fixed case count dropped; evidence record template; pack-guide extension point and people's reports as their own evidence; approval pending when unattended; post-deployment check kept only as a record line"
     },
     {
+      "skill": "skills/core/to-questionnaire",
+      "source": "mattpocock/skills",
+      "path": "skills/productivity/to-questionnaire",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; a line that preparing the questionnaire never authorises sending it, with recipients, sending and notification left to the owner's instructions"
+    },
+    {
       "skill": "skills/core/triage",
       "source": "mattpocock/skills",
       "path": "skills/engineering/triage",

@@ -12,8 +12,9 @@ Review a change along independent axes:
 
 - **Standards**: does the code follow this project's documented coding standards?
 - **Spec**: does the code do what the originating issue or spec asked for?
+- **Failure**: where the code fails, does it fail loudly, or silently with a wrong result?
 
-Each axis runs as its own **parallel sub-agent**, so neither pollutes the other's context; this skill then reports their findings side by side, apart and unranked.
+Each axis runs as its own **parallel sub-agent**, so none pollutes another's context; this skill then reports their findings side by side, apart and unranked.
 
 The review is read-only. It changes nothing in the project, runs no check, and does not call `verifying`. Sorting and fixing findings belong to `receiving-review`.
 
@@ -91,7 +92,10 @@ Issue every reviewer call together, in the foreground, each sub-agent starting w
 - the announced scope, and the paths of the patch and commit-list files from step 2;
 - the evidence rules and the out-of-scope observations format from `reviewing`, pasted in full;
 - the reporting rules: findings only, never restate the diff; mark each finding **hard** or **judgement call**; no confidence scores or ratings;
+- the security-finding procedure, when it is installed (see _Security findings_);
 - the axis brief below, with its not-to-report list.
+
+Each reviewer's model, harness and effort come from `delegating` and the personal delegation policy where they are set up. The three roles may run on different models; each axis still gets exactly one reviewer.
 
 **Standards brief**:
 
@@ -109,17 +113,28 @@ Issue every reviewer call together, in the foreground, each sub-agent starting w
 - "Ask the project's listed pack guides for what a diff cannot prove for this stack, and report those requirements as unverifiable; let the lookup start nothing else."
 - Not to report: style or standards (the Standards axis); open questions the spec itself leaves open, as missing work.
 
-With no spec available, skip the Spec reviewer.
+**Failure brief**:
+
+- Nothing from steps 3 and 4: no spec and no standards. The Failure reviewer runs on every review, a review with no spec included.
+- "Walk each changed path through its happy, missing, empty and upstream-error cases, and report where a failure goes silent: a swallowed error; a silently wrong result; a side effect missed on one branch; an event or notification fired only on success; an empty handler; a handler that only logs and continues; a default returned in place of a failure; a silent skip."
+- "Trace outside the diff wherever a failure leads. Three cases always prompt a trace: a new value or constant, traced through every consumer; shared state across an `await`, with both orders shown; a change that is itself a guard (a test, a mock, a CI gate), asked whether it fails loudly or passes silently. These prompt tracing and never limit it."
+- "A finding is a judgement call unless its quoted line comes with a concrete consequence: the input, the path and the wrong outcome."
+- "Ask the project's listed pack guides for failure modes specific to the stack; let the lookup start nothing else."
+- Not to report: failures that already surface to the caller or user (a raised error, a failing exit code); style or standards (the Standards axis); whether the change does what was asked (the Spec axis).
+
+With no spec available, skip the Spec reviewer; Standards and Failure still run.
+
+**Security findings**: check the installed skill listing for `receiving-review` (`hissal.skill-collection/receiving-review`). When it is installed with its `references/SECURITY-FINDING.md`, paste that procedure into every brief, and have each reviewer assess any security finding with it before reporting, giving the finding its verdict. When it is not installed, proceed without it; it is never a requirement.
 
 ### 6. Aggregate
 
-Present each axis under its own heading (`## Standards`, `## Spec`), verbatim or lightly cleaned. Do **not** merge or rerank findings across axes, because the axes are deliberately separate (see _Why two axes_).
+Present each axis under its own heading (`## Standards`, `## Spec`, `## Failure`), verbatim or lightly cleaned. Do **not** merge or rerank findings across axes, because the axes are deliberately separate (see _Why three axes_).
 
 - Missing coverage, as `reviewing`'s evidence rules define it, goes under the heading of the axis it belongs to.
 - A skipped Spec axis reads "no spec available".
 - Gather every reviewer's out-of-scope observations into one **Out-of-scope observations** section after the axes, in `reviewing`'s format; pre-existing entries are not counted.
 
-End with a one-line summary: findings per axis (hard and judgement call), and the worst issue _within each axis_, if any. Pick no single winner across axes: that is the reranking the separation exists to prevent.
+End with a one-line summary: findings per axis (Standards, Spec and Failure; hard and judgement call), and the worst issue _within each axis_, if any. Pick no single winner across axes: that is the reranking the separation exists to prevent.
 
 ### 7. Suggest at handback
 
@@ -136,11 +151,12 @@ Known concrete defects stay in the findings whether or not a suggestion is offer
 
 Run for a caller (a workflow that started this review), make no offer: return the observed follow-up needs with the report, and the caller decides what to offer the owner.
 
-## Why two axes
+## Why three axes
 
-A change can pass one axis and fail the other:
+A change can pass some axes and fail another:
 
 - Code that follows every standard but implements the wrong thing → **Standards pass, Spec fail.**
 - Code that does exactly what the issue asked but breaks the project's conventions → **Spec pass, Standards fail.**
+- Code that follows the standards and matches the spec but fails silently → **Standards pass, Spec pass, Failure fail.**
 
-Reporting them separately stops one axis from masking the other.
+Reporting them separately stops one axis from masking another.

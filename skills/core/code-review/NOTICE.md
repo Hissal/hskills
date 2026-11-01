@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/code-review`
 - Pinned commit: `49dd158d1076134a641b33efb035946536778336`
 - Licence: MIT
-- Local changes: scope, shared evidence rules and the stop on a missing requirement come from reviewing; one captured patch with untracked files; spec and standards finding widened; Spec gains changed and unverifiable; smell baseline gains the duplication rule and a platform smell; extension points, handback suggestions and collection metadata replace the Unity line, the setup pointer and the word cap
+- Local changes: scope, shared evidence rules and the stop on a missing requirement come from reviewing; one captured patch with untracked files; spec and standards finding widened; Spec gains changed and unverifiable; a third axis, Failure, and the security-finding hook; smell baseline gains the duplication rule and a platform smell; extension points, handback suggestions and collection metadata replace the Unity line, the setup pointer and the word cap
 
 ## Licence
 

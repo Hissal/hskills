@@ -1,6 +1,6 @@
 # Notice
 
-This skill is a new synthesis. It copies no source text. Its files are written in our own words, adapted from this MIT-licensed source, pinned to the commit that was read:
+This skill is a new synthesis. Its files are written in our own words and keep only a few short phrases of the source's wording. They are adapted from this MIT-licensed source, pinned to the commit that was read:
 
 - `SKILL.md`, the method (a stop condition pairing a target with a minimum number of attempts, a harness proved to separate contrasting workloads and then frozen, one hypothesis per iteration kept or reverted, one commit per accepted win, pushing past the first plateau): cursor/plugins pstack [Hillclimb playbook](https://github.com/cursor/plugins/blob/ccb5507cec1546dc88135c1139c811e6c59115ba/pstack/skills/poteto-mode/playbooks/hillclimb.md). Copyright (c) 2026 Lauren Tan.
 

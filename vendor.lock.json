@@ -105,6 +105,14 @@
       "changes": "collection metadata and gates; tracker, label strings and ticket folder from project configuration, with /setup-project when no tracker is named; existing issues searched to avoid duplicates; acceptance criteria pass/fail; optional Proof note per ticket; tickets sharing an exclusive surface block each other; pack-guide extension point for slicing work; /implement or /implement-spec offered at completion"
     },
     {
+      "skill": "skills/core/triage",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/triage",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; the AI-generated disclaimer replaced by posting every triage comment through commenting with a during-triage context suffix; tracker from project configuration, with /setup-project when none is configured; label strings default to the canonical role names and come from project configuration only where they differ; the pack-guide extension point for stack involvement, reproduction/completion tools and environment, and required human participation; the maintainer's own issues triaged like outside ones; grilling and domain-modeling marked as process calls; /to-questionnaire and /handoff suggestions; contents lists added to both references"
+    },
+    {
       "skill": "skills/core/wayfinder",
       "source": "mattpocock/skills",
       "path": "skills/engineering/wayfinder",

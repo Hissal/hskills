@@ -22,6 +22,7 @@
     "skills/core/to-questionnaire",
     "skills/core/to-spec",
     "skills/core/to-tickets",
+    "skills/core/triage",
     "skills/core/verifying",
     "skills/core/wayfinder",
     "skills/core/why"

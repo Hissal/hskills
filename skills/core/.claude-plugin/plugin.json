@@ -25,6 +25,7 @@
     "./to-questionnaire",
     "./to-spec",
     "./to-tickets",
+    "./triage",
     "./verifying",
     "./wayfinder",
     "./why"

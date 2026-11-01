@@ -114,6 +114,10 @@
     "path": "skills/core/to-tickets",
     "requires": []
   },
+  "hissal.skill-collection/triage": {
+    "path": "skills/core/triage",
+    "requires": []
+  },
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",
     "requires": []

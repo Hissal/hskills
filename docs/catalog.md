@@ -652,6 +652,7 @@ changing skill identity or requirements with
 | `hissal.skill-collection/guide` | [`guide`](../skills/core/guide/SKILL.md) | — |
 | `hissal.skill-collection/hillclimb` | [`hillclimb`](../skills/core/hillclimb/SKILL.md) | `hissal.skill-collection/verifying` [`verifying`](../skills/core/verifying/SKILL.md) |
 | `hissal.skill-collection/improve-codebase-architecture` | [`architecture-review`](../skills/core/architecture-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
+| `hissal.skill-collection/migrating` | [`migrating`](../skills/core/migrating/SKILL.md) | — |
 | `hissal.skill-collection/onboarding-guide` | [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md) | — |
 | `hissal.skill-collection/receiving-review` | [`receiving-review`](../skills/core/receiving-review/SKILL.md) | — |
 | `hissal.skill-collection/reviewing` | [`reviewing`](../skills/core/reviewing/SKILL.md) | — |

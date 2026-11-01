@@ -9,6 +9,7 @@
     "./commenting",
     "./guide",
     "./hillclimb",
+    "./migrating",
     "./receiving-review",
     "./reviewing",
     "./risky-changes",

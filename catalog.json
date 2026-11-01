@@ -35,6 +35,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/migrating": {
+    "path": "skills/core/migrating",
+    "requires": []
+  },
   "hissal.skill-collection/onboarding-guide": {
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []

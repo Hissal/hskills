@@ -17,6 +17,7 @@
     "./risky-changes",
     "./second-opinion",
     "./test-review",
+    "./triage",
     "./verifying",
     "./why"
   ]

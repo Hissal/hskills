@@ -57,6 +57,14 @@
       "changes": "collection metadata and gates; description names the pull request; done line; tracker, guidance pointer and check commands from project configuration, /setup-project when no tracker is named; pack-guide extension point for check cadence; reuse line and sizing test; diagnosing-bugs after two failed fixes for the same check; completion through verifying and review findings through receiving-review; commit to the current branch replaced by branch-fit rules and a ready or draft pull request written through pr, pushing to an existing PR or skipping it when none applies; process calls stated as not requirements; report step"
     },
     {
+      "skill": "skills/core/implement-spec",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/implement-spec",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; tracker from project configuration, /setup-project replacing the setup pointer; every dispatch through delegating, with the host subagent fallback and this workflow's roles; implementer brief carries the project-guidance pointer and the parallel-worktrees pack-guide extension point; implementer reports checked against the real diff through verifying before merging; review findings handled through receiving-review, with no automatic second-opinion; integration branch checked through verifying; draft PR links the spec and tickets and switches to closing them only once every criterion is verified, partial work on the Not done line and no ticket per unfixed finding; follow-up offers at handback"
+    },
+    {
       "skill": "skills/core/research",
       "source": "mattpocock/skills",
       "path": "skills/engineering/research",
@@ -103,6 +111,14 @@
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
       "changes": "collection metadata and gates; the AI-generated disclaimer replaced by posting every triage comment through commenting with a during-triage context suffix; tracker from project configuration, with /setup-project when none is configured; label strings default to the canonical role names and come from project configuration only where they differ; the pack-guide extension point for stack involvement, reproduction/completion tools and environment, and required human participation; the maintainer's own issues triaged like outside ones; grilling and domain-modeling marked as process calls; /to-questionnaire and /handoff suggestions; contents lists added to both references"
+    },
+    {
+      "skill": "skills/core/wayfinder",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/wayfinder",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; tracker and its wayfinding operations read from project configuration, with /setup-project for a missing tracker, replacing the setup pointer and the local-markdown default; resolution comments name what each decision was chosen over; research subagents dispatched through delegating with the host-subagent fallback, briefed with the throwaway research branch as their location and a short return; process calls are not requirements; /to-spec, /to-questionnaire and /handoff suggestions added"
     }
   ]
 }

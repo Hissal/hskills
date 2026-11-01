@@ -57,7 +57,7 @@ The resolved scope sets how far candidates reach:
 
 Discoveries outside the scope go to reviewing's out-of-scope observations, never to the candidates.
 
-Done when the scope is announced, or one question or the survey offer is out to the owner.
+Done when reviewing's announcement block is out as its own message before step 2 starts, or one question or the survey offer is out to the owner. A summary of the scope in the final report does not count.
 
 ### 2. Explore
 

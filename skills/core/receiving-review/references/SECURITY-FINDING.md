@@ -28,6 +28,6 @@ Show that the check tells the cases apart. A malicious input is rejected or neut
 
 ## Verdict
 
-- **Confirmed**: a reachable path, an attacker who gains something, and no control that holds.
+- **Confirmed**: a reachable path, an attacker who gains something, and no control that holds. A negative control that a read-only caller could not run is a named gap; on its own it does not make the finding inconclusive.
 - **Refuted**: the path is unreachable, the attacker gains nothing, or a cited control holds for this input; the negative control agrees.
 - **Inconclusive**: anything short of either, with each gap named. An inconclusive finding stays open; a missing proof never turns it into refuted.

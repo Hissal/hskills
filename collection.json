@@ -15,6 +15,7 @@
     "skills/core/second-opinion",
     "skills/core/test-review",
     "skills/core/verifying",
+    "skills/core/wayfinder",
     "skills/core/why"
   ],
   "packs": {
@@ -25,5 +26,7 @@
       "skills/packs/onboarding/onboarding-guide"
     ]
   },
-  "expensive": []
+  "expensive": [
+    "skills/core/wayfinder"
+  ]
 }

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "role": ["helper", "researcher"],
+      "difficulty": ["simple", "normal"],
+      "pool": [
+        { "harness": "opencode", "family": "glm" },
+        { "harness": "opencode", "family": "deepseek" },
+        { "harness": "opencode", "family": "kimi" }
+      ],
+      "autoFallback": true
+    }
+  ]
+}

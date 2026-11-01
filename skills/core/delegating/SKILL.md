@@ -36,10 +36,18 @@ The same rules bind you when you are yourself a dispatched agent. A helper, or a
 
 Resolve selection before transport, so the native tool's model list never quietly narrows the choice.
 
-- **Automatic** (no explicit instruction): choose from suitable available models. Suitable means strong enough for the role's difficulty: a small fast model can run a simple helper, difficult work and final reviews need a frontier model. Your own model family is an acceptable default.
+Explicit instructions win over the personal delegation policy for whatever they name; the policy then decides the rest. Read the policy at `~/.config/skill-collection/delegation.json`:
+
+- **No file**: select automatically. That is normal, so suggest nothing.
+- **A file**: check it against the [policy schema](references/policy.schema.json), then select each agent's choice by matching, order or pool, effort and fallback as the [policy guide](references/POLICY.md) says. Its selector examples ([ordered](references/policy-examples/ordered.json), [pool](references/policy-examples/pool.json), [workflow override](references/policy-examples/workflow-override.json)) are illustrations, never assignments. A rule whose choices are exhausted asks before going outside its list unless the policy sets `autoFallback`; unattended, the blocked dispatch is preserved and reported.
+- **Invalid** (unreadable, not JSON, or breaking the schema): never treat it as absent. At dispatch, report the file and every problem, and suggest `/delegating setup` to repair it. Then ask the owner before selecting automatically; unattended, preserve the brief in a file and report the blocked dispatch.
+
+Project facts and the host's real limits bind every policy choice: no rule widens authority, isolation or a concurrency limit.
+
+- **Automatic** (no explicit instruction, and no policy rule matching): choose from suitable available models. Suitable means strong enough for the role's difficulty: a small fast model can run a simple helper, difficult work and final reviews need a frontier model. Your own model family is an acceptable default.
 - **Family names** ("Opus", "GPT Sol") resolve against the live catalog to the newest suitable stable version, from advertised IDs and reliable version information. A preview or experimental variant only when named. Surface an ambiguity you cannot resolve.
 - **Diversity groups** are selected together, never one agent at a time. Prefer different model families, then different lines within one family. The same model through two harnesses is not diversity. A model too weak for the role stays out, whatever its family. Preferred diversity unavailable: reuse a model and report it. Required diversity unavailable: the dispatch is blocked.
-- **Effort**: low for simple quick work, medium for normal work, high for difficult work. xhigh only with an exceptional reason, stated in the summary. max only on the user's explicit instruction; never raise effort to max on your own. Map the intent to the harness's own control with [effort mappings](references/EFFORT.md): equal option names do not mean equal effort or cost. An automatic default may take a documented approximation or the model's fixed behaviour, reported as such. An explicit effort with no supported equivalent makes that choice unavailable.
+- **Effort**: low for simple quick work, medium for normal work, high for difficult work, unless the policy's `effortDefaults` replace them. xhigh only with an exceptional reason, stated in the summary. max only on the user's explicit instruction or a policy entry naming it; never raise effort to max on your own. A policy rule's effort counts as explicit. Map the intent to the harness's own control with [effort mappings](references/EFFORT.md): equal option names do not mean equal effort or cost. An automatic default may take a documented approximation or the model's fixed behaviour, reported as such. An explicit effort with no supported equivalent makes that choice unavailable.
 - **Unavailable** (not installed, not signed in, quota or auth failure, no transport reaches it): move to the next suitable choice and record why. An explicitly requested choice that is unavailable gets no substitute without asking. Unattended, preserve the brief in a file and report the blocked dispatch.
 
 ## 4. Choose the transport
@@ -82,7 +90,7 @@ Show the summary, then dispatch:
 ```md
 **Dispatch:** <role> on <harness or provider>, <model>, effort <level> [<approximation or limitation>]
 **Transport:** <native | T3 delegation | CLI: <command>>
-**Selection:** <explicit instruction | automatic>; diversity <met | reused: why | not asked>
+**Selection:** <explicit instruction | policy: <rule, e.g. workflows.code-review[0] or rules[1]> | automatic: <no policy | no matching rule | outside the list: why>>; diversity <met | reused: why | not asked>
 ```
 
 One line per agent when several go together.

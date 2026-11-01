@@ -455,3 +455,5 @@ module.exports.push(
 );
 // ---- release versions and steering paths (#112) ------------------------------
 module.exports.push(...require('./release-steering-cases')({ skill }));
+// ---- schema examples (#246) ---------------------------------------------------
+module.exports.push(...require('./schema-examples-cases')({ skill }));

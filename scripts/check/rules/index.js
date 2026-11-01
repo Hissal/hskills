@@ -12,6 +12,7 @@ module.exports = [
   require('./skill-body-length'),
   require('./reference-contents'),
   require('./reference-unlinked'),
+  require('./schema-examples'),
   require('./skill-metadata'),
   require('./skill-requirements'),
   require('./requirement-reference'),

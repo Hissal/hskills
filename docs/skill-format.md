@@ -128,6 +128,7 @@ It writes only those two values, leaving every other line of `SKILL.md` and `age
 - Mutually exclusive modes get one reference each, and `SKILL.md` says to read exactly one.
 - A reference over 100 lines opens with a contents list: a list of in-page links (`- [Setup](#setup)`), or a list under a `Contents` heading, before its first section.
 - Keep the `SKILL.md` body within 500 lines; past that, disclose.
+- A JSON schema a skill ships is `<stem>.schema.json`, with its examples as JSON files in a `<stem>-examples/` folder beside it. The check validates every example against the schema, and the schema may use only the keywords [`json-schema.js`](../scripts/check/json-schema.js) implements (`schema-examples`). Add a keyword there, with a fixture, before a schema uses it.
 - Name a bundled file with a relative Markdown link from the file that mentions it: `[FORMS.md](FORMS.md)`, `[detect](scripts/detect.js)`. The check also resolves code-span paths starting with `./` or a directory present in the skill folder (such as `references/x.md`). Other code spans may name project files and are left alone.
 
 ## Scripts
@@ -204,6 +205,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `skill-body-length` | warn | a `SKILL.md` body over 500 lines |
 | `reference-contents` | warn | a reference over 100 lines with no contents list |
 | `reference-unlinked` | warn | a reference not linked straight from `SKILL.md` (`NOTICE.md` excepted) |
+| `schema-examples` | fail | a skill's `<stem>.schema.json` is not JSON or uses a keyword outside the subset [`json-schema.js`](../scripts/check/json-schema.js) implements, or a JSON file in a `<stem>-examples/` folder beside it is not JSON or breaks the schema; an examples folder with no schema beside it fails too |
 | `skill-metadata` | fail | missing or invalid schema/ID, malformed requirements or duplicate ID |
 | `skill-requirements` | fail | a requirement outside the resolved set or a requirement cycle |
 | `requirement-reference` | fail | a Markdown link names a missing file in a required skill's folder |

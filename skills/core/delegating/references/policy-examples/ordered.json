@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "role": ["reviewer", "implementer"],
+      "difficulty": ["difficult"],
+      "order": [
+        { "harness": "codex", "family": "sol" },
+        { "harness": "claude-code", "family": "opus" }
+      ],
+      "effort": "high"
+    },
+    {
+      "order": [
+        { "harness": "claude-code", "family": "opus" },
+        { "harness": "codex", "family": "sol" }
+      ]
+    }
+  ]
+}

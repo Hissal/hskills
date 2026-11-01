@@ -134,6 +134,8 @@ After the report, offer a follow-up only when its condition was observed in this
 
 Known concrete defects stay in the findings whether or not a suggestion is offered. With no condition observed, end at the summary.
 
+Run for a caller (a workflow that started this review), make no offer: return the observed follow-up needs with the report, and the caller decides what to offer the owner.
+
 ## Why two axes
 
 A change can pass one axis and fail the other:

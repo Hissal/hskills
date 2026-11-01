@@ -650,6 +650,7 @@ changing skill identity or requirements with
 | `hissal.skill-collection/code-review` | [`code-review`](../skills/core/code-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/commenting` | [`commenting`](../skills/core/commenting/SKILL.md) | — |
 | `hissal.skill-collection/csharp-guide` | [`csharp-guide`](../skills/packs/csharp/csharp-guide/SKILL.md) | — |
+| `hissal.skill-collection/delegating` | [`delegating`](../skills/core/delegating/SKILL.md) | — |
 | `hissal.skill-collection/dependency-audit` | [`dependency-audit`](../skills/core/dependency-audit/SKILL.md) | — |
 | `hissal.skill-collection/domain-modeling` | [`domain-modeling`](../skills/core/domain-modeling/SKILL.md) | — |
 | `hissal.skill-collection/grilling` | [`grilling`](../skills/core/grilling/SKILL.md) | — |

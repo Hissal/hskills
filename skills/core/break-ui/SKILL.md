@@ -92,7 +92,7 @@ Close with the cases you built and where they live, then the offers that apply:
 
 - Fixes on request: the owner names the rows to fix (`fix all`, `fix 1, 3`).
 - Keeping the worst-case fixture as a regression test, in the project's usual test or fixture place. Offer it once; it stays only when the owner chooses it.
-- `/handoff`, when the owner chooses to defer the fixes or pass the work to someone else and the cases and findings would be costly to rebuild.
+- `/handoff`, when the owner chooses to defer the fixes or pass the work to someone else and the cases and findings would be costly to rebuild. The owner starts it; you never run it.
 
 When you run for a parent agent, return this report as your output; the parent makes the offers.
 

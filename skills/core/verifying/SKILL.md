@@ -85,7 +85,7 @@ A red check is reported as failed, with its command, tree and exit code. A check
 
 Running as a delegate, hand back the evidence and any follow-up needs; the parent owns the recommendations the user sees.
 
-When changed installation, public entry points or quickstart behaviour leave a consequential consumer scenario unproven by these producer-side checks, ask the project's listed pack guides for ship-readiness for this kind of project, and at handback suggest the fresh-consumer review they name, with the package, version and scenario. The required checks still complete, or the report says plainly that verification is incomplete.
+When changed installation, public entry points or quickstart behaviour leave a consequential consumer scenario unproven by these producer-side checks, ask the project's listed pack guides for ship-readiness for this kind of project, and at handback suggest the fresh-consumer review they name, with the package, version and scenario. When no guide names one, report that scenario as **unvalidated**. The required checks still complete, or the report says plainly that verification is incomplete.
 
 ## Evidence ladder
 

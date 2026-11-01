@@ -46,5 +46,9 @@
     "requires": [
       "hissal.skill-collection/reviewing"
     ]
+  },
+  "hissal.skill-collection/why": {
+    "path": "skills/core/why",
+    "requires": []
   }
 }

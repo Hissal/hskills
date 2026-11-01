@@ -10,6 +10,7 @@
     "./receiving-review",
     "./reviewing",
     "./second-opinion",
-    "./test-review"
+    "./test-review",
+    "./why"
   ]
 }

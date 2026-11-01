@@ -655,4 +655,5 @@ changing skill identity or requirements with
 | `hissal.skill-collection/reviewing` | [`reviewing`](../skills/core/reviewing/SKILL.md) | — |
 | `hissal.skill-collection/second-opinion` | [`second-opinion`](../skills/core/second-opinion/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/test-review` | [`test-review`](../skills/core/test-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
+| `hissal.skill-collection/why` | [`why`](../skills/core/why/SKILL.md) | — |
 <!-- END GENERATED DEPENDENCIES -->

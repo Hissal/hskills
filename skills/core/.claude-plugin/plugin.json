@@ -11,6 +11,7 @@
     "./reviewing",
     "./second-opinion",
     "./test-review",
-    "./verifying"
+    "./verifying",
+    "./why"
   ]
 }

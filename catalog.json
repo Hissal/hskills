@@ -1,4 +1,14 @@
 {
+  "hissal.skill-collection/code-review": {
+    "path": "skills/core/code-review",
+    "requires": [
+      "hissal.skill-collection/reviewing"
+    ]
+  },
+  "hissal.skill-collection/commenting": {
+    "path": "skills/core/commenting",
+    "requires": []
+  },
   "hissal.skill-collection/csharp-guide": {
     "path": "skills/packs/csharp/csharp-guide",
     "requires": []
@@ -11,8 +21,34 @@
     "path": "skills/core/guide",
     "requires": []
   },
+  "hissal.skill-collection/improve-codebase-architecture": {
+    "path": "skills/core/architecture-review",
+    "requires": [
+      "hissal.skill-collection/reviewing"
+    ]
+  },
   "hissal.skill-collection/onboarding-guide": {
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []
+  },
+  "hissal.skill-collection/receiving-review": {
+    "path": "skills/core/receiving-review",
+    "requires": []
+  },
+  "hissal.skill-collection/reviewing": {
+    "path": "skills/core/reviewing",
+    "requires": []
+  },
+  "hissal.skill-collection/second-opinion": {
+    "path": "skills/core/second-opinion",
+    "requires": [
+      "hissal.skill-collection/reviewing"
+    ]
+  },
+  "hissal.skill-collection/test-review": {
+    "path": "skills/core/test-review",
+    "requires": [
+      "hissal.skill-collection/reviewing"
+    ]
   }
 }

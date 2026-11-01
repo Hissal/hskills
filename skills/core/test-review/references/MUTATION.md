@@ -22,4 +22,4 @@ Take the first class that fits, with the evidence it needs:
 
 - **Rate the change, not the neighbourhood.** A gap's severity comes from what that specific mutant would do to a caller, never from how risky the surrounding module feels or how many survivors sit near it.
 - **One cause, one finding.** When one weak assertion or one untested branch lets many mutants live, report the cause once and list the mutants as its instances.
-- **Results are a tool finding.** Form your own judgement of the tests first, then read the results; say when the run was partial or incomplete. Rerunning the tool is the owner's check, never part of the review.
+- **Results are a tool finding**, read after your own judgement as `reviewing`'s evidence rules require. Rerunning the tool is the owner's check, never part of the review.

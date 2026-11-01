@@ -42,20 +42,20 @@ Done when the scope is announced in `reviewing`'s shape.
 
 ## 2. Gather the yardsticks
 
-Read, before judging any test:
+Gather these before judging any test. Standards and idioms are read now; tool reports are only located now, and read in step 3 after your own judgement:
 
 - **The project's standards**: every file that documents how code is written, including any project coding guide that project instructions point to. They apply to test files exactly as to production files.
 - **This stack's test idioms.** Ask the project's listed pack guides for this stack's test idioms (skip markers, assertion forms, cheat patterns).
-- **Coverage, if the project already has it.** Ask the project's listed pack guides for collecting test coverage for this stack, to find and read a report the project has already produced. Producing one is a check run, so a missing report stays missing.
+- **Coverage, if the project already has it.** Ask the project's listed pack guides for collecting test coverage for this stack, to find a report the project has already produced. Producing one is a check run, so a missing report stays missing.
 - **Mutation results, if the project already has them**: a mutation tool's report of changes it made to production code and which ones the tests failed to catch.
 
 A pack lookup answers a question inside this review; it never starts test authoring or runs a check.
 
-Done when you know which standards files, idioms, coverage report and mutation results (or none) the review uses.
+Done when you know which standards files, idioms, coverage report and mutation results (or none) the review uses, with the reports located but not yet read.
 
 ## 3. Judge the tests
 
-For every test in scope, read the test and the production code it exercises, then hold it against each yardstick below. Form your own judgement first; read existing test results, coverage and other tool output only afterwards, as `reviewing`'s evidence rules require, and say when a report is partial, stale against the snapshot, or missing files.
+For every test in scope, read the test and the production code it exercises, then hold it against each yardstick below. Form your own judgement of each test first. Then read the coverage and mutation reports from step 2 and any existing test results, under `reviewing`'s evidence rules; a report stale against the snapshot or missing files counts as degraded.
 
 Done when every test in scope has been held against every section of this step, and every gap you report names its bug.
 
@@ -144,7 +144,7 @@ Then check the ratings:
 
 ## 5. Report
 
-`reviewing`'s evidence rules hold for every finding: quote the line, state how complete a search was, keep a declined-to-judge slot, and report a part you could not finish as missing coverage. Out-of-scope observations go in `reviewing`'s section.
+`reviewing`'s evidence rules hold for every finding. Out-of-scope observations go in `reviewing`'s section.
 
 ```md
 <scope announcement from step 1>
@@ -166,8 +166,10 @@ Then check the ratings:
 **Totals:** <N> findings: <N> Critical, <N> High, <N> Medium, <N> Low. <Tool inputs used, and any that degraded.>
 ```
 
-Zero findings is a valid result: report the verdict, the tests read, and the totals.
+With zero findings, report the verdict, the tests read, and the totals.
 
 ## Handback
 
-When the review found a recurring or consequential quality requirement with evidence behind it, one that only an enforceable check would hold (skip markers keep appearing, say), offer `/constraints`, naming the requirement and the gap a check would close. Offer nothing else by default; the owner chooses what happens next.
+When the review found a recurring or consequential quality requirement with evidence behind it, one that only an enforceable check would hold (skip markers keep appearing, say), offer `/constraints`, naming the requirement and the gap a check would close. When the owner chooses to defer or transfer concrete review work whose evidence would be costly to rebuild, offer `/handoff`; not every unfixed finding qualifies, and nothing already in the tracker is recorded again. Offer nothing else by default; the owner chooses what happens next.
+
+Run for a caller, make no offer: return the evidenced check need or the work to transfer with your findings, and the caller decides what to offer the owner.

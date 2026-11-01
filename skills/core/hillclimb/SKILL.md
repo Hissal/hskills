@@ -73,7 +73,7 @@ Read the log, then for each attempt:
 2. **Change** only what the hypothesis names.
 3. **Measure** with the frozen harness against the current best, run from a separate checkout, interleaving the two, and run the regression gate. When the result sits close to the noise, run the same frozen command again rather than changing it, and check in an attribution run that the part the hypothesis named moved.
 4. **Decide**:
-   - **Kept** when the metric moves past the noise in the right direction, errors stay at zero, the work count holds and the gate exits 0. A change that simplifies the code and holds the number within the noise may also be kept.
+   - **Kept** when the metric moves past the noise in the right direction, errors stay at zero, the work count holds and the gate exits 0.
    - **Reverted** otherwise, in full, including any file the attempt created. Neutral is a revert; a win that turns the gate red is a revert.
 5. **Log** the row, kept or reverted, before the next attempt starts.
 6. **Commit** a kept attempt alone: its files and the log, with the attempt number and before and after in the message. It becomes the current best. After a revert, confirm the tree matches the current best before going on; the reverted row reaches git with the next kept commit or at the stop.
@@ -97,13 +97,15 @@ The run stops when the stop condition holds; when, past a plateau, each untried 
    - the log's path and commit;
    - what was not investigated, and the best next hypothesis.
 
-When the owner chooses to defer the run or hand it to someone else, and the harness, attribution or log would be costly to rebuild, offer `/handoff` as this harness writes it, naming the log and the next hypothesis. A suggestion is the human's to start; you never run it.
+When the owner chooses to defer the run or hand it to someone else, and the harness, attribution or log would be costly to rebuild, offer `/handoff` as this host writes it, naming the log and the next hypothesis. A suggestion is the human's to start; you never run it.
+
+When you run for a parent agent, hand back the evidence and any follow-up needs; the parent owns the recommendations the user sees.
 
 ## Unattended runs
 
 Run unattended only when the owner explicitly asked for this run to proceed without them. An autonomous run that did not ask for `hillclimb` never starts one.
 
 - The objective, stop condition, workload, harness and regression gate stay as set. When the owner set none, choose them, write the reason in the log's **Objective** section, and hold them fixed.
-- Keep, revert, commit and push to the run's own branch without asking. Record consequential choices in the log.
+- Keep, revert and commit on the run's own branch without asking. Record consequential choices in the log.
 - Stop and report when the run needs a decision only the owner can make, such as changing the objective or the harness.
 - A host mechanism that keeps a goal running across turns is a way to drive the attempts where the host offers one; the log stays the source of truth.

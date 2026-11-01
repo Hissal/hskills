@@ -60,6 +60,7 @@ Each candidate is one `<article>`:
 - **Problem**: one sentence. What hurts.
 - **Solution**: one sentence. What changes.
 - **Wins**: bullets, ≤6 words each. e.g. "Tests hit one interface", "Pricing logic stops leaking", "Delete 4 shallow wrappers".
+- **Duplication** (duplication candidates only): a compact table: the callers (`font-mono text-sm`, file and line), lines removed and added excluding tests, the same including tests, and a one-line **Risk** (never "none").
 - **ADR callout** (if applicable): one line in an amber-tinted box (`bg-amber-500/10 border border-amber-400/40 text-amber-200`).
 
 No paragraphs of explanation. If the diagram needs a paragraph to be understood, redraw the diagram.

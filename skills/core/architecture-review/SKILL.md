@@ -61,7 +61,7 @@ Done when the scope is announced, or one question or the survey offer is out to 
 
 Read the project's domain glossary (`GLOSSARY.md`) and any ADRs in the area you're touching first.
 
-Then spawn a sub-agent with a fresh context window to walk the codebase. Give it the resolved scope and snapshot, the reach rule from step 1, and the pack guides' sources of friction. Don't follow rigid heuristics; explore organically and note where you experience friction:
+Then spawn a sub-agent with a fresh context window to walk the codebase. Give it the resolved scope and snapshot, the reach rule from step 1, the pack guides' sources of friction and the duplication lens below. Don't follow rigid heuristics; explore organically and note where you experience friction:
 
 - Where does understanding one concept require bouncing between many small modules?
 - Where are modules **shallow**, with an interface nearly as complex as the implementation?
@@ -70,6 +70,15 @@ Then spawn a sub-agent with a fresh context window to walk the codebase. Give it
 - Which parts of the codebase are untested, or hard to test through their current interface?
 
 Apply the **deletion test** to anything you suspect is shallow: would deleting it concentrate complexity, or just move it? A "yes, concentrates" is the signal you want.
+
+Look through the **duplication lens** too. Repeated logic becomes a candidate only when it holds up:
+
+- **Two real callers.** Prove at least two real callers of the repeated logic, quoting each call site. Similar names, generated copies and vendored copies do not count.
+- **Reuse first.** Search for an existing helper that already does the job and point the callers at it before proposing a new one. A new helper stays small: the shared logic and nothing more.
+- **Count.** Lines removed and lines added, once excluding tests and once including them. Say when the total may grow.
+- **Risk.** Name the concrete risk of merging the copies, such as copies about to diverge or a caller relying on one copy's quirk. The risk is never "none".
+
+A shared helper with N callers is a deepening opportunity that passes the deletion test: deleting it would scatter its logic back across N places. Fewer duplication candidates, including none, is a valid result.
 
 Candidates and the explorer's report follow reviewing's evidence rules: an explorer that did not finish is missing coverage, and zero candidates is a valid result.
 
@@ -87,6 +96,7 @@ For each candidate, render a card with:
 - **Benefits**: explained in terms of locality and leverage, and how tests would improve
 - **Before / After diagram**: side-by-side, custom-drawn, illustrating the shallowness and the deepening
 - **Recommendation strength**: one of `Strong`, `Worth exploring`, `Speculative`, rendered as a badge
+- **Duplication** (duplication candidates only): each caller with its file and line, lines removed and added excluding and including tests, and the risk
 
 After the cards, list any out-of-scope observations in reviewing's format. End the report with a **Top recommendation** section: which candidate you'd tackle first and why.
 

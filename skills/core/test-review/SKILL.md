@@ -47,10 +47,11 @@ Read, before judging any test:
 - **The project's standards**: every file that documents how code is written, including any project coding guide that project instructions point to. They apply to test files exactly as to production files.
 - **This stack's test idioms.** Ask the project's listed pack guides for this stack's test idioms (skip markers, assertion forms, cheat patterns).
 - **Coverage, if the project already has it.** Ask the project's listed pack guides for collecting test coverage for this stack, to find and read a report the project has already produced. Producing one is a check run, so a missing report stays missing.
+- **Mutation results, if the project already has them**: a mutation tool's report of changes it made to production code and which ones the tests failed to catch.
 
 A pack lookup answers a question inside this review; it never starts test authoring or runs a check.
 
-Done when you know which standards files, idioms and coverage report (or none) the review uses.
+Done when you know which standards files, idioms, coverage report and mutation results (or none) the review uses.
 
 ## 3. Judge the tests
 
@@ -89,7 +90,40 @@ On a diff, compare with the base: a weakened assertion shows only beside the lin
 
 ### Missing tests
 
-A missing test is reported only with the concrete bug it would catch: the input or sequence, the wrong result a plausible defect would produce, and who would see it. Rate it by that bug's consequence on the same scale as every other finding. A gap with no nameable bug is not a finding. Coverage numbers point to where to look; the bug is what makes it a finding.
+A missing test is reported only with the concrete bug it would catch: the input or sequence, the wrong result a plausible defect would produce, and who would see it. Rate it by that bug's consequence on the same scale as every other finding. A gap with no nameable bug is not a finding.
+
+### Changes the tests would still pass
+
+Ask of each behaviour in scope: which caller-visible changes to the production code would these tests still pass? Work through the plausible ones by reading: a wrong constant, a flipped or off-by-one condition, a removed guard, a dropped side effect, an early or default return, swapped arguments, an error path that goes quiet. A change some test would fail is caught. A change every test still passes is a finding: name the change, the line it would alter, the tests that would still pass and why (no assertion reaches it, the oracle is too weak, no input crosses that branch). Rate it by the bug it lets through.
+
+Consider only changes a caller could observe; a behaviour-preserving refactor that no test notices is the tests doing their job. Reason it out from the code: applying a change and running the tests is a check run, so a change you cannot settle by reading goes in the declined-to-judge slot with the run that would settle it.
+
+### Dead mocks
+
+Trace every mock, stub and fake through the code path its test actually runs:
+
+- **Unreached**: the setup is never called on that path (an argument the code ignores, a branch the inputs never take).
+- **Ignored**: it is called, but nothing it returns or records reaches an assertion.
+- **Overridden or duplicated**: a later setup replaces it, or two set up the same thing.
+- **Incidental verification**: the test verifies a call the outcome does not depend on, coupling it to the implementation.
+
+A dead mock misleads the reader about what the test depends on, and can hide that the real collaborator is never exercised. Rate it by that: Low when the assertion still stands on independent ground, higher when the test only appears to cover a path because of the mock. A mock that supplies the result the code should produce is the proves-itself anti-pattern, not a dead mock.
+
+### Coverage
+
+Use coverage only from a report the project already has, and only after forming your own view. Check the report against the snapshot: a report older than the code under review is stale, and the review says so.
+
+- **Rank by risk.** Complex code with little coverage comes first: many branches or callers, consequential behaviour, few lines run by tests. Weigh complexity against coverage; compute no score.
+- **Covered is not tested.** A line a test runs without any assertion depending on it is covered and untested. Check the highest-ranked areas with the two analyses above.
+- **No targets.** A percentage is evidence of where to look, never a goal: report gaps by the bugs they would let through, and never recommend tests to reach a number.
+
+### Prune findings
+
+A finding that a test should be retired must clear the retention bar and carry a complete retirement card: read [pruning](references/PRUNING.md) before reporting one. Without a complete card, the test stays, and any doubt about its value is a declined-to-judge entry. Retiring a test is the owner's call; the review only makes the case.
+
+### Mutation results
+
+When the project already has mutation results for code in scope, read [mutation results](references/MUTATION.md) and triage their survivors. A survivor is a candidate, not yet a gap.
 
 ## 4. Calibrate severity honestly
 
@@ -104,7 +138,7 @@ Then check the ratings:
 
 - **When in doubt, rate lower.** A rating is a claim; raise it only on a quoted consequence.
 - **One systemic finding, many instances.** When one cause repeats across tests, report it once and count its instances ("1 finding, 6 tests affected"), listing them.
-- **Gaps are not anti-patterns.** An ordinary missing case is a missing test, rated by its bug; it never inflates an anti-pattern's severity.
+- **Gaps are not anti-patterns.** An ordinary missing case, a change the tests would still pass, a coverage gap or a mutation survivor is rated by the bug it lets through; it never inflates an anti-pattern's severity.
 - **Not findings:** separate tests for distinct boundaries (they are not duplicates); explicit setup repeated in each test (it isolates them); a round-trip check, such as encode then decode, used as the oracle (it is real evidence); a test of pure logic without mocks.
 - **Say when the tests are good.** If they are well written, say so first and plainly. Never inflate a finding to justify the review.
 
@@ -119,7 +153,7 @@ Then check the ratings:
 
 ### Findings
 
-#### <Critical | High | Medium | Low>: <short title> (<standards | anti-pattern | cheating | missing test>)
+#### <Critical | High | Medium | Low>: <short title> (<standards | anti-pattern | cheating | missing test | survives a change | dead mock | coverage gap | prune | mutation survivor>)
 `<path>:<line>`: `<quoted line>`
 <What is wrong, and the concrete bug or regression it lets through.> <Instances, when systemic.>
 

@@ -1,6 +1,6 @@
 # Experiment log format
 
-One Markdown file per run, at `<evidence record path>/<YYYY-MM-DD>-hillclimb-<metric>.md`. It is the run's source of truth: a reader, or a resumed session, learns from it alone what was set, what was tried and what holds now.
+One Markdown file per run, at `<evidence record path>/hillclimb/<YYYY-MM-DD>-<metric>.md`. It is the run's source of truth: a reader, or a resumed session, learns from it alone what was set, what was tried and what holds now.
 
 ## Rules
 

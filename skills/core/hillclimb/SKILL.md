@@ -39,7 +39,7 @@ The log lives under the project's evidence record path. The project states it in
 
 A missing file or a missing field takes its default.
 
-When a log for this run already exists, read it whole and continue from the step it records. Otherwise work on a branch of the run's own and create one log for the run at `<evidence record path>/<YYYY-MM-DD>-hillclimb-<metric>.md` in [the experiment-log format](references/EXPERIMENT-LOG.md), creating the folder when needed. Write each section as its step finishes.
+When a log for this run already exists, read it whole and continue from the step it records. Otherwise work on a branch of the run's own and create one log for the run at `<evidence record path>/hillclimb/<YYYY-MM-DD>-<metric>.md` in [the experiment-log format](references/EXPERIMENT-LOG.md), creating the folder when needed. Write each section as its step finishes.
 
 ## 2. Set the objective
 

@@ -1,6 +1,7 @@
 {
   "core": [
     "skills/core/architecture-review",
+    "skills/core/blast-radius",
     "skills/core/code-review",
     "skills/core/commenting",
     "skills/core/guide",

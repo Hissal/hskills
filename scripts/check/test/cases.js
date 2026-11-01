@@ -16,6 +16,7 @@
 //              proves the tree is clean.
 //   output:    regexes the check's other stdout lines (not findings) must
 //              match one to one, in order (optional)
+//   env:       extra environment variables for the check (optional)
 // Build skills with skill() so every fixture starts from a skill that passes
 // every rule; a ticket that adds a required field adds it there once.
 
@@ -393,6 +394,13 @@ for (const [name, body, expect] of [
   name: 'collection check runs install harness: ' + name,
   files: { 'scripts/install/test/run.js': body },
   expect,
+});
+// #216: a harness past the limit fails the check (a 5s harness passed before).
+module.exports.push({
+  name: 'collection check runs install harness: timeout',
+  files: { 'scripts/install/test/run.js': 'setTimeout(() => {}, 5000);' },
+  env: { COLLECTION_INSTALL_CASES_TIMEOUT_MS: '1000' },
+  expect: ['fail install-cases scripts/install/test/run.js'],
 });
 module.exports.push({
   name: 'an installer without its case harness fails the collection check',

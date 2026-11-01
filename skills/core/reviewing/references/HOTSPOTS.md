@@ -25,14 +25,14 @@ Both are starting points, not boundaries: lengthen or shorten the window when th
 
 ## Selection
 
-Select modules, never single files: group changed paths into the directory, package or component that owns a responsibility.
+Select areas that each own a responsibility. Group changed paths into the directory, package or component they belong to, rather than listing that module's files one by one. A file that stands alone, such as a root glossary or a top-level config, is an area by itself.
 
 - **Follow renames** (`-M`, `git log --follow`), so a moved or renamed module counts once, under its current path.
 - **Weigh** repeated change (commits and distinct days touching the module), complexity (size, branching, callers) and the calling review's concern: an architecture review weighs module boundaries, a test review the modules whose tests changed or should have.
 - **Exclude noise**: generated files, vendored code, lockfiles, build output and bulk mechanical commits (formatting, mass renames).
 - **Domain guidance**: apply the guidance the calling review already reaches, such as guidance that keeps a stack's asset churn from dominating an architecture scan. The survey makes no lookups of its own.
 
-Done when each selected area is one module with a stated reason drawn from the history.
+Done when each selected area owns one responsibility and has a stated reason drawn from the history.
 
 ## Fallbacks
 

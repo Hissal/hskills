@@ -46,7 +46,7 @@ Each part of the project carries exactly one of these states into the report:
 
 Use the audit command the project already runs (its check commands or CI), else the one the pack guide named, else the package manager's own audit command. Run it without installing or building the project, since an install runs the dependencies' own code; if the tool cannot run without an install, ask the owner first.
 
-Capture each run by verifying's capture rules, and record the command, the tool's version, the exit code and where the full output is kept. Many audit tools exit non-zero when they find vulnerabilities as well as when they fail to run. Read the tool's documented exit codes and its output to tell which: findings go to step 4; a run that failed makes that part **Unassessable**. A missing tool or a failed run never becomes a clean result.
+Record each run's exit code before anything reads its output, then the command, the tool's version and where the full output is kept; when `verifying` is installed, capture the run by its rules as well. A non-zero exit is never clean, and a missing tool is a failure, not a skip. Many audit tools exit non-zero when they find vulnerabilities as well as when they fail to run. Read the tool's documented exit codes and its output to tell which: findings go to step 4; a run that failed makes that part **Unassessable**.
 
 Quote counts and severities as the tool printed them.
 
@@ -85,6 +85,6 @@ A clean verdict covers only what was assessed. When any part is in **Not assesse
 
 When the owner asks for a change, make that change alone, then run the audit again on the new tree.
 
-When the owner chooses to defer the remaining investigation or pass it to someone else, and the evidence gathered so far (dependency paths, reachability traces, lockfile reading) would be costly to rebuild, offer `/handoff` with that reason.
+When the owner chooses to defer the remaining investigation or pass it to someone else, and the evidence gathered so far (dependency paths, reachability traces, lockfile reading) would be costly to rebuild, offer `/handoff` with that reason. The owner starts it; you never run it.
 
 Running for a parent agent, return the report as evidence; the parent owns the recommendations to the owner.

@@ -171,7 +171,7 @@ A skill copied from a source keeps its provenance in plain files (ADR 0002, [#17
   ```
 
   `NOTICE.md` is not a reference: it needs no link from `SKILL.md`.
-- **Adapted skills**: a skill whose files rewrite a source in our own words, copying no text, has no lock entry. When its ticket asks for provenance pointers, keep them out of the files an agent reads: a link to the source invites the agent to fetch it. Write them in a hand-written `NOTICE.md` in the skill folder instead. It names each adapted source with a GitHub link pinned to a full commit SHA, travels with installs and is never loaded ([#157](https://github.com/Hissal/skill-collection/issues/157)).
+- **Adapted skills**: a skill whose files rewrite a source in our own words, copying no text, has no lock entry. When its ticket asks for provenance pointers, keep them out of the files an agent reads: a link to the source invites the agent to fetch it. Write them in a hand-written `NOTICE.md` in the skill folder instead. It names each adapted source with a GitHub link pinned to a full commit SHA and that source's licence identifier, travels with installs and is never loaded. It records provenance, so a source can be compared against its newer commits; it carries no licence text, since nothing is copied ([#157](https://github.com/Hissal/skill-collection/issues/157)).
 
 Scripts read the lock through `scripts/vendor/lock.js`, never by parsing it themselves.
 
@@ -522,8 +522,8 @@ without partial work and print:
 
 Stopped: required skill <bare-callable-name> (<required-id>) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
-`npx skills` do not install requirements; the Unity sync resolves them from
-this metadata. Install or repair the requirement, then retry.
+`npx skills` do not install requirements; `agent-skills-sync` resolves them
+from this metadata. Install or repair the requirement, then retry.
 
 Check only whether the required material loads; the installer verifies identity
 and content. Loading this requirement grants no permission to invoke a

@@ -9,7 +9,7 @@ Placeholders: `<owner>/<repo>` is the source, `<path>` the skill folder inside i
 Decide first, per skill:
 
 - **Copy**: the source's text comes into the tree. Only from a source whose licence permits copying with its notice (MIT, Apache-2.0 and the like). Follow [Intake](#intake).
-- **Own words**: an idea-only take, or anything from a copyleft source. Write the skill in the collection's own words. It gets no lock entry, no baseline, no `NOTICE.md`, and no `SPEC.md` or `SOURCES.md`. The intake ends here.
+- **Own words**: an idea-only take, or anything from a copyleft source. Write the skill in the collection's own words. It gets no lock entry, no baseline, no licence-area file, and no `SPEC.md` or `SOURCES.md`. Record where it drew from in a hand-written `NOTICE.md`, as [Adapted skills](skill-format.md#copied-skills) describes: each source linked and pinned to a full commit SHA, so the source can later be compared against its newer commits for changes worth taking. The intake ends here.
 
 ## Intake
 

@@ -646,6 +646,7 @@ changing skill identity or requirements with
 | Skill ID | Callable / source | Hard requirements |
 |---|---|---|
 | `hissal.skill-collection/blast-radius` | [`blast-radius`](../skills/core/blast-radius/SKILL.md) | `hissal.skill-collection/verifying` [`verifying`](../skills/core/verifying/SKILL.md) |
+| `hissal.skill-collection/break-ui` | [`break-ui`](../skills/core/break-ui/SKILL.md) | — |
 | `hissal.skill-collection/code-review` | [`code-review`](../skills/core/code-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/commenting` | [`commenting`](../skills/core/commenting/SKILL.md) | — |
 | `hissal.skill-collection/csharp-guide` | [`csharp-guide`](../skills/packs/csharp/csharp-guide/SKILL.md) | — |

@@ -5,6 +5,7 @@
   "skills": [
     "./architecture-review",
     "./blast-radius",
+    "./break-ui",
     "./code-review",
     "./commenting",
     "./dependency-audit",

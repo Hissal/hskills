@@ -2,6 +2,7 @@
   "core": [
     "skills/core/architecture-review",
     "skills/core/blast-radius",
+    "skills/core/break-ui",
     "skills/core/code-review",
     "skills/core/commenting",
     "skills/core/dependency-audit",

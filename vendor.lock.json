@@ -17,6 +17,14 @@
       "changes": "collection metadata and gates; verifying declared as a hard requirement with the shared stop template; the own evidence ladder replaced by a link to verifying's, with its status words (unvalidated for unproven); arena step and the how, why and unslop references dropped; web timing examples made stack-neutral and the pack-guide extension point added; change scope, done line, capture rules for the proving script, a Not searched part, the /handoff offer and the subordinate-agent return added"
     },
     {
+      "skill": "skills/core/break-ui",
+      "source": "emilkowalski/skills",
+      "path": "skills/break-ui",
+      "sha": "2d228630ba1446365f614a108cb8252f1feda202",
+      "license": "MIT",
+      "changes": "collection frontmatter and gates; persona and initial-response line dropped; the demo/worst-case toggle replaced by cases wired at the data boundary, with the fixture kept only when the owner chooses; network and permission failures added (an idea, not text, from pbakaus/impeccable harden at https://github.com/pbakaus/impeccable/blob/936867543ac2576920d663cc9803597f6044f3ac/plugin/skills/impeccable/reference/harden.md, Apache-2.0); viewport, zoom, theme and direction checks and the CSS failure-signature table move to the pack-guide extension point; target question, clipped-list and harness-cause rules, Not checked part, /handoff offer and subordinate-agent return added; joined emoji example spelled out without a literal zero-width joiner, and the quoted steering example replaced by a description, for the security scan"
+    },
+    {
       "skill": "skills/core/code-review",
       "source": "mattpocock/skills",
       "path": "skills/engineering/code-review",

@@ -5,6 +5,10 @@
       "hissal.skill-collection/verifying"
     ]
   },
+  "hissal.skill-collection/break-ui": {
+    "path": "skills/core/break-ui",
+    "requires": []
+  },
   "hissal.skill-collection/code-review": {
     "path": "skills/core/code-review",
     "requires": [

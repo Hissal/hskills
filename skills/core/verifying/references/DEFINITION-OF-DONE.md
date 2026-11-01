@@ -8,7 +8,7 @@ Ship and release claims add the project's ship-readiness answer from its pack gu
 
 - Every acceptance criterion of the task is checked against the diff or a run.
 - The changed behaviour was seen running; a compile or type check alone does not show it.
-- A test for the new behaviour went red before the change and green after it.
+- When the change alters behaviour, a test for the new behaviour went red before the change and green after it.
 - The existing checks that cover the change are green on the final tree.
 - The failure paths and boundary inputs the change touches behave correctly too.
 

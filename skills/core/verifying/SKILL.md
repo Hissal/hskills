@@ -57,8 +57,8 @@ A result belongs to the tree it ran on. Once the tree changes (an edit, a rebase
 
 A failure is the branch's fault unless you show otherwise. Showing otherwise means running the same check on the base tree (the merge-base, in a separate checkout so the working tree stays as it is) and getting the same failure. Anything less is ambiguous, and ambiguous counts as in-branch.
 
-- **In-branch failure:** stop the work that builds on it, then fix it or report the work blocked.
-- **A declared suite cannot run:** a blocker. Report it as blocked.
+- **In-branch failure:** stop the work that builds on it, then fix it or report it as a blocker.
+- **A declared suite cannot run:** the claims it would back are unvalidated. Report the blocker in prose with its command, tree and exit code.
 - **Pre-existing failure:** keep its fix out of the branch's change.
   - Unattended: put it on the PR's **Not done** line with the evidence that it is pre-existing (base commit, command, exit code, what failed), and carry on.
   - With the owner present: put the choice to them: fix it in a separate commit, record it, or knowingly skip it.
@@ -77,7 +77,7 @@ Give each claim one status word:
 - **inconclusive**: a run happened but cannot settle the claim, such as a number that fails the number reference or a result that does not reproduce.
 - **not measured**: a performance or metric claim with no tool data; each such finding is labelled *potential impact*.
 
-A red or blocked check is reported as failed or blocked, with its command, tree and exit code. A claim the evidence contradicts, such as a delegate's "done" against a diff that lacks part of the task, is reported as failed with that evidence.
+A red check is reported as failed, with its command, tree and exit code. A check that cannot run leaves its claims unvalidated, and the report names the blocker in prose. A claim the evidence contradicts, such as a delegate's "done" against a diff that lacks part of the task, is reported as failed with that evidence.
 
 - List each check as command, tree, exit code and counts.
 - Say what was not investigated, and why.
@@ -85,7 +85,7 @@ A red or blocked check is reported as failed or blocked, with its command, tree 
 
 Running as a delegate, hand back the evidence and any follow-up needs; the parent owns the recommendations the user sees.
 
-When changed installation, public entry points or quickstart behaviour leave a consequential consumer scenario unproven by these producer-side checks, ask the applicable listed pack guide for a fresh-consumer review at handback, and offer its route naming the package, version and scenario. The required checks still complete, or the report says plainly that verification is incomplete.
+When changed installation, public entry points or quickstart behaviour leave a consequential consumer scenario unproven by these producer-side checks, ask the project's listed pack guides for ship-readiness for this kind of project, and at handback suggest the fresh-consumer review they name, with the package, version and scenario. The required checks still complete, or the report says plainly that verification is incomplete.
 
 ## Evidence ladder
 

@@ -10,8 +10,6 @@ This file holds the stack-neutral checks. The stack's measuring tools come from 
 - Know what the harness actually times and counts, and what falls outside it.
 - Note how loaded the machine is. When you cannot quiet it, interleave the sides so both share the noise, and say so in the report.
 
-When the user wants only a rough figure, a single run will do, provided questions 4 and 7 are answered and the report says it was one run. Comparing options always takes the full set.
-
 ## The seven questions
 
 Answer each from a run, not from reading the code.
@@ -29,6 +27,7 @@ Answer each from a run, not from reading the code.
 - Open with the verdict: **faster**, **slower**, **no measurable difference**, or **inconclusive**.
 - Then the number with its unit, the run count, the range and the bottleneck: "cold start 2.4 s → 1.9 s, median of 6 runs each, range 1.8–2.0 s after; bound by disk reads".
 - The verdict is **inconclusive** when you claim a difference but cannot name the bottleneck, when a side ran untuned, or when question 4 or 7 went unanswered. Name the gap.
+- A figure from fewer than five interleaved runs per side, a rough figure the user asked for included, is reported as **inconclusive** with its run count, never as a result.
 - Observed numbers are given exactly; projections only as rough magnitudes.
 - Keep the runs, the range and the bottleneck evidence beside the number (a notes file or a linked log) so a reader can check it.
 

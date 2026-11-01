@@ -1,4 +1,10 @@
 {
+  "hissal.skill-collection/code-review": {
+    "path": "skills/core/code-review",
+    "requires": [
+      "hissal.skill-collection/reviewing"
+    ]
+  },
   "hissal.skill-collection/csharp-guide": {
     "path": "skills/packs/csharp/csharp-guide",
     "requires": []

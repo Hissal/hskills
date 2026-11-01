@@ -644,6 +644,7 @@ changing skill identity or requirements with
 <!-- BEGIN GENERATED DEPENDENCIES -->
 | Skill ID | Callable / source | Hard requirements |
 |---|---|---|
+| `hissal.skill-collection/code-review` | [`code-review`](../skills/core/code-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/csharp-guide` | [`csharp-guide`](../skills/packs/csharp/csharp-guide/SKILL.md) | — |
 | `hissal.skill-collection/guide` | [`guide`](../skills/core/guide/SKILL.md) | — |
 | `hissal.skill-collection/onboarding-guide` | [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md) | — |

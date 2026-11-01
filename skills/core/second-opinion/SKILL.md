@@ -31,28 +31,30 @@ The needed reference is reviewing's [scope contract](../reviewing/references/SCO
 
 ## 1. Settle the target
 
-An explicit target always wins: `/second-opinion PR 42`, a branch, a range, files. Otherwise resolve "this" from the first source that gives one:
+The target sets the mode: a change (a diff, PR, branch, range or files) is **Review** mode; a claim or decision is **Doubt** mode.
 
-1. **Earlier in this conversation.** After a `code-review`, the target is that review's exact target, base and snapshot: reuse them as recorded, without resolving again. A claim or decision made earlier has no mode yet: say so and stop.
-2. **Pending work**, resolved through `reviewing`'s bare invocation in the [scope contract](../reviewing/references/SCOPE.md).
+An explicit target always wins: `/second-opinion PR 42`, a branch, a range, files, a quoted claim or decision. Otherwise resolve "this" from the first source that gives one:
+
+1. **Earlier in this conversation.** After a `code-review`, the target is that review's exact target, base and snapshot: reuse them as recorded, without resolving again (Review). A claim or decision made earlier is the target (Doubt).
+2. **Pending work** (Review), resolved through `reviewing`'s bare invocation in the [scope contract](../reviewing/references/SCOPE.md).
 3. **Neither:** ask one question naming what could be meant.
 
 A second opinion presupposes a first, so it never runs the hotspot survey. When `reviewing` would reach the survey, ask instead.
 
 Note the **first opinion's model family**: the family of the model that made the review, claim or decision, usually yours; every family involved when several reviewers ran.
 
-Announce before anything is spent, in `reviewing`'s announcement shape, adding:
+Announce before anything is spent. Review mode uses `reviewing`'s announcement shape; Doubt mode gives the claim or decision in one sentence as its **Target**. Both add:
 
 ```md
-**Mode:** Review
-**First opinion:** <code-review on this target | none: the change itself> (<model family>)
+**Mode:** <Review | Doubt>
+**First opinion:** <code-review on this target | the claim's or decision's source | none: the change itself> (<model family>)
 ```
 
-Done when the target, base and snapshot are announced, or one question is out to the user.
+Done when the target and mode are announced, with base and snapshot in Review mode, or one question is out to the user.
 
 ## 2. Prepare the mode's input
 
-Read the [Review mode](references/REVIEW.md) reference and follow it. It captures the input and writes the mode's ask.
+Read exactly one mode reference and follow it: [Review mode](references/REVIEW.md) for a change, [Doubt mode](references/DOUBT.md) for a claim or decision. It prepares the input, writes the mode's ask and, in Doubt mode, runs the cycles that steps 3 to 6 serve.
 
 ## 3. Brief the reader
 
@@ -71,7 +73,7 @@ Host delegation takes the brief as the reader's prompt. Any file the transport n
 
 Ask `delegating` for one fresh-context reader under the personal delegation policy, describing the need:
 
-- **Role:** second reviewer. **Difficulty:** that of the first opinion's work.
+- **Role:** second reviewer (Review) or doubter (Doubt). **Difficulty:** that of the first opinion's work.
 - **Diversity preferred**, in order: a different model family from the first opinion's, then a different line within that family. The same model through two harnesses is not diversity. A model too weak for the role stays out, whatever family it is.
 - **Transport:** host delegation first; a documented CLI transport only when it is the only way to reach an allowed choice. A CLI reader runs in its read-only mode, reads the brief from a file and writes its output to a file.
 
@@ -102,17 +104,18 @@ Show the dispatch summary, then dispatch:
 
 The review is **incomplete** when the reader exits non-zero, returns nothing, returns output outside the return shape or without its last line, or asks to approve a plan or a question instead of reviewing. Report an incomplete review as missing coverage, never as zero findings. A quota failure at dispatch moves on as in step 4.
 
-Compare `git status --porcelain` with the recorded snapshot. Report any change the reader made, and leave it for the owner.
+Compare `git status --porcelain` and `HEAD` with their state before dispatch. Report any change the reader made, and leave it for the owner.
 
 ## 6. Report
 
 ```md
 <dispatch summary, with the model the reader or transport reports actually running; say so when it differs from the one requested>
 **Agreement:** <first-opinion points the reader also raised | none>. Recorded, not counted: agreement is not proof.
+**Checked:** <reader claims you verified yourself, with the result | none>
 
 <the reader's output, verbatim>
 
 Recommendation: <one action> because <the most actionable finding, or why none is>.
 ```
 
-The output stays verbatim: no edits, trims or summary in its place. Exactly one recommendation line follows it. Then stop: the owner decides what to do with it. Delete the temporary files.
+The output stays verbatim: no edits, trims or summary in its place. Exactly one recommendation line follows it. Doubt mode reports each cycle in this shape, as its reference says, with the one recommendation line after the last. Then stop: the owner decides what to do with it. Delete the temporary files.

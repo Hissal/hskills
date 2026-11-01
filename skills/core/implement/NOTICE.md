@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/implement`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; description names the pull request; done line; tracker, guidance pointer and check commands from project configuration, /setup-project when no tracker is named; pack-guide extension point for check cadence; reuse line and sizing test; diagnosing-bugs after two failed fixes for the same check; completion through verifying and review findings through receiving-review; commit to the current branch replaced by branch-fit rules and a ready or draft pull request written through pr, pushing to an existing PR or skipping it when none applies; process calls stated as not requirements; report step
+- Local changes: collection metadata and gates; project configuration and a pack-guide extension point; reuse and sizing rules; diagnosing-bugs, verifying and receiving-review as process calls; branch-fit and pull-request rules replace the commit line; report step
 
 ## Licence
 

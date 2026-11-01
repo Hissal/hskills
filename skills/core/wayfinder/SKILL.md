@@ -135,7 +135,7 @@ The user may run unblocked tickets in parallel, so expect other sessions to be e
 
 ### Research subagents
 
-Consult `delegating` for each research subagent when it is installed; otherwise dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort. Each subagent starts with a fresh context window and gets only its brief:
+Each research subagent has the role researcher and the difficulty of its ticket's question; state both when dispatching. Consult `delegating` for each research subagent when it is installed; otherwise dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort. Each subagent starts with a fresh context window and gets only its brief:
 
 - **Ticket**: its name, link and question, plus the map's link and Destination, and the path of the tracker doc whose "Wayfinding operations" the subagent follows.
 - **Location**: a throwaway `research/<name>` branch named from the ticket. "Call the Skill tool with "research" and save its findings file on this branch, not where the repository keeps notes. Push the branch and open no PR: it is never merged."
@@ -151,3 +151,5 @@ When charting stops, after a ticket's resolution is recorded, or at a blocker be
 - `/handoff` when the owner chooses to defer or pass on concrete work from this session whose evidence, decisions or remaining steps would be costly to rebuild, such as a half-resolved ticket. Not every open ticket qualifies: the map and its tickets are already the tracker's record, and nothing they hold adequately is recorded again. Nothing is created or assigned automatically.
 
 Repeat an offer only when circumstances change materially. With no condition observed, end without one.
+
+When you run for a parent agent, make no offer: return the observed follow-up needs, and the parent decides what to offer the user.

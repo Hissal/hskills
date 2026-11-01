@@ -123,3 +123,5 @@ Offer a follow-up only when its condition was observed in this triage, giving th
 - **`/handoff`**: when the maintainer chooses to defer or transfer concrete triage work whose evidence or remaining steps would be costly to rebuild (a reproduction, a half-grilled request). Not every unfinished item qualifies, and nothing already recorded on the tracker, such as triage notes or an agent brief, is recorded again.
 
 A suggestion is the maintainer's to start; you never run it, and it grants no authority triage lacks. With no condition observed, end at the outcome.
+
+When you run for a parent agent, make no offer: return the observed follow-up needs, and the parent decides what to offer the user.

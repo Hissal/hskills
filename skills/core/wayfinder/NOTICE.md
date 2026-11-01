@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/wayfinder`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; tracker and its wayfinding operations read from project configuration, with /setup-project for a missing tracker, replacing the setup pointer and the local-markdown default; resolution comments name what each decision was chosen over; research subagents dispatched through delegating with the host-subagent fallback, briefed with the throwaway research branch as their location and a short return; process calls are not requirements; /to-spec, /to-questionnaire and /handoff suggestions added
+- Local changes: collection metadata and gates; project configuration and its wayfinding operations replace the setup pointer and local-markdown default; resolutions name rejected options; researcher subagents through delegating on a throwaway branch; process calls; /to-spec, /to-questionnaire and /handoff suggestions and parent-agent return
 
 ## Licence
 

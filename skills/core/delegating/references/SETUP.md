@@ -49,4 +49,4 @@ Validate it before showing it: parse it as plain JSON (no comments, no trailing 
 
 Show the whole file. With an existing file, show the changes as a diff against it as well, and confirm that every rule the owner did not change is untouched. Ask the owner to confirm, and write only on their explicit yes; a change request goes back to the round it belongs to.
 
-On yes, create `~/.config/skill-collection/` when missing. Before replacing an existing file, copy it to `delegation.json.bak` beside it. Write the file as UTF-8 with LF line endings, two-space indentation and a final newline. Read it back and validate it again, then report its path, the backup's path when one was made, and that the next dispatch reads it.
+On yes, create `~/.config/skill-collection/` when missing. Write the file as UTF-8 with LF line endings, two-space indentation and a final newline. Read it back and validate it again, then report its path and that the next dispatch reads it.

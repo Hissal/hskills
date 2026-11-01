@@ -22,7 +22,7 @@ Spin up a **background agent** to do the research, so you keep working while it 
 
 Ask `delegating` for one researcher: role researcher, difficulty that of the question, no diversity needed. When `delegating` is not installed, dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort.
 
-When this skill runs inside a researcher role, that agent does the reading itself and starts no peer researcher.
+When this skill already runs as a researcher, or as a helper that may start no agent, do the reading yourself: start no researcher, and follow the researcher's job below.
 
 The brief carries the question, the file path from step 1, and the researcher's job below in full, since the researcher has no other access to this skill.
 

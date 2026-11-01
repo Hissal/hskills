@@ -14,7 +14,7 @@ Break a plan, spec, or conversation into a set of **tickets**: tracer-bullet ver
 
 The issue tracker and triage label vocabulary come from the project's configuration: the files linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`. When it names no tracker, tell the user to run `/setup-project`, and publish nothing until a tracker is named. Without a label mapping, use the role names as label strings (`ready-for-agent`).
 
-Ask the project's listed pack guides for *slicing work: surfaces that cannot be worked in parallel, work that needs a human or a running tool, renames that need expand-contract*. Use the answer for slices, edges and Proof notes; the lookup starts nothing else, and when no guide answers, carry on with these steps.
+Ask the project's listed pack guides for *slicing work: surfaces that cannot be worked in parallel, work that needs a human or a running tool, renames that need expand-contract*. Use the answer for slices, edges and Proof notes; the lookup starts nothing else, and when no guide answers, carry on silently with these steps.
 
 ## Process
 
@@ -136,4 +136,4 @@ Once the tickets and their edges are published, offer one next step with the rea
 - `/implement <ticket>` when the user wants a selected ready ticket built: one ticket on the frontier, or tickets to be taken one at a time.
 - `/implement-spec <parent or spec>` when the whole graph should be worked through and integrated.
 
-The user starts it; you never run it.
+The user starts it; you never run it. When you run for a parent agent, make no offer: return the observed follow-up needs, and the parent decides what to offer the user.

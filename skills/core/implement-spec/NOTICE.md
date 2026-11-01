@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/implement-spec`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; tracker from project configuration, /setup-project replacing the setup pointer; every dispatch through delegating, with the host subagent fallback and this workflow's roles; implementer brief carries the project-guidance pointer and the parallel-worktrees pack-guide extension point; implementer reports checked against the real diff through verifying before merging; review findings handled through receiving-review, with no automatic second-opinion; integration branch checked through verifying; draft PR links the spec and tickets and switches to closing them only once every criterion is verified, partial work on the Not done line and no ticket per unfixed finding; follow-up offers at handback
+- Local changes: collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; reports checked through verifying; findings through receiving-review; draft PR closing work only once verified; process calls; /handoff offer and parent-agent return
 
 ## Licence
 

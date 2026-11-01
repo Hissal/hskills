@@ -39,7 +39,7 @@ Each choice must still be suitable for the role's difficulty and available (skil
 
 - **Order**: take the first suitable available choice.
 - **Pool**: choose among the suitable available members, by fit to the task. A pool supplies choices, never extra agents or work.
-- **Diversity group**: select its agents together from the one rule. An ordered rule supplies different families in its order, then different lines within a family; a pool supplies distinct suitable members. Taking the first choice for every agent of a diversity group is never the selection. When the rule holds too few distinct choices, diversity preferred reuses one and reports it; diversity required goes to fallback.
+- **Diversity group**: select its agents together from the one rule. An ordered rule supplies different families in its order, then different lines within a family; a pool supplies distinct suitable members. Taking the first choice for every agent of a diversity group is never the selection. When the rule holds too few distinct choices, diversity preferred reuses one and reports it; diversity required looks outside the list only as [Fallback](#fallback) allows, and the dispatch is blocked when it still cannot be met.
 
 ## Effort
 

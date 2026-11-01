@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/grill-with-docs`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; grilling and domain-modeling declared as hard requirements by ID with the shared stop template; /to-spec suggestion at completion and the parent-agent return added
+- Local changes: collection metadata and gates; grilling and domain-modeling as hard requirements with the stop template; /to-spec suggestion and parent-agent return
 
 ## Licence
 

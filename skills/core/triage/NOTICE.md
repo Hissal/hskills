@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/triage`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; the AI-generated disclaimer replaced by posting every triage comment through commenting with a during-triage context suffix; tracker from project configuration, with /setup-project when none is configured; label strings default to the canonical role names and come from project configuration only where they differ; the pack-guide extension point for stack involvement, reproduction/completion tools and environment, and required human participation; the maintainer's own issues triaged like outside ones; grilling and domain-modeling marked as process calls; /to-questionnaire and /handoff suggestions; contents lists added to both references
+- Local changes: collection metadata and gates; AI disclaimer replaced by commenting with a context suffix; project configuration for tracker and labels; pack-guide extension point; maintainer issues triaged alike; process calls; /to-questionnaire and /handoff suggestions and parent-agent return; contents lists in both references
 
 ## Licence
 

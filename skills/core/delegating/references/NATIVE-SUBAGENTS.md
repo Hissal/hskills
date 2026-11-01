@@ -1,6 +1,6 @@
 # Native subagents
 
-The subagent tool each harness ships. Observed on 2026-11-01; each section names what was read and whether a dispatch was tried. Before relying on a fact, check the harness's current documentation and its live tool list: hosts change faster than this file.
+The subagent tool each harness ships. Observed on 2026-11-01; each section names what was read and whether a dispatch was tried. Before relying on a fact, check the harness's current documentation and its live tool list: hosts change faster than this file. No harness here is assumed present: each user's set differs.
 
 ## Claude Code
 

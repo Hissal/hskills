@@ -1,6 +1,6 @@
 # T3 Code delegation
 
-T3 Code exposes its own orchestration tools (server key `t3-code`) to every provider session it runs. Observed on 2026-11-01 from `pingdotgg/t3code` at `fa31b66bbb2ae5234205a8628a78e038d917202f`: [`docs/orchestration-v2/orchestrator-mcp-server.md`](https://github.com/pingdotgg/t3code/blob/main/docs/orchestration-v2/orchestrator-mcp-server.md) and the orchestration instructions T3 injects into its sessions (`packages/provider-core/src/server/orchestrationInstructions.ts`). Not tried: T3 Code was not running in the build environment, so every fact here is **unverified** by dispatch.
+T3 Code exposes its own orchestration tools (server key `t3-code`) to every provider session it runs. Observed on 2026-11-01 from `pingdotgg/t3code` at `fa31b66bbb2ae5234205a8628a78e038d917202f`: [`docs/orchestration-v2/orchestrator-mcp-server.md`](https://github.com/pingdotgg/t3code/blob/fa31b66bbb2ae5234205a8628a78e038d917202f/docs/orchestration-v2/orchestrator-mcp-server.md) and the orchestration instructions T3 injects into its sessions (`packages/provider-core/src/server/orchestrationInstructions.ts`). Not tried: T3 Code was not running in the build environment, so every fact here is **unverified** by dispatch.
 
 T3's injected instructions are the host's guidance and win over this file. Re-read them, and call `orchestrator_capabilities`, rather than trusting the facts below.
 

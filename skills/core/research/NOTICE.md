@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/research`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; trigger-only description limited to external research; scope set to external sources, with the local codebase left to how and history to why; a location the caller supplies wins; dispatch through delegating with the host-subagent fallback, and no peer researcher from a researcher role; the brief carries the researcher's job in full; sources pinned to commit SHAs; Direct, Supported and Inferred confidence tiers that a summary keeps, apart from verifying's evidence ladder (an idea, not text, from cursor/plugins pstack why at https://github.com/cursor/plugins/blob/ccb5507cec1546dc88135c1139c811e6c59115ba/pstack/skills/why/references/epistemics.md, MIT); a Coverage section where a URL alone is not coverage and an empty section is not proof of absence (an idea, not text, from davidondrej/skills deep-scrape at https://github.com/davidondrej/skills/blob/7874889bd037d411f6079e38ee8601557c4a8995/skills/research-and-web/deep-scrape/SKILL.md, MIT); a few-line return with the path
+- Local changes: collection metadata and gates; trigger-only description for external research; caller-supplied location; dispatch through delegating, none from a researcher or helper; SHA-pinned sources, confidence tiers and a Coverage section; short return with the path
 
 ## Licence
 

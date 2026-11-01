@@ -1,6 +1,6 @@
 # Effort mappings
 
-How the collection's effort intent (low, medium, high, xhigh, max) reaches each harness's own control. Observed on 2026-11-01 from the sources named in [native subagents](NATIVE-SUBAGENTS.md), [T3 Code delegation](T3-CODE.md) and [CLI transports](CLI-TRANSPORTS.md). Read the model's live list of levels before choosing: levels vary by model and change between releases.
+How the collection's effort intent (low, medium, high, xhigh, max) reaches each harness's own control. Observed on 2026-11-01 from the sources named in [native subagents](NATIVE-SUBAGENTS.md), [T3 Code delegation](T3-CODE.md) and [CLI transports](CLI-TRANSPORTS.md). Read the model's live list of levels before choosing: levels vary by model and change between releases. No harness or provider here is assumed present: each user's set differs.
 
 A matching name is not matching effort or cost: `high` on one harness is not `high` on another. When the intent has no exact control:
 

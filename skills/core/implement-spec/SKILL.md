@@ -16,13 +16,15 @@ The goal is the entire spec implemented on a single **integration branch**, with
 
 The tickets are not a list of steps. They are a **task graph** with blocking relationships between them. This means there is always a **frontier** of tickets which are ready to be grabbed.
 
-Ask the project's listed pack guides for running work in parallel worktrees, and use the answer when you create worktrees; when none answers, carry on with these steps.
+Ask the project's listed pack guides for running work in parallel worktrees, and use the answer when you create worktrees; when none answers, carry on silently.
 
 Start every subagent with a fresh context window.
 
+The calls below to `research`, `tdd`, `verifying`, `code-review`, `receiving-review` and `pr` are process calls, not requirements: when one is not installed, say so once and carry on doing its part as the step describes.
+
 Before dispatching any subagent, consult `delegating`; when `delegating` is not installed, dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort. The brief, the return, the dispatch summary and the rules for reading a report live there. This workflow's roles:
 
-- **Exploration subagent**: optional, one, before any implementer. Normal difficulty.
+- **Exploration subagent**: optional, one, before any implementer. Role: researcher. Normal difficulty.
 - **Implementer subagents**: one per frontier ticket, in parallel, each in its own worktree. Difficulty is the ticket's.
 - **Merger subagent**: one merge at a time, after you have checked the work it merges. Normal difficulty.
 
@@ -34,13 +36,13 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 1. Read the spec and tickets to understand the task graph.
 
-2. (optional) Use an **exploration subagent** to conduct any exploration required by the tickets - relevant codebase files or external documentation. Ensure the exploration subagent can save files - it should save its markdown notes in a directory outside the repo, accessible by all future subagents. Where a ticket needs facts from outside sources, it may call the Skill tool with `research`. This lets **implementer subagents** focus on implementation rather than exploration.
+2. (optional) Use an **exploration subagent** to conduct any exploration required by the tickets - relevant codebase files or external documentation. Ensure the exploration subagent can save files - it should save its markdown notes in a directory outside the repo, accessible by all future subagents. Where a ticket needs facts from outside sources, it may call the Skill tool with `research`; its brief names its role, researcher, so `research` does the reading in that subagent instead of starting another. This lets **implementer subagents** focus on implementation rather than exploration.
 
-3. Create the integration branch. If the issue tracker closes work through PRs, or the user asks for one, open a draft PR after the first merge in step 5 (a branch with no commits ahead of main can't open one). Write its body through `pr`. It links the spec and every ticket without closing them (`Refs #12`, not `Closes #12`, on GitHub) until step 9.
+3. Create the integration branch. If the issue tracker closes work through PRs, or the user asks for one, open a draft PR after the first merge in step 5 (a branch with no commits ahead of the default branch can't open one). Write its body through `pr`. It links the spec and every ticket without closing them (`Refs #12`, not `Closes #12`, on GitHub) until step 9.
 
 4. Use a fresh **implementer subagent** for each ticket, each in its own worktree on its own branch. Its brief points at the spec, the ticket, the exploration notes and the integration branch, and carries:
    - the project-guidance pointer: load the coding guidance and tooling configuration the project's instructions point to before coding; tooling configuration wins, and a conflict between them is reported;
-   - "Ask the project's listed pack guides for running work in parallel worktrees; when none answers, carry on."
+   - "Ask the project's listed pack guides for running work in parallel worktrees; when none answers, carry on silently."
 
    Each implementer subagent:
    - confirms its worktree is based on the integration branch before starting, and resets onto it if not;
@@ -61,11 +63,8 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
    Report the integration branch, the PR if any, and what stayed unvalidated, with the reason.
 
+   After the report, offer `/handoff` only when the owner chooses to defer or hand over the remaining tickets or findings and the evidence gathered would be costly to rebuild, giving that reason. Nothing already in the tracker is recorded again. The owner starts it; you never run it. Otherwise end at the report.
+
+   When you run for a parent agent, make no offer: return the observed follow-up needs, and the parent decides what to offer the user.
+
 10. Clean up all **implementer subagent** worktrees.
-
-After the report, offer a follow-up only when its condition was observed in this run, giving the concrete reason and the invocation. Each one offers; none runs:
-
-- A follow-up need `code-review` or `receiving-review` returned, such as `/second-opinion` before a disputed consequential fix.
-- `/handoff` when the owner chooses to defer or hand over the remaining tickets or findings, and the evidence gathered would be costly to rebuild. Nothing already in the tracker is recorded again.
-
-With no condition observed, end at the report.

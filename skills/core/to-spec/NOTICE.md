@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/to-spec`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; tracker and label vocabulary from project configuration, with /setup-project for a missing tracker; reuse line in exploration; existing issues checked before publishing; pack-guide extension point for sketching test seams; completion bar; decisions marked chosen over X because Y; agent inferences kept under Assumptions; optional Do not touch and Open until implementation sections; writing-for-agents pointer; default, skippable fresh-context spec review through delegating with its own evidence rules and fact-checked absence claims; one playback confirmed in a batch before publishing, and no edit after; contextual suggestions and the subordinate return
+- Local changes: collection metadata and gates; project configuration and a pack-guide extension point; duplicate check; decisions, assumptions and optional sections; delegated fresh-context spec review; one confirmed playback before publishing; suggestions and parent-agent return
 
 ## Licence
 

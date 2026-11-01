@@ -1,6 +1,6 @@
 # CLI transports
 
-A harness's headless command, used only when no host delegation reaches an allowed choice. Observed on 2026-11-01; each section names what was read and whether a run was tried. Check the command's current `--help` before the first run in a session: flags change between versions.
+A harness's headless command, used only when no host delegation reaches an allowed choice. Observed on 2026-11-01; each section names what was read and whether a run was tried. Check the command's current `--help` before the first run in a session: flags change between versions. No CLI here is assumed installed: each user's set differs.
 
 ## Rules for every CLI run
 

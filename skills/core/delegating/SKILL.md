@@ -9,7 +9,7 @@ metadata:
 
 # Delegating
 
-One contract for every agent you start: who may start it, what it runs on, what its brief carries, what it returns, and how you check it. The calling workflow says what it needs; this skill resolves how.
+One contract for every agent you start: who may start it, what it runs on, what its brief carries, what it returns, and how you check it. The calling workflow says what it needs; this skill resolves how. The exception: a calling skill may say that a plain read-only helper on the host's native subagent tool, with no model, harness or effort asked for, starts without this skill.
 
 Done when every agent you started has a resolved choice shown in a dispatch summary, a standalone brief, and a return you checked against the real tree, or a blocked dispatch you reported.
 
@@ -30,7 +30,7 @@ The same rules bind you when you are yourself a dispatched agent. A helper, or a
 
 ## 2. Before firing
 
-- **Parallel work.** Whenever agents would run at the same time, ask the project's listed pack guides for *stack-specific shared resources and isolation constraints*: what two workers cannot share (an editor, a device, a database, a port) and how to isolate them. Carry on with your own judgment when no guide answers. There is no fixed concurrency cap: respect the host's limits, any limit the user stated, and any infrastructure limit the project configuration records; run in parallel only what gains from it and cannot collide.
+- **Parallel work.** Whenever agents would run at the same time, ask the project's listed pack guides for *stack-specific shared resources and isolation constraints*: what two workers cannot share (an editor, a device, a database, a port) and how to isolate them. When no guide answers, carry on silently with your own judgment. There is no fixed concurrency cap: respect the host's limits, any limit the user stated, and any infrastructure limit the project configuration records; run in parallel only what gains from it and cannot collide.
 - **Dirty tree.** When workers run in another checkout (a worktree, a delegated child, a CLI in another folder), run `git status --porcelain`. If it lists anything, warn in one line which uncommitted work the workers will not see.
 - **Cost.** Before a run of more than one agent, state its cost in one line: how many agents, on which models and efforts, and roughly how much each reads.
 

@@ -35,6 +35,8 @@ Check the claim at the revision it concerns:
 - Does the suggested change serve the requested outcome, or pull away from it (an unrequested feature, a broader rewrite, a contradicted decision)?
 - Does the reviewer lack context you have: an earlier decision, a platform constraint, a test that already covers it?
 
+When the finding claims a security weakness, assess it with [assessing a security finding](references/SECURITY-FINDING.md); its verdict answers this step.
+
 Absence of disproof is not confirmation. A claim you can neither confirm nor refute after looking stays unclear.
 
 Classify a verified finding as **mechanical** (one evident fix a careful maintainer would apply without discussion, changing nothing beyond the defect) or a **judgement call** (reasonable people would choose differently: design, a trade-off, a public contract, behaviour beyond the defect).

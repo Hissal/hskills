@@ -23,6 +23,12 @@
     "path": "skills/core/guide",
     "requires": []
   },
+  "hissal.skill-collection/hillclimb": {
+    "path": "skills/core/hillclimb",
+    "requires": [
+      "hissal.skill-collection/verifying"
+    ]
+  },
   "hissal.skill-collection/improve-codebase-architecture": {
     "path": "skills/core/architecture-review",
     "requires": [

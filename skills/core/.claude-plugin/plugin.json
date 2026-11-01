@@ -8,6 +8,7 @@
     "./code-review",
     "./commenting",
     "./guide",
+    "./hillclimb",
     "./receiving-review",
     "./reviewing",
     "./second-opinion",

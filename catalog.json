@@ -14,5 +14,9 @@
   "hissal.skill-collection/onboarding-guide": {
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []
+  },
+  "hissal.skill-collection/receiving-review": {
+    "path": "skills/core/receiving-review",
+    "requires": []
   }
 }

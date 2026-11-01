@@ -1,7 +1,8 @@
 {
   "core": [
     "skills/core/commenting",
-    "skills/core/guide"
+    "skills/core/guide",
+    "skills/core/receiving-review"
   ],
   "packs": {
     "csharp": [

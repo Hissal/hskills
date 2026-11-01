@@ -27,7 +27,7 @@ Check only whether the required material loads; the installer verifies identity
 and content. Loading this requirement grants no permission to invoke a
 user-invoked workflow; wait for the human to invoke that workflow.
 
-Done when every consumer and effect outside the diff that you found is either a risk or cleared, each with its evidence; the one fact the change is safe because of has run in code on a named tree or is marked **unproven**; every claim carries its rung on verifying's [evidence ladder](../verifying/SKILL.md#evidence-ladder); and every place you did not search is named with the reason.
+Done when every consumer and effect outside the diff that you found is either a risk or cleared, each with its evidence; the one fact the change is safe because of has run in code on a named tree or is marked **unvalidated**; every claim carries its rung on verifying's [evidence ladder](../verifying/SKILL.md#evidence-ladder); and every place you did not search is named with the reason.
 
 The change is what the human names: a diff, a branch, a commit or a pull request. With nothing named, take the working tree and the branch against its base. You examine the change and report on it; the change itself stays as it is.
 
@@ -66,7 +66,7 @@ Every entry rests on a place you read, in the project or in the dependency's sou
 
 Write a script or test that exercises the real code (the library at the version the project ships, the exact function in question) and is built to fail if the fact is false. Run it and capture it by verifying's rules: the command, the tree it ran on and the real exit code. Include its output in the report.
 
-Keep the script outside the change, in a scratch location, unless the owner chooses to keep it as a test. When the fact cannot be run (no runtime available, or the code needs a live system you cannot reach), mark it **unproven**, give the highest rung it reached, and say what a run would need.
+Keep the script outside the change, in a scratch location, unless the owner chooses to keep it as a test. When the fact cannot be run (no runtime available, or the code needs a live system you cannot reach), mark it **unvalidated**, give the highest rung it reached, and say what a run would need.
 
 When a run is cheap, prove the risks that matter most the same way.
 
@@ -77,7 +77,7 @@ Give every claim about what the code does its rung on verifying's [evidence ladd
 ## 7. Hand back
 
 - **Behaviour change**: what the change does differently, including what no changed line states.
-- **Safety fact**: the sentence, its rung and status, and the proof (command, tree, exit code, output), or **unproven** with the reason.
+- **Safety fact**: the sentence, its rung and status, and the proof (command, tree, exit code, output), or **unvalidated** with the reason.
 - **Risks**: each with how it breaks, `file:line`, likelihood and cost, how to check, its rung, and the proof for those that matter.
 - **Cleared**: each with what was checked and its rung.
 - **Catch it before merge**: the cheapest test or reproduction that would expose the breakage, the proving script included.
@@ -86,3 +86,5 @@ Give every claim about what the code does its rung on verifying's [evidence ladd
 Keep private details (credentials, internal hosts, customer data) out of anything bound for a public place.
 
 When the owner chooses to defer the remaining investigation or pass it to someone else, and the evidence gathered so far (traced consumers, the proving script, dependency reading) would be costly to rebuild, offer `/handoff` with that reason. The owner starts it; you never run it.
+
+When you run for a parent agent, hand back the evidence and any follow-up needs; the parent owns the recommendations the user sees.

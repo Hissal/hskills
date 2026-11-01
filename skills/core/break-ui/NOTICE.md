@@ -8,7 +8,7 @@ This skill is copied from [emilkowalski/skills](https://github.com/emilkowalski/
 - Path: `skills/break-ui`
 - Pinned commit: `2d228630ba1446365f614a108cb8252f1feda202`
 - Licence: MIT
-- Local changes: collection frontmatter and gates; persona and initial-response line dropped; the demo/worst-case toggle replaced by cases wired at the data boundary, with the fixture kept only when the owner chooses; network and permission failures added; viewport, zoom, theme and direction checks and the CSS failure-signature table move to the pack-guide extension point; target question, clipped-list and harness-cause rules, Not checked part, /handoff offer and subordinate-agent return added; joined emoji example spelled out without a literal zero-width joiner, and the quoted steering example replaced by a description, for the security scan
+- Local changes: collection frontmatter and gates; persona and initial-response line dropped; the demo/worst-case toggle replaced by cases wired at the data boundary, with the fixture kept only when the owner chooses; network and permission failures added (an idea, not text, from pbakaus/impeccable harden at https://github.com/pbakaus/impeccable/blob/936867543ac2576920d663cc9803597f6044f3ac/plugin/skills/impeccable/reference/harden.md, Apache-2.0); viewport, zoom, theme and direction checks and the CSS failure-signature table move to the pack-guide extension point; target question, clipped-list and harness-cause rules, Not checked part, /handoff offer and subordinate-agent return added; joined emoji example spelled out without a literal zero-width joiner, and the quoted steering example replaced by a description, for the security scan
 
 ## Licence
 

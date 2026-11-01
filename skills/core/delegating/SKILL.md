@@ -13,6 +13,8 @@ One contract for every agent you start: who may start it, what it runs on, what 
 
 Done when every agent you started has a resolved choice shown in a dispatch summary, a standalone brief, and a return you checked against the real tree, or a blocked dispatch you reported.
 
+Invoked with the argument `setup` (`/delegating setup`), you write the owner's personal delegation policy with them instead: read [policy setup](references/SETUP.md) and follow it in place of the steps below. Read it only in that mode.
+
 ## 1. Take the caller's contract
 
 The calling workflow states, for each agent: its **role**, the task's **difficulty** (simple, normal, difficult), the **agent count**, and how the agents relate (independent, in sequence, or a diversity group with diversity **preferred** or **required**). Resolve those here. When the caller leaves one out, infer it from the task and say so in the dispatch summary.

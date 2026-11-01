@@ -41,6 +41,7 @@ The core guide's workflows beyond the main routes, grouped by need. Pick the row
 |---|---|
 | Audit instructions and context the agent receives, including conflicts and unnecessary load | `/context-audit` |
 | Measure actual Claude Code session token use | `/session-report` (Claude-only) |
+| Choose which models, harnesses and effort delegated agents run on, or repair an invalid delegation policy | `/delegating setup` |
 | Set a temporary editing boundary for this session and project | `/freeze` |
 | Remove that temporary editing boundary | `/unfreeze` |
 

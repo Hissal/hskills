@@ -1,6 +1,6 @@
 # Personal delegation policy
 
-The owner's standing choices of harness, model and effort, read at every dispatch. One optional JSON file per person, at `~/.config/skill-collection/delegation.json` (`~` is the home directory on every system). Each person's own file is read the same way, and nothing in it is shared. The [schema](policy.schema.json) is the authority on what is valid; this guide says how a valid file selects.
+The owner's standing choices of harness, model and effort, read at every dispatch. One optional JSON file per person, at `~/.config/skill-collection/delegation.json` (`~` is the home directory on every system). Each person's own file is read the same way, and nothing in it is shared. The [schema](policy.schema.json) is the authority on what is valid; this guide says how a valid file selects. The owner writes or changes the file by answering questions with `/delegating setup`, whose [procedure](SETUP.md) is read only in that mode.
 
 A file is **invalid** when it cannot be read, is not plain JSON (comments and trailing commas count), or breaks the schema: an unknown field, a rule with both `order` and `pool` or neither, a choice naming both `model` and `family` or neither `harness` nor `provider`, an effort off the scale, or a `version` other than `1`.
 

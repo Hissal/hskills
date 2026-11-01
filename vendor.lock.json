@@ -33,6 +33,14 @@
       "changes": "scope, shared evidence rules and the stop on a missing requirement come from reviewing; one captured patch with untracked files; spec and standards finding widened; Spec gains changed and unverifiable; a third axis, Failure, and the security-finding hook; smell baseline gains the duplication rule and a platform smell; extension points, handback suggestions and collection metadata replace the Unity line, the setup pointer and the word cap"
     },
     {
+      "skill": "skills/core/implement",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/implement",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; description names the pull request; done line; tracker, guidance pointer and check commands from project configuration, /setup-project when no tracker is named; pack-guide extension point for check cadence; reuse line and sizing test; diagnosing-bugs after two failed fixes for the same check; completion through verifying and review findings through receiving-review; commit to the current branch replaced by branch-fit rules and a ready or draft pull request written through pr, pushing to an existing PR or skipping it when none applies; process calls stated as not requirements; report step"
+    },
+    {
       "skill": "skills/core/risky-changes",
       "source": "davidondrej/skills",
       "path": "skills/ops-and-setup/risky-changes",

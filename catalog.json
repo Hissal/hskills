@@ -37,6 +37,10 @@
       "hissal.skill-collection/verifying"
     ]
   },
+  "hissal.skill-collection/implement": {
+    "path": "skills/core/implement",
+    "requires": []
+  },
   "hissal.skill-collection/improve-codebase-architecture": {
     "path": "skills/core/architecture-review",
     "requires": [

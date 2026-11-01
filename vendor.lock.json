@@ -49,6 +49,14 @@
       "changes": "collection metadata and gates; fact-finding by a read-only helper on the host's own subagent tool, consulting delegating only for a stated model, harness or effort or a helper outside that tool, with the host-tool fallback; scope, one-decision-per-question, map-first and exit-check rules added; assumptions confirmed with the shared understanding; /to-questionnaire and /wayfinder suggestions and the parent-agent return added"
     },
     {
+      "skill": "skills/core/implement",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/implement",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; description names the pull request; done line; tracker, guidance pointer and check commands from project configuration, /setup-project when no tracker is named; pack-guide extension point for check cadence; reuse line and sizing test; diagnosing-bugs after two failed fixes for the same check; completion through verifying and review findings through receiving-review; commit to the current branch replaced by branch-fit rules and a ready or draft pull request written through pr, pushing to an existing PR or skipping it when none applies; process calls stated as not requirements; report step"
+    },
+    {
       "skill": "skills/core/risky-changes",
       "source": "davidondrej/skills",
       "path": "skills/ops-and-setup/risky-changes",

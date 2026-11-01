@@ -669,5 +669,6 @@ changing skill identity or requirements with
 | `hissal.skill-collection/to-spec` | [`to-spec`](../skills/core/to-spec/SKILL.md) | — |
 | `hissal.skill-collection/to-tickets` | [`to-tickets`](../skills/core/to-tickets/SKILL.md) | — |
 | `hissal.skill-collection/verifying` | [`verifying`](../skills/core/verifying/SKILL.md) | — |
+| `hissal.skill-collection/wayfinder` | [`wayfinder`](../skills/core/wayfinder/SKILL.md) | — |
 | `hissal.skill-collection/why` | [`why`](../skills/core/why/SKILL.md) | — |
 <!-- END GENERATED DEPENDENCIES -->

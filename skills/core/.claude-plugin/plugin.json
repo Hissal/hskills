@@ -25,6 +25,7 @@
     "./to-spec",
     "./to-tickets",
     "./verifying",
+    "./wayfinder",
     "./why"
   ]
 }

@@ -107,6 +107,10 @@
     "path": "skills/core/verifying",
     "requires": []
   },
+  "hissal.skill-collection/wayfinder": {
+    "path": "skills/core/wayfinder",
+    "requires": []
+  },
   "hissal.skill-collection/why": {
     "path": "skills/core/why",
     "requires": []

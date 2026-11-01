@@ -49,6 +49,10 @@
     "path": "skills/core/implement",
     "requires": []
   },
+  "hissal.skill-collection/implement-spec": {
+    "path": "skills/core/implement-spec",
+    "requires": []
+  },
   "hissal.skill-collection/improve-codebase-architecture": {
     "path": "skills/core/architecture-review",
     "requires": [

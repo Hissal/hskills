@@ -55,7 +55,7 @@ Every step lands in one commit; the intake is done when that commit passes the c
    node scripts/vendor/drift.js
    ```
 
-   The check passes; its messages name the script for each format fix. The drift report lists the new skill as `current` when the copy is unchanged and `local-drift` when it carries local changes (`update-available` or `both` when the pin is behind the source's head, as for Matt-derived skills). `baseline-corrupt` means the baseline was edited.
+   The check passes; its messages name the script for each format fix. The drift report lists the new skill as `current` when the copy is unchanged and `local-drift` when it carries local changes (`update-available` or `both` when the pin is behind the source's head, as a [Matt-derived](#matt-derived-skills) pin can be). `baseline-corrupt` means the baseline was edited.
 
    A `crlf-line-ending` or `utf8-bom` failure in the baseline means the source committed CRLF or a BOM: convert those files to LF without a BOM, and change nothing else in the baseline. The drift script compares with line endings and BOM normalised, so this edit stays `current`; any other edit to the baseline reads as `baseline-corrupt`.
 9. **Commit** copy, baseline, licence, lock and `NOTICE.md` together.
@@ -69,21 +69,11 @@ Every step lands in one commit; the intake is done when that commit passes the c
 
 ## Matt-derived skills
 
-A skill from Matt Pocock's set is copied from the fork (`Hissal/mattpocock-skills-unity`) but recorded against `mattpocock/skills`, so drift is measured against the real upstream. It follows [Intake](#intake) with these differences:
+A skill from Matt Pocock's set is copied straight from `mattpocock/skills`. It follows [Intake](#intake) with `<owner>/<repo>` set to `mattpocock/skills`, so the copy, the baseline (`vendor/mattpocock/skills/<name>/`), the licence (`licenses/mattpocock/skills.txt`), the lock's `source` and `NOTICE.md` all come from that repository at one commit. The only difference is the pin: the `mattpocock/skills` commit the owner or the ticket chooses, which may be behind the default branch's head. Check out that commit in Intake step 1 instead of the head. When it is behind, the drift report lists the new skill as `update-available` or `both`.
 
-- **Pin**: the `mattpocock/skills` commit the fork last merged:
+The fork (`Hissal/mattpocock-skills-unity`) is not a source for core skills: no fork clone, no merge-base, and none of its text enters a core skill. It differs from `mattpocock/skills` only by Unity lines that core skills drop anyway. Unity material from the fork reaches the Unity pack through ordinary [Intake](#intake), or as [own words](#copy-or-own-words), like any other source.
 
-  ```sh
-  git clone -c core.autocrlf=false --filter=blob:none https://github.com/Hissal/mattpocock-skills-unity <tmp>/fork
-  git -C <tmp>/fork remote add upstream https://github.com/mattpocock/skills
-  git -C <tmp>/fork fetch --no-tags upstream
-  git -C <tmp>/fork merge-base HEAD upstream/main
-  ```
-
-  In the Intake steps below, `<tmp>/src` is `<tmp>/fork`.
-
-- **Baseline and licence**: from `mattpocock/skills` at that pin (`git -C <tmp>/fork checkout <sha>` gives its tree), at `vendor/mattpocock/skills/<name>/` and `licenses/mattpocock/skills.txt`. The lock's `source` is `mattpocock/skills` and `path` the folder there.
-- **Copy and security read**: from the fork's default branch (`git -C <tmp>/fork checkout -` after the baseline step), since that is the text that enters the tree. The fork's Unity changes are the recorded local changes: `changes` names them, and the drift report shows `local-drift`, or `both` when `mattpocock/skills` has moved past the fork's last merge.
+Lock entries made under the earlier fork procedure keep their pins and baselines; they take updates through [Taking an update](#taking-an-update) like any other entry.
 
 ## Taking an update
 

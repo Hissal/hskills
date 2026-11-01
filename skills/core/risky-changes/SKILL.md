@@ -50,7 +50,7 @@ Each number is a claim: when `verifying` is installed, vet the numbers with it. 
 
 ## 4. Record the evidence
 
-Save the cases and results at `<evidence record path>/<YYYY-MM-DD>-<change>.md`, one record per change. Create the folder if needed, and commit the record with the change. Without this record, the change is not verified. Unit tests do not replace live measurement. Record aggregates, counts and redacted examples; personal data and secrets stay in the source.
+Save the cases and results at `<evidence record path>/risky-changes/<YYYY-MM-DD>-<change>.md`, one record per change. Create the folder if needed, and commit the record with the change. Without this record, the change is not verified. Unit tests do not replace live measurement. Record aggregates, counts and redacted examples; personal data and secrets stay in the source.
 
 ```md
 # <the change, in one line>

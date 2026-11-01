@@ -18,5 +18,9 @@
   "hissal.skill-collection/receiving-review": {
     "path": "skills/core/receiving-review",
     "requires": []
+  },
+  "hissal.skill-collection/reviewing": {
+    "path": "skills/core/reviewing",
+    "requires": []
   }
 }

@@ -56,5 +56,9 @@
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",
     "requires": []
+  },
+  "hissal.skill-collection/why": {
+    "path": "skills/core/why",
+    "requires": []
   }
 }

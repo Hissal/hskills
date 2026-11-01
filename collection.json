@@ -9,7 +9,8 @@
     "skills/core/reviewing",
     "skills/core/second-opinion",
     "skills/core/test-review",
-    "skills/core/verifying"
+    "skills/core/verifying",
+    "skills/core/why"
   ],
   "packs": {
     "csharp": [

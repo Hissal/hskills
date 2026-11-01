@@ -75,6 +75,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/to-questionnaire": {
+    "path": "skills/core/to-questionnaire",
+    "requires": []
+  },
   "hissal.skill-collection/to-spec": {
     "path": "skills/core/to-spec",
     "requires": []

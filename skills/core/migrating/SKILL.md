@@ -64,6 +64,7 @@ When data in the old shape is stored or sent between versions, order the stages 
 
 1. **Readers**: ship code that reads both the old and the new shape while it still writes the old one.
 2. **Writers**: switch the writer to the new shape only once every reader that can meet the data understands it: older installed versions, other services, and the version a rollback would restore.
+   When some reader can never be confirmed (outside tools, mods, installs that are never updated), write both shapes instead of switching. New readers must pick one shape when the two disagree, since an old tool can edit and write back only the old one: decide which wins and test that case. Stop writing the old shape only after the window the changelog or consumer notice announces for the old path (step 6). Dual-writing needs a format that tolerates the extra field, and a field whose meaning changed cannot be dual-written.
 3. **Old-shape reading** stays while old data can exist. Data that is never rewritten (saves, archives, exports) keeps it for good, unless the data carries a version marker and is upgraded on load.
 
 Check each reader against a real old-shape sample written by the old code, kept as a fixture, not one rebuilt by hand from the new code's idea of it.

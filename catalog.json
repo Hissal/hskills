@@ -35,6 +35,12 @@
     "path": "skills/core/reviewing",
     "requires": []
   },
+  "hissal.skill-collection/second-opinion": {
+    "path": "skills/core/second-opinion",
+    "requires": [
+      "hissal.skill-collection/reviewing"
+    ]
+  },
   "hissal.skill-collection/test-review": {
     "path": "skills/core/test-review",
     "requires": [

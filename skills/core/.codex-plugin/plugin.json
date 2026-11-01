@@ -9,6 +9,7 @@
     "./guide",
     "./receiving-review",
     "./reviewing",
+    "./second-opinion",
     "./test-review"
   ]
 }

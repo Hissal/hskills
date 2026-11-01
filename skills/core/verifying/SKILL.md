@@ -1,6 +1,6 @@
 ---
 name: verifying
-description: Use before claiming work is done, fixed or passing, and when an agent's report or a measured number needs confirming.
+description: "Use when a claim that work is done, fixed, passing or faster needs evidence from a run: before you make one, or to confirm an agent's report or a measured number."
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/verifying"

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Architecture Review"
+  short_description: "Find deepening candidates and stop for a pick"
+policy:
+  allow_implicit_invocation: false

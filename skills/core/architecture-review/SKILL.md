@@ -18,6 +18,8 @@ This command is _informed_ by the project's domain model and built on a shared d
 - Call the Skill tool with "codebase-design" for the architecture vocabulary (**module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**) and its principles (the deletion test, "the interface is the test surface", "one adapter = hypothetical seam, two = real"). Use these terms exactly in every suggestion, and don't drift into "component," "service," "API," or "boundary."
 - The domain language in `GLOSSARY.md` gives names to good seams; ADRs in `docs/adr/` record decisions this command should not re-litigate.
 
+Only `reviewing` gates this review. The calls to `codebase-design`, `grilling` and `domain-modeling` are process calls, not requirements: when one is not installed, say so once and carry on, using the vocabulary and principles named above as written and walking the decisions with the owner directly.
+
 The review is read-only until the owner chooses: the report goes to the OS temp directory, glossary and ADR edits happen only in the grilling loop of a candidate the owner picked, and code changes only in a continuation the owner chose.
 
 Before doing any work, load reviewing (hissal.skill-collection/reviewing) and its needed

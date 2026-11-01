@@ -76,6 +76,7 @@ try {
     if (c.agnix === 'real') delete env.COLLECTION_CHECK_AGNIX;
     else if (c.agnix === 'missing') env.COLLECTION_CHECK_AGNIX = path.join(dir, 'no-agnix-here.js');
     else if (c.agnix) env.AGNIX_STUB = JSON.stringify(c.agnix);
+    Object.assign(env, c.env);
 
     // a file a before script deleted is not compared
     const written = Object.fromEntries(Object.keys(Object.assign({}, c.committed, c.files)).filter((f) => fs.existsSync(path.join(dir, ...f.split('/')))).map((f) => [f, fs.readFileSync(path.join(dir, ...f.split('/')))]));

@@ -4,13 +4,17 @@
   "description": "Generated core skill list from collection.json.",
   "skills": [
     "./architecture-review",
+    "./blast-radius",
     "./code-review",
     "./commenting",
     "./guide",
+    "./hillclimb",
     "./receiving-review",
     "./reviewing",
     "./risky-changes",
     "./second-opinion",
-    "./test-review"
+    "./test-review",
+    "./verifying",
+    "./why"
   ]
 }

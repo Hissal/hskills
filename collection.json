@@ -1,14 +1,21 @@
 {
   "core": [
     "skills/core/architecture-review",
+    "skills/core/blast-radius",
     "skills/core/break-ui",
     "skills/core/code-review",
     "skills/core/commenting",
+    "skills/core/dependency-audit",
     "skills/core/guide",
+    "skills/core/hillclimb",
+    "skills/core/migrating",
     "skills/core/receiving-review",
     "skills/core/reviewing",
+    "skills/core/risky-changes",
     "skills/core/second-opinion",
-    "skills/core/test-review"
+    "skills/core/test-review",
+    "skills/core/verifying",
+    "skills/core/why"
   ],
   "packs": {
     "csharp": [

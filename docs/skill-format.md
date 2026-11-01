@@ -283,6 +283,7 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
 - `output` (optional) lists regexes the check's other stdout lines must match one to one, in order, for cases about what the check prints besides findings.
+- `env` (optional) sets extra environment variables for the check, such as a short `COLLECTION_INSTALL_CASES_TIMEOUT_MS`.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
 - `skill()` also writes matching harness gates: the OpenCode gate appended to `skillMd()`'s `metadata` (the `gate` option replaces it; `null` leaves it out) and `agents/openai.yaml` (the `openai` option replaces it; `null` leaves it out).
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'\uFEFF'`), so the repository itself stays LF and BOM-free.

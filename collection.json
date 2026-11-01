@@ -13,6 +13,7 @@
     "skills/core/implement",
     "skills/core/migrating",
     "skills/core/receiving-review",
+    "skills/core/research",
     "skills/core/reviewing",
     "skills/core/risky-changes",
     "skills/core/second-opinion",
@@ -31,5 +32,7 @@
       "skills/packs/onboarding/onboarding-guide"
     ]
   },
-  "expensive": []
+  "expensive": [
+    "skills/core/research"
+  ]
 }

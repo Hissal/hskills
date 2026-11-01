@@ -35,7 +35,7 @@ user-invoked workflow; wait for the human to invoke that workflow.
 
 ### 1. Settle the scope
 
-Resolve the scope through `reviewing` and announce its target, base and snapshot in `reviewing`'s shape before reviewing. Pending work is always reviewed when there is any; with nothing pending, `reviewing`'s hotspot survey picks the areas. Its [scope contract](../reviewing/references/SCOPE.md) settles every case.
+Resolve the scope through `reviewing` and announce its target, base and snapshot in `reviewing`'s shape before reviewing. An explicit or caller scope is reviewed as resolved. On a bare invocation, pending work is always reviewed when there is any, never swapped for the survey; with nothing pending, `reviewing`'s hotspot survey picks the areas. Its [scope contract](../reviewing/references/SCOPE.md) settles every case.
 
 Done when the announcement is out.
 
@@ -43,7 +43,8 @@ Done when the announcement is out.
 
 Capture one patch and the commit list for the announced scope, once, and write both to files in the OS temp directory, outside the checkout:
 
-- **Commits only** (a PR, a range): `git diff <merge-base> <head>` and `git log --oneline <merge-base>..<head>`.
+- **A PR or a branch**: `git diff <merge-base> <head>` and `git log --oneline <merge-base>..<head>`.
+- **A commit range**: exactly the revisions as named, read as written (`git diff A..B` and `git diff A...B` differ), with the matching `git log --oneline`.
 - **Current work**: `git diff <merge-base>` for tracked files, plus each untracked file from `git ls-files --others --exclude-standard` as a new-file diff (`git diff --no-index /dev/null <file>`). Untracked files belong in every review of uncommitted work.
 - **No base** (named files, a subsystem, survey areas): the file list at the recorded snapshot stands in for the patch.
 
@@ -89,7 +90,7 @@ Issue every reviewer call together, in the foreground, each sub-agent starting w
 
 - the announced scope, and the paths of the patch and commit-list files from step 2;
 - the evidence rules and the out-of-scope observations format from `reviewing`, pasted in full;
-- the reporting rules: findings only, never restate the diff; mark each finding **hard** or **judgement call**; no confidence scores or ratings; a **Declined to judge** list for what the evidence cannot settle; zero findings is a valid report;
+- the reporting rules: findings only, never restate the diff; mark each finding **hard** or **judgement call**; no confidence scores or ratings;
 - the axis brief below, with its not-to-report list.
 
 **Standards brief**:
@@ -114,7 +115,7 @@ With no spec available, skip the Spec reviewer.
 
 Present each axis under its own heading (`## Standards`, `## Spec`), verbatim or lightly cleaned. Do **not** merge or rerank findings across axes, because the axes are deliberately separate (see _Why two axes_).
 
-- A reviewer that failed, timed out or did not finish is **missing coverage** for its axis, reported under that axis's heading, never as zero findings.
+- Missing coverage, as `reviewing`'s evidence rules define it, goes under the heading of the axis it belongs to.
 - A skipped Spec axis reads "no spec available".
 - Gather every reviewer's out-of-scope observations into one **Out-of-scope observations** section after the axes, in `reviewing`'s format; pre-existing entries are not counted.
 

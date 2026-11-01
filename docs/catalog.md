@@ -652,17 +652,22 @@ changing skill identity or requirements with
 | `hissal.skill-collection/csharp-guide` | [`csharp-guide`](../skills/packs/csharp/csharp-guide/SKILL.md) | — |
 | `hissal.skill-collection/dependency-audit` | [`dependency-audit`](../skills/core/dependency-audit/SKILL.md) | — |
 | `hissal.skill-collection/domain-modeling` | [`domain-modeling`](../skills/core/domain-modeling/SKILL.md) | — |
+| `hissal.skill-collection/grilling` | [`grilling`](../skills/core/grilling/SKILL.md) | — |
 | `hissal.skill-collection/guide` | [`guide`](../skills/core/guide/SKILL.md) | — |
 | `hissal.skill-collection/hillclimb` | [`hillclimb`](../skills/core/hillclimb/SKILL.md) | `hissal.skill-collection/verifying` [`verifying`](../skills/core/verifying/SKILL.md) |
+| `hissal.skill-collection/implement` | [`implement`](../skills/core/implement/SKILL.md) | — |
 | `hissal.skill-collection/improve-codebase-architecture` | [`architecture-review`](../skills/core/architecture-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/migrating` | [`migrating`](../skills/core/migrating/SKILL.md) | — |
 | `hissal.skill-collection/onboarding-guide` | [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md) | — |
 | `hissal.skill-collection/receiving-review` | [`receiving-review`](../skills/core/receiving-review/SKILL.md) | — |
+| `hissal.skill-collection/research` | [`research`](../skills/core/research/SKILL.md) | — |
 | `hissal.skill-collection/reviewing` | [`reviewing`](../skills/core/reviewing/SKILL.md) | — |
 | `hissal.skill-collection/risky-changes` | [`risky-changes`](../skills/core/risky-changes/SKILL.md) | — |
 | `hissal.skill-collection/second-opinion` | [`second-opinion`](../skills/core/second-opinion/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/test-review` | [`test-review`](../skills/core/test-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/to-questionnaire` | [`to-questionnaire`](../skills/core/to-questionnaire/SKILL.md) | — |
+| `hissal.skill-collection/to-spec` | [`to-spec`](../skills/core/to-spec/SKILL.md) | — |
+| `hissal.skill-collection/to-tickets` | [`to-tickets`](../skills/core/to-tickets/SKILL.md) | — |
 | `hissal.skill-collection/triage` | [`triage`](../skills/core/triage/SKILL.md) | — |
 | `hissal.skill-collection/verifying` | [`verifying`](../skills/core/verifying/SKILL.md) | — |
 | `hissal.skill-collection/why` | [`why`](../skills/core/why/SKILL.md) | — |

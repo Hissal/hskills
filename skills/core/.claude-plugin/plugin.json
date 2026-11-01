@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Generated core skill list from collection.json.",
   "skills": [
+    "./architecture-review",
     "./guide",
     "./reviewing"
   ]

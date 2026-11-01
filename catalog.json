@@ -7,6 +7,12 @@
     "path": "skills/core/guide",
     "requires": []
   },
+  "hissal.skill-collection/improve-codebase-architecture": {
+    "path": "skills/core/architecture-review",
+    "requires": [
+      "hissal.skill-collection/reviewing"
+    ]
+  },
   "hissal.skill-collection/onboarding-guide": {
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []

@@ -209,7 +209,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `requirement-reference` | fail | a Markdown link names a missing file in a required skill's folder |
 | `guide-needs-target` | fail | a guide needs-table target is not its own file, a skill in the same pack (core for core guides), or explicitly project-selected vendor guidance |
 | `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
-| `install-cases` | fail | the temporary-filesystem user installer cases fail or crash |
+| `install-cases` | fail | the temporary-filesystem user installer cases fail, crash, or run past 900s (`COLLECTION_INSTALL_CASES_TIMEOUT_MS` overrides the limit) |
 | `guard-cases` | fail | a [command guard case](../hooks/command-guard/test/run.js) fails, or the harness exits non-zero; a passing harness prints only its `guard:` summary line |
 | `requirement-body-id` | fail | a required ID is absent from the requiring skill's body |
 | `vendor-lock` | fail | `vendor.lock.json` is not valid against [Copied skills](#copied-skills), or an entry names no skill folder; the other `vendor-*` rules wait until the lock is valid |
@@ -283,6 +283,7 @@ Add a case to `scripts/check/test/cases.js`; the runner needs no change. A case 
 - `expect` lists each finding as `<fail|warn> <rule> <file>`. A finding not listed fails the case, and the exit code must be 1 exactly when a `fail` is expected. Wording and line numbers are not compared.
 - Each fail rule gets a failing fixture and a passing neighbour (`expect: []`); each warning gets a fixture that warns and exits zero.
 - `output` (optional) lists regexes the check's other stdout lines must match one to one, in order, for cases about what the check prints besides findings.
+- `env` (optional) sets extra environment variables for the check, such as a short `COLLECTION_INSTALL_CASES_TIMEOUT_MS`.
 - Build skills with `skill()` and `skillMd()`, which produce a skill that passes every rule. A rule that makes a new field required adds that field to `skillMd()` once, so every existing case stays a passing neighbour.
 - `skill()` also writes matching harness gates: the OpenCode gate appended to `skillMd()`'s `metadata` (the `gate` option replaces it; `null` leaves it out) and `agents/openai.yaml` (the `openai` option replaces it; `null` leaves it out).
 - Write CRLF, BOM and other bytes as escapes in the case (`'\r\n'`, `'\uFEFF'`), so the repository itself stays LF and BOM-free.

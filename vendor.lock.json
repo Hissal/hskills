@@ -1,6 +1,14 @@
 {
   "skills": [
     {
+      "skill": "skills/core/architecture-review",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/improve-codebase-architecture",
+      "sha": "49dd158d1076134a641b33efb035946536778336",
+      "license": "MIT",
+      "changes": "renamed architecture-review keeping the old ID; scope from reviewing; duplication lens; dark report; stops for the owner's pick and offers only a chosen continuation; subordinate mode; Unity line replaced by a pack-guide extension point"
+    },
+    {
       "skill": "skills/core/code-review",
       "source": "mattpocock/skills",
       "path": "skills/engineering/code-review",

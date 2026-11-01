@@ -33,6 +33,14 @@
       "changes": "scope, shared evidence rules and the stop on a missing requirement come from reviewing; one captured patch with untracked files; spec and standards finding widened; Spec gains changed and unverifiable; a third axis, Failure, and the security-finding hook; smell baseline gains the duplication rule and a platform smell; extension points, handback suggestions and collection metadata replace the Unity line, the setup pointer and the word cap"
     },
     {
+      "skill": "skills/core/implement-spec",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/implement-spec",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; tracker from project configuration, /setup-project replacing the setup pointer; every dispatch through delegating, with the host subagent fallback and this workflow's roles; implementer brief carries the project-guidance pointer and the parallel-worktrees pack-guide extension point; implementer reports checked against the real diff through verifying before merging; review findings handled through receiving-review, with no automatic second-opinion; integration branch checked through verifying; draft PR links the spec and tickets and switches to closing them only once every criterion is verified, partial work on the Not done line and no ticket per unfixed finding; follow-up offers at handback"
+    },
+    {
       "skill": "skills/core/risky-changes",
       "source": "davidondrej/skills",
       "path": "skills/ops-and-setup/risky-changes",

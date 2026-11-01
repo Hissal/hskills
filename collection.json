@@ -8,6 +8,7 @@
     "skills/core/dependency-audit",
     "skills/core/guide",
     "skills/core/hillclimb",
+    "skills/core/implement-spec",
     "skills/core/migrating",
     "skills/core/receiving-review",
     "skills/core/reviewing",
@@ -25,5 +26,7 @@
       "skills/packs/onboarding/onboarding-guide"
     ]
   },
-  "expensive": []
+  "expensive": [
+    "skills/core/implement-spec"
+  ]
 }

@@ -11,6 +11,7 @@
     "./delegating",
     "./dependency-audit",
     "./domain-modeling",
+    "./grill-with-docs",
     "./grilling",
     "./guide",
     "./hillclimb",

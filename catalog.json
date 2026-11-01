@@ -35,6 +35,13 @@
     "path": "skills/core/domain-modeling",
     "requires": []
   },
+  "hissal.skill-collection/grill-with-docs": {
+    "path": "skills/core/grill-with-docs",
+    "requires": [
+      "hissal.skill-collection/domain-modeling",
+      "hissal.skill-collection/grilling"
+    ]
+  },
   "hissal.skill-collection/grilling": {
     "path": "skills/core/grilling",
     "requires": []

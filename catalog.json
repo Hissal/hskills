@@ -120,6 +120,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/tdd": {
+    "path": "skills/core/tdd",
+    "requires": []
+  },
   "hissal.skill-collection/test-review": {
     "path": "skills/core/test-review",
     "requires": [

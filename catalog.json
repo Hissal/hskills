@@ -21,6 +21,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/codebase-design": {
+    "path": "skills/core/codebase-design",
+    "requires": []
+  },
   "hissal.skill-collection/commenting": {
     "path": "skills/core/commenting",
     "requires": []
@@ -35,6 +39,10 @@
   },
   "hissal.skill-collection/dependency-audit": {
     "path": "skills/core/dependency-audit",
+    "requires": []
+  },
+  "hissal.skill-collection/diagnosing-bugs": {
+    "path": "skills/core/diagnosing-bugs",
     "requires": []
   },
   "hissal.skill-collection/domain-modeling": {
@@ -62,6 +70,10 @@
       "hissal.skill-collection/verifying"
     ]
   },
+  "hissal.skill-collection/how": {
+    "path": "skills/core/how",
+    "requires": []
+  },
   "hissal.skill-collection/implement": {
     "path": "skills/core/implement",
     "requires": []
@@ -78,8 +90,16 @@
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []
   },
+  "hissal.skill-collection/prototype": {
+    "path": "skills/core/prototype",
+    "requires": []
+  },
   "hissal.skill-collection/receiving-review": {
     "path": "skills/core/receiving-review",
+    "requires": []
+  },
+  "hissal.skill-collection/refactoring": {
+    "path": "skills/core/refactoring",
     "requires": []
   },
   "hissal.skill-collection/research": {
@@ -99,6 +119,10 @@
     "requires": [
       "hissal.skill-collection/reviewing"
     ]
+  },
+  "hissal.skill-collection/tdd": {
+    "path": "skills/core/tdd",
+    "requires": []
   },
   "hissal.skill-collection/test-review": {
     "path": "skills/core/test-review",
@@ -124,6 +148,10 @@
   },
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",
+    "requires": []
+  },
+  "hissal.skill-collection/wait-what": {
+    "path": "skills/core/wait-what",
     "requires": []
   },
   "hissal.skill-collection/wayfinder": {

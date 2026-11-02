@@ -1,0 +1,5 @@
+interface:
+  display_name: "TDD"
+  short_description: "Write, change or fix tests, test-first or not"
+policy:
+  allow_implicit_invocation: true

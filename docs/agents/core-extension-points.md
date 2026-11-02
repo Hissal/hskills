@@ -52,6 +52,10 @@ Decided in [Diagnosis and performance](https://github.com/Hissal/skill-collectio
 - `tdd`: writing, setting up and running tests for this stack.
 - `test-review`: this stack's test idioms, including skip markers, assertion forms and cheat patterns; collecting test coverage for this stack.
 
+Added by the [contextual suggestions decision](https://github.com/Hissal/skill-collection/issues/73#issuecomment-6443641717):
+
+- `diagnosing-bugs`: an incident review, at the handback of a stabilised real service incident.
+
 ## Design, continuity and prototyping
 
 Decided in [Design and refactoring](https://github.com/Hissal/skill-collection/issues/40#issuecomment-6177796453), [Continuity and learning](https://github.com/Hissal/skill-collection/issues/41#issuecomment-6181216467), and [Prototyping](https://github.com/Hissal/skill-collection/issues/44#issuecomment-6195116678):

@@ -33,6 +33,22 @@
       "changes": "scope, shared evidence rules and the stop on a missing requirement come from reviewing; one captured patch with untracked files; spec and standards finding widened; Spec gains changed and unverifiable; a third axis, Failure, and the security-finding hook; smell baseline gains the duplication rule and a platform smell; extension points, handback suggestions and collection metadata replace the Unity line, the setup pointer and the word cap"
     },
     {
+      "skill": "skills/core/codebase-design",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/codebase-design",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; agent-contributor lens; project glossary, glossary map and ADR line; read as vocabulary by other workflows without a design session; caller-first design; four invariant questions; defer-the-seam principle; split-ownership, two-ways and importable-internals red flags; pack-guide extension point for seam and compatibility rules; design-it-twice consults delegating before its subagents; threat-model reference read when a design crosses a trust boundary, with pack-guide extension point for threats, controls and checks, lines from addyosmani/agent-skills skills/security-and-hardening/SKILL.md at 1401c8b8030e023baeebb31781a6653fe8e93026, MIT, Copyright (c) 2025 Addy Osmani; trigger-only description; published-interface reference, lines from Aaronontheweb/dotnet-skills skills/csharp-api-design/SKILL.md at 5ca5db8cf25566f19d2a5dc53204d4af22b23a0d, MIT, Copyright (c) 2025 Aaron Stannard; lines from Aaronontheweb/dotnet-skills skills/serialization/SKILL.md at 5ca5db8cf25566f19d2a5dc53204d4af22b23a0d, MIT, Copyright (c) 2025 Aaron Stannard; lines from addyosmani/agent-skills skills/api-and-interface-design/SKILL.md at 1401c8b8030e023baeebb31781a6653fe8e93026, MIT, Copyright (c) 2025 Addy Osmani; misuse probe ideas only from trailofbits/skills plugins/sharp-edges/skills/sharp-edges/SKILL.md at d016e08cc7408ecb1853a299d06d4a56e363ad5e, CC-BY-SA-4.0"
+    },
+    {
+      "skill": "skills/core/diagnosing-bugs",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/diagnosing-bugs",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; glossary map clause; pack-guide extension point; tdd and verifying as process calls; error output as untrusted data, sanitised before a web search; human-in-the-loop template copied and edited, told apart from /wizard; wrong-state divergence branch; perf branch vets numbers through verifying and tries the performance mantras in order; refuted hypotheses reverted and a three-strike stop; causal-chain gate and deferred divergent fix; regression test through tdd, red in its own assertion, with a missing seam reported; fix confirmed through verifying and the original loop; /test-review, /hillclimb, /wizard, incident-review and /handoff suggestions and parent-agent return; trigger-only description; lines from cursor/plugins pstack/skills/poteto-mode/playbooks/perf-issue.md at ae5650febf4320793844c12c4adaa937f417f8da, MIT, Copyright (c) 2026 Lauren Tan; lines from EveryInc/compound-engineering-plugin skills/ce-debug/SKILL.md at 77cc431daaebea7ee9f33ac530a66eec5404572b, MIT, Copyright (c) 2025 Every"
+    },
+    {
       "skill": "skills/core/domain-modeling",
       "source": "mattpocock/skills",
       "path": "skills/engineering/domain-modeling",
@@ -57,6 +73,14 @@
       "changes": "collection metadata and gates; fact-finding by a native read-only helper, through delegating only when needed; scope, one-decision, map-first and exit-check rules; confirmed assumptions; /to-questionnaire and /wayfinder suggestions and parent-agent return; trigger-only description"
     },
     {
+      "skill": "skills/core/how",
+      "source": "cursor/plugins",
+      "path": "pstack/skills/how",
+      "sha": "ae5650febf4320793844c12c4adaa937f417f8da",
+      "license": "MIT",
+      "changes": "collection metadata and gates; scope named as local code and installed packages in the description and body, with external sources left out; done line; the Task tool, model-rule and poteto-mode dispatch lines replaced by a delegating consult with the host-subagent fallback and the read-it-yourself path; a simple question answered directly instead of by one explainer; explorer angles kept from overlapping and started in parallel; answer in chat with no file unless asked; prompt references linked, their tool names made harness-neutral and the local-only scope carried into them"
+    },
+    {
       "skill": "skills/core/implement",
       "source": "mattpocock/skills",
       "path": "skills/engineering/implement",
@@ -73,6 +97,14 @@
       "changes": "collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; reports checked through verifying; findings through receiving-review; draft PR closing work only once verified; process calls; /handoff offer and parent-agent return"
     },
     {
+      "skill": "skills/core/prototype",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/prototype",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; project configuration; brief with keep-if and kill criteria; medium rule and strict single file; pack-guide extension point; throwaway branch created before the first file, separate worktree, pushed capture and return; optional draft PR closed unmerged at the verdict; hand-over check with verifying's unvalidated word; sharing route; verdict against the brief; porting summary; UI variant axes, self-checked variants and a tradeoff table; contents list in the UI reference; Behavior branch reference; deterministic Logic module with a settable seed and clock inputs; getState, dispatch and Copy state for two audiences; variants and knobs; replay in the hand-over check; /break-ui and /wayfinder suggestions and parent-agent return; description per #44"
+    },
+    {
       "skill": "skills/core/research",
       "source": "mattpocock/skills",
       "path": "skills/engineering/research",
@@ -87,6 +119,14 @@
       "sha": "7874889bd037d411f6079e38ee8601557c4a8995",
       "license": "MIT",
       "changes": "trigger narrowed to public APIs, data transforms or drops, pricing or quotas, defaults, and provider or model parameters; collection metadata; evidence path and approver from project configuration; verified, unvalidated and failed statuses; research step and fixed case count dropped; evidence record template; pack-guide extension point and people's reports as their own evidence; approval pending when unattended; post-deployment check kept only as a record line"
+    },
+    {
+      "skill": "skills/core/tdd",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/tdd",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; glossary map clause; covers all test work with a trigger-only description; tests-are-code principle with the project's coding guidance; seams chosen and reported at the end when the user cannot confirm them; four-question authoring gate; red for the right reason with a stub past non-assertion failures; prove the test can fail; fixture-supplied result, vacuous and new absence assertion anti-patterns; refactoring pointer moves from code-review to refactoring; pack-guide extension point; process calls; /test-review suggestion and parent-agent return; mocking example endpoints under /api for the copied-file safety check; generated-input reference, read only when a test generates its inputs, in the collection's own words with TypeScript examples and this stack's shapes from the pack guides; ideas only, no text, from trailofbits/skills plugins/property-based-testing/skills/property-based-testing at 442fc9d6c89b1e937e6f7a477e7071ea75fcbea4, CC-BY-SA-4.0; ideas from Aaronontheweb/dotnet-skills skills/cscheck/SKILL.md at 5ca5db8cf25566f19d2a5dc53204d4af22b23a0d, MIT"
     },
     {
       "skill": "skills/core/to-questionnaire",
@@ -119,6 +159,14 @@
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
       "changes": "collection metadata and gates; AI disclaimer replaced by commenting with a context suffix; project configuration for tracker and labels; pack-guide extension point; maintainer issues triaged alike; process calls; /to-questionnaire and /handoff suggestions and parent-agent return; contents lists in both references; writing-for-agents process call for agent briefs"
+    },
+    {
+      "skill": "skills/core/wait-what",
+      "source": "mattpocock/skills",
+      "path": "skills/productivity/wait-what",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; description reworded for a clearer, more concise re-explanation; re-pitch asked to be clearer and more concise; rules that the re-pitch keeps the last message's hedges and certainty and corrects it when it was wrong, lines from EveryInc/compound-engineering-plugin skills/wtf/SKILL.md at 77cc431daaebea7ee9f33ac530a66eec5404572b, MIT, Copyright (c) 2025 Every"
     },
     {
       "skill": "skills/core/wayfinder",

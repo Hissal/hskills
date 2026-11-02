@@ -135,5 +135,6 @@ For *this stack's seam and compatibility rules*, ask the pack guides this projec
 
 ## Going deeper
 
+- **A design that crosses a trust boundary** (outside input, auth, secrets, tenant data, tool or agent input): read [THREAT-MODEL.md](THREAT-MODEL.md) before the interface settles. It names the assets, actors, boundaries and attacker paths, and traces each threat to a control and a test.
 - **Deepening a cluster given its dependencies**, see [DEEPENING.md](DEEPENING.md): dependency categories, seam discipline, and replace-don't-layer testing.
 - **Exploring alternative interfaces**, see [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md): spin up parallel sub-agents to design the interface several radically different ways, then compare on depth, locality, and seam placement.

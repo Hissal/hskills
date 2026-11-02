@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/codebase-design`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; agent-contributor lens; project glossary and ADR line; read as vocabulary by other workflows without a design session; caller-first design; four invariant questions; defer-the-seam principle; split-ownership, two-ways and importable-internals red flags; pack-guide extension point for seam and compatibility rules; design-it-twice consults delegating before its subagents; trigger-only description
+- Local changes: collection metadata and gates; agent-contributor lens; project glossary and ADR line; read as vocabulary by other workflows without a design session; caller-first design; four invariant questions; defer-the-seam principle; split-ownership, two-ways and importable-internals red flags; pack-guide extension point for seam and compatibility rules; design-it-twice consults delegating before its subagents; threat-model reference read when a design crosses a trust boundary, with pack-guide extension point for threats, controls and checks, lines from addyosmani/agent-skills skills/security-and-hardening/SKILL.md at 1401c8b8030e023baeebb31781a6653fe8e93026, MIT, Copyright (c) 2025 Addy Osmani; trigger-only description
 
 ## Licence
 

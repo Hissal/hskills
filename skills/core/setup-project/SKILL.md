@@ -64,6 +64,10 @@ The block holds one sub-block per section that writes one:
 ### Domain docs
 
 [one-line summary of layout: "single-context" or "multi-context"]. See `docs/agents/domain.md`.
+
+### Vendor docs
+
+[one line per selected document: when to read it and where].
 ```
 
 Then write each section's docs file, using the seed template it names as a starting point. A docs file that already exists holds the user's edits: change only the lines a changed choice touches, and never rewrite it from its seed.
@@ -88,6 +92,14 @@ An `## Agent skills` block already in either file stays where it is: update it t
 **The move offer** is a separate question, asked after the block is settled, with its own approval: move `CLAUDE.md`'s content into `AGENTS.md` and leave `CLAUDE.md` holding only `@AGENTS.md`. Make the move only on an explicit yes, showing the merged `AGENTS.md` first when it already has content of its own. On any other answer, both files stay as they are.
 
 ## Sections
+
+### Recommendations
+
+Recommend collection skills, vendor skills and dependency-shipped guidance together, in one view. Follow [recommendations.md](references/recommendations.md) when this run has something new to weigh: no selection yet, or the stack or dependencies changed. It says how to reach the collection catalog and a pack's `SETUP.md` from an installed folder, with no checkout and before any install.
+
+Skills already installed and pointers already in `### Vendor docs` are settled. When nothing new remains to recommend, say so in one line and write nothing.
+
+The view takes the owner's choice. Each pick then goes in the draft with its install command or pointer, and is delivered once the draft is approved. Documentation pointers go in the `### Vendor docs` sub-block; a run with none writes no sub-block.
 
 ### Issue tracker
 

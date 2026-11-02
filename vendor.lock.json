@@ -126,7 +126,7 @@
       "path": "skills/engineering/setup-matt-pocock-skills",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "renamed setup-project; collection metadata and gates; instruction-file layout with a separately approved move; triage question for a real tracker only, with a label table only when a label differs; re-runs keep settled choices; sections separated from the process; seeds name the collection and its skills"
+      "changes": "renamed setup-project; collection metadata and gates; instruction-file layout with a separately approved move; triage question for a real tracker only, with a label table only when a label differs; re-runs keep settled choices; sections separated from the process; seeds name the collection and its skills; recommendations across collection, vendor and dependency guidance added"
     },
     {
       "skill": "skills/core/tdd",

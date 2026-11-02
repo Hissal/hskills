@@ -37,6 +37,8 @@ A **seam** is the public boundary you test at: the interface where you observe b
 
 Ask: "What's the public interface, and which seams should we test?" Give each proposed seam a one-line note on what it catches and what it misses.
 
+When you may decide without the user (they are away, or the work runs unattended), choose the seams yourself, then list each one and what it catches and misses in your final message, so the user sees the choice that was theirs.
+
 When the shape of that interface is itself in question (how deep the module is, where the seam belongs, what the interface should expose), call the Skill tool with "codebase-design" for the vocabulary. It is the shared source of the module, interface, depth, seam, adapter, leverage and locality terms, and it is a reference to consult, not a session to run.
 
 **Authoring gate.** Before writing any test, answer four questions in your reasoning (a gate to pass, not a card to fill in per test):

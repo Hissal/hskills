@@ -11,6 +11,7 @@ What a skill folder in this collection holds, and the check that keeps the tree 
 - [Disclosed references](#disclosed-references)
 - [Scripts](#scripts)
 - [Portability](#portability)
+- [Missing project facts](#missing-project-facts)
 - [Line endings](#line-endings)
 - [Copied skills](#copied-skills)
 - [The collection check](#the-collection-check)
@@ -141,6 +142,10 @@ It writes only those two values, leaving every other line of `SKILL.md` and `age
 ## Portability
 
 A skill's folder works wherever it is installed. It never assumes a sibling folder, a repository checkout or one installation scope (user, project or plugin). Knowledge a skill requires from another skill resolves through that skill's installed identity, not through a path.
+
+## Missing project facts
+
+A skill that needs a project fact with no default, and finds none in the project's configuration (the files linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`), tells the user to run `/setup-project`. A fact with a default is never missing: an absent value means the owning skill's default ([#34](https://github.com/Hissal/skill-collection/issues/34#issuecomment-6124395889)).
 
 ## Line endings
 

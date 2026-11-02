@@ -120,6 +120,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/setup-project": {
+    "path": "skills/core/setup-project",
+    "requires": []
+  },
   "hissal.skill-collection/tdd": {
     "path": "skills/core/tdd",
     "requires": []

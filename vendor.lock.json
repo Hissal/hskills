@@ -121,6 +121,14 @@
       "changes": "trigger narrowed to public APIs, data transforms or drops, pricing or quotas, defaults, and provider or model parameters; collection metadata; evidence path and approver from project configuration; verified, unvalidated and failed statuses; research step and fixed case count dropped; evidence record template; pack-guide extension point and people's reports as their own evidence; approval pending when unattended; post-deployment check kept only as a record line"
     },
     {
+      "skill": "skills/core/setup-project",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/setup-matt-pocock-skills",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "renamed setup-project; collection metadata and gates; instruction-file layout with a separately approved move; triage question for a real tracker only, with a label table only when a label differs; re-runs keep settled choices; sections separated from the process; seeds name the collection and its skills"
+    },
+    {
       "skill": "skills/core/tdd",
       "source": "mattpocock/skills",
       "path": "skills/engineering/tdd",

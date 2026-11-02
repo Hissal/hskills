@@ -28,6 +28,7 @@
     "./reviewing",
     "./risky-changes",
     "./second-opinion",
+    "./setup-project",
     "./tdd",
     "./test-review",
     "./to-questionnaire",

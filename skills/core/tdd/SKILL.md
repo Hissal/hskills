@@ -27,7 +27,7 @@ Reach green by changing the code under test: never weaken, skip or delete a test
 
 Tests verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't. A good test reads like a specification: "user can checkout with valid cart" tells you exactly what capability exists, and it survives refactors because it doesn't care about internal structure.
 
-See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
+See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines. When a test generates its inputs (property-based or model-based), read [generated-inputs.md](generated-inputs.md) before writing it.
 
 ## Seams: where tests go
 

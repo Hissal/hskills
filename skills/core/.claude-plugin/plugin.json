@@ -7,6 +7,7 @@
     "./blast-radius",
     "./break-ui",
     "./code-review",
+    "./codebase-design",
     "./commenting",
     "./delegating",
     "./dependency-audit",

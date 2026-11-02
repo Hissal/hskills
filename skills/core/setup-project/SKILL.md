@@ -14,6 +14,8 @@ Scaffold the per-repo configuration the other skills read, linked from the `## A
 
 This is a prompt-driven skill, not a deterministic script. Explore, present what you found, confirm with the user, then write.
 
+Invoked with a pack name (`/setup-project <pack>`), read [packs](references/packs.md) and follow its one-pack run in place of the full [process](#process).
+
 ## Process
 
 ### Explore
@@ -24,7 +26,10 @@ Look at the current repo to understand its starting state. Read whatever exists;
 - `AGENTS.md` and `CLAUDE.md` at the repo root: does either exist? Does `CLAUDE.md` hold only `@AGENTS.md`, or real content? Which of them holds an `## Agent skills` block?
 - `GLOSSARY.md` and `GLOSSARY-MAP.md` at the repo root, and the legacy `CONTEXT.md` / `CONTEXT-MAP.md`. If a legacy file exists, offer to `git mv` it to its `GLOSSARY` name and rewrite those names in `docs/agents/domain.md`.
 - `docs/adr/` and any `src/*/docs/adr/` directories
-- `docs/agents/`: read every file this skill's prior output could be. These are the settled choices.
+- `docs/agents/`: read every file this skill's prior output could be. These are the settled choices, apart from `docs/agents/setup-handoff.md`, which holds [open questions](#open-questions) to bring back first, and `docs/agents/setup-research/`, the saved evidence behind them and past choices.
+- Test, lint and build commands: package scripts, task runners, CI workflows.
+- Style tooling configuration, and any written coding guide.
+- `.agents/config/`: guard extensions already recorded.
 - `.scratch/`: a sign that a local-markdown issue tracker convention is already in use
 - Monorepo signals: a `pnpm-workspace.yaml`, a `workspaces` field in `package.json`, or a populated `packages/*` with its own `src/`. These are present only in a genuinely large multi-package repo; their absence means single-context, which is almost every repo.
 
@@ -40,7 +45,7 @@ A choice the project's configuration already records is **settled**: state it in
 
 Show the user a draft of what this run would change: the `## Agent skills` block and each file a section writes. Let them edit before writing.
 
-When every section is settled and the block already links its files, there is no draft: tell the user nothing changed, make the [move offer](#instruction-file) if it applies, and end the run with every file byte-for-byte as it was.
+When every section is settled, the block already links its files and each file carries the [missing-field header](#defaults), there is no draft: tell the user nothing changed, make the [move offer](#instruction-file) if it applies, and end the run with every file byte-for-byte as it was.
 
 ### Write
 
@@ -65,16 +70,40 @@ The block holds one sub-block per section that writes one:
 
 [one-line summary of layout: "single-context" or "multi-context"]. See `docs/agents/domain.md`.
 
+### Check commands
+
+[one-line summary of the commands and tiers]. See `docs/agents/check-commands.md`.
+
+### Style guide
+
+[the one conditional pointer line from Style guide below]
+
+### Evidence
+
+[one-line summary of how the evidence facts differ from the defaults]. See `docs/agents/evidence.md`.
+
+### Guard extensions
+
+[one-line summary of the added cases]. See `.agents/config/command-guard.json`.
+
+### Packs
+
+- `<guide's exact callable name>`: <its domain in a few words>. See `docs/agents/<pack>.md`.
+
 ### Vendor docs
 
 [one line per selected document: when to read it and where].
+
+### Setup handoff
+
+[how many setup questions are open, only while any are]. See `docs/agents/setup-handoff.md`.
 ```
 
 Then write each section's docs file, using the seed template it names as a starting point. A docs file that already exists holds the user's edits: change only the lines a changed choice touches, and never rewrite it from its seed.
 
 ### Done
 
-Tell the user what this run wrote and which skills read it. Mention they can edit `docs/agents/*.md` directly later, and that a re-run reads the current state, keeps what is settled and revisits only what changed.
+Tell the user what this run wrote and which skills read it, then every question still open: its handoff entry or issue, any research still running, and what each one blocks. Mention they can edit `docs/agents/*.md` directly later, and that a re-run reads the current state, keeps what is settled and revisits only what changed.
 
 ## Instruction file
 
@@ -90,6 +119,32 @@ Pick the file by what exists:
 An `## Agent skills` block already in either file stays where it is: update it there, so the project keeps one block.
 
 **The move offer** is a separate question, asked after the block is settled, with its own approval: move `CLAUDE.md`'s content into `AGENTS.md` and leave `CLAUDE.md` holding only `@AGENTS.md`. Make the move only on an explicit yes, showing the merged `AGENTS.md` first when it already has content of its own. On any other answer, both files stay as they are.
+
+## Defaults
+
+A fact with no sensible default, such as the tracker or the check commands, is always written. A fact with a default is written only when the project differs. The domain docs file is written for its reading rules, whichever layout the project has. Whenever a section asks about a fact with a default, show the default and its value in the question; accepting it writes nothing, and a file that would then hold nothing is not created.
+
+Facts live in one prose file per group under `docs/agents/`, linked from the block. A fact moves to `.agents/config/` only when a tool, not an agent, must read it.
+
+Every config file opens with this line, directly under its title; a file this skill owns that lacks it gets the line through the draft. A JSON config file has no title and carries the line as its first key, `$comment`.
+
+> A missing field means the owning skill's default.
+
+## Open questions
+
+An open question never stalls the run, whether a section raised it or the owner volunteered it at any point, including a doubt about a choice a section would otherwise write without asking. Take the first route that fits, then carry on with everything that does not need its answer. Read [open-questions.md](./open-questions.md) when any route past the lookup fires.
+
+| The question | Route |
+|---|---|
+| A fact the repo, a command or a doc states | Look it up in place and continue. |
+| One question that bounded reading can settle | Start a research subagent through `delegating` at once, save its findings, and bring the evidence back for the owner to choose. |
+| Clear work or a decision that needs another session or a human | Record a handoff: a tracker issue, or a local document with no tracker. |
+| Several connected decisions, shape unclear, more than one session | Recommend a `/wayfinder` map, and record a handoff. One substantial research question stays with the research route. |
+| A sequence only the human can perform, blocking progress, where an interactive procedure would materially help | Suggest `/wizard`, and record a handoff. |
+
+A single approval or value is a question to ask the owner; a step you can run yourself is yours to run.
+
+`delegating` is a process call, and `/wayfinder`, `/wizard` and `/handoff` are suggestions the owner starts. None is a requirement: the run works without them.
 
 ## Sections
 
@@ -112,9 +167,9 @@ Default posture: these skills were designed for GitHub. If a `git remote` points
 - **Local markdown**: issues live as files under `.scratch/<feature>/` in this repo (good for solo projects or repos without a remote)
 - **Other** (Jira, Linear, etc.): ask the user to describe the workflow in one paragraph; the skill will record it as freeform prose
 
-Record the choice in `docs/agents/issue-tracker.md`, from its seed: [issue-tracker-github.md](./issue-tracker-github.md), [issue-tracker-gitlab.md](./issue-tracker-gitlab.md) or [issue-tracker-local.md](./issue-tracker-local.md). For an "other" tracker, write the file from scratch using the user's description. The GitHub and GitLab templates carry a "PRs as a request surface" flag, defaulted **off**. Leave it off and don't raise it: a user who wants external PRs in the triage queue can flip the flag in the file later.
+Record the choice in `docs/agents/issue-tracker.md`, from its seed: [issue-tracker-github.md](./issue-tracker-github.md), [issue-tracker-gitlab.md](./issue-tracker-gitlab.md) or [issue-tracker-local.md](./issue-tracker-local.md). For an "other" tracker, write the file from scratch using the user's description. The GitHub and GitLab templates describe a "PRs as a request surface" flag, defaulted **off**, which only a `yes` writes. Leave it off and don't raise it: a user who wants external PRs in the triage queue can add the flag the file describes later.
 
-A GitHub or GitLab tracker needs a reachable repo. When the user picks one and no `git remote` points at that host, get the repo URL from them and wire it up (`git init` if needed, `git remote add origin <url>`) before going further. Done when `gh repo view` / `glab repo view` prints the project from inside this directory; if it can't, stop and tell the user what's missing.
+A GitHub or GitLab tracker needs a reachable repo. When the user picks one and no `git remote` points at that host, get the repo URL from them and wire it up (`git init` if needed, `git remote add origin <url>`) before going further. Done when `gh repo view` / `glab repo view` prints the project from inside this directory; if it can't, tell the user what's missing and take it through [Open questions](#open-questions).
 
 ### Triage labels
 
@@ -137,3 +192,31 @@ Default to **single-context** (one `GLOSSARY.md` + `docs/adr/` at the repo root)
 Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSSARY.md` files) only when exploration found monorepo signals. Then confirm which layout they want.
 
 Record the layout in `docs/agents/domain.md`, from its seed: [domain.md](./domain.md).
+
+### Check commands
+
+Derive the commands from the project's own configuration, and ask only for what it does not show. Propose one row per command with what it checks and its cost tier: `edit loop`, `task end` or `CI`, defined in the seed. Give a test command its one-file form as a separate `edit loop` row when the runner takes one, with `<file>` in the path's place.
+
+Record the rows in `docs/agents/check-commands.md`, from its seed: [check-commands.md](./check-commands.md), replacing its placeholder row. `verifying`, `implement` and `constraints` read this name and these columns, so keep both. Rows already in the file are settled, whoever wrote them, including the rows `constraints` adds. A floor guard gets a row only when the project already has one. Settled rows are not run again.
+
+Once the draft is approved and before writing `check-commands.md`, run each `edit loop` and `task end` command once, on a real test file for a one-file form; the draft names them. A command that cannot start (exit 127, an unknown script) leaves its row out and is reported with its next step. A command that runs and fails keeps its row and is reported with its exit code. Report `CI` rows as not run. A project with no commands yet writes no file, and the final report says so.
+
+### Style guide
+
+When no pointer is recorded, or the guide it names has gone, read [style-guide-choice.md](./style-guide-choice.md) and follow it: offer the choice, put the guide in the project, write the one pointer line and flag each conflict with tooling configuration. With a pointer already settled, run only that reference's Flag conflicts step.
+
+### Evidence
+
+An `## Agent skills` block already in place with no `docs/agents/evidence.md` has settled on the defaults. Otherwise ask one question, showing the defaults:
+
+> Keep the evidence defaults? (recommended: **yes**) Evidence record path: `docs/evidence/`. Approver: the owner in this session.
+
+On **yes**, write no file and no sub-block. Otherwise write `docs/agents/evidence.md`, with the missing-field header, holding only the facts that differ, under the names `risky-changes` and `hillclimb` read: `**Evidence record path**:` and `**Approver**:`. Add the `### Evidence` sub-block.
+
+### Guard extensions
+
+Only when a selected pack's `SETUP.md` offers guard extensions, read [guard-extensions.md](./guard-extensions.md) and record the selection. With no offer, skip this section.
+
+### Packs
+
+Take this section last, after every other section, whatever order they are written in. When your skill listing shows no pack guide (`<pack>-guide`, with a plugin prefix when a plugin installed it) and the instruction file has no `### Packs` list, skip it and write no sub-block. Otherwise read [packs](references/packs.md) and follow its full run.

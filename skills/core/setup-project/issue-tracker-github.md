@@ -1,5 +1,7 @@
 # Issue tracker: GitHub
 
+A missing field means the owning skill's default.
+
 Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
 
 ## Conventions
@@ -20,7 +22,7 @@ File issues only into the user's own repo. Never file into `Hissal/skill-collect
 
 ## Pull requests as a triage surface
 
-**PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` reads this flag.)_
+_`/triage` reads this flag; with no flag, it is `no`. If this repo treats external PRs as feature requests, add this line: `**PRs as a request surface: yes.**`_
 
 When set to `yes`, PRs run through the same labels and states as issues, using the `gh pr` equivalents:
 

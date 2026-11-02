@@ -1,5 +1,7 @@
 # Domain Docs
 
+A missing field means the owning skill's default.
+
 How the skills should consume this repo's domain documentation when exploring the codebase.
 
 ## Before exploring, read these

@@ -38,7 +38,7 @@
       "path": "skills/engineering/codebase-design",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; agent-contributor lens; project glossary and ADR line; read as vocabulary by other workflows without a design session; caller-first design; four invariant questions; defer-the-seam principle; split-ownership, two-ways and importable-internals red flags; pack-guide extension point for seam and compatibility rules; design-it-twice consults delegating before its subagents; trigger-only description"
+      "changes": "collection metadata and gates; agent-contributor lens; project glossary and ADR line; read as vocabulary by other workflows without a design session; caller-first design; four invariant questions; defer-the-seam principle; split-ownership, two-ways and importable-internals red flags; pack-guide extension point for seam and compatibility rules; design-it-twice consults delegating before its subagents; threat-model reference read when a design crosses a trust boundary, with pack-guide extension point for threats, controls and checks, lines from addyosmani/agent-skills skills/security-and-hardening/SKILL.md at 1401c8b8030e023baeebb31781a6653fe8e93026, MIT, Copyright (c) 2025 Addy Osmani; trigger-only description; published-interface reference, lines from Aaronontheweb/dotnet-skills skills/csharp-api-design/SKILL.md and skills/serialization/SKILL.md at 5ca5db8cf25566f19d2a5dc53204d4af22b23a0d, MIT, Copyright (c) 2025 Aaron Stannard; lines from addyosmani/agent-skills skills/api-and-interface-design/SKILL.md at 301b02b12bff98e4688e6984af6556802322bbde, MIT, Copyright (c) 2025 Addy Osmani; misuse probe ideas only from trailofbits/skills plugins/sharp-edges/skills/sharp-edges/SKILL.md at d016e08cc7408ecb1853a299d06d4a56e363ad5e, CC-BY-SA-4.0"
     },
     {
       "skill": "skills/core/diagnosing-bugs",
@@ -102,7 +102,7 @@
       "path": "skills/engineering/prototype",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; project configuration; brief with keep-if and kill criteria; medium rule and strict single file; pack-guide extension point; throwaway branch created before the first file, separate worktree, pushed capture and return; optional draft PR closed unmerged at the verdict; hand-over check with verifying's unvalidated word; sharing route; verdict against the brief; porting summary; UI variant axes, self-checked variants and a tradeoff table; contents list in the UI reference; /break-ui and /wayfinder suggestions and parent-agent return; description per #44"
+      "changes": "collection metadata and gates; project configuration; brief with keep-if and kill criteria; medium rule and strict single file; pack-guide extension point; throwaway branch created before the first file, separate worktree, pushed capture and return; optional draft PR closed unmerged at the verdict; hand-over check with verifying's unvalidated word; sharing route; verdict against the brief; porting summary; UI variant axes, self-checked variants and a tradeoff table; contents list in the UI reference; Behavior branch reference; deterministic Logic module with a settable seed and clock inputs; getState, dispatch and Copy state for two audiences; variants and knobs; replay in the hand-over check; /break-ui and /wayfinder suggestions and parent-agent return; description per #44"
     },
     {
       "skill": "skills/core/research",

@@ -11,7 +11,7 @@ Because it's one file with nothing to install, you can hand it to a non-develope
 - "I want to feel out what the API should look like before writing it."
 - Anything where someone wants to **press buttons and watch state change**.
 
-If the question is "what should this look like," this is the wrong branch. Use [UI.md](UI.md).
+If the question is "what should this look like," this is the wrong branch. Use [UI.md](UI.md). If it is how the thing behaves in use, or left to run, use [BEHAVIOR.md](BEHAVIOR.md).
 
 ## Process
 
@@ -28,9 +28,11 @@ The right shape depends on the question:
 - **A pure reducer**: `(state, action) => state`. Good when actions are discrete events and state is a single value.
 - **A state machine**: explicit states and transitions. Good when "which actions are even legal right now" is part of the question.
 - **A small set of pure functions** over a plain data type. Good when there's no implicit current state, just transformations.
-- **A class or module with a clear method surface** when the logic genuinely owns ongoing internal state.
+- **A class or module with a clear method surface** when the logic genuinely owns ongoing internal state, as long as that state reads out as plain data.
 
 Pick whichever shape best fits the question being asked, *not* whichever is easiest to wire to a page. Keep it pure: no DOM, no `document`, no button handlers reaching inside it. The page calls into it; nothing flows the other direction. This is what makes the prototype useful past its own lifetime: once the question's answered, the validated reducer / machine / function set lifts into the real module on its own.
+
+Keep the state plain data (values, arrays and objects that survive a JSON round trip) and the module deterministic: the same state and action always give the same next state. Random numbers and the current time come in as inputs: a seed held in the state and fed to a small seeded generator written inside the module, and a clock value carried on the action that needs it. The module itself never calls `Math.random()` or `Date.now()`. Then the same seed and the same steps always give the same result, for the person and for the agent.
 
 ### 3. Build the shareable HTML file
 
@@ -41,9 +43,10 @@ Write it for a non-developer. Every label is in **domain language**, not code: b
 Lay it out with a clean hierarchy, top to bottom:
 
 1. **Title and one-line explanation** of what this demo lets you explore (the question from step 1).
-2. **Current state**: the full relevant state, rendered as a readable panel (labelled fields, not a raw JSON dump), re-rendered after every click so the change is visible. Where it helps a non-developer follow, call out what just changed.
+2. **Current state**: the full relevant state, rendered as a readable panel (labelled fields, not a raw JSON dump), re-rendered after every click so the change is visible. Where it helps a non-developer follow, call out what just changed. Show the seed here and let it be set: setting it restarts from the initial state with that seed. Beside the panel goes the Copy state button, and the page carries the `prototype` object (see rule 5 of the SKILL's [Rules that apply to every branch](SKILL.md#rules-that-apply-to-every-branch)).
 3. **Free-play buttons**: one button per action, always available, so anyone can poke at the model in any order. Each click dispatches its action and re-renders the state.
-4. **Guided walkthroughs**: a set of **scenarios**, one per tab. Each tab holds a short plain-language description of the scenario (the situation it sets up and what to watch for) and underneath it, the ordered **buttons to press** for that scenario. Each step is a real button: clicking it performs that action and moves to the next step. Starting a walkthrough resets to a known initial state so the scenario runs the same way every time.
+4. **Guided walkthroughs**: a set of **scenarios**, one per tab. Each tab holds a short plain-language description of the scenario (the situation it sets up and what to watch for) and underneath it, the ordered **buttons to press** for that scenario. Each step is a real button: clicking it performs that action and moves to the next step. Starting a walkthrough resets to a known initial state, with a fixed seed, so the scenario runs the same way every time.
+5. **Variants and knobs**, when the question compares rules or tunes a value: the switcher and knob panel the SKILL's [Variants and knobs](SKILL.md#variants-and-knobs) describes.
 
 Choose scenarios that demonstrate the awkward cases, the ones hard to reason about on paper: the happy path, a tricky edge case, an attempt at something that should be illegal.
 

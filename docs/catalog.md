@@ -12,7 +12,7 @@ As of **2026-10-28 (Europe/Helsinki)**. A transcription of the current blueprint
 |---|---|---|---|---|---|
 | `grilling` | core model-invoked | `mattpocock/skills`, adapted | — | Resolve decisions; scope, one decision per question, assumptions and exit check | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#35 resolution](https://github.com/Hissal/skill-collection/issues/35#issuecomment-6126545823) |
 | `domain-modeling` | core model-invoked | `mattpocock/skills`, adapted | — | Project vocabulary and ADRs; code names are not automatically domain terms | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#35 resolution](https://github.com/Hissal/skill-collection/issues/35#issuecomment-6126545823) |
-| `codebase-design` | core model-invoked | `mattpocock/skills`, adapted; pstack, Addy, Aaronontheweb ideas | — | Seams/compatibility; caller-first, ownership, invariants; published-interface reference; disclosed threat-model reference (assets, actors, trust boundaries, attacker paths with evidence and counterevidence, threat → control → test), used where trust boundaries are relevant; extension point: this stack's threats, controls and checks | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#40 resolution](https://github.com/Hissal/skill-collection/issues/40#issuecomment-6177796453); [#51 resolution](https://github.com/Hissal/skill-collection/issues/51) |
+| `codebase-design` | core model-invoked | `mattpocock/skills`, adapted; pstack, Addy, Aaronontheweb ideas | — | Seams/compatibility; caller-first, ownership, invariants; published-interface reference; disclosed threat-model reference (assets, actors, trust boundaries, attacker paths with evidence and counterevidence, assumptions and freshness per threat, optional qualitative attack trees, threat → control → test), read when a design crosses a trust boundary; extension points: this stack's seam and compatibility rules; this stack's threats, controls and checks | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#40 resolution](https://github.com/Hissal/skill-collection/issues/40#issuecomment-6177796453); [#51 resolution](https://github.com/Hissal/skill-collection/issues/51) |
 | `tdd` | core model-invoked | `mattpocock/skills`, adapted; test-value, mutation and generated-input ideas | — | All test work; stack authoring/setup/run needs; red for the right reason | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#39 resolution](https://github.com/Hissal/skill-collection/issues/39#issuecomment-6170537610) |
 | `diagnosing-bugs` | core model-invoked | `mattpocock/skills`, adapted; superpowers, pstack, gstack, CE ideas | — | Feedback loop/instrumentation/profiling; causal chain and divergence; calls tdd/verifying | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#38 resolution](https://github.com/Hissal/skill-collection/issues/38#issuecomment-6168634570); [#39 resolution](https://github.com/Hissal/skill-collection/issues/39#issuecomment-6170537610) |
 | `writing-for-agents` | core model-invoked | Fork, adapted; CE, Sentry, Anthropic, dotnet ideas | — | Authoring standard; disclosed skill mechanics, steering and testing references | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#42 resolution](https://github.com/Hissal/skill-collection/issues/42#issuecomment-6191540887) |
@@ -318,6 +318,7 @@ Each numbered entry identifies affected earlier wording, the later deciding auth
 - **Earlier wording:** Callable name improve-codebase-architecture.
 - **Superseded by:** [#50](https://github.com/Hissal/skill-collection/issues/50#issuecomment-6426359993)
 - **Exact suggested replacement:** “Use architecture-review for the collection skill; preserve its stable identity and fork provenance. The old name is historical.”
+- **Later amended:** The ID changed to `hissal.skill-collection/architecture-review` before the first release, when nothing had it installed. Fork provenance stays, and IDs stay stable from the first release on.
 
 ### S19
 
@@ -645,6 +646,7 @@ changing skill identity or requirements with
 <!-- BEGIN GENERATED DEPENDENCIES -->
 | Skill ID | Callable / source | Hard requirements |
 |---|---|---|
+| `hissal.skill-collection/architecture-review` | [`architecture-review`](../skills/core/architecture-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/blast-radius` | [`blast-radius`](../skills/core/blast-radius/SKILL.md) | `hissal.skill-collection/verifying` [`verifying`](../skills/core/verifying/SKILL.md) |
 | `hissal.skill-collection/break-ui` | [`break-ui`](../skills/core/break-ui/SKILL.md) | — |
 | `hissal.skill-collection/code-review` | [`code-review`](../skills/core/code-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
@@ -662,7 +664,6 @@ changing skill identity or requirements with
 | `hissal.skill-collection/how` | [`how`](../skills/core/how/SKILL.md) | — |
 | `hissal.skill-collection/implement` | [`implement`](../skills/core/implement/SKILL.md) | — |
 | `hissal.skill-collection/implement-spec` | [`implement-spec`](../skills/core/implement-spec/SKILL.md) | — |
-| `hissal.skill-collection/improve-codebase-architecture` | [`architecture-review`](../skills/core/architecture-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/migrating` | [`migrating`](../skills/core/migrating/SKILL.md) | — |
 | `hissal.skill-collection/onboarding-guide` | [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md) | — |
 | `hissal.skill-collection/prototype` | [`prototype`](../skills/core/prototype/SKILL.md) | — |

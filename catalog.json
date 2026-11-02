@@ -15,6 +15,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/codebase-design": {
+    "path": "skills/core/codebase-design",
+    "requires": []
+  },
   "hissal.skill-collection/commenting": {
     "path": "skills/core/commenting",
     "requires": []

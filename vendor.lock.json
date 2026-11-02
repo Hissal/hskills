@@ -33,6 +33,14 @@
       "changes": "scope, shared evidence rules and the stop on a missing requirement come from reviewing; one captured patch with untracked files; spec and standards finding widened; Spec gains changed and unverifiable; a third axis, Failure, and the security-finding hook; smell baseline gains the duplication rule and a platform smell; extension points, handback suggestions and collection metadata replace the Unity line, the setup pointer and the word cap"
     },
     {
+      "skill": "skills/core/codebase-design",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/codebase-design",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; agent-contributor lens; project glossary and ADR line; read as vocabulary by other workflows without a design session; caller-first design; four invariant questions; defer-the-seam principle; split-ownership, two-ways and importable-internals red flags; pack-guide extension point for seam and compatibility rules; design-it-twice consults delegating before its subagents; trigger-only description"
+    },
+    {
       "skill": "skills/core/domain-modeling",
       "source": "mattpocock/skills",
       "path": "skills/engineering/domain-modeling",

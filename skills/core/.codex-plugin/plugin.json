@@ -30,6 +30,7 @@
     "./to-tickets",
     "./triage",
     "./verifying",
+    "./wait-what",
     "./wayfinder",
     "./why"
   ]

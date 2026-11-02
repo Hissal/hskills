@@ -318,6 +318,7 @@ Each numbered entry identifies affected earlier wording, the later deciding auth
 - **Earlier wording:** Callable name improve-codebase-architecture.
 - **Superseded by:** [#50](https://github.com/Hissal/skill-collection/issues/50#issuecomment-6426359993)
 - **Exact suggested replacement:** “Use architecture-review for the collection skill; preserve its stable identity and fork provenance. The old name is historical.”
+- **Later amended:** The ID changed to `hissal.skill-collection/architecture-review` before the first release, when nothing had it installed. Fork provenance stays, and IDs stay stable from the first release on.
 
 ### S19
 
@@ -645,6 +646,7 @@ changing skill identity or requirements with
 <!-- BEGIN GENERATED DEPENDENCIES -->
 | Skill ID | Callable / source | Hard requirements |
 |---|---|---|
+| `hissal.skill-collection/architecture-review` | [`architecture-review`](../skills/core/architecture-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/blast-radius` | [`blast-radius`](../skills/core/blast-radius/SKILL.md) | `hissal.skill-collection/verifying` [`verifying`](../skills/core/verifying/SKILL.md) |
 | `hissal.skill-collection/break-ui` | [`break-ui`](../skills/core/break-ui/SKILL.md) | — |
 | `hissal.skill-collection/code-review` | [`code-review`](../skills/core/code-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
@@ -662,7 +664,6 @@ changing skill identity or requirements with
 | `hissal.skill-collection/how` | [`how`](../skills/core/how/SKILL.md) | — |
 | `hissal.skill-collection/implement` | [`implement`](../skills/core/implement/SKILL.md) | — |
 | `hissal.skill-collection/implement-spec` | [`implement-spec`](../skills/core/implement-spec/SKILL.md) | — |
-| `hissal.skill-collection/improve-codebase-architecture` | [`architecture-review`](../skills/core/architecture-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/migrating` | [`migrating`](../skills/core/migrating/SKILL.md) | — |
 | `hissal.skill-collection/onboarding-guide` | [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md) | — |
 | `hissal.skill-collection/prototype` | [`prototype`](../skills/core/prototype/SKILL.md) | — |

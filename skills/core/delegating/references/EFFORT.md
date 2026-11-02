@@ -17,12 +17,12 @@ Levels `low`, `medium`, `high`, `xhigh`, `max`, per model (read at [model config
 
 ## Codex
 
-Effort is `model_reasoning_effort` (or `reasoning_effort` on `spawn_agent`), a non-empty string the model advertises in its catalog; the source read fixes no list of values. Map intent to the same-named advertised value; an intent the model does not advertise follows the rules above. **Unverified** by a run.
+Effort is `model_reasoning_effort` (or `reasoning_effort` on `spawn_agent`), a non-empty string the model advertises in its catalog; the source read fixes no list of values. Map intent to the same-named advertised value; an intent the model does not advertise follows the rules above. Tried on 2026-11-02 (Codex CLI 0.166.0): `gpt-6.1-sol` ran at `low` and `medium` through both, and an unadvertised value failed the request, which listed `none`, `minimal`, `low`, `medium`, `high`, `xhigh` and `max`.
 
 ## OpenCode
 
-Effort is a model variant (`--variant`, or a variant in config) or a provider option such as `reasoningEffort`. Built-in variants per the docs: Anthropic `high` (default) and `max`; OpenAI roughly `none`, `minimal`, `low`, `medium`, `high`, `xhigh`; Google `low` and `high`. Other providers have their own; a custom variant can add a level. Through OpenCode an Anthropic model has no built-in low or medium: an automatic default approximates with `high` and reports it; an explicit low or medium needs a custom variant or is unavailable. **Unverified** by a run.
+Effort is a model variant (`#<variant>` after the model, in `opencode run -m` or the subagent tool's `model`, or a variant in config) or a provider option such as `reasoningEffort`. Built-in variants per the docs: Anthropic `high` (default) and `max`; OpenAI roughly `none`, `minimal`, `low`, `medium`, `high`, `xhigh`; Google `low` and `high`. Other providers have their own; a custom variant can add a level. Through OpenCode an Anthropic model has no built-in low or medium: an automatic default approximates with `high` and reports it; an explicit low or medium needs a custom variant or is unavailable. A gateway provider lists its own variants: OpenCode Go's `claude-haiku-5-5` listed `none` to `max`. Tried on 2026-11-02 (OpenCode 2.2.5): `opencode-go/gpt-6-luna` ran at variants `low` and `medium`.
 
 ## T3 Code
 
-Effort goes in `delegate_task`'s `target.options`, using the option names and values `orchestrator_capabilities` lists for that provider and model. Those values come from the underlying provider, so the provider's own row above still says what they mean. **Unverified** by a run.
+Effort goes in `delegate_task`'s `target.options`, using the option names and values `orchestrator_capabilities` lists for that provider and model. Those values come from the underlying provider, so the provider's own row above still says what they mean. Tried on 2026-11-02: `reasoningEffort: 'low'` on Codex's `gpt-6.1-sol` reached the child.

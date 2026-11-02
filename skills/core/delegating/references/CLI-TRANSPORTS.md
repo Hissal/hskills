@@ -22,20 +22,21 @@ Read: [CLI reference](https://code.claude.com/docs/en/cli-reference), 2026-11-01
 
 ## Codex: `codex exec`
 
-Read: source of `openai/codex` at `cb1bc0ae4ed996c67a6e118bf79a7435f0d3f0d2` (`codex-rs/exec/src/cli.rs`, `codex-rs/utils/cli/src/shared_options.rs`), 2026-11-01. Not installed in the build environment: **unverified**.
+Read: source of `openai/codex` at `cb1bc0ae4ed996c67a6e118bf79a7435f0d3f0d2` (`codex-rs/exec/src/cli.rs`, `codex-rs/utils/cli/src/shared_options.rs`), 2026-11-01. Tried on 2026-11-02 with Codex CLI 0.166.0: `codex exec -m gpt-6.1-sol -c model_reasoning_effort="low" -s read-only -C <dir> --ephemeral -o <file> - < <brief file>` ran `gpt-6.1-sol` at effort `low`.
 
-- Prompt as an argument, or `-` to read it from stdin.
-- `-m <model>`; effort through `-c model_reasoning_effort="<level>"` (a value the model advertises).
+- Prompt as an argument, or `-` to read it from stdin. With the prompt as an argument, close stdin (`< /dev/null`): an open stdin is read as additional input, and the run waits on it.
+- `-m <model>`; effort through `-c model_reasoning_effort="<level>"` (a value the model advertises). A value the model lacks fails the run with the supported list; it is not stepped down.
+- Without `--json`, the run's header names the model, provider, sandbox and effort that ran; the JSONL events do not.
 - `-s read-only | workspace-write | danger-full-access` sets the sandbox.
 - `-o <file>` writes the agent's last message to a file; `--json` prints events as JSONL.
 - `-C <dir>` sets the working root; `--worktree` runs in a new managed git worktree; `--ephemeral` keeps no session files.
 
 ## OpenCode: `opencode run`
 
-Read: docs source of `anomalyco/opencode` at `8bca5329293a34f4bdd7fdc4f4020be80c1eb477` (`cli.mdx`), 2026-11-01. Not installed in the build environment: **unverified**.
+Read: docs source of `anomalyco/opencode` at `8bca5329293a34f4bdd7fdc4f4020be80c1eb477` (`cli.mdx`), 2026-11-01, and `opencode run --help` of 2.2.5, 2026-11-02. Tried on 2026-11-02 with OpenCode 2.2.5: `opencode run --format json -m 'opencode-go/gpt-6-luna#low' "<brief>"` from the target directory; the session recorded `gpt-6-luna`, variant `low`.
 
-- `-m <provider/model>`, `--variant <name>` for the provider's reasoning effort, `--agent <name>`.
-- `--format json` prints raw JSON events; `--dir <path>` sets the directory.
+- `-m <provider/model>`, or `-m <provider/model#variant>` for the provider's reasoning effort; `--agent <name>`. 2.2.5 has no `--variant` or `--dir` flag: run it from the target directory.
+- `--format json` prints raw JSON events (`step_start`, `tool_use`, `text`, `step_finish`); they do not name the model.
 - `--auto` auto-approves permissions that are not explicitly denied: use it only when the brief's Authority covers every such action.
 - `opencode models` lists the configured models.
 

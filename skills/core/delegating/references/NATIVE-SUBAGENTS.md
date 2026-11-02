@@ -16,9 +16,9 @@ Read: [sub-agents](https://code.claude.com/docs/en/sub-agents) and [model config
 
 ## Codex
 
-Read: source of `openai/codex` at `cb1bc0ae4ed996c67a6e118bf79a7435f0d3f0d2` (2026-11-01): the multi-agent tool spec and the config schema. The hosted docs were not reachable from the build environment. Not tried: **unverified**.
+Read: source of `openai/codex` at `cb1bc0ae4ed996c67a6e118bf79a7435f0d3f0d2` (2026-11-01): the multi-agent tool spec and the config schema. The hosted docs were not reachable from the build environment. Tried on 2026-11-02 with Codex CLI 0.166.0: a `codex exec` parent on `gpt-6.1-sol` at effort `medium` made one `spawn_agent` call with `fork_turns: "none"`, `model: "gpt-6.1-sol"` and `reasoning_effort: "low"`, and the child's session recorded `gpt-6.1-sol` at effort `low`.
 
-- **Tool**: `spawn_agent` with `message`, optional `agent_type`, `fork_context` (leave false for a fresh context), and `model` and `reasoning_effort` overrides where the session exposes them. Spawned agents inherit the parent's model by default. Follow up with `send_input` or `followup_task`; collect with `wait`.
+- **Tool**: `spawn_agent` with `message`, a `task_name`, `fork_turns`, and `model` and `reasoning_effort` overrides. `fork_turns` omitted or `"all"` forks the whole conversation: the child inherits the parent's model and effort and takes no overrides. Set `"none"` for a fresh context, which a brief needs and any override requires. The source read called this `fork_context`; 0.166.0 exposes `fork_turns`, so read the live tool schema. Codex's own tool guidance sets `model` or `reasoning_effort` only when the user, `AGENTS.md` or a skill asks for them. Follow up with `send_input` or `followup_task`; collect with `wait`.
 - **Models reachable**: the session's provider catalog. Effort values are whatever the model advertises.
 - **Roles**: `[agents.<role>]` in `config.toml`, with a `description` and an optional `config_file` layer.
 - **Defaults and limits**: `agents.default_subagent_model`, `agents.default_subagent_reasoning_effort`, `agents.max_concurrent_threads_per_session` (unset: the backend's default), `agents.max_depth` (V1 only).
@@ -26,11 +26,11 @@ Read: source of `openai/codex` at `cb1bc0ae4ed996c67a6e118bf79a7435f0d3f0d2` (20
 
 ## OpenCode
 
-Read: docs source of `anomalyco/opencode` at `8bca5329293a34f4bdd7fdc4f4020be80c1eb477` (`agents.mdx`, `models.mdx`, 2026-11-01). Not tried: **unverified**.
+Read: docs source of `anomalyco/opencode` at `8bca5329293a34f4bdd7fdc4f4020be80c1eb477` (`agents.mdx`, `models.mdx`, 2026-11-01), and the tool source at `v2.2.5` = `9bbb8ce18c80f099e0e448775f59d965ead40a21` ([`packages/core/src/tool/plugin/subagent.ts`](https://github.com/anomalyco/opencode/blob/9bbb8ce18c80f099e0e448775f59d965ead40a21/packages/core/src/tool/plugin/subagent.ts), 2026-11-02). Tried on 2026-11-02 with OpenCode 2.2.5, from `opencode run` on `opencode-go/gpt-6-luna#low`: one call with agent `general` and no `model` (the child ran `gpt-6-luna`, variant `low`), and one with `model: "opencode-go/gpt-6-luna#medium"` (the child ran variant `medium`).
 
-- **Tool**: the Task tool starts any agent with `mode: subagent` or `all` (built-in `general` and `explore`). Each runs as a child session.
-- **Models reachable**: every provider configured in OpenCode, as `provider/model-id`, so one OpenCode session can reach several model families. A subagent without a `model` uses the invoking agent's model. `opencode models` lists what is configured.
-- **Effort**: per agent through a `variant` or a provider option such as `reasoningEffort`; see [effort mappings](EFFORT.md).
+- **Tool**: `subagent` (the docs call it the Task tool), with `agent`, `description`, `prompt`, and optional `model`, `background` and `sessionID` (a follow-up to an existing child). It starts any agent with `mode: subagent` or `all` (built-in `general` and `explore`). Each runs as a child session with a fresh context.
+- **Models reachable**: every provider configured in OpenCode, as `provider/model-id`, so one OpenCode session can reach several model families. A call's `model` (`provider/model-id`, or `provider/model-id#variant`) overrides; the tool refuses a model that is not available and a variant the model lacks. Without it, the child takes the invoking session's model and variant. The tool's own guidance sets `model` only when the user explicitly asks. `opencode models` lists what is configured.
+- **Effort**: a variant in the call's `model`, or per agent through a `variant` or a provider option such as `reasoningEffort`; see [effort mappings](EFFORT.md).
 - **Permissions**: `permission` per agent; `permission.task` limits which subagents an agent may start.
 - **Limits**: no concurrency limit found in the docs read.
 

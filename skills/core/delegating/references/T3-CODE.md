@@ -1,6 +1,6 @@
 # T3 Code delegation
 
-T3 Code exposes its own orchestration tools (server key `t3-code`) to every provider session it runs. Observed on 2026-11-01 from `pingdotgg/t3code` at `fa31b66bbb2ae5234205a8628a78e038d917202f`: [`docs/orchestration-v2/orchestrator-mcp-server.md`](https://github.com/pingdotgg/t3code/blob/fa31b66bbb2ae5234205a8628a78e038d917202f/docs/orchestration-v2/orchestrator-mcp-server.md) and the orchestration instructions T3 injects into its sessions (`packages/provider-core/src/server/orchestrationInstructions.ts`). Not tried: T3 Code was not running in the build environment, so every fact here is **unverified** by dispatch.
+T3 Code exposes its own orchestration tools (server key `t3-code`) to every provider session it runs. Observed on 2026-11-01 from `pingdotgg/t3code` at `fa31b66bbb2ae5234205a8628a78e038d917202f`: [`docs/orchestration-v2/orchestrator-mcp-server.md`](https://github.com/pingdotgg/t3code/blob/fa31b66bbb2ae5234205a8628a78e038d917202f/docs/orchestration-v2/orchestrator-mcp-server.md) and the orchestration instructions T3 injects into its sessions (`packages/provider-core/src/server/orchestrationInstructions.ts`). Tried on 2026-11-02 from a T3 Code session on `claude-opus-5-5`: `orchestrator_capabilities`, then one `delegate_task` with provider `codex`, model `gpt-6.1-sol`, `options: {reasoningEffort: 'low'}`, role `research` and `mode: 'wait'`. The result named that provider, model and option, its answer was correct, and the checkout was unchanged. The other facts below were read, not tried.
 
 T3's injected instructions are the host's guidance and win over this file. Re-read them, and call `orchestrator_capabilities`, rather than trusting the facts below.
 
@@ -21,9 +21,9 @@ Call `orchestrator_capabilities` once per thread, before the first `delegate_tas
 ## `delegate_task`
 
 - `task`: the full brief. The child receives only this and an optional `role` (`implementation`, `research`, `review`, `design`, `test`, `general`); no parent history.
-- `target`: `providerInstanceId`, `driverKind`, `model`, and `options` from the capability listing (effort goes here, for example `{effort: 'high'}`). Omitted fields inherit from the parent. A different provider with no model takes that provider's first advertised model, so always name the model.
+- `target`: `providerInstanceId`, `driverKind`, `model`, and `options` from the capability listing (effort goes here, under the option id the listing gives that provider: in the listing seen, `effort` for Claude, `reasoningEffort` for Codex, `variant` for OpenCode and `reasoning_effort` for Cursor). Omitted fields inherit from the parent. A different provider with no model takes that provider's first advertised model, so always name the model.
 - `isolation`: `shared` (default, the parent checkout) or `worktree` (a new checkout from the parent commit; uncommitted edits stay out, so give the dirty-tree warning).
-- `runtimeMode`: `inherit`, `approval-required`, `auto-accept-edits`, `full-access`. A child never runs broader than its parent. A mode the target provider does not offer is refused when explicit, and an inherited one steps down to the broadest it offers.
+- `runtimeMode`: `inherit`, `approval-required`, `auto-accept-edits`, `auto`, `full-access`. A child never runs broader than its parent. A mode the target provider does not offer is refused when explicit, and an inherited one steps down to the broadest it offers.
 - `interactionMode`: `inherit`, `plan`, `default`; it may narrow to `plan`, never widen.
 - `mode`: `async` returns at once; `wait` returns the result or times out without cancelling. A pending question from the child ends the wait.
 - `clientRequestId`: stable across retries of one request; distinct for each review round.

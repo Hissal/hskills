@@ -129,6 +129,14 @@
       "changes": "collection metadata and gates; AI disclaimer replaced by commenting with a context suffix; project configuration for tracker and labels; pack-guide extension point; maintainer issues triaged alike; process calls; /to-questionnaire and /handoff suggestions and parent-agent return; contents lists in both references; writing-for-agents process call for agent briefs"
     },
     {
+      "skill": "skills/core/wait-what",
+      "source": "mattpocock/skills",
+      "path": "skills/productivity/wait-what",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; description reworded for a clearer, more concise re-explanation; re-pitch asked to be clearer and more concise; rules that the re-pitch keeps the last message's hedges and certainty and corrects it when it was wrong, lines from EveryInc/compound-engineering-plugin skills/wtf/SKILL.md at 77cc431daaebea7ee9f33ac530a66eec5404572b, MIT, Copyright (c) 2025 Every"
+    },
+    {
       "skill": "skills/core/wayfinder",
       "source": "mattpocock/skills",
       "path": "skills/engineering/wayfinder",

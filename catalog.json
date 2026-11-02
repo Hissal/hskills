@@ -82,6 +82,10 @@
     "path": "skills/core/receiving-review",
     "requires": []
   },
+  "hissal.skill-collection/refactoring": {
+    "path": "skills/core/refactoring",
+    "requires": []
+  },
   "hissal.skill-collection/research": {
     "path": "skills/core/research",
     "requires": []

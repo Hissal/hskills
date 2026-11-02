@@ -12,7 +12,7 @@ Contents:
 - [The misuse probe](#the-misuse-probe)
 - [No type names in persisted payloads](#no-type-names-in-persisted-payloads)
 
-For *this stack's seam and compatibility rules* (binary compatibility, assembly boundaries, a public-API baseline), ask the pack guides this project lists, unless you already have; use the answer alongside these rules, and carry on silently when none answers.
+For *this stack's seam and compatibility rules* (binary compatibility, assembly boundaries, a public-interface baseline), ask the pack guides this project lists, unless you already have; use the answer alongside these rules, and carry on silently when none answers.
 
 ## Hyrum's Law
 
@@ -51,7 +51,7 @@ interface CreateTaskInput {
 
 Breaking, besides removing and retyping: renaming; making an optional input required; accepting less than before (tighter validation, a shorter limit); returning more than a caller can handle (a new value in an output union that callers switch over exhaustively); turning a returned result into a thrown error or the reverse. A new optional input whose absence keeps the old behaviour, and a new output field, are additive.
 
-When the change cannot be additive, it is a migration, not a design change.
+When the change cannot be additive, it is a migration, not a design change: say so in the design, naming the callers it breaks, and leave the transition out of it.
 
 ## A changed default is a breaking change
 

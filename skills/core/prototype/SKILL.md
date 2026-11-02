@@ -51,7 +51,7 @@ For *where a prototype lives, how it runs and is removed, and which medium fits 
 3. **No persistence by default.** State lives in memory. Persistence is the thing the prototype is _checking_, not something it should depend on. If the question explicitly involves a database, hit a scratch DB or a local file with a clear "PROTOTYPE, wipe me" name.
 4. **Skip the polish.** No tests, no error handling beyond what makes the prototype _runnable_, no abstractions. The point is to learn something fast.
 5. **Surface the state, for two audiences.** After every action (logic, behavior) or on every variant switch (UI), print or render the full relevant state so the user can see what changed. For the agent, a logic or behavior page puts `getState()` and `dispatch(action)` on a global `prototype` object: `dispatch` takes the same actions the page's own controls send, and `getState()` returns the same data the **Copy state** button copies as JSON text: the variant, the state and the knob values. For a UI prototype, the variant URL key serves both.
-6. **Capture it when done.** Fold any validated decision into the real code, then capture the prototype itself as a **primary source** on its throwaway branch, as [Place and capture](#place-and-capture) describes. Capture the answer too (the verdict and the question it settled). The main branch keeps only the validated decision.
+6. **Capture it when done.** Capture the prototype itself as a **primary source** on its throwaway branch, as [Place and capture](#place-and-capture) describes, and the answer too (the verdict and the question it settled). Then, back where work started, fold any validated decision into the real code. The main branch keeps only the validated decision.
 
 ## Variants and knobs
 
@@ -65,7 +65,7 @@ A **knob** is a live parameter in the debug panel (a logic page shows its knobs 
 
 **Draft PR.** When it applies, push the branch at the first commit and open a draft PR to the default branch. Title it by the repo's convention, marked as a prototype. The body carries the brief, says the PR never merges, and says how to run the prototype. Update the PR as the prototype changes.
 
-**Capture.** Commit the prototype to its throwaway branch and push that branch: the main branch and an archive folder never hold it. Then return to the branch or worktree where work started. The verdict records the question it settled and whether the keep-if criteria were met. Put it on the implementation issue with a context pointer to the draft PR, or to the branch when there is no PR. With a draft PR, record the keep-if result in it too and close it unmerged; the branch stays as the record.
+**Capture.** Commit the prototype to its throwaway branch and push that branch: the main branch and an archive folder never hold it. With no remote, say the branch is local only. Then return to the branch or worktree where work started. The verdict records the question it settled and whether the keep-if criteria were met. Put it on the implementation issue with a context pointer to the draft PR, or to the branch when there is no PR; with no issue, put it in your handback. With a draft PR, record the keep-if result in it too and close it unmerged; the branch stays as the record.
 
 ## Hand-over check
 

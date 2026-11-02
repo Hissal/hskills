@@ -4,7 +4,7 @@ Build each explorer subagent's prompt from this template. Fill in the placeholde
 
 ---
 
-Other explorers are investigating different slices of the same subsystem in parallel. Don't try to cover everything. Focus on your assigned angle and go deep. Read only: change no file.
+Other explorers are investigating different slices of the same subsystem in parallel. Don't try to cover everything. Focus on your assigned angle and go deep. Read only: change no file. Read the local codebase and its installed packages, nothing external; name anything that would need an external source as a gap.
 
 ## Question
 

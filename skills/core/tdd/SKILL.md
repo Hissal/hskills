@@ -59,12 +59,12 @@ When the shape of that interface is itself in question (how deep the module is, 
 
 - **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
 - **Red for the right reason.** Red is the test's own assertion failing. A compile, import, fixture or environment failure is not red: get past it with a stub (the signature, no logic) and nothing more, then run again until the failure is the assertion.
-- **Prove the test can fail.** After green, name one plausible wrong implementation the test rejects. When the test looks suspect (you struggle to name one, it went green sooner than expected, or it was never red in its own assertion), apply that wrong implementation, re-run to see red, then revert it.
+- **Prove the test can fail.** After green, name one plausible wrong implementation the test rejects (wrong constant, wrong branch, missing side effect, default return). When the test looks suspect (you struggle to name one, it went green sooner than expected, or it was never red in its own assertion), apply that wrong implementation, re-run to see red, then revert it.
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle.
 - **Refactoring is not part of the loop.** It happens after green, under the `refactoring` skill's rules, not inside the red → green implementation cycle.
 
 ## Suggest at handback
 
-Offer `/test-review` only on evidence of a broader test-quality problem outside the current task, naming the area and an example. Touching tests, adding a regression test or low coverage alone is not that evidence. The offer runs nothing; with no such evidence, offer nothing.
+Offer `/test-review` only on evidence of a broader test-quality problem outside the current task, naming the area and an example. Touching tests, adding a regression test or low coverage alone is not that evidence, and a test problem inside the current task is handled directly. The offer runs nothing; with no such evidence, offer nothing.
 
 When you run for a parent agent, make no offer: return the observed follow-up need, and the parent decides what to offer the user.

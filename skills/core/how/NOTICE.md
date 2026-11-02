@@ -8,7 +8,7 @@ This skill is copied from [cursor/plugins](https://github.com/cursor/plugins/tre
 - Path: `pstack/skills/how`
 - Pinned commit: `ae5650febf4320793844c12c4adaa937f417f8da`
 - Licence: MIT
-- Local changes: collection metadata and gates; scope named as local code and installed packages in the description and body, with external sources left out; done line; the Task tool, model-rule and poteto-mode dispatch lines replaced by a delegating consult with the host-subagent fallback and the read-it-yourself path; a simple question answered directly instead of by one explainer; explorer angles kept from overlapping and started in parallel; answer in chat with no file unless asked; prompt references linked and their tool names made harness-neutral
+- Local changes: collection metadata and gates; scope named as local code and installed packages in the description and body, with external sources left out; done line; the Task tool, model-rule and poteto-mode dispatch lines replaced by a delegating consult with the host-subagent fallback and the read-it-yourself path; a simple question answered directly instead of by one explainer; explorer angles kept from overlapping and started in parallel; answer in chat with no file unless asked; prompt references linked, their tool names made harness-neutral and the local-only scope carried into them
 
 ## Licence
 

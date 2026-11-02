@@ -16,7 +16,7 @@ The scope is the local codebase and the packages installed for it, read from dis
 
 Done when the explanation is in chat under the sections below, every claim about the code names the file and function it rests on, and every gap the reading could not close is named.
 
-Use read-only subagents where the harness has them, otherwise read it yourself. Before dispatching any subagent, consult `delegating`; when `delegating` is not installed, dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort. Every subagent here is a helper that reads and changes no file: explorers are independent, normal difficulty; the explainer is one, difficult.
+Use read-only subagents where the harness has them, otherwise read it yourself. Before dispatching any subagent, consult `delegating`; when `delegating` is not installed, dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort. Every subagent here reads and changes no file. Explorers are helpers: independent, normal difficulty. The explainer is a role agent, because it judges the findings: one, difficult.
 
 ## 1. Assess complexity
 

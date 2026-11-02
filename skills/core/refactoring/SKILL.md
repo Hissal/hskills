@@ -76,7 +76,7 @@ Keep the handoff concise and evidence-based:
 - **Refactor:** name the structural operation and the symbols and files changed.
 - **Preserved:** name the behaviour or compatibility boundary and the pin that preserved it.
 - **Validation:** report the exact commands and observed results, with `verifying`'s status words. Never claim success after a failed build or test run.
-- **Deferred:** name each behaviour change or migration boundary intentionally left undone, and each change reverted for not lowering reader load. Omit this line when nothing was deferred or reverted.
+- **Deferred:** name each behaviour change or migration boundary intentionally left undone, and each change reverted for not lowering reader load. Write `none` when nothing was deferred or reverted.
 
 Then, only when step 1 found a migration boundary, offer `/migrating` with the boundary named (the old name or shape, and the stored data, rollout or separately updated consumer that holds it) and the invocation as this harness writes it. It is the human's to start; you never run it. With no boundary found, end at the report.
 

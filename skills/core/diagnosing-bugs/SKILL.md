@@ -42,7 +42,7 @@ Spend disproportionate effort here. **Be aggressive. Be creative. Refuse to give
 7. **Property / fuzz loop.** If the bug is "sometimes wrong output", run 1000 random inputs and look for the failure mode.
 8. **Bisection harness.** If the bug appeared between two known states (commit, dataset, version), automate "boot at state X, check, repeat" so you can `git bisect run` it.
 9. **Differential loop.** Run the same input through old-version vs new-version (or two configs) and diff outputs.
-10. **HITL bash script.** Last resort. If a human must click, drive _them_ with a script so the loop is still structured. `scripts/hitl-loop.template.sh` is a template to copy, not a script to run: copy it, replace the steps between its edit markers with this repro's, and run your copy. Captured output feeds back to you. This script drives a human through a repro loop inside this diagnosis; it is not `/wizard` (see **Suggest at handback**).
+10. **HITL bash script.** Last resort. If a human must click, drive _them_ with a script so the loop is still structured. `scripts/hitl-loop.template.sh` is a template to copy, not a script to run: copy it, replace the steps between its edit markers with this repro's, make the `printf` lines at its end print your captures, and run your copy. Captured output feeds back to you. This script drives a human through a repro loop inside this diagnosis; `/wizard` is a handback suggestion for a blocking human-only sequence.
 
 Build the right feedback loop, and the bug is 90% fixed.
 
@@ -121,7 +121,7 @@ Tool preference:
 
 **Wrong-state branch.** When the symptom is wrong state or output rather than a crash, localise it by **divergence**: run the same input through an oracle (the last good version, a reference implementation, a worked expected trace) and through the code, find the first point where the two diverge, then search back from there for the first cause. Trace coarse first (phase or module boundaries), and fine only inside the span where they part.
 
-**Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, query plan), then bisect. Measure first, fix second. Vet the baseline and every later number against `verifying`'s reported-number reference ("a reported number is a claim") before you trust it. Try the performance mantras in order, cheapest first:
+**Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, query plan), then bisect. Measure first, fix second. Vet the baseline and every later number against `verifying`'s reported-number reference ("a reported number is a claim") before you trust it; without `verifying`, report the numbers as unvetted. Try the performance mantras in order, cheapest first:
 
 1. Don't do it. Stop work whose result nothing uses rather than cheapening it.
 2. Do it, but don't do it again.
@@ -176,7 +176,7 @@ At handback, or at the blocker where stated, offer a follow-up only when its con
 - `/hillclimb` when evidence establishes a performance problem and what remains is sustained improvement of a measurable result through competing experiments. Name the metric, the baseline and the remaining question. An ordinary measured fix stays in this diagnosis.
 - `/wizard` at the blocker, when a sequence only the human can perform blocks progress and an interactive procedure would materially help. Explain the outcome it reaches and where you resume. A single approval or value is asked for directly.
 - An incident review, when the bug was a real service incident, now stabilised, whose impact, timeline, contributing conditions or follow-ups still need examining: ask the pack guides this project lists for an *incident review* and offer what they name, with the incident. It reviews the incident, not this session's work. When no guide answers, offer nothing.
-- `/handoff` when the user chooses to defer or hand over the diagnosis and its evidence (the loop, the minimised repro, the refuted hypotheses) would be costly to rebuild.
+- `/handoff` when the user chooses to defer or hand over the diagnosis and its evidence (the loop, the minimised repro, the refuted hypotheses) would be costly to rebuild. A tracker record that already holds them is not duplicated.
 
 Repeat an offer only when circumstances change materially. With no condition observed, end without one.
 

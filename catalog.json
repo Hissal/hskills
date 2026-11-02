@@ -35,6 +35,10 @@
     "path": "skills/core/dependency-audit",
     "requires": []
   },
+  "hissal.skill-collection/diagnosing-bugs": {
+    "path": "skills/core/diagnosing-bugs",
+    "requires": []
+  },
   "hissal.skill-collection/domain-modeling": {
     "path": "skills/core/domain-modeling",
     "requires": []
@@ -115,6 +119,10 @@
     "requires": [
       "hissal.skill-collection/reviewing"
     ]
+  },
+  "hissal.skill-collection/tdd": {
+    "path": "skills/core/tdd",
+    "requires": []
   },
   "hissal.skill-collection/test-review": {
     "path": "skills/core/test-review",

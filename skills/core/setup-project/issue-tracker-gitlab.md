@@ -1,5 +1,7 @@
 # Issue tracker: GitLab
 
+A missing field means the owning skill's default.
+
 Issues and specs for this repo live as GitLab issues. Use the [`glab`](https://gitlab.com/gitlab-org/cli) CLI for all operations.
 
 ## Conventions
@@ -16,7 +18,7 @@ Infer the repo from `git remote -v`; `glab` does this automatically when run ins
 
 ## Merge requests as a triage surface
 
-**MRs as a request surface: no.** _(Set to `yes` if this repo treats external merge requests as feature requests; `/triage` reads this flag.)_
+_`/triage` reads this flag; with no flag, it is `no`. If this repo treats external merge requests as feature requests, add this line: `**MRs as a request surface: yes.**`_
 
 When set to `yes`, MRs run through the same labels and states as issues, using the `glab mr` equivalents:
 

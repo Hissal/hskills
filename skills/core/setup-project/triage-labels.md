@@ -1,5 +1,7 @@
 # Triage Labels
 
+A missing field means the owning skill's default.
+
 The skills speak in terms of five canonical triage roles. Each role's label is its own name by default. This file maps a role to the actual label string used in this repo's issue tracker only where that differs; a role with no row uses the default.
 
 | Role              | Label in our tracker | Meaning                                  |

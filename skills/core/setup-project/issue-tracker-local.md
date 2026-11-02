@@ -1,5 +1,7 @@
 # Issue tracker: Local Markdown
 
+A missing field means the owning skill's default.
+
 Issues and specs for this repo live as markdown files in `.scratch/`.
 
 ## Conventions

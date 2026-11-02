@@ -94,6 +94,10 @@ The block holds one sub-block per section that writes one:
 
 [one line per selected document: when to read it and where].
 
+### Vendor sources
+
+[one-line summary of the sources]. [Only when any follow a dependency: "When changing <those dependencies>, follow the check there."] See `docs/agents/vendor-sources.md`.
+
 ### Setup handoff
 
 [how many setup questions are open, only while any are]. See `docs/agents/setup-handoff.md`.
@@ -126,7 +130,7 @@ A fact with no sensible default, such as the tracker or the check commands, is a
 
 Facts live in one prose file per group under `docs/agents/`, linked from the block. A fact moves to `.agents/config/` only when a tool, not an agent, must read it.
 
-Every config file opens with this line, directly under its title; a file this skill owns that lacks it gets the line through the draft. A JSON config file has no title and carries the line as its first key, `$comment`.
+Every config file opens with this line, directly under its title; a config file this skill owns that lacks it gets the line through the draft, and `docs/agents/setup-handoff.md` and `docs/agents/setup-research/` are not config files, so neither the line nor the no-change check under [Confirm and edit](#confirm-and-edit) applies to them. A JSON config file has no title and carries the line as its first key, `$comment`.
 
 > A missing field means the owning skill's default.
 
@@ -155,6 +159,12 @@ Recommend collection skills, vendor skills and dependency-shipped guidance toget
 Skills already installed and pointers already in `### Vendor docs` are settled. When nothing new remains to recommend, say so in one line and write nothing.
 
 The view takes the owner's choice. Each pick then goes in the draft with its install command or pointer, and is delivered once the draft is approved. Documentation pointers go in the `### Vendor docs` sub-block; a run with none writes no sub-block.
+
+### Vendor sources
+
+When this run delivers a vendor pick or a pick waiting for its dependency, when the owner deselects one, or when `docs/agents/vendor-sources.md` exists, read [vendor-sources.md](references/vendor-sources.md) and follow it: record the picks, check what the file holds, and remove what is no longer selected. Otherwise skip this section and write no file.
+
+Refreshing happens during this run, or when an agent changes a followed dependency within its task's authority. Nothing runs between those times.
 
 ### Issue tracker
 

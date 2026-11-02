@@ -11,7 +11,7 @@ metadata:
 
 One contract for every agent you start: who may start it, what it runs on, what its brief carries, what it returns, and how you check it. The calling workflow says what it needs; this skill resolves how. The exception: a calling skill may say that a plain read-only helper on the host's native subagent tool, with no model, harness or effort asked for, starts without this skill.
 
-Done when every agent you started has a resolved choice shown in a dispatch summary, a standalone brief, and a return you checked against the real tree, or a blocked dispatch you reported.
+Done when every agent you started has a resolved choice in the dispatch summary of your final report, a standalone brief, and a return you checked against the real tree, or a blocked dispatch you reported.
 
 Invoked with the argument `setup` (`/delegating setup`), you write the owner's personal delegation policy with them instead: read [policy setup](references/SETUP.md) and follow it in place of the steps below. Read it only in that mode.
 
@@ -90,12 +90,13 @@ An action the invoking workflow already authorised (an autonomous flow's push or
 
 ## 6. Dispatch
 
-Before the first dispatch call, write this summary as visible text in the same message as that call. The user sees neither your thinking nor the brief, so a summary only there, or only in the final report, does not count.
+Keep this summary for each agent you dispatch, and put it in your final report:
 
 ```md
 **Dispatch:** <role> on <harness or provider>, <model>, effort <level> [<approximation or limitation>]
 **Transport:** <the host's tool | CLI: <command>>
 **Selection:** <explicit instruction | policy: <rule, e.g. workflows.code-review[0] or rules[1]> | automatic: <no policy | no matching rule | outside the list: why>>; diversity <met | reused: why | not asked>
+**Ran as:** <confirmed from <the record> | unconfirmed: why>
 ```
 
 One line per agent when several go together.

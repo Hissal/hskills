@@ -21,6 +21,7 @@
     "./implement",
     "./implement-spec",
     "./migrating",
+    "./pr",
     "./prototype",
     "./receiving-review",
     "./refactoring",

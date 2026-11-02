@@ -39,6 +39,7 @@ Read: docs source of `anomalyco/opencode` at `8bca5329293a34f4bdd7fdc4f4020be80c
 - `--format json` prints raw JSON events (`step_start`, `tool_use`, `text`, `step_finish`); they do not name the model.
 - `--auto` auto-approves permissions that are not explicitly denied: use it only when the brief's Authority covers every such action.
 - `opencode models` lists the configured models.
+- Give every run a time limit: one run on 2026-11-02 hung for 500 s with no output and no session, and the same command then finished in 29 s. The cause was not found.
 
 ## Other CLIs
 

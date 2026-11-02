@@ -142,6 +142,8 @@ Each research subagent has the role researcher and the difficulty of its ticket'
 - **Resolution**: "Post a resolution comment on the ticket with a short summary of the findings and a context pointer to the file on the branch, close the ticket, then append `- [<ticket name>](<link>): <one-line gist>` to the map's Decisions so far. Claim, create and change no other ticket."
 - **Return**: a few lines of summary, the branch and the file's path, and any follow-up needs the findings raise. "Offer the user nothing; the session that started you decides what to offer."
 
+When the tracker is files in the checkout and a subagent runs isolated from that checkout, the dispatching session claims the ticket and records the resolution from the subagent's return; the brief asks that subagent for no tracker edit.
+
 ## Suggest at the stopping point
 
 When charting stops, after a ticket's resolution is recorded, or at a blocker before dependent work, offer a follow-up only when its condition was observed here, giving the concrete reason and the invocation. Each one offers; none runs, resolves a ticket or widens what this session may do:

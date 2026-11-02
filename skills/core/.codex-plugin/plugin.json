@@ -23,6 +23,7 @@
     "./reviewing",
     "./risky-changes",
     "./second-opinion",
+    "./tdd",
     "./test-review",
     "./to-questionnaire",
     "./to-spec",

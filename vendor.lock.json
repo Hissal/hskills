@@ -89,6 +89,14 @@
       "changes": "trigger narrowed to public APIs, data transforms or drops, pricing or quotas, defaults, and provider or model parameters; collection metadata; evidence path and approver from project configuration; verified, unvalidated and failed statuses; research step and fixed case count dropped; evidence record template; pack-guide extension point and people's reports as their own evidence; approval pending when unattended; post-deployment check kept only as a record line"
     },
     {
+      "skill": "skills/core/tdd",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/tdd",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; covers all test work with a trigger-only description; tests-are-code principle with the project's coding guidance; four-question authoring gate; red for the right reason with a stub past non-assertion failures; prove the test can fail; fixture-supplied result, vacuous and new absence assertion anti-patterns; refactoring pointer moves from code-review to refactoring; pack-guide extension point; process calls; /test-review suggestion and parent-agent return; mocking example endpoints under /api for the copied-file safety check"
+    },
+    {
       "skill": "skills/core/to-questionnaire",
       "source": "mattpocock/skills",
       "path": "skills/productivity/to-questionnaire",

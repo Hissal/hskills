@@ -23,8 +23,27 @@
     "path": "skills/packs/csharp/csharp-guide",
     "requires": []
   },
+  "hissal.skill-collection/delegating": {
+    "path": "skills/core/delegating",
+    "requires": []
+  },
   "hissal.skill-collection/dependency-audit": {
     "path": "skills/core/dependency-audit",
+    "requires": []
+  },
+  "hissal.skill-collection/domain-modeling": {
+    "path": "skills/core/domain-modeling",
+    "requires": []
+  },
+  "hissal.skill-collection/grill-with-docs": {
+    "path": "skills/core/grill-with-docs",
+    "requires": [
+      "hissal.skill-collection/domain-modeling",
+      "hissal.skill-collection/grilling"
+    ]
+  },
+  "hissal.skill-collection/grilling": {
+    "path": "skills/core/grilling",
     "requires": []
   },
   "hissal.skill-collection/guide": {
@@ -36,6 +55,14 @@
     "requires": [
       "hissal.skill-collection/verifying"
     ]
+  },
+  "hissal.skill-collection/implement": {
+    "path": "skills/core/implement",
+    "requires": []
+  },
+  "hissal.skill-collection/implement-spec": {
+    "path": "skills/core/implement-spec",
+    "requires": []
   },
   "hissal.skill-collection/improve-codebase-architecture": {
     "path": "skills/core/architecture-review",
@@ -53,6 +80,10 @@
   },
   "hissal.skill-collection/receiving-review": {
     "path": "skills/core/receiving-review",
+    "requires": []
+  },
+  "hissal.skill-collection/research": {
+    "path": "skills/core/research",
     "requires": []
   },
   "hissal.skill-collection/reviewing": {
@@ -75,8 +106,28 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/to-questionnaire": {
+    "path": "skills/core/to-questionnaire",
+    "requires": []
+  },
+  "hissal.skill-collection/to-spec": {
+    "path": "skills/core/to-spec",
+    "requires": []
+  },
+  "hissal.skill-collection/to-tickets": {
+    "path": "skills/core/to-tickets",
+    "requires": []
+  },
+  "hissal.skill-collection/triage": {
+    "path": "skills/core/triage",
+    "requires": []
+  },
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",
+    "requires": []
+  },
+  "hissal.skill-collection/wayfinder": {
+    "path": "skills/core/wayfinder",
     "requires": []
   },
   "hissal.skill-collection/why": {

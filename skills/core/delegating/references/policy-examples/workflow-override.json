@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "autoFallback": false,
+  "effortDefaults": {
+    "normal": "high"
+  },
+  "workflows": {
+    "code-review": [
+      {
+        "role": ["reviewer"],
+        "pool": [
+          { "provider": "anthropic", "family": "opus" },
+          { "provider": "openai", "family": "sol" }
+        ],
+        "effort": "xhigh"
+      }
+    ]
+  },
+  "rules": [
+    {
+      "difficulty": ["simple"],
+      "order": [
+        { "harness": "claude-code", "model": "claude-sonnet-5-5" }
+      ],
+      "effort": "low"
+    }
+  ]
+}

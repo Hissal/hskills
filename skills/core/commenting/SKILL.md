@@ -26,6 +26,7 @@ The comment starts here.
 
 - `<model>`: the full public name the harness reports for the model writing the comment, copied as reported (for example "Claude Opus 5.5", not "Claude"). When the harness reports no model name, use the harness name. A guessed name is worse than the harness name.
 - `<user>`: the GitHub login you post as (`gh api user --jq .login`).
+- Context suffix: only when the skill that called you supplies one, add it as given after the bold text, a comma and a space between. For example, the suffix `during triage` gives `> 🤖 **<model> on behalf of @<user>**, during triage`. With none supplied, the line ends at the bold text.
 - The note holds that one line; the comment sits below it, outside the quote. It is the comment's only attribution: no signature, footer, heading or rule.
 
 ## 2. Write the comment

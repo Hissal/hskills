@@ -5,16 +5,28 @@
     "skills/core/break-ui",
     "skills/core/code-review",
     "skills/core/commenting",
+    "skills/core/delegating",
     "skills/core/dependency-audit",
+    "skills/core/domain-modeling",
+    "skills/core/grill-with-docs",
+    "skills/core/grilling",
     "skills/core/guide",
     "skills/core/hillclimb",
+    "skills/core/implement",
+    "skills/core/implement-spec",
     "skills/core/migrating",
     "skills/core/receiving-review",
+    "skills/core/research",
     "skills/core/reviewing",
     "skills/core/risky-changes",
     "skills/core/second-opinion",
     "skills/core/test-review",
+    "skills/core/to-questionnaire",
+    "skills/core/to-spec",
+    "skills/core/to-tickets",
+    "skills/core/triage",
     "skills/core/verifying",
+    "skills/core/wayfinder",
     "skills/core/why"
   ],
   "packs": {
@@ -25,5 +37,9 @@
       "skills/packs/onboarding/onboarding-guide"
     ]
   },
-  "expensive": []
+  "expensive": [
+    "skills/core/implement-spec",
+    "skills/core/research",
+    "skills/core/wayfinder"
+  ]
 }

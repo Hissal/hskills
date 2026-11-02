@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Personal delegation policy",
+  "description": "The file at ~/.config/skill-collection/delegation.json. Fields and matching: POLICY.md beside this file.",
+  "type": "object",
+  "required": ["version"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "description": "Optional path or URL of this schema, for editors.",
+      "type": "string"
+    },
+    "version": {
+      "description": "Schema version of the policy file.",
+      "const": 1
+    },
+    "autoFallback": {
+      "description": "true lets delegating pick a suitable model outside a rule's choices, unasked, once they are exhausted. Default false: ask first. A rule's own autoFallback wins.",
+      "type": "boolean"
+    },
+    "effortDefaults": {
+      "description": "Personal effort for each difficulty when a matching rule names none. Unset difficulties keep the collection's defaults (low, medium, high).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "simple": { "$ref": "#/$defs/effort" },
+        "normal": { "$ref": "#/$defs/effort" },
+        "difficult": { "$ref": "#/$defs/effort" }
+      }
+    },
+    "rules": {
+      "description": "Rules for every workflow, tried in order after the dispatching workflow's own rules.",
+      "$ref": "#/$defs/rules"
+    },
+    "workflows": {
+      "description": "Per-workflow overrides: each key is a workflow's callable name (code-review, implement-spec). Its rules are tried, in order, before the top-level rules.",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/rules" }
+    }
+  },
+  "$defs": {
+    "effort": {
+      "description": "The collection's effort intent; each harness maps it to its own control.",
+      "enum": ["low", "medium", "high", "xhigh", "max"]
+    },
+    "name": {
+      "description": "A lower-case identifier: letters and digits, words joined by single hyphens.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "rules": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/rule" }
+    },
+    "rule": {
+      "description": "Matches an agent by role and difficulty; an omitted matcher matches any. Exactly one of order or pool.",
+      "type": "object",
+      "additionalProperties": false,
+      "oneOf": [
+        { "required": ["order"] },
+        { "required": ["pool"] }
+      ],
+      "properties": {
+        "role": {
+          "description": "Role names, lower case, words separated by single spaces. A name matches a caller's role equal to it or ending in it as a whole word, ignoring case: reviewer matches spec reviewer.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^[a-z0-9]+( [a-z0-9]+)*$" }
+        },
+        "difficulty": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "enum": ["simple", "normal", "difficult"] }
+        },
+        "order": {
+          "description": "Ordered choices: the first suitable available one is used.",
+          "$ref": "#/$defs/choices"
+        },
+        "pool": {
+          "description": "Unordered choices: delegating picks among the suitable available members. A pool supplies choices, not extra agents.",
+          "$ref": "#/$defs/choices"
+        },
+        "effort": {
+          "description": "Effort for every choice in this rule. Unset: effortDefaults, then the collection's defaults.",
+          "$ref": "#/$defs/effort"
+        },
+        "autoFallback": {
+          "description": "Overrides the top-level autoFallback for this rule.",
+          "type": "boolean"
+        }
+      }
+    },
+    "choices": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/choice" }
+    },
+    "choice": {
+      "description": "Where the model runs (harness, provider or both) and which model (an exact ID or a version-independent family).",
+      "type": "object",
+      "additionalProperties": false,
+      "anyOf": [
+        { "required": ["harness"] },
+        { "required": ["provider"] }
+      ],
+      "oneOf": [
+        { "required": ["model"] },
+        { "required": ["family"] }
+      ],
+      "properties": {
+        "harness": {
+          "description": "The agent runtime that runs the model, such as claude-code, codex or opencode.",
+          "$ref": "#/$defs/name"
+        },
+        "provider": {
+          "description": "Who serves the model, such as anthropic, openai or zai.",
+          "$ref": "#/$defs/name"
+        },
+        "model": {
+          "description": "An exact model ID as the harness or provider takes it (OpenCode: provider/model-id). Never substituted; may name a preview.",
+          "type": "string",
+          "pattern": "^\\S+$"
+        },
+        "family": {
+          "description": "A version-independent family (opus, sol, glm). Resolves to the newest suitable stable model in the live catalog.",
+          "$ref": "#/$defs/name"
+        }
+      }
+    }
+  }
+}

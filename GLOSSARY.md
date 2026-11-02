@@ -115,10 +115,10 @@ Another skill that must be available for a managed skill to work. A suggestion o
 
 **Source**:
 An external repository the collection may borrow skills, ideas or mechanisms from.
-_Avoid_: upstream (that is `mattpocock/skills`, the source Matt-derived skills are tracked against)
+_Avoid_: upstream (that is `mattpocock/skills`, the source Matt-derived skills are copied from and tracked against)
 
 **The fork**:
-`Hissal/mattpocock-skills-unity`, the Unity edition of Matt Pocock's skills. A source: Matt-derived skills are copied from it into this repo, and it is no longer where they are authored.
+`Hissal/mattpocock-skills-unity`, the Unity edition of Matt Pocock's skills. A source for the Unity pack only: core Matt-derived skills are copied from `mattpocock/skills`, not from it, and it is no longer where any skill is authored.
 _Avoid_: base, member
 
 **Override**:

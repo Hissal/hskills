@@ -149,6 +149,15 @@ The repository is LF everywhere, with no UTF-8 BOM: either breaks frontmatter an
 
 A skill copied from a source keeps its provenance in plain files (ADR 0002, [#17](https://github.com/Hissal/skill-collection/issues/17#issuecomment-6108951556), [#51](https://github.com/Hissal/skill-collection/issues/51#issuecomment-6477057987)). An idea taken without copying text needs no record, and no skill carries a `SPEC.md` or `SOURCES.md`.
 
+The copying rule ([#263](https://github.com/Hissal/skill-collection/issues/263)):
+
+- Copy source lines that are good; change them only where a change is warranted, never for its own sake.
+- A skill mostly copied from one source is a copied skill: lock entry, pin, baseline, licence file and generated `NOTICE.md`, as below.
+- Otherwise, verbatim lines from a permissively licensed source (MIT, Apache-2.0 and the like) need no pin. Name each such source with its full commit SHA, its licence and its copyright line: in the hand-written `NOTICE.md` of an adapted skill (below), or in the lock entry's `changes` line of a copied skill that takes lines from a second source.
+- Copyleft sources (CC-BY-SA and the like) stay idea-only: no text is copied from them.
+
+The files:
+
 - **Lock**: `vendor.lock.json` at the root lists every copied skill:
 
   ```json
@@ -161,7 +170,7 @@ A skill copied from a source keeps its provenance in plain files (ADR 0002, [#17
       "changes": "one line: what this copy changes, or none" } ] }
   ```
 
-  `skill` is the copy's folder in this tree; `source` the GitHub `owner/repo`; `path` the skill folder in the source; `sha` the pinned commit; `license` the source's licence identifier; `changes` the one-line reason for local changes. Every field is required and no other field is allowed. One entry per skill folder.
+  `skill` is the copy's folder in this tree; `source` the GitHub `owner/repo`; `path` the skill folder in the source; `sha` the pinned commit; `license` the source's licence identifier; `changes` the one-line reason for local changes; it also names any second source the copy takes verbatim lines from, as `lines from <owner>/<repo> <path> at <sha>, <licence>, Copyright (c) <year> <holder>`. Every field is required and no other field is allowed. One entry per skill folder.
 - **Baseline**: the source folder at the pinned commit, every file, at `vendor/<owner>/<repo>/<skill>/` (`<skill>` is the copy's folder name). The vendor area sits outside every skill root and plugin directory, so no harness loads the baseline's `SKILL.md` and no plugin cache copies it. Everything under `vendor/` belongs to one entry's baseline. Baselines are committed LF and BOM-free like every file (see [Line endings](#line-endings)); the drift script normalises CRLF and BOM itself when it compares with a source.
 - **Licence area**: each source's licence in full at `licenses/<owner>/<repo>.txt`.
 - **`NOTICE.md`**: each copied skill's folder holds one, generated from the lock and the licence area: the source repository, path, pinned commit, licence, local changes and the full licence text. It travels with plugin and folder installs. Never edit it; after changing the lock or a licence file, regenerate:
@@ -171,7 +180,13 @@ A skill copied from a source keeps its provenance in plain files (ADR 0002, [#17
   ```
 
   `NOTICE.md` is not a reference: it needs no link from `SKILL.md`.
-- **Adapted skills**: a skill whose files rewrite a source in our own words, copying no text, has no lock entry. When its ticket asks for provenance pointers, keep them out of the files an agent reads: a link to the source invites the agent to fetch it. Write them in a hand-written `NOTICE.md` in the skill folder instead. It names each adapted source with a GitHub link pinned to a full commit SHA and that source's licence identifier, travels with installs and is never loaded. It records provenance, so a source can be compared against its newer commits; it carries no licence text, since nothing is copied ([#157](https://github.com/Hissal/skill-collection/issues/157)).
+- **Adapted skills**: a skill written in our own words has no lock entry, even when it keeps some verbatim lines from a permissive source. When it copies lines, or its ticket asks for provenance pointers, keep the pointers out of the files an agent reads: a link to the source invites the agent to fetch it. Write them in a hand-written `NOTICE.md` in the skill folder instead. It names each adapted source with a GitHub link pinned to a full commit SHA and that source's licence identifier, travels with installs and is never loaded. It records provenance, so a source can be compared against its newer commits ([#157](https://github.com/Hissal/skill-collection/issues/157)). A source the skill copies lines from is also named with its copyright line, and the entry says which lines are copied:
+
+  ```markdown
+  - `SKILL.md`, the two lines of the stop rule, copied verbatim: obra/superpowers [`verification-before-completion`](https://github.com/obra/superpowers/blob/8ca22dba9a94f28898bbce59f2537ff4d87c747d/skills/verification-before-completion/SKILL.md). MIT, Copyright (c) 2025 Jesse Vincent.
+  ```
+
+  It carries no licence text: no lock entry or licence-area file backs it.
 
 Scripts read the lock through `scripts/vendor/lock.js`, never by parsing it themselves.
 

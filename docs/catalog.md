@@ -658,6 +658,7 @@ changing skill identity or requirements with
 | `hissal.skill-collection/grilling` | [`grilling`](../skills/core/grilling/SKILL.md) | — |
 | `hissal.skill-collection/guide` | [`guide`](../skills/core/guide/SKILL.md) | — |
 | `hissal.skill-collection/hillclimb` | [`hillclimb`](../skills/core/hillclimb/SKILL.md) | `hissal.skill-collection/verifying` [`verifying`](../skills/core/verifying/SKILL.md) |
+| `hissal.skill-collection/how` | [`how`](../skills/core/how/SKILL.md) | — |
 | `hissal.skill-collection/implement` | [`implement`](../skills/core/implement/SKILL.md) | — |
 | `hissal.skill-collection/implement-spec` | [`implement-spec`](../skills/core/implement-spec/SKILL.md) | — |
 | `hissal.skill-collection/improve-codebase-architecture` | [`architecture-review`](../skills/core/architecture-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |

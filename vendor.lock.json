@@ -65,6 +65,14 @@
       "changes": "collection metadata and gates; fact-finding by a native read-only helper, through delegating only when needed; scope, one-decision, map-first and exit-check rules; confirmed assumptions; /to-questionnaire and /wayfinder suggestions and parent-agent return; trigger-only description"
     },
     {
+      "skill": "skills/core/how",
+      "source": "cursor/plugins",
+      "path": "pstack/skills/how",
+      "sha": "ae5650febf4320793844c12c4adaa937f417f8da",
+      "license": "MIT",
+      "changes": "collection metadata and gates; scope named as local code and installed packages in the description and body, with external sources left out; done line; the Task tool, model-rule and poteto-mode dispatch lines replaced by a delegating consult with the host-subagent fallback and the read-it-yourself path; a simple question answered directly instead of by one explainer; explorer angles kept from overlapping and started in parallel; answer in chat with no file unless asked; prompt references linked and their tool names made harness-neutral"
+    },
+    {
       "skill": "skills/core/implement",
       "source": "mattpocock/skills",
       "path": "skills/engineering/implement",

@@ -60,6 +60,10 @@
       "hissal.skill-collection/verifying"
     ]
   },
+  "hissal.skill-collection/how": {
+    "path": "skills/core/how",
+    "requires": []
+  },
   "hissal.skill-collection/implement": {
     "path": "skills/core/implement",
     "requires": []

@@ -4,7 +4,7 @@ description: Scan a codebase for deepening opportunities, present them as a visu
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/improve-codebase-architecture"
+  agent-skills-sync.id: "hissal.skill-collection/architecture-review"
   agent-skills-sync.requires: '["hissal.skill-collection/reviewing"]'
   opencode/autoinvoke: "false"
 ---

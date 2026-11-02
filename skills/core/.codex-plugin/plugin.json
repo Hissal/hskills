@@ -20,6 +20,7 @@
     "./implement-spec",
     "./migrating",
     "./receiving-review",
+    "./refactoring",
     "./research",
     "./reviewing",
     "./risky-changes",

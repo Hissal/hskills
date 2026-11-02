@@ -90,6 +90,10 @@
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []
   },
+  "hissal.skill-collection/pr": {
+    "path": "skills/core/pr",
+    "requires": []
+  },
   "hissal.skill-collection/prototype": {
     "path": "skills/core/prototype",
     "requires": []

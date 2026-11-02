@@ -1,4 +1,10 @@
 {
+  "hissal.skill-collection/architecture-review": {
+    "path": "skills/core/architecture-review",
+    "requires": [
+      "hissal.skill-collection/reviewing"
+    ]
+  },
   "hissal.skill-collection/blast-radius": {
     "path": "skills/core/blast-radius",
     "requires": [
@@ -63,12 +69,6 @@
   "hissal.skill-collection/implement-spec": {
     "path": "skills/core/implement-spec",
     "requires": []
-  },
-  "hissal.skill-collection/improve-codebase-architecture": {
-    "path": "skills/core/architecture-review",
-    "requires": [
-      "hissal.skill-collection/reviewing"
-    ]
   },
   "hissal.skill-collection/migrating": {
     "path": "skills/core/migrating",

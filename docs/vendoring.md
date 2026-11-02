@@ -6,10 +6,13 @@ Placeholders: `<owner>/<repo>` is the source, `<path>` the skill folder inside i
 
 ## Copy or own words
 
+Copy a source's line when it is good. Change it only where a change is warranted (the collection's format, a fix, an adaptation the skill needs), never for its own sake. The rules below decide what a copied line costs; the file formats are in [Copied skills](skill-format.md#copied-skills).
+
 Decide first, per skill:
 
-- **Copy**: the source's text comes into the tree. Only from a source whose licence permits copying with its notice (MIT, Apache-2.0 and the like). Follow [Intake](#intake).
-- **Own words**: an idea-only take, or anything from a copyleft source. Write the skill in the collection's own words. It gets no lock entry, no baseline, no licence-area file, and no `SPEC.md` or `SOURCES.md`. Record where it drew from in a hand-written `NOTICE.md`, as [Adapted skills](skill-format.md#copied-skills) describes: each source linked and pinned to a full commit SHA, so the source can later be compared against its newer commits for changes worth taking. The intake ends here.
+- **Copy**: the skill is mostly copied from one source, whose licence permits copying with its notice (MIT, Apache-2.0 and the like). It gets the full intake: lock entry, pin, baseline, licence-area file and generated `NOTICE.md`. Follow [Intake](#intake). If it also takes verbatim lines from a second permissive source, that source needs no pin, baseline or licence-area file of its own: name it in the lock entry's `changes` line with its full commit SHA, its licence and its copyright line.
+- **Own words**: anything else. Write the skill in the collection's own words; verbatim lines from a permissive source may still come in where they are good, and need no pin. The skill gets no lock entry, no baseline, no licence-area file, and no `SPEC.md` or `SOURCES.md`. Record where it drew from in a hand-written `NOTICE.md`, as [Adapted skills](skill-format.md#copied-skills) describes: each source linked at its full commit SHA, so it can later be compared against its newer commits for changes worth taking, and each source of copied lines also named with its licence and copyright line. The intake ends here.
+- **Copyleft sources** (CC-BY-SA and the like) stay idea-only, whichever kind the skill is: no text is copied from them.
 
 ## Intake
 

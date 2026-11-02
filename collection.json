@@ -8,6 +8,7 @@
     "skills/core/commenting",
     "skills/core/delegating",
     "skills/core/dependency-audit",
+    "skills/core/diagnosing-bugs",
     "skills/core/domain-modeling",
     "skills/core/grill-with-docs",
     "skills/core/grilling",

@@ -41,6 +41,14 @@
       "changes": "collection metadata and gates; agent-contributor lens; project glossary and ADR line; read as vocabulary by other workflows without a design session; caller-first design; four invariant questions; defer-the-seam principle; split-ownership, two-ways and importable-internals red flags; pack-guide extension point for seam and compatibility rules; design-it-twice consults delegating before its subagents; trigger-only description"
     },
     {
+      "skill": "skills/core/diagnosing-bugs",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/diagnosing-bugs",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; pack-guide extension point; tdd and verifying as process calls; error output as untrusted data, sanitised before a web search; human-in-the-loop script told apart from /wizard; wrong-state divergence branch; perf branch vets numbers through verifying and tries the performance mantras in order; refuted hypotheses reverted and a three-strike stop; causal-chain gate and deferred divergent fix; regression test through tdd, red in its own assertion, with a missing seam reported; fix confirmed through verifying and the original loop; /test-review, /hillclimb, /wizard, incident-review and /handoff suggestions and parent-agent return; trigger-only description; lines from cursor/plugins pstack/skills/poteto-mode/playbooks/perf-issue.md at ae5650febf4320793844c12c4adaa937f417f8da, MIT, Copyright (c) 2026 Lauren Tan; lines from EveryInc/compound-engineering-plugin skills/ce-debug/SKILL.md at 77cc431daaebea7ee9f33ac530a66eec5404572b, MIT, Copyright (c) 2025 Every"
+    },
+    {
       "skill": "skills/core/domain-modeling",
       "source": "mattpocock/skills",
       "path": "skills/engineering/domain-modeling",

@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/setup-matt-pocock-skills`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: renamed setup-project; collection metadata and gates; instruction-file layout with a separately approved move; triage question for a real tracker only, with a label table only when a label differs; re-runs keep settled choices; sections separated from the process; seeds name the collection and its skills
+- Local changes: renamed setup-project; collection metadata and gates; instruction-file layout with a separately approved move; triage question for a real tracker only, with a label table only when a label differs; re-runs keep settled choices; sections separated from the process; seeds name the collection and its skills; pack list and pack SETUP.md runs
 
 ## Licence
 

@@ -14,6 +14,8 @@ Scaffold the per-repo configuration the other skills read, linked from the `## A
 
 This is a prompt-driven skill, not a deterministic script. Explore, present what you found, confirm with the user, then write.
 
+Invoked with a pack name (`/setup-project <pack>`), read [packs](references/packs.md) and follow its one-pack run in place of the full [process](#process).
+
 ## Process
 
 ### Explore
@@ -64,6 +66,10 @@ The block holds one sub-block per section that writes one:
 ### Domain docs
 
 [one-line summary of layout: "single-context" or "multi-context"]. See `docs/agents/domain.md`.
+
+### Packs
+
+- `<guide's exact callable name>`: <its domain in a few words>. See `docs/agents/<pack>.md`.
 ```
 
 Then write each section's docs file, using the seed template it names as a starting point. A docs file that already exists holds the user's edits: change only the lines a changed choice touches, and never rewrite it from its seed.
@@ -125,3 +131,7 @@ Default to **single-context** (one `GLOSSARY.md` + `docs/adr/` at the repo root)
 Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSSARY.md` files) only when exploration found monorepo signals. Then confirm which layout they want.
 
 Record the layout in `docs/agents/domain.md`, from its seed: [domain.md](./domain.md).
+
+### Packs
+
+Take this section last, after every other section, whatever order they are written in. When your skill listing shows no pack guide (`<pack>-guide`, with a plugin prefix when a plugin installed it) and the instruction file has no `### Packs` list, skip it and write no sub-block. Otherwise read [packs](references/packs.md) and follow its full run.

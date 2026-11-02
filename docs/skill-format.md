@@ -172,7 +172,7 @@ The files:
 
   `skill` is the copy's folder in this tree; `source` the GitHub `owner/repo`; `path` the skill folder in the source; `sha` the pinned commit; `license` the source's licence identifier; `changes` the one-line reason for local changes; it also names any second source the copy takes verbatim lines from, as `lines from <owner>/<repo> <path> at <sha>, <licence>, Copyright (c) <year> <holder>`. Every field is required and no other field is allowed. One entry per skill folder.
 - **Baseline**: the source folder at the pinned commit, every file, at `vendor/<owner>/<repo>/<skill>/` (`<skill>` is the copy's folder name). The vendor area sits outside every skill root and plugin directory, so no harness loads the baseline's `SKILL.md` and no plugin cache copies it. Everything under `vendor/` belongs to one entry's baseline. Baselines are committed LF and BOM-free like every file (see [Line endings](#line-endings)); the drift script normalises CRLF and BOM itself when it compares with a source.
-- **Licence area**: each source's licence in full at `licenses/<owner>/<repo>.txt`.
+- **Licence area**: the licence in full of each source a lock entry names in `source`, at `licenses/<owner>/<repo>.txt`. A second source named only in `changes` gets no file here.
 - **`NOTICE.md`**: each copied skill's folder holds one, generated from the lock and the licence area: the source repository, path, pinned commit, licence, local changes and the full licence text. It travels with plugin and folder installs. Never edit it; after changing the lock or a licence file, regenerate:
 
   ```

@@ -15,6 +15,7 @@
     "./grilling",
     "./guide",
     "./hillclimb",
+    "./how",
     "./implement",
     "./implement-spec",
     "./migrating",

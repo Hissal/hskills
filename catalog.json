@@ -78,6 +78,10 @@
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []
   },
+  "hissal.skill-collection/prototype": {
+    "path": "skills/core/prototype",
+    "requires": []
+  },
   "hissal.skill-collection/receiving-review": {
     "path": "skills/core/receiving-review",
     "requires": []

@@ -15,16 +15,16 @@ If the question is whether the rules themselves are right, stepped one action at
 
 ## Process
 
-### 1. Write the module the Logic way
+### 1. Write a pure, deterministic module
 
-Read step 2 of [LOGIC.md](LOGIC.md) and build the module exactly as it describes: pure, deterministic, its state plain data, the seed and the clock coming in as inputs. Behavior adds two things the module answers:
+Put the model in one `<script>` block as a small pure module the page calls into: no DOM, no `document`, no handler reaching inside it, so it lifts into the real code once the question is answered. Keep its state plain data (values, arrays and objects that survive a JSON round trip) and the module deterministic: the same state and action always give the same next state. Random numbers and time come in as inputs: a seed held in the state and fed to a small seeded generator inside the module, and a clock value carried on the action that needs it. The module itself never calls `Math.random()` or `Date.now()`. The module also answers two things:
 
 - **What can be done now, and why not**: a pure function from state to every action with whether it is allowed and, when it is not, the reason in domain language.
 - **Time**, when something moves on its own: a `tick` action carrying a fixed time step. Each tick advances the model by that step, so a run is the same sequence of ticks wherever it plays.
 
 ### 2. Build the working thing
 
-One file, plain HTML/CSS/JS, under the same single-file rule as every prototype: no build step, no library, everything inline, so it opens offline by double-click.
+One file, plain HTML/CSS/JS, under the single-file rule in the SKILL's [Pick the medium](SKILL.md#pick-the-medium).
 
 - **A form like the real one.** Render the model the way the real thing will look and respond: a list that drags, a form that fills, a queue that drains, a board with pieces on it. Rough is fine; recognisable is required.
 - **Usable within seconds.** It opens on the working thing, already in a sensible starting state, with the obvious first action in view. The brief sits at the top, collapsed to one line that expands.

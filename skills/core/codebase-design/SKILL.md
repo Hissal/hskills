@@ -11,7 +11,7 @@ metadata:
 
 Design **deep modules**: a lot of behaviour behind a small interface, placed at a clean seam, testable through that interface. Use this language and these principles wherever code is being designed or restructured. The aim is leverage for callers, locality for maintainers, and testability for everyone. Assume the next contributor is an agent that sees only the files it opened and copies the nearest example.
 
-When exploring the codebase, read `GLOSSARY.md` (if it exists) so module names match the project's domain language, and check ADRs in the area you're touching.
+When exploring the codebase, read `GLOSSARY.md` (if it exists; follow `GLOSSARY-MAP.md` to the right one when the repo has several) so module names match the project's domain language, and check ADRs in the area you're touching.
 
 Another workflow (`tdd`, `architecture-review`, `migrating` and the like) may read this skill for its vocabulary and principles. That is reading a reference inside the caller's job: apply what fits and carry on with the caller's steps, without starting a design session.
 

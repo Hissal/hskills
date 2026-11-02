@@ -11,15 +11,15 @@ metadata:
 
 TDD is the red → green loop, and this skill governs all test work, test-first or not: every test you write, change or fix earns its place, goes red for the right reason, and is shown able to fail. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle: consult them before and during the loop, not after.
 
-When exploring the codebase, read `GLOSSARY.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+When exploring the codebase, read `GLOSSARY.md` (if it exists; follow `GLOSSARY-MAP.md` to the right one when the repo has several) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
 
-Ask the project's listed pack guides for *writing, setting up and running tests for this stack*; the answer is knowledge for this work, and when none answers, carry on silently. A pack lookup never starts authoring: a review that consults this stack's test idioms stays a review.
+For *writing, setting up and running tests for this stack*, ask the pack guides this project lists; the answer is knowledge for this work, and when none answers, carry on silently. A pack lookup never starts authoring: a review that consults this stack's test idioms stays a review.
 
 The calls below to `codebase-design` and `refactoring` are process calls, not requirements: when one is not installed, say so once and carry on with this skill's own rules.
 
 ## Tests are code
 
-Tests follow the same architecture, naming and standards as production code. Read the project's selected coding guidance and its applicable tooling configuration (linter, formatter, compiler and analyzer settings) through the guidance pointer in project configuration, and apply them to test files exactly as to production files. When the behaviour a test covers changes, the test changes with it.
+Tests follow the same architecture, naming and standards as production code. Project facts come from project configuration: the files linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`. Read the project's selected coding guidance and its applicable tooling configuration (linter, formatter, compiler and analyzer settings) through the guidance pointer there, and apply them to test files exactly as to production files. When the behaviour a test covers changes, the test changes with it.
 
 Reach green by changing the code under test: never weaken, skip or delete a test to get there. Add a test to protect a behaviour, never only to show green.
 

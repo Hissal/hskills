@@ -18,16 +18,7 @@ Name everyone who can act on the design: anonymous callers, signed-in users, oth
 
 A trust boundary is where a value written by one actor reaches code that acts for another. Where does untrusted data cross into your system? Requests, messages and queues, uploaded files, callbacks from third-party services, stored data another actor wrote, and **LLM output**, plus the local values that look internal because the OS handed them to you: another process's command line or environment, filenames on a shared volume, a path in a job payload. Trust follows who *wrote* a value, not which channel delivered it. Every boundary is attack surface.
 
-For each boundary, name what crosses it, who wrote it, and the seam where the design first acts on it. Then ask each question below at that boundary, as a quick lens, not a ceremony:
-
-| Threat | Ask |
-|---|---|
-| **S**poofing | Can someone impersonate a user/service? |
-| **T**ampering | Can data be altered in transit or at rest? |
-| **R**epudiation | Can an action be denied later? |
-| **I**nformation disclosure | Can data leak? |
-| **D**enial of service | Can it be overwhelmed? |
-| **E**levation of privilege | Can a user gain rights they shouldn't? |
+For each boundary, name what crosses it, who wrote it, and the seam where the design first acts on it.
 
 ## 4. Threats
 
@@ -38,8 +29,6 @@ Record each threat with these fields:
 - **Counterevidence**: what would make the threat false: validation, a type that cannot hold the bad value, an authorisation check, a framework default, deployment configuration. Cite each one and confirm it covers this input on this path. When you claim none exists, say how far you searched.
 - **Assumptions**: what the threat takes as true that nobody has checked, such as a deployment setting, a caller's behaviour or an upstream guarantee. An assumption is a named gap, never evidence.
 - **Freshness**: the commit or date the evidence was read at. When the code or configuration behind that evidence changes, re-read it; until then, treat it as an assumption.
-
-Whether a threat is real, how severe it is, and whether the owner accepts the risk are three separate calls. Record each apart; an accepted risk stays in the model with its acceptance named.
 
 ### Attack trees (optional)
 

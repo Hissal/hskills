@@ -19,6 +19,7 @@
     "./implement",
     "./implement-spec",
     "./migrating",
+    "./prototype",
     "./receiving-review",
     "./refactoring",
     "./research",

@@ -81,6 +81,14 @@
       "changes": "collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; reports checked through verifying; findings through receiving-review; draft PR closing work only once verified; process calls; /handoff offer and parent-agent return"
     },
     {
+      "skill": "skills/core/prototype",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/prototype",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; project configuration; brief with keep-if and kill criteria; medium rule and strict single file; pack-guide extension point; throwaway branch created before the first file, separate worktree, pushed capture and return; optional draft PR closed unmerged at the verdict; hand-over check with verifying's unvalidated word; sharing route; verdict against the brief; porting summary; UI variant axes, self-checked variants and a tradeoff table; contents list in the UI reference; /break-ui and /wayfinder suggestions and parent-agent return; description per #44"
+    },
+    {
       "skill": "skills/core/research",
       "source": "mattpocock/skills",
       "path": "skills/engineering/research",

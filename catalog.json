@@ -15,6 +15,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/codebase-design": {
+    "path": "skills/core/codebase-design",
+    "requires": []
+  },
   "hissal.skill-collection/commenting": {
     "path": "skills/core/commenting",
     "requires": []
@@ -78,8 +82,16 @@
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []
   },
+  "hissal.skill-collection/prototype": {
+    "path": "skills/core/prototype",
+    "requires": []
+  },
   "hissal.skill-collection/receiving-review": {
     "path": "skills/core/receiving-review",
+    "requires": []
+  },
+  "hissal.skill-collection/refactoring": {
+    "path": "skills/core/refactoring",
     "requires": []
   },
   "hissal.skill-collection/research": {
@@ -128,6 +140,10 @@
   },
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",
+    "requires": []
+  },
+  "hissal.skill-collection/wait-what": {
+    "path": "skills/core/wait-what",
     "requires": []
   },
   "hissal.skill-collection/wayfinder": {

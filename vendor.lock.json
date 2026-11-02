@@ -33,6 +33,14 @@
       "changes": "scope, shared evidence rules and the stop on a missing requirement come from reviewing; one captured patch with untracked files; spec and standards finding widened; Spec gains changed and unverifiable; a third axis, Failure, and the security-finding hook; smell baseline gains the duplication rule and a platform smell; extension points, handback suggestions and collection metadata replace the Unity line, the setup pointer and the word cap"
     },
     {
+      "skill": "skills/core/codebase-design",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/codebase-design",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; agent-contributor lens; project glossary and ADR line; read as vocabulary by other workflows without a design session; caller-first design; four invariant questions; defer-the-seam principle; split-ownership, two-ways and importable-internals red flags; pack-guide extension point for seam and compatibility rules; design-it-twice consults delegating before its subagents; trigger-only description"
+    },
+    {
       "skill": "skills/core/domain-modeling",
       "source": "mattpocock/skills",
       "path": "skills/engineering/domain-modeling",
@@ -71,6 +79,14 @@
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
       "changes": "collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; reports checked through verifying; findings through receiving-review; draft PR closing work only once verified; process calls; /handoff offer and parent-agent return"
+    },
+    {
+      "skill": "skills/core/prototype",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/prototype",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; project configuration; brief with keep-if and kill criteria; medium rule and strict single file; pack-guide extension point; throwaway branch created before the first file, separate worktree, pushed capture and return; optional draft PR closed unmerged at the verdict; hand-over check with verifying's unvalidated word; sharing route; verdict against the brief; porting summary; UI variant axes, self-checked variants and a tradeoff table; contents list in the UI reference; /break-ui and /wayfinder suggestions and parent-agent return; description per #44"
     },
     {
       "skill": "skills/core/research",
@@ -127,6 +143,14 @@
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
       "changes": "collection metadata and gates; AI disclaimer replaced by commenting with a context suffix; project configuration for tracker and labels; pack-guide extension point; maintainer issues triaged alike; process calls; /to-questionnaire and /handoff suggestions and parent-agent return; contents lists in both references; writing-for-agents process call for agent briefs"
+    },
+    {
+      "skill": "skills/core/wait-what",
+      "source": "mattpocock/skills",
+      "path": "skills/productivity/wait-what",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; description reworded for a clearer, more concise re-explanation; re-pitch asked to be clearer and more concise; rules that the re-pitch keeps the last message's hedges and certainty and corrects it when it was wrong, lines from EveryInc/compound-engineering-plugin skills/wtf/SKILL.md at 77cc431daaebea7ee9f33ac530a66eec5404572b, MIT, Copyright (c) 2025 Every"
     },
     {
       "skill": "skills/core/wayfinder",

@@ -16,10 +16,10 @@ Read `~/.config/skill-collection/delegation.json` (`~` is the home directory on 
 
 Offer only harnesses and models seen live on this machine. Collect them before asking anything:
 
-- **Harnesses**: the one you are running in, each other harness CLI found on the `PATH` (`claude`, `codex`, `opencode`), and T3 Code's providers when its orchestration tools are present. Read each CLI's current `--help` for how it reports sign-in, and keep only those signed in.
-- **Models**: each harness's own listing: T3's `orchestrator_capabilities`, `opencode models`, the host's model picker, its documented aliases, or what its `--help` names. The transport references say what was observed: [native subagents](NATIVE-SUBAGENTS.md), [T3 Code delegation](T3-CODE.md), [CLI transports](CLI-TRANSPORTS.md).
+- **Harnesses**: the one you are running in, each other harness CLI found on the `PATH` (`claude`, `codex`, `opencode`), and any provider a host delegation tool lists. Read each CLI's current `--help` for how it reports sign-in, and keep only those signed in.
+- **Models**: each harness's own listing: a capability tool, a models command, its model picker, or what its `--help` names.
 - **Families**: name each live model's family (`opus`, `sol`, `glm`), as the policy guide resolves it, and note which family is the newest stable frontier line of each provider.
-- **Effort levels** each live model takes, from [effort mappings](EFFORT.md).
+- **Effort levels** each live model takes, from the same listings. Say which you could not confirm.
 - **Workflows** in your skill listing that dispatch agents (`code-review`, `implement-spec`, `second-opinion`, `wayfinder`), for overrides.
 
 Show the owner this inventory in a short list. A model the owner names that you did not see live goes in only after you tell them so: at dispatch it is skipped as unavailable until it is.

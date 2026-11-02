@@ -43,7 +43,7 @@ Each choice must still be suitable for the role's difficulty and available (skil
 
 ## Effort
 
-The rule's `effort`, else `effortDefaults` for the difficulty, else the collection's defaults. Map it through [effort mappings](EFFORT.md).
+The rule's `effort`, else `effortDefaults` for the difficulty, else the collection's defaults. Map it to the harness's own control as `delegating` step 3 says.
 
 - A rule's `effort` is the owner's stated choice: it may be `xhigh` or `max`, and a choice with no supported equivalent for it is unavailable.
 - An `effortDefaults` value is a default: an approximation is allowed and reported, and it never lands upward on max unless max is the value.

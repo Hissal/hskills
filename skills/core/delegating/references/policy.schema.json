@@ -40,7 +40,7 @@
   },
   "$defs": {
     "effort": {
-      "description": "The collection's effort intent; each harness maps it through references/EFFORT.md.",
+      "description": "The collection's effort intent; each harness maps it to its own control.",
       "enum": ["low", "medium", "high", "xhigh", "max"]
     },
     "name": {

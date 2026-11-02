@@ -49,20 +49,23 @@ Project facts and the host's real limits bind every policy choice: no rule widen
 - **Automatic** (no explicit instruction, and no policy rule matching): choose from suitable available models. Suitable means strong enough for the role's difficulty: a small fast model can run a simple helper, difficult work and final reviews need a frontier model. Your own model family is an acceptable default.
 - **Family names** ("Opus", "GPT Sol") resolve against the live catalog to the newest suitable stable version, from advertised IDs and reliable version information. A preview or experimental variant only when named. Surface an ambiguity you cannot resolve.
 - **Diversity groups** are selected together, never one agent at a time. Prefer different model families, then different lines within one family. The same model through two harnesses is not diversity. A model too weak for the role stays out, whatever its family. Preferred diversity unavailable: reuse a model and report it. Required diversity unavailable: the dispatch is blocked.
-- **Effort**: low for simple quick work, medium for normal work, high for difficult work, unless the policy's `effortDefaults` replace them. xhigh only with an exceptional reason, stated in the summary. max only on the user's explicit instruction or a policy entry naming it; never raise effort to max on your own. A policy rule's effort counts as explicit. Map the intent to the harness's own control with [effort mappings](references/EFFORT.md): equal option names do not mean equal effort or cost. An automatic default may take a documented approximation or the model's fixed behaviour, reported as such. An explicit effort with no supported equivalent makes that choice unavailable.
+- **Effort**: low for simple quick work, medium for normal work, high for difficult work, unless the policy's `effortDefaults` replace them. xhigh only with an exceptional reason, stated in the summary. max only on the user's explicit instruction or a policy entry naming it; never raise effort to max on your own. A policy rule's effort counts as explicit. Map the intent to the harness's own control, reading the levels each model takes from a live listing, and reporting a limitation when none shows them: equal option names do not mean equal effort or cost. An automatic default may take the nearest level or the model's fixed behaviour, reported as such, and never lands upward on max. An explicit effort with no supported equivalent makes that choice unavailable.
 - **Unavailable** (not installed, not signed in, quota or auth failure, no transport reaches it): move to the next suitable choice and record why. An explicitly requested choice that is unavailable gets no substitute without asking. Unattended, preserve the brief in a file and report the blocked dispatch.
 
 ## 4. Choose the transport
 
-Use the host's own delegation first, following its guidance. Read the reference for where you are:
+Use the host's own delegation first, following its guidance and its live tool schemas and capability listings. Start an agent that takes a brief with a fresh context, never a fork of your conversation.
 
-- [Native subagents](references/NATIVE-SUBAGENTS.md) for Claude Code, Codex and OpenCode's own subagent tools.
-- [T3 Code delegation](references/T3-CODE.md) when T3 Code's orchestration tools are present. There, native subagents take same-provider work the native tool supports; T3 delegation takes cross-provider work, models missing from the native tool, children T3 should own, and children that need worktree isolation. Read providers, models and options from T3's capability listing.
-- [CLI transports](references/CLI-TRANSPORTS.md) only when no host delegation reaches an allowed choice.
+When no host delegation reaches an allowed choice, run that harness's headless CLI:
+
+- Read its current `--help` before the first run in a session.
+- Write the brief to a file outside the checkout and pass it whole: the agent sees nothing else.
+- Close stdin unless the brief goes through it, and give every run a time limit.
+- Capture the final output to a file and keep the exit code. A non-zero exit, an empty output or output outside the return shape is a failed dispatch, not a result.
+- Run it where the brief says, no wider than the brief's Authority.
+- A quota or rate-limit failure makes that choice unavailable for now: report it and move on, never retry in a loop.
 
 A choice no transport reaches is unavailable (step 3). Permission and sandbox modes are never assumed equal across harnesses because their labels match; a child runs at or below the authority the brief grants. Each fresh review round is a new delegated task carrying the complete context (brief, prior findings, responses, open objections), never a continuation of the last reviewer's conversation.
-
-Every host fact in these references is a dated observation. Check it against the host's current guidance and live capabilities before relying on it.
 
 ## 5. Write the brief
 
@@ -87,11 +90,11 @@ An action the invoking workflow already authorised (an autonomous flow's push or
 
 ## 6. Dispatch
 
-Show the summary, then dispatch:
+Before the first dispatch call, write this summary as visible text in the same message as that call. The user sees neither your thinking nor the brief, so a summary only there, or only in the final report, does not count.
 
 ```md
 **Dispatch:** <role> on <harness or provider>, <model>, effort <level> [<approximation or limitation>]
-**Transport:** <native | T3 delegation | CLI: <command>>
+**Transport:** <the host's tool | CLI: <command>>
 **Selection:** <explicit instruction | policy: <rule, e.g. workflows.code-review[0] or rules[1]> | automatic: <no policy | no matching rule | outside the list: why>>; diversity <met | reused: why | not asked>
 ```
 
@@ -110,6 +113,6 @@ Rulings: <each reversible default taken, or none>
 Blocked on / scope needed: <only when not done>
 ```
 
-The report is evidence, never the result. Check the real diff and run the checks yourself through `verifying` before calling the work done. No report, a report outside this shape, or a report naming no evidence is not done: a gap is not a pass. Say so when the model that ran differs from the one requested.
+The report is evidence, never the result. Check the real diff and run the checks yourself through `verifying` before calling the work done. No report, a report outside this shape, or a report naming no evidence is not done: a gap is not a pass. Confirm the model and effort that actually ran from the run's own record where it names them, and report them; say so when they differ from what you requested.
 
 Carry every ruling into your final report, and onto the ticket when the work comes from one. Needs more scope goes to whoever owns the scope; you widen nothing on the agent's behalf.

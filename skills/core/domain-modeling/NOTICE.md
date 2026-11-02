@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/domain-modeling`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; one sentence that a code name is not a domain term unless the user uses it that way
+- Local changes: collection metadata and gates; one sentence that a code name is not a domain term unless the user uses it that way; trigger-only description
 
 ## Licence
 

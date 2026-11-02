@@ -10,7 +10,7 @@ metadata:
 
 You have been provided a spec. This spec should have tickets associated with it, describing how to implement the spec.
 
-Read the issue tracker from the project's configuration: the tracker file linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`. If the project names no tracker, tell the user to run `/setup-project`.
+Read the issue tracker from the project's configuration: the tracker file linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`. If the project names no tracker, tell the user to run `/setup-project`, and stop.
 
 The goal is the entire spec implemented on a single **integration branch**, with every ticket whose acceptance criteria are verified resolved the way the issue tracker closes work, and every gap reported.
 
@@ -24,9 +24,9 @@ The calls below to `research`, `tdd`, `verifying`, `code-review`, `receiving-rev
 
 Before dispatching any subagent, consult `delegating`; when `delegating` is not installed, dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort. The brief, the return, the dispatch summary and the rules for reading a report live there. This workflow's roles:
 
-- **Exploration subagent**: optional, one, before any implementer. Role: researcher. Normal difficulty.
+- **Exploration subagent**: optional, one, before any implementer. Role: researcher.
 - **Implementer subagents**: one per frontier ticket, in parallel, each in its own worktree. Difficulty is the ticket's.
-- **Merger subagent**: one merge at a time, after you have checked the work it merges. Normal difficulty.
+- **Merger subagent**: one merge at a time, after you have checked the work it merges.
 
 Communication to and from subagents should be sparse. Communicate primarily through **context pointers**: to the spec, tickets, research notes, and previous commits. Don't duplicate information already available via pointers.
 

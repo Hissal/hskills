@@ -1,6 +1,6 @@
 ---
 name: grilling
-description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
+description: Use when the user asks to grill, stress-test or poke holes in a plan, decision or idea.
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/grilling"

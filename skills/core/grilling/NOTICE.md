@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/productivity/grilling`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; fact-finding by a native read-only helper, through delegating only when needed; scope, one-decision, map-first and exit-check rules; confirmed assumptions; /to-questionnaire and /wayfinder suggestions and parent-agent return
+- Local changes: collection metadata and gates; fact-finding by a native read-only helper, through delegating only when needed; scope, one-decision, map-first and exit-check rules; confirmed assumptions; /to-questionnaire and /wayfinder suggestions and parent-agent return; trigger-only description
 
 ## Licence
 

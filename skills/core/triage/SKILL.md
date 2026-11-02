@@ -80,7 +80,7 @@ Ask the project's listed pack guides for classifying stack involvement, reproduc
 4. **Grill (if needed).** If the request needs fleshing out, call the Skill tool twice, for "grilling" and "domain-modeling", and grill it into shape a round of questions at a time, sharpening domain terms and updating `GLOSSARY.md`/ADRs inline as decisions land. These are process calls: when one is not installed, say so once and grill the maintainer directly.
 
 5. **Apply the outcome:**
-   - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)). Name the tools and environment an agent needs to reproduce and complete the work.
+   - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)). When `writing-for-agents` is installed, follow it for the prose. Name the tools and environment an agent needs to reproduce and complete the work.
    - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing, or participation this stack needs from a human).
    - `needs-info`: post triage notes (template below).
    - For `wontfix`, close the issue, with the comment depending on *why*:

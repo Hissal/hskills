@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/prototype`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; project configuration; brief with keep-if and kill criteria; medium rule and strict single file; pack-guide extension point; throwaway branch created before the first file, separate worktree, pushed capture and return; optional draft PR closed unmerged at the verdict; hand-over check with verifying's unvalidated word; sharing route; verdict against the brief; porting summary; UI variant axes, self-checked variants and a tradeoff table; contents list in the UI reference; /break-ui and /wayfinder suggestions and parent-agent return; description per #44
+- Local changes: collection metadata and gates; project configuration; brief with keep-if and kill criteria; medium rule and strict single file; pack-guide extension point; throwaway branch created before the first file, separate worktree, pushed capture and return; optional draft PR closed unmerged at the verdict; hand-over check with verifying's unvalidated word; sharing route; verdict against the brief; porting summary; UI variant axes, self-checked variants and a tradeoff table; contents list in the UI reference; Behavior branch reference; deterministic Logic module with a settable seed and clock inputs; getState, dispatch and Copy state for two audiences; variants and knobs; replay in the hand-over check; /break-ui and /wayfinder suggestions and parent-agent return; description per #44
 
 ## Licence
 

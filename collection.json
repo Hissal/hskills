@@ -48,7 +48,8 @@
     "unity": [
       "skills/packs/unity/unity-debugging",
       "skills/packs/unity/unity-guide",
-      "skills/packs/unity/unity-networking"
+      "skills/packs/unity/unity-networking",
+      "skills/packs/unity/unity-testing"
     ]
   },
   "expensive": [

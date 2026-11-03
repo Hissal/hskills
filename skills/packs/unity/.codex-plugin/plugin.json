@@ -5,6 +5,7 @@
   "skills": [
     "./unity-debugging",
     "./unity-guide",
-    "./unity-networking"
+    "./unity-networking",
+    "./unity-testing"
   ]
 }

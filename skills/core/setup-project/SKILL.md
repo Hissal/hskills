@@ -38,7 +38,7 @@ Look at the current repo to understand its starting state. Read whatever exists;
 - `.agents/config/`: guard extensions already recorded.
 - `.scratch/`: a sign that a local-markdown issue tracker convention is already in use
 - Monorepo signals: a `pnpm-workspace.yaml`, a `workspaces` field in `package.json`, or a populated `packages/*` with its own `src/`. These are present only in a genuinely large multi-package repo; their absence means single-context, which is almost every repo.
-- Harness configuration: `.claude/` means Claude Code, `.codex/` or `.agents/` means Codex, `opencode.json` means OpenCode, and `skills-lock.json` shows what is installed.
+- Harness configuration: `.codex/` means Codex, `opencode.json` means OpenCode, and `.claude/` with more than `skills/` means Claude Code. `.claude/skills/`, `.agents/` and `skills-lock.json` show what is installed and name no harness: setup writes them itself, and many harnesses share `.agents/`.
 
 Bring back any `docs/agents/setup-handoff.md` entries, as [open questions](references/open-questions.md#handoff) says. Then summarise what's present and what's missing, and name the steps that look settled.
 
@@ -64,7 +64,7 @@ Done when each section is settled, answered, or held on an open question.
 
 Guidance lands before anything is scaffolded, so scaffolding can use it.
 
-Show the user a draft of what this run would change: the `## Agent skills` block, each file a section writes, each pick's command and pointer, the labels to create and each scaffolding command. Say that the check commands come in step 6's draft, and name each harness check there that spends a model call. Let them edit before anything is written. Approval covers everything the draft lists.
+Show the user a draft of what this run would change: the `## Agent skills` block, each file a section writes, each pick's command and pointer, the labels to create and each scaffolding command. Say that the check commands come in step 6's draft, and list the harness checks for step 1's harnesses, marking any that spends a model call; the approved list sets only what [verify guidance](references/verify-guidance.md) checks, and skills still install to both folders. Let them edit before anything is written. Approval covers everything the draft lists.
 
 When every section is settled, the block already links its files and each file carries the [missing-field header](#defaults), and no gap needs filling, there is no draft: tell the user nothing changed, make the [move offer](#instruction-file) if it applies, and go on to step 6 with every file byte-for-byte as it was.
 
@@ -88,7 +88,7 @@ Everything here comes from the project as it now stands, so an empty project nee
 
 1. **Look again.** Repeat step 1's look at commands, tooling, manifests and monorepo signals. An answer the result contradicts reopens under the settled rule. A new dependency brings step 2 back for what it ships. Deliver each waiting pick whose dependency is now restored, and clear its **Waiting** field.
 2. **Derive.** Take [Check commands](#check-commands), and the [Style guide](#style-guide) pointer and conflicts.
-3. **Confirm.** Show the rows and any line the look changed as a short draft, approved like step 4's. Nothing to change means no draft. Run and write what it approves.
+3. **Confirm.** Show the rows and any line the look changed as a short draft, approved like step 4's, with the harness checks when step 4 had no draft. Nothing to change means no draft. Run and write what it approves.
 4. **Verify guidance.** When this run delivered or changed guidance, read [verify guidance](references/verify-guidance.md) and follow it. On any other run, confirm that each selected skill's folder and each pointer's path still exist.
 5. **Report.** Tell the user what this run wrote and which skills read it, then each step's result: done, skipped with its reason, or **incomplete** with its next step. List every question still open: its handoff entry or issue, any research still running, and what each one blocks. Mention they can edit `docs/agents/*.md` directly later, and that a re-run reads the current state, keeps what is settled and revisits only what changed.
 

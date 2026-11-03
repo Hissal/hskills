@@ -2,7 +2,7 @@
 
 Guidance counts as reachable when a fresh process of the harness shows it. This session's own skill listing may predate this run's installs, so it proves nothing either way.
 
-Done when each skill, pack line and pointer this run delivered has a result for each intended harness: reachable, or incomplete with its next step.
+Done when each skill, pack line and pointer this run delivered has a result for each harness the approved draft lists: reachable, or incomplete with its next step.
 
 ## Files
 

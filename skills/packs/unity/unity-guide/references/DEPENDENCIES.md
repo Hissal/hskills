@@ -76,9 +76,9 @@ Recognise it by the package `com.github-glitchenzo.nugetforunity` or by its two 
 
 ## Duplicate assemblies
 
-Compare assembly names across every channel at once, including `Library/PackageCache/`: UPM packages, NuGet folders, vendored DLLs and Asset Store imports. Unity allows one precompiled assembly of a name per platform, and otherwise stops compiling with `Multiple precompiled assemblies with the same name`. Each channel's own tool sees only its own copy.
+Compare assembly names across every channel at once, including `Library/PackageCache/`: UPM packages, NuGet folders, vendored DLLs and Asset Store imports. Each channel's own tool sees only its own copy, and Unity keeps going, so a clean compile says nothing about duplicates. On Editors 6000.3.20f1 and 6000.7.0b2 it keeps one copy, ignores the rest and exits 0. Copies of different versions log `Duplicate assembly '<name>.dll' with different versions detected, using '<path>' and ignoring '<path>'`, and the higher version won in every run here. Copies of one version log nothing. So the version a channel's files show may not be the one that runs.
 
-Report every copy with its channel, path and version. Two copies are a real clash only where their platforms overlap, so read each `.meta`'s `platformData` and any `defineConstraints` first: a package may ship one copy per platform by design, as `com.unity.nuget.newtonsoft-json` does for AOT. A `.meta` that is missing means the file has not imported yet, so its platforms are unknown.
+Report every copy with its channel, path and version. Two copies compete only where their platforms overlap (inferred from the platform settings; no run here separated it), so read each `.meta`'s `platformData` and any `defineConstraints` first: a package may ship one copy per platform by design, as `com.unity.nuget.newtonsoft-json` does for AOT. A `.meta` that is missing means the file has not imported yet, so its platforms are unknown.
 
 A common cause is a NuGet package already provided by a UPM package, directly or through another package's dependency.
 

@@ -93,7 +93,7 @@ Each checkout keeps its own `Library/`, generated state being per checkout. A ch
 
 ## Reading results
 
-A result is green only with a clean compile, a nonzero test count and zero failures. A count of zero is no verdict, core's **inconclusive**, whatever the exit code and report say: a filter that matched nothing exits 0 with `result="Passed"`.
+A result is green only with a clean compile, a nonzero test count and zero failures. A count of zero is no verdict, core's **inconclusive**, whatever the exit code and report say: a filter that matched nothing exits 0 with `result="Passed"`. Run a filter as given, even when it looks wrong: its zero answers what was asked. Report that as not green and offer the exact name as the next run.
 
 Exit codes and envelopes mislead in both directions. Read [Reading results](references/READING-RESULTS.md) before trusting any Unity result.
 
@@ -108,7 +108,7 @@ Pushing and triggering CI are the user's. Name the checks CI would cover and whi
 Every verification ends with this, inside core's report:
 
 - **Ran**: each check, run or reused, with its route, tree and result (for tests, the counts), and which kind of evidence it is.
-- **Skipped**: each check the risk needed that did not run, with the environment gap that stopped it (no Editor, locked project, no licence, cold import declined, CI not triggered).
+- **Skipped**: each check the risk needed that did not run, with its reason. A missing capability reads `environment gap: <what>` (no Editor, locked project, no licence, cold import declined, CI not triggered), and the answer says the code was not judged.
 - **Unvalidated**: each behaviour or risk whose check did not run.
 - **Known failures**: unrelated failures seen, left for their own investigation.
 - **Manual checks**: what no check can judge, as concrete steps for the user.

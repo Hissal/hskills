@@ -16,7 +16,7 @@ Each hides a test from a run, so each needs a reason a reader can check:
 ## Assertion and log-expectation forms
 
 - `LogAssert.Expect` before the code that logs is the sound form. Multiple expectations must appear in order.
-- `LogAssert.NoUnexpectedReceived()` asserts in place that nothing unexpected has been logged.
+- `LogAssert.NoUnexpectedReceived()` fails on any message not expected so far, a plain `Debug.Log` included (observed on 6000.3.20f1 and 6000.6.5f1), so it is stricter than the end-of-frame check.
 - `Is.EqualTo(...).Using(Vector3EqualityComparer.Instance)` and the other comparers in `UnityEngine.TestTools.Utils` give float tolerance; hand-rolled tolerances wide enough to swallow the behaviour do not.
 - A test with no assertion that only proves "no exception, no error log" is weak unless that is the contract, and then its name says so.
 

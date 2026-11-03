@@ -5,7 +5,7 @@ Reach for these only when a plain `[Test]` cannot express the behaviour.
 ## `[UnityTest]`
 
 - Returns `IEnumerator`; `yield return null` skips one frame (one `EditorApplication.update` in EditMode). Use it only to wait on frames (PlayMode) or to yield Editor instructions (EditMode).
-- **EditMode yields:** `null`, an `AsyncOperation`, or an Editor instruction: `EnterPlayMode`, `ExitPlayMode`, `RecompileScripts`, `WaitForDomainReload`. Runtime waits do not wait there: `yield return new WaitForSeconds(1.5f)` returned after 0 ms (observed on 6000.6.2f1). Poll in PlayMode, or against a real-time deadline over `yield return null`.
+- **EditMode yields:** `null`, an `AsyncOperation`, or an Editor instruction: `EnterPlayMode`, `ExitPlayMode`, `RecompileScripts`, `WaitForDomainReload`. Runtime waits do not wait there: `yield return new WaitForSeconds(1.5f)` returned after 0 ms (observed on 6000.3.20f1 and 6000.6.5f1). Poll in PlayMode, or against a real-time deadline over `yield return null`.
 - **PlayMode yields:** `WaitForSeconds`, `WaitForFixedUpdate`, `WaitUntil` and the rest work. Yielding an Editor instruction from a PlayMode test throws. Unity calls long waits bad practice; mark a slow test `[Explicit, Category("<name>")]` so the default run skips it.
 - `[UnitySetUp]` and `[UnityTearDown]` are the `IEnumerator` forms of `[SetUp]` and `[TearDown]` (plus `[UnityOneTimeSetUp]` and `[UnityOneTimeTearDown]` from Test Framework 1.5).
 - `MonoBehaviourTest<T>`: yield one to create a MonoBehaviour implementing `IMonoBehaviourTest` and wait until its `IsTestFinished` is true. It has no deadline of its own beyond the test timeout.
@@ -18,7 +18,7 @@ An unexpected domain reload during a test fails it. A test that recompiles or en
 ## Async tests
 
 - `[Test] public async Task Name()` works (Test Framework 1.3 and later), in both modes; so do `async Task` `[SetUp]` and `[TearDown]`. The task runs on the main thread, polled each frame.
-- **Await an `Awaitable` inside an `async Task` test.** An `async Awaitable` test method is not supported: its body ran to the end, then the runner failed the test with a `NullReferenceException` from NUnit's async handling, hiding the body's own result (observed on 6000.6.2f1).
+- **Await an `Awaitable` inside an `async Task` test.** An `async Awaitable` test method is not supported: its body ran to the end, then the runner failed the test with a `NullReferenceException` from NUnit's async handling, hiding the body's own result (observed on 6000.3.20f1 and 6000.6.5f1).
 - `Assert.ThrowsAsync` blocks the main thread and freezes the Editor. Use `try`, `await` and `catch`, then assert on what was caught.
 - Error logs are checked only after an async test completes.
 

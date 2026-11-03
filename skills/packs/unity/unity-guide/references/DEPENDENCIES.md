@@ -46,7 +46,7 @@ What to look for between the layers:
 
 ## Git URLs
 
-Parse the manifest value into repository, `?path=` subfolder and `#revision`. Git dependencies are declared only in a project manifest: `package.json` cannot declare them, so each one is a direct dependency.
+Parse the manifest value into repository, `?path=` subfolder and `#revision`, and report all three with the locked `hash` for each package. Git dependencies are declared only in a project manifest: `package.json` cannot declare them, so each one is a direct dependency.
 
 - **Moving reference.** A branch, a tag and an omitted revision can all point elsewhere later. The lock holds the commit in `hash` until someone adds the URL again, which takes the current target. Report the reference as moving and give the locked hash. A full commit hash in the URL is the only fixed form.
 - **Compare with upstream.** `git ls-remote <repository> <revision>` reads the current commit without a checkout. A difference means the next re-add brings in unreviewed code. An unreachable host is **Unassessable**, and the locked commit stays unverified.
@@ -58,7 +58,7 @@ The UPM graph cannot see these, so search for them: every file type in the chann
 
 For each, record the path, the identity and the provenance available:
 
-- **Managed DLL:** read the assembly name and version from the file (`[Reflection.AssemblyName]::GetAssemblyName(<path>)` in PowerShell, or a metadata reader). The file name is only a hint. Identity read from the file gives a lookup key; it does not prove where the file came from.
+- **Managed DLL:** read the assembly name and version from the file (`[Reflection.AssemblyName]::GetAssemblyName(<path>)` in PowerShell, or a metadata reader). The file name is only a hint. Identity read from the file is a lookup key, and it does not prove where the file came from. When it names a published package, compare the file's hash with that package's copy: a match ties the content to the package.
 - **Native plugin:** the `.meta`'s `PluginImporter` `platformData` says which platforms and CPUs load it. A hash can be recorded, and that is often all there is.
 - **Asset Store import:** an `AssetOrigin` block in a `.meta` gives `productId`, `packageName`, `packageVersion` and `uploadId` where the Editor wrote one, which is a provenance lead and not always present. Nothing resolves or pins these imports, and they may be edited in place. `unity assets inspect <file>` lists a `.unitypackage` without importing it.
 - **Provenance not found:** state `unknown`, which is a coverage gap and not evidence of tampering.
@@ -96,7 +96,7 @@ What each channel can give:
 - **NuGet:** look up each package by id and version in OSV (`https://api.osv.dev/v1/query`, ecosystem `NuGet`) or the NuGet vulnerability feed. Transitives are in `packages.config`.
 - **Vendored managed DLL:** a lookup under its identity read from the file is possible, labelled as inferred identity.
 - **Native plugin and Asset Store:** usually **Unassessable** for advisories.
-- **Provenance:** registry publisher, lock `hash` against upstream, `AssetOrigin`, or a recorded source in the repo, as above.
+- **Provenance:** registry publisher, a cached package's files against its published tarball, lock `hash` against upstream, `AssetOrigin`, or a recorded source in the repo, as above.
 - **Platform compatibility:** the `unity` field of `package.json`, asmdef `includePlatforms` and `excludePlatforms`, and `PluginImporter` settings, checked against the targets the project ships.
 
 ## Adding a dependency
@@ -118,7 +118,7 @@ Apply this first, and core's adding-a-dependency rule when `dependency-audit` is
 4. **Platform and backend support.** Check it against what the project ships: the `unity` minimum, asmdef platforms, a native library per target, IL2CPP (`AOT` constraints, reflection and code stripping), and for NuGet a `lib/` target the project's API compatibility level can load. Name each target with no support.
 5. **Assets it brings.** Admitting art or other assets into the project's folders, and any rules for it, follow [Asset-import rules](ASSET-IMPORT-RULES.md), on the user's request.
 
-**After the authorised addition,** review what actually changed:
+**After the authorised addition,** review what actually changed. Every answer about adding lists these checks as what follows, including an answer that says to wait:
 
 - the lock diff: every new or moved entry explained, and each resolved `url` and `hash`;
 - scopes: new `scopedRegistries` entries, and the names they now capture;

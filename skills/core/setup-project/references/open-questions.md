@@ -1,6 +1,6 @@
 # Open questions
 
-The routes behind [Open questions](./SKILL.md#open-questions): the research brief, the handoff record and the suggestion wording. Read the part the route needs.
+The routes behind [Open questions](../SKILL.md#open-questions): the research brief, the handoff record and the suggestion wording. Read the part the route needs.
 
 ## Research subagent
 
@@ -32,9 +32,9 @@ Where it goes:
 - **GitHub or GitLab tracker settled and reachable**: show the title and body and ask once, then create the issue with the commands in `docs/agents/issue-tracker.md`, or its seed if the file is not written yet, with no assignee and no mention of anyone. Add one line to `docs/agents/setup-handoff.md` linking it. On a no, record it locally.
 - **Any other case** (no tracker, one not settled or not reachable yet, local markdown or a tracker with no CLI): write it as an entry in `docs/agents/setup-handoff.md`, a section per open question.
 
-That file opens with `Open setup questions. Re-run /setup-project to bring these back.` and is written at once, ahead of the draft, since it holds only what this run already knows. The `### Setup handoff` sub-block is added at [Write](./SKILL.md#write).
+That file opens with `Open setup questions. Re-run /setup-project to bring these back.` and is written at once, ahead of the draft, since it holds only what this run already knows. The `### Setup handoff` sub-block is added at [Deliver guidance](../SKILL.md#4-deliver-guidance), or at step 6's [Confirm](../SKILL.md#6-record-and-verify) for an entry raised after it.
 
-**On a re-run**, bring each entry back first: read its linked issue when it has one, and ask the owner only what the record leaves open. An answered entry feeds its section and leaves the file; the last one out removes the file and the sub-block. An unanswered entry stays exactly as written.
+**On a re-run**, bring each entry back first: read its linked issue when it has one, and ask the owner only what the record leaves open. An answered entry feeds its section and leaves the file, and so does a blocked check that now passes when you run its next action; the last one out removes the file and the sub-block. An unanswered entry stays exactly as written.
 
 ## Suggestions
 
@@ -54,7 +54,7 @@ You print the invocation and go on with independent work, even where the host wo
 /wayfinder Destination: <the decisions needed to resume setup>. Context: <what exploration found, the sections waiting, the handoff entry>.
 ```
 
-The map lives on the tracker, so settle [Issue tracker](./SKILL.md#issue-tracker) first; local markdown is enough.
+The map lives on the tracker, so settle [Issue tracker](../SKILL.md#issue-tracker) first; local markdown is enough.
 
 **`/wizard`**, for a sequence only the human can perform that blocks progress, where an interactive procedure would materially help:
 

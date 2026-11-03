@@ -64,11 +64,9 @@ For each pick delivered or named as waiting, add or update its entry in the draf
 
 Copy a new pointer into **Docs** exactly as the draft writes it in `### Vendor docs`. That word-for-word match is what makes a line setup's own, so the user's file carries no marker. A line already in `### Vendor docs` before this pick stays the owner's, and its entry takes no **Docs**.
 
-A copied skill's **Route** starts its package folder with `./`, because `skills add` reads a bare `node_modules/<package>` as a GitHub repository.
-
 ## Check on a re-run
 
-Check each entry against its source of truth, and report one line per entry: current, changed (with the installed version, and the earlier one when the lock's git history shows it), missing, or not checked (with the next step). Entries are settled choices; these checks change nothing until the owner approves a draft line. A run that finds nothing to change has no draft.
+This runs in [Recommend](../SKILL.md#2-recommend), so what it finds joins the draft. Check each entry against its source of truth, and report one line per entry: current, changed (with the installed version, and the earlier one when the lock's git history shows it), missing, or not checked (with the next step). Entries are settled choices; these checks change nothing until the owner approves a draft line. A run that finds nothing to change has no draft.
 
 Say before each download why it runs: `git ls-remote` reads refs only, `--list` and `skills add` clone the source. A source you cannot reach is `not checked` and its entry stays. Read a restored dependency from disk; restoring one is the owner's step, so an unrestored dependency is `not checked` with its restore command as the next step.
 

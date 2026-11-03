@@ -2,7 +2,7 @@
 
 One view of everything that would help this project: collection skills, separately installed vendor skills and guidance shipped inside dependencies. An empty repo gets the same view, built from the intended stack. Nothing here needs a pack list, an installed guide, restored dependencies or finished configuration.
 
-Done when the owner has seen the view, every row has their answer, each pick is delivered or named as waiting for its dependency, and every source you could not reach is named.
+The view and the choice are step 2; delivery is step 4. Done when the owner has seen the view, every row has their answer, each pick is delivered or named as waiting for its dependency, and every source you could not reach is named.
 
 ## Contents
 
@@ -15,7 +15,7 @@ Done when the owner has seen the view, every row has their answer, each pick is 
 
 ## 1. Find the stack
 
-Take it from declarations, lock files and code. With no stack to read, ask for the intended outcome and stack in one question, helping choose when the owner is undecided, and use the intended versions below.
+Take it from declarations, lock files and code. With no stack to read, use the outcome and stack from [Orient](../SKILL.md#1-orient), and the intended versions below.
 
 ## 2. Discover
 
@@ -112,7 +112,7 @@ List each pick's command and pointer in the draft. After approval:
 | Documentation | One line in the `### Vendor docs` sub-block. For bundled documents: `When <job>, read <project-relative path>; it follows <dependency>'s installed version.`, with the path to the documents' entry file or folder, resolved from the workspace that uses the dependency. With nothing bundled: `When <job>, read <vendor URL>.` A vendor-managed block that already tells agents how to reach these documents stays as it is. Say so in the row and recommend no pointer; write one only when the owner picks it, and leave the block alone. |
 | Collection skill or pack | `npx skills add Hissal/skill-collection#<commit> --skill <name>... --agent claude-code codex --yes`, naming every requested skill and all it `requires`, followed transitively through `catalog.json` at that commit, because the tool does not resolve requirements. `--skill` takes each skill's `name`, here and in the routes below. A project on another sync tool uses that tool. |
 | Vendor skill | `npx skills add <owner>/<repo>#<ref> --skill <name> --agent claude-code codex --yes`, with `<ref>` the commit of the newest release tag, or of the default branch when the source has no version tags. |
-| Skill shipped in a dependency | `npx skills add <restored package folder> --skill <name> --agent claude-code codex --yes`. Tell the owner this is a copy: it keeps the version it was copied from until refreshed. |
+| Skill shipped in a dependency | `npx skills add ./<restored package folder> --skill <name> --agent claude-code codex --yes`. The leading `./` matters: `skills add` reads a bare `node_modules/<package>` as a GitHub repository. Tell the owner this is a copy: it keeps the version it was copied from until refreshed. |
 | Whole vendor set | The vendor's plugin when it publishes one and the owner takes its hooks and always-on parts, since a plugin update brings new skills. Otherwise `--skill '*'`, and tell the owner later additions arrive only when the command runs again at a newer ref. |
 | Claude Code plugin | `claude plugin install <plugin>@<marketplace> --scope project`, after `claude plugin marketplace add <owner>/<repo>` when the marketplace is new. It enables the whole plugin in `.claude/settings.json`, so offer it for a pick that wants every part. The marketplace is registered per user: tell the owner teammates run the same `marketplace add`. |
 | Hook or always-on instruction | The vendor's own route, after its separate yes. |

@@ -49,13 +49,13 @@ Where the product supports a controller or keyboard, traverse with each, and rea
 - A popup takes focus when it opens, and takes it again when it reopens.
 - Closing a popup returns focus to what opened it.
 
-Use the input the project already has: real devices at hand, or its existing input tests. With no such means, list the focus items as not exercised, each with the steps for a human run. An input harness built to complete this checklist is out of scope.
+Use the input the project already has: real devices at hand, or its existing input tests. With no such means, a throwaway script may set a selection and read its navigation links (`Selectable.FindSelectableOnDown`), as injected state. List each focus item still without input as not exercised, with the steps for a human run. An input harness built to complete this checklist is out of scope.
 
 ## Evidence
 
-Name how each result was driven:
+Label every result with how it was driven, in the caller's report format: a column, or a label on each row. Observed or inferred does not say this, so these labels sit beside them.
 
-- **Injected state:** code set the data or the selection, or sent synthetic events. It shows how the UI responds to that state, not that input can reach it.
+- **Injected state:** code set the data or the selection, or sent synthetic events. Worst-case data bound by a script is injected state. It shows how the UI responds to that state, not that input can reach it.
 - **Actual input:** input went through the project's real input path, from a device or an existing project test. Give the sequence and the focus after each step.
 - **Human run:** a person operated it. Give who ran what, and what they reported.
 

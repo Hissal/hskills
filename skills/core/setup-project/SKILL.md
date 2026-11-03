@@ -66,13 +66,13 @@ Guidance lands before anything is scaffolded, so scaffolding can use it.
 
 Show the user a draft of what this run would change: the `## Agent skills` block, each file a section writes, each pick's command and pointer, the labels to create and each scaffolding command. Say that the check commands come in step 6's draft, and list the harness checks for step 1's harnesses, marking any that spends a model call; the approved list sets only what [verify guidance](references/verify-guidance.md) checks, and skills still install to both folders. Let them edit before anything is written. Approval covers everything the draft lists.
 
-When every section is settled, the block already links its files and each file carries the [missing-field header](#defaults), and no gap needs filling, there is no draft: tell the user nothing changed, make the [move offer](#instruction-file) if it applies, and go on to step 6 with every file byte-for-byte as it was.
+When every section is settled, the block already links its files and each file carries the [missing-field header](#defaults), no list command stops short in [Issue tracker](#issue-tracker), and no gap needs filling, there is no draft: tell the user nothing changed, make the [move offer](#instruction-file) if it applies, and go on to step 6 with every file byte-for-byte as it was.
 
 After approval, in this order:
 
 1. Deliver each pick through [Deliver](references/recommendations.md#6-deliver) and record it through [Vendor sources](#vendor-sources). A failed install goes through [Open questions](#open-questions), and the rest carries on.
 2. Write to the file [Instruction file](#instruction-file) picks. If an `## Agent skills` block already exists, update its contents in place rather than appending a duplicate, and change only the lines a changed choice touches. With no block yet, append it at the end of the file. Leave the surrounding sections as the user wrote them. The block holds one sub-block per section that writes one, in the shape and order of [the block](references/agent-skills-block.md).
-3. Write each section's docs file, using the seed template it names as a starting point. A docs file that already exists holds the user's edits: change only the lines a changed choice touches, and never rewrite it from its seed.
+3. Write each section's docs file, using the seed template it names as a starting point. A docs file that already exists holds the user's edits: change only the lines a changed choice or an approved correction touches, and never rewrite it from its seed.
 
 Done when each pick is delivered, waiting or reported, and the block and every approved file are on disk.
 
@@ -170,6 +170,8 @@ Default posture: these skills were designed for GitHub. If a `git remote` points
 - **Other** (Jira, Linear, etc.): ask the user to describe the workflow in one paragraph; the skill will record it as freeform prose
 
 Record the choice in `docs/agents/issue-tracker.md`, from its seed: [issue-tracker-github.md](./issue-tracker-github.md), [issue-tracker-gitlab.md](./issue-tracker-gitlab.md) or [issue-tracker-local.md](./issue-tracker-local.md). For an "other" tracker, write the file from scratch using the user's description. The GitHub and GitLab templates describe a "PRs as a request surface" flag, defaulted **off**, which only a `yes` writes. Leave it off and don't raise it: a user who wants external PRs in the triage queue can add the flag the file describes later.
+
+An existing file's list command can stop short: `gh issue list` with no `--limit` and `glab issue list` with no `--per-page` return 30 issues with no warning. Put each such line in the draft with its seed's flag and cut-off wording added. This reopens no choice.
 
 A GitHub or GitLab tracker needs a reachable repo. When the user picks one and no `git remote` points at that host, get the repo URL from them and wire it up (`git init` if needed, `git remote add origin <url>`) before going further. Done when `gh repo view` / `glab repo view` prints the project from inside this directory; if it can't, tell the user what's missing and take it through [Open questions](#open-questions).
 

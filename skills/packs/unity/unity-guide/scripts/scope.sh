@@ -24,7 +24,9 @@ be followed. Stderr names each one, and the listing prints what could be read.
 
 With an Editor, use SerializationScope.cs, beside this script: it adds the type
 closure this grep lacks. Copy it and call an entry point, treating it as a black
-box. <types> is a comma-separated list of full type names, namespace included.
+box. Each is public static on the global class SerializationScope. Find and
+Reserialize take strings and return a string. <types> is a comma-separated list of
+full type names, namespace included.
 
   Find(types)                   connected Editor, from a scratch copy outside Assets/
   Reserialize(types, pathList)  connected Editor; pathList is the approved list,

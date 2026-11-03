@@ -30,7 +30,7 @@ For each entry whose **Follows** names it, within your task's authority, and oth
 - **Skills**: compare each copy with the package's own folder, `diff -r .agents/skills/<name> <package folder>/<skill folder>`. When they differ, run the entry's **Route** again.
 - **Dependency removed**: delete the `### Vendor docs` line that matches **Docs** word for word, and nothing else; a similar line stays and goes in your report. Run `npx skills remove <names> --yes` for those of its **Skills** whose `skills-lock.json` entry names the source in **Route**; a folder whose lock entry names another source, or that the lock does not list, is not this entry's and stays. Then delete the entry.
 
-Run `/setup-project` for anything else. On Node 20 the `skills` CLI fails with a `glob` SyntaxError; run it as `npx -p node@22 -p skills -c '<command>'`.
+Run `/setup-project` for anything else. On Node 20 the `skills` CLI fails with a `glob` SyntaxError; run it as `npx -p node@22 -p skills -c 'skills <arguments>'`, dropping the command's own `npx`.
 
 ## <source>
 

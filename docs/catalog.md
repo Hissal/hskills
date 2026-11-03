@@ -684,6 +684,7 @@ changing skill identity or requirements with
 | `hissal.skill-collection/to-spec` | [`to-spec`](../skills/core/to-spec/SKILL.md) | — |
 | `hissal.skill-collection/to-tickets` | [`to-tickets`](../skills/core/to-tickets/SKILL.md) | — |
 | `hissal.skill-collection/triage` | [`triage`](../skills/core/triage/SKILL.md) | — |
+| `hissal.skill-collection/unity-debugging` | [`unity-debugging`](../skills/packs/unity/unity-debugging/SKILL.md) | `hissal.skill-collection/unity-guide` [`unity-guide`](../skills/packs/unity/unity-guide/SKILL.md) |
 | `hissal.skill-collection/unity-guide` | [`unity-guide`](../skills/packs/unity/unity-guide/SKILL.md) | — |
 | `hissal.skill-collection/unity-networking` | [`unity-networking`](../skills/packs/unity/unity-networking/SKILL.md) | — |
 | `hissal.skill-collection/verifying` | [`verifying`](../skills/core/verifying/SKILL.md) | — |

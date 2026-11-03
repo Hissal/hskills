@@ -264,7 +264,7 @@ Start from `git diff --stat -- '*.unity' '*.prefab' '*.asset' '*.meta'`, and rea
 - `propertyPath` lines: overrides renamed or dropped.
 - Meta churn: a `.meta` whose `guid:` changed, a `.meta` added or deleted without its asset, an asset moved without its `.meta`.
 
-In the code: a serialized field renamed without `FormerlySerializedAs`, a field turned into an auto-property without it, an enum reordered or a value removed, a `[SerializeReference]` type renamed or moved without `MovedFrom`, a MonoBehaviour or ScriptableObject in a file-scoped namespace. A finding is hard when it loses data or breaks a reference; otherwise it is a judgement call.
+In the code: a serialized field renamed without `FormerlySerializedAs`, a field turned into an auto-property without it, an enum reordered or a value removed, a `[SerializeReference]` type renamed or moved without `MovedFrom`, a MonoBehaviour or ScriptableObject in a file-scoped namespace.
 
 A diff cannot establish that values survive import: name that as unverified until [the checks](#check-after-import) ran.
 

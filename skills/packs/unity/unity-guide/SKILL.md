@@ -50,6 +50,7 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 | Need | Target |
 |---|---|
 | A Unity API, Manual or package fact at this repo's versions | [Docs lookup](SKILL.md#docs-lookup) |
+| Prototype medium, placement, running, capture or removal, for gameplay or other Unity project content | `skill: unity-prototyping` |
 | The user asks to set up or change import settings, asset admission or automated import checks, or why one they set up misbehaves (a symptom such as a blurry texture is no match) | [Asset-import rules](references/ASSET-IMPORT-RULES.md) |
 | This stack's dependency ecosystem: manifests and lockfiles, the audit tool, where versions are decided (`dependency-audit`) | [Dependencies](references/DEPENDENCIES.md) |
 | Adding a dependency or moving one to another version, in any channel: UPM, Asset Store, a vendored DLL, a native plugin or NuGetForUnity | [Dependencies](references/DEPENDENCIES.md) |

@@ -32,21 +32,22 @@ This reference owns the **Assemblies** section of `docs/agents/unity.md`.
 
 Assess a change only after tracing every script and asmdef it touches. Say the trace in the answer.
 
-1. **Ownership.** Walk up from the script to the nearest `.asmdef` or `.asmref`; that names its assembly. With neither, the folder names decide the predefined assembly: `Assembly-CSharp`, `Assembly-CSharp-Editor` in an `Editor` folder, `-firstpass` variants under `Plugins`. In a package, a script with neither compiles into nothing, and only the Editor log says so (*observed*).
-2. **References.** List what the owner references and what references the owner, each resolved to a name.
-3. **Inclusion.** For the owner and each reference, read `includePlatforms`, `excludePlatforms`, `defineConstraints` and any test-runner references, and say which of the Editor and the Player compile each one.
-4. **Defines.** Name every symbol gating the changed code: `#if` blocks, `defineConstraints`, `versionDefines` and project-wide symbols.
-5. **Compilation effects.** Name what recompiles (the changed assemblies and their dependents) and the check the change needs:
+1. **List.** Run [the listing](#list-the-assemblies) first, on a small project too: it resolves every GUID and marks what a hand read of the asmdefs misses. Its lines feed the steps below.
+2. **Ownership.** Walk up from the script to the nearest `.asmdef` or `.asmref`; that names its assembly. With neither, the folder names decide the predefined assembly: `Assembly-CSharp`, `Assembly-CSharp-Editor` in an `Editor` folder, `-firstpass` variants under `Plugins`. In a package, a script with neither compiles into nothing, and only the Editor log says so (*observed*).
+3. **References.** From the listing, name what the owner references and what references the owner.
+4. **Inclusion.** For the owner and each reference, read `includePlatforms`, `excludePlatforms`, `defineConstraints` and any test-runner references, and say which of the Editor and the Player compile each one.
+5. **Defines.** Name every symbol gating the changed code: `#if` blocks, `defineConstraints`, `versionDefines` and project-wide symbols.
+6. **Compilation effects.** Name what recompiles (the changed assemblies and their dependents) and the check the change needs:
    - A compile after any asmdef, reference or define change.
    - A Player build when the change touches the Editor/runtime split or defines. An Editor compile proves nothing about the Player, so without a build say the Player side is unvalidated.
 
-The trace is done when each touched file has a named owner backed by the file that decides it, and each owner has a stated Editor and Player inclusion.
+The trace is done when the listing has run, each touched file has a named owner backed by the file that decides it, and each owner has a stated Editor and Player inclusion.
 
 ## List the assemblies
 
 For the mechanics of inspecting a running project, use official tooling: an open Editor's Inspector shows a selected script's assembly, and `CompilationPipeline` lists them. Build no mapping of your own on top.
 
-In a checkout, list every assembly with [the listing script](../scripts/asmdefs.sh), which needs bash and grep. Run `bash <this skill's folder>/scripts/asmdefs.sh --help` first and treat the script as a black box. Its `?` marks a reference that resolves to nothing, and `no-meta` an asmdef without its `.meta`.
+In a checkout, list every assembly with [the listing script](../scripts/asmdefs.sh), which needs bash and grep. Run `bash <this skill's folder>/scripts/asmdefs.sh --help` first and treat the script as a black box, then run it on the project or package root. Its `?` marks a reference that resolves to nothing, and `no-meta` an asmdef without its `.meta`. With no bash here, say so, and read each `.asmdef` and the `guid:` line of its `.meta` instead.
 
 ## Propose boundaries
 

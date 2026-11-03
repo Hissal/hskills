@@ -24,7 +24,7 @@ Check only whether the required material loads; the installer verifies identity
 and content. Loading this requirement grants no permission to invoke a
 user-invoked workflow; wait for the human to invoke that workflow.
 
-This is the Unity layer on core `verifying`, which owns the process, the definition of done and the status words. Here: which check establishes what, where it can run, how to read what it says, and how to report it. Done when each claim rests on a check that establishes it, every result was read past its exit code, and the [report](#report) is written.
+This is the Unity layer on core `verifying`, which owns the process, the definition of done and the status words. Here: which check establishes what, where it can run, how to read what it says, and how to report it. Done when each claim rests on a check that establishes it, every result was read past its exit code, and the [report](#report) is written. A [lookup](#lookups-from-other-workflows) is done when its answer is given.
 
 The CLI is beta and moves every few weeks. The commands named here mark traps. Take their current form from `unity commands --grep <term>`, `unity <command> --help`, `unity skill show` and, for Editor commands, `unity command --query <term>`.
 
@@ -40,6 +40,7 @@ Read **Verification** in `docs/agents/unity.md`. A missing field means this defa
 | Test filters | None |
 | Build targets and method | The project's active target, with the CLI's default build |
 | Authoritative CI workflow | "CI, if the repo has one" |
+| Unity involvement classification | Disabled |
 
 Rung commands live in the check-commands file linked from the `## Agent skills` block. A row for a check replaces the default route for that check; with no file or no row, use the routes below.
 
@@ -64,6 +65,16 @@ For each behaviour the change touches or failure it risks, pick the cheapest che
   - **Scripted state**: a test or script set the state, then observed it. A simulated run is this, never a playtest.
   - **Real input**: input arrived through the game's own input path.
   - **Human judgement**: feel, visuals, audio, perceived timing. No check gives this. It becomes a manual check in the report.
+
+## QA checklist
+
+Add a case only where the change risks it, and name its evidence kind. It runs on the targets and devices the project already has.
+
+- **Interruptions**: focus loss, pause, a scene load or a dialog arriving mid-action.
+- **Input-device switching**: changing device mid-interaction, a device disconnecting, prompts and UI focus following the switch.
+- **State transitions**: entering or leaving a mode mid-action, restart, quit to menu, and returning to a state already left.
+
+A case a test can script goes to `unity-testing`. A case that needs real input or judgement becomes a manual check in the report.
 
 ## Where Unity runs
 
@@ -102,6 +113,17 @@ To run C# in the Editor (a validation script, a probe, a script another Unity sk
 ## CI
 
 Pushing and triggering CI are the user's. Name the checks CI would cover and which workflow runs them; those stay unvalidated. Once the user has pushed, read the finished run from the CI host and report it as that check.
+
+## Lookups from other workflows
+
+A core workflow asking through the guide gets knowledge for its own job: run no check and start no workflow for it, and skip the report. Read the file for the need, and answer from it and the sections above.
+
+| Asked for | Read |
+|---|---|
+| Ship-readiness for a project or a package | [Ship-readiness](references/SHIP-READINESS.md) |
+| Measuring a change against real data: which values a run really used | [Which values](references/WHICH-VALUES.md) |
+| Check tools and cost tiers (`constraints`), shared resources or parallel worktrees (`delegating`, `implement-spec`), slicing work (`to-tickets`), environment gaps (`retro`) | [Planning](references/PLANNING.md) |
+| Classifying Unity involvement in issues, for triage or selection | [Issue classification](references/ISSUE-CLASSIFICATION.md) |
 
 ## Report
 

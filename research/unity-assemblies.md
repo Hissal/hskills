@@ -210,7 +210,7 @@ Entering Play mode, **domain reload off**: steps 2 and 3 vanish except `[Initial
 - On 6000.5.11f1 (#33, reload off), entering and exiting Play mode gave the same order as 6.6 for every callback probed (`[OnExitingEditMode]`, `playModeStateChanged`, `[InitializeOnEnterPlayMode]`, `[OnEnteringPlayMode]`, `SubsystemRegistration`, `[OnExitingPlayMode]`, `[OnEnteringEditMode]`).
 - Windows release player, 6000.6.2f1 (#33, `BuildPipeline.BuildPlayer` with `BuildOptions.None`, run with `-batchmode -nographics -logFile`, quitting itself with `Application.Quit` after a few frames): `[OnCodeLoaded]`, `[OnCodeInitializing]`, `[OnEnteringPlayMode]`, `SubsystemRegistration`, `AfterAssembliesLoaded`, `BeforeSceneLoad`, `Awake`, `AfterSceneLoad`, `Start`, then `OnApplicationQuit`, `[OnExitingPlayMode]`, `[OnCodeUnloading]`. This confirms the docs' "at Player startup" and "before Player quit" for the Play mode pair. A first probe that read `Time.frameCount` inside `[OnCodeLoaded]` crashed the player natively (managed stack ending in `UnityEngine.Time:get_frameCount` under `CodeLoadedScope:Enter`): engine APIs are not ready that early in a player.
 - **Docs mapping versus behaviour**: the 6.6 manual and the `SubsystemRegistration` API page map it to `[OnCodeInitializing]` ("For new code, use OnCodeInitializingAttribute instead"), a mapping by load timing. The reload-off order above shows they differ on every later Play session: `SubsystemRegistration` fires on each Play entry, `[OnCodeInitializing]` does not. A per-Play reset therefore maps to `[OnEnteringPlayMode]` or `[AutoStaticsCleanup]`. Raised in review of PR #48.
-- **Unverified**: the reload-on order on 6.5, code reload during Play mode, and Player builds on other platforms or IL2CPP (docs say `[OnEnteringPlayMode]` runs at Player startup and `[OnExitingPlayMode]` before quit).
+- **Unverified**: code reload during Play mode, and Player builds on other platforms or IL2CPP. The reload-on order on 6.5 was run later: see the recheck below (docs say `[OnEnteringPlayMode]` runs at Player startup and `[OnExitingPlayMode]` before quit).
 
 #### `[AutoStaticsCleanup]` observed, 6000.6.2f1 and 6000.5.11f1
 
@@ -232,6 +232,30 @@ Where the reset runs when code loads (6000.6.2f1, #33 review of PR #48). A type-
 - Windows release player: type init, `[OnCodeLoaded]`, `[OnCodeInitializing]` (filled both), reset, `[OnEnteringPlayMode]` with `Cache` null and `KeptCache` kept, then `SubsystemRegistration`, `BeforeSceneLoad`, `Start`; on quit `[OnExitingPlayMode]`, then the reset again.
 
 Also observed: a MonoBehaviour singleton's static instance field after exiting Play mode (reload off) held the destroyed object: `Instance == null` was true, `ReferenceEquals(Instance, null)` and `Instance is null` were false, and `Instance ?? fallback` returned the destroyed object. `UNITY_6000_5_OR_NEWER` is defined on 6000.5.11f1 (seen in the compiler response file), so a dual path can gate on it.
+
+#### Recheck, [#293](https://github.com/Hissal/skill-collection/issues/293), 2026-11-03
+
+Run on 6000.3.20f1, 6000.5.11f1, 6000.6.5f1 and 6000.7.0b2 on Windows with Mono: a batch-mode Editor (`-batchmode -nographics`) driven through Play, Play, a real recompile, a texture import and exit, with `DisableDomainReload`, `None` and `DisableDomainReload | DisableSceneReload`; then a release player from `BuildOptions.None`. A file trace was written from every callback, with a scene object carrying the probe. The record, with the probe's method, is on the issue.
+
+Same as the 6000.6.2f1 results above, on all three 6.5-or-later versions: reload-off entry, exit, recompile, the reset's timing, reset semantics, `CS8785` with the sibling cleanup lost, `UAC0031`, `CS0260`, the fake-null singleton, the `[OnCodeLoaded]` `Time.frameCount` crash in a player (exit 139), and import workers running load code.
+
+New or different:
+
+- **6000.5.11f1, reload on:** `[OnCodeInitializing]` runs before `[InitializeOnEnterPlayMode]`. 6000.6.5f1 and 6000.7.0b2 run them the other way round.
+- **The reset, not `[OnEnteringPlayMode]`, is the first callback with `isPlaying` true.**
+- **Exit:** `OnApplicationQuit`, `OnDisable` and `OnDestroy` run before `[OnExitingPlayMode]`.
+- **Player quit:** `[OnCodeDeinitializing]` runs before `[OnCodeUnloading]`, which the docs state only for a code reload. `BeforeSplashScreen` also fired.
+- **Editor exit:** `[OnExitingEditMode]`, `[OnCodeDeinitializing]`, `[OnCodeUnloading]`.
+- **Analyzer, 6000.7.0b2:** `UAL0010` and `UAL0013` with no `.globalconfig`, matching the 6.7 Manual's "When Fast Enter Play Mode (domain reload disabled) is enabled, the analyzer is enabled by default". Not observed with reload on. 6000.5.11f1 and 6000.6.5f1 emitted no `UAL` warning with the default config.
+- **`UAL0014` not reproduced:** a `partial` static class with a cleaned field and an explicit static constructor gave no `UAL` warning on any of the three versions, with `build_property.UnityEnableAutoStaticsCleanupAnalysis = true` in `<asmdefName>.globalconfig` and a second compile after the file was imported. Cause not investigated. On 6.5 and 6.6, whether that file turned the analyzer on at all is therefore unconfirmed.
+- **`CS0260` on 6000.7.0b2 with the analyzer on:** the 6.7 Manual documents `UAL0012` for that case; the compile gave `CS0260`, with no `UAL0012` in the log.
+- **Destruction, all four versions:** a subscriber destroyed without unsubscribing stays on a static event, and its handler runs with `this == null`. `transform` throws `MissingReferenceException` in the Editor and `NullReferenceException` in a player. With reload off, the count grew by one per session.
+- **Pooled reuse, all four versions:** `SetActive` off and on runs `OnDisable` and `OnEnable`. `Awake` and `Start` run once, fields keep their values, and a running coroutine does not resume.
+- **Scene reload off, the three 6.5-or-later versions:** same callback order, and `Awake` and `OnEnable` ran each Play. The probe's non-serialized field was dirtied only in Play mode, so it read 1 each session; this does not test the documented persistence of non-serialized fields.
+
+Inference: order within one phase across different objects (for example two components' `OnDisable`) varied between runs here, so these results say nothing about it.
+
+Not rechecked: `unity recompile --json` hiding `CS8785` (6000.6.2f1 only).
 
 ### Pre-6.5 fallbacks and Enter Play Mode Options history
 

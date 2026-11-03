@@ -59,6 +59,7 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 | Measuring performance for this stack: choosing the method, and what a number supports (`verifying`, `hillclimb`) | `skill: unity-debugging` |
 | Test seams, authoring, setup, cadence, test-review idioms or coverage (`tdd`, `test-review`, `to-spec`, `implement`, part of `codebase-design`); a lookup during a review supplies knowledge and starts no test authoring | `skill: unity-testing` |
 | Knowledge from an official Unity skill or vendor source this project selected | vendor-guidance: the sources in the project's `### Vendor docs` and `docs/agents/vendor-sources.md`; reading one grants no workflow authority |
+| Serialized fields, asset/script moves, prefab overrides, saved-data compatibility or GUIDs; Unity asset merge conflicts; `blast-radius`, `migrating`, `refactoring`, `code-review` and `to-tickets` lookups where serialized data is relevant; what `architecture-review` and `reviewing`'s hotspot survey leave out of the scan | [Serialization rules](references/SERIALIZATION.md) |
 
 ## Docs lookup
 

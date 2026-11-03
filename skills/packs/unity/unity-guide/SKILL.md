@@ -51,6 +51,7 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 |---|---|
 | A Unity API, Manual or package fact at this repo's versions | [Docs lookup](SKILL.md#docs-lookup) |
 | Gameplay authority, replication or observing multiple participants, once a session exists (session, Relay, Lobby or matchmaking setup is no match) | `skill: unity-networking` |
+| Assembly boundaries, script placement, references or compilation problems, including a compile error about a type that exists or a Player build failing where the Editor compiles; `code-review`, `blast-radius`, `migrating`, `refactoring`, `codebase-design`, `architecture-review` and `to-tickets` lookups where assemblies are relevant | [Assembly rules](references/ASSEMBLIES.md) |
 | Knowledge from an official Unity skill or vendor source this project selected | vendor-guidance: the sources in the project's `### Vendor docs` and `docs/agents/vendor-sources.md`; reading one grants no workflow authority |
 
 ## Docs lookup

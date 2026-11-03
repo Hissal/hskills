@@ -22,7 +22,7 @@ Run these from the project root, each with a time limit and stdin closed. `<inst
 
 Each listing should show a pack guide under the exact name its `### Packs` line uses; correct a line that differs.
 
-Codex and OpenCode hide a user-invoked skill from these listings by design. On those two, its folder and its gate are the check: `allow_implicit_invocation: false` in `agents/openai.yaml` on Codex, `opencode/autoinvoke: "false"` in `SKILL.md` on OpenCode.
+Codex and OpenCode hide a user-invoked skill from these listings by design. On those two, its folder and its gate are the check: `allow_implicit_invocation: false` in its `openai.yaml` on Codex, `opencode/autoinvoke: "false"` in `SKILL.md` on OpenCode.
 
 Read the harness's `--help` when a flag is refused.
 

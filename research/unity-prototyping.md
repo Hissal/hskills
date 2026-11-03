@@ -1,5 +1,7 @@
 # Research: Unity prototypes
 
+Status: historical evidence for the Unity pack, not a collection decision. The skills it names as planned were built differently: assembly, serialization and lifecycle material lives in `unity-guide`'s references.
+
 Ticket: [#34](https://github.com/Hissal/mattpocock-skills-unity/issues/34), designed in [#19](https://github.com/Hissal/mattpocock-skills-unity/issues/19), part of [#1](https://github.com/Hissal/mattpocock-skills-unity/issues/1). Feeds the `unity-prototyping` skill and the prototype folder question in setup. Researched 2026-09-25.
 
 Sourcing rule: every claim cites a primary source (docs.unity3d.com, git-scm.com) or is marked **observed**: checked on one Windows 11 machine on 2026-09-25 with Unity 6000.6.2f1, Unity CLI 1.0.0-beta.11 and `com.unity.pipeline` 0.7.0-exp.1, in the gitignored `unity-sandbox/` (URP blank, Mono backend, Enter Play Mode Options on with domain and scene reload off, Active Input Handling set to the Input System only), through a GUI editor opened with `unity open`. **Unverified** means neither documented nor observed.

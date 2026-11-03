@@ -1,5 +1,7 @@
 # Research: Unity serialization mechanics
 
+Status: historical evidence for the Unity pack, not a collection decision. The skills it names as planned were built differently: assembly, serialization and lifecycle material lives in `unity-guide`'s references. GitHub links were pinned afterwards, to the last commit on or before the note's date (2026-09-23), not recorded at reading time. The `MovedFromAttribute.cs` link stays on its branch: that path is absent at the commit for that date.
+
 Ticket: [#2](https://github.com/Hissal/mattpocock-skills-unity/issues/2), part of [#1](https://github.com/Hissal/mattpocock-skills-unity/issues/1). Feeds the `unity-serialization` skill.
 
 Sources are primary only: the Unity manual and scripting API on docs.unity3d.com, Unity's [UnityCsReference](https://github.com/Unity-Technologies/UnityCsReference) source, official Unity package docs, and posts on unity.com by Unity staff. Unless a claim says otherwise, it was checked against the Unity 6.0 (6000.0) docs. Claims that only hold from a certain version say so. Anything marked **Unverified** could not be traced to a primary source and should not be stated as fact in the skill without a hedge.
@@ -96,7 +98,7 @@ Generic field types (for example `MyClass<int>`) serialize directly since Unity 
 ### `FormerlySerializedAs` (field renames)
 
 - "Use this attribute to rename a field without losing its serialized value": `[FormerlySerializedAs("hitpoints")] public int health;`. ([FormerlySerializedAsAttribute, 6000.0](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Serialization.FormerlySerializedAsAttribute.html))
-- Source: `[AttributeUsage(AttributeTargets.Field, AllowMultiple = true, Inherited = false)]`, so a field can carry several old names (chained renames). ([FormerlySerializedAsAttribute.cs](https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Serialization/FormerlySerializedAsAttribute.cs))
+- Source: `[AttributeUsage(AttributeTargets.Field, AllowMultiple = true, Inherited = false)]`, so a field can carry several old names (chained renames). ([FormerlySerializedAsAttribute.cs](https://github.com/Unity-Technologies/UnityCsReference/blob/6b50e5544f6efcca1f44dbace3d1778b465ac6d0/Runtime/Export/Serialization/FormerlySerializedAsAttribute.cs))
 - Only removable once every scene and asset has been re-saved with the new name; leaving it in place is harmless. ([FormerlySerializedAsAttribute](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Serialization.FormerlySerializedAsAttribute.html))
 - Unity upgrades old data in memory only; files keep the old name until re-saved. `AssetDatabase.ForceReserializeAssets` writes the upgrade to disk and is the documented step before removing `FormerlySerializedAs`. Call it only from a direct user action (menu item), never from callbacks like `OnEnable`. ([ForceReserializeAssets, 6000.0](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AssetDatabase.ForceReserializeAssets.html))
 - Changing a field's type is not covered by this attribute. **Unverified** how Unity converts values across type changes; treat a type change as data loss unless tested.

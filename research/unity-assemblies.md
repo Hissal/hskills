@@ -1,5 +1,7 @@
 # Research: Unity assemblies and compilation
 
+Status: historical evidence for the Unity pack, not a collection decision. The skills it names as planned were built differently: assembly, serialization and lifecycle material lives in `unity-guide`'s references. Bare `#N` issue numbers refer to the tracker of the repo this note was written in. GitHub links were pinned afterwards, to the last commit on or before the note's date (2026-09-23), not recorded at reading time.
+
 Ticket: [#5](https://github.com/Hissal/mattpocock-skills-unity/issues/5), part of #1. Feeds the planned `unity-assemblies` skill.
 
 Sources are the Unity Manual and Scripting API on docs.unity3d.com, plus the Unity-Technologies `UnityCsReference` GitHub source. The baseline is Unity 6.0 LTS (6000.0) docs. Where the latest docs (Unity 6.6, 6000.6, built 2026-09-21) differ, both are cited. The `UnityCsReference` master branch was at "Unity 6000.7.0b1" when read (2026-09-23). Anything not stated by a primary source is marked **unverified** or **inference**.
@@ -47,7 +49,7 @@ Unity compiles scripts in four phases by folder location, each producing a prede
 
 ### `.asmdef` JSON fields
 
-From the [file format reference](https://docs.unity3d.com/6000.0/Documentation/Manual/assembly-definition-file-format.html), the [Inspector reference](https://docs.unity3d.com/6000.0/Documentation/Manual/class-AssemblyDefinitionImporter.html), and the serialized class `CustomScriptAssemblyData` in [UnityCsReference `CustomScriptAssembly.cs`](https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Scripting/ScriptCompilation/CustomScriptAssembly.cs).
+From the [file format reference](https://docs.unity3d.com/6000.0/Documentation/Manual/assembly-definition-file-format.html), the [Inspector reference](https://docs.unity3d.com/6000.0/Documentation/Manual/class-AssemblyDefinitionImporter.html), and the serialized class `CustomScriptAssemblyData` in [UnityCsReference `CustomScriptAssembly.cs`](https://github.com/Unity-Technologies/UnityCsReference/blob/6b50e5544f6efcca1f44dbace3d1778b465ac6d0/Editor/Mono/Scripting/ScriptCompilation/CustomScriptAssembly.cs).
 
 | Field | Default | Effect |
 |---|---|---|
@@ -63,7 +65,7 @@ From the [file format reference](https://docs.unity3d.com/6000.0/Documentation/M
 | `defineConstraints` | `[]` | Symbols that must all hold for the assembly to compile or be referenced. |
 | `versionDefines` | `[]` | Objects `{ "name", "expression", "define" }`: define a symbol when a package, module, or Unity version matches. |
 
-Legacy field: `"optionalUnityReferences": ["TestAssemblies"]` is still read and converted to `autoReferenced: false`, `overrideReferences: true`, references to `UnityEngine.TestRunner` and `UnityEditor.TestRunner`, `nunit.framework.dll`, and define constraint `UNITY_INCLUDE_TESTS`. [UnityCsReference `CustomScriptAssembly.cs`](https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Scripting/ScriptCompilation/CustomScriptAssembly.cs)
+Legacy field: `"optionalUnityReferences": ["TestAssemblies"]` is still read and converted to `autoReferenced: false`, `overrideReferences: true`, references to `UnityEngine.TestRunner` and `UnityEditor.TestRunner`, `nunit.framework.dll`, and define constraint `UNITY_INCLUDE_TESTS`. [UnityCsReference `CustomScriptAssembly.cs`](https://github.com/Unity-Technologies/UnityCsReference/blob/6b50e5544f6efcca1f44dbace3d1778b465ac6d0/Editor/Mono/Scripting/ScriptCompilation/CustomScriptAssembly.cs)
 
 `.asmref` has one field, `reference`, holding the target assembly's name or `"GUID:<guid>"`. [file format](https://docs.unity3d.com/6000.0/Documentation/Manual/assembly-definition-file-format.html)
 
@@ -78,7 +80,7 @@ Legacy field: `"optionalUnityReferences": ["TestAssemblies"]` is still read and 
 - **Hand-written `.meta`, observed** on 6000.6.2f1 (2026-09-24, `unity-sandbox/`, resident headless editor): a new `Probe.A.asmdef` with a hand-written `.meta` (`fileFormatVersion: 2`, a random lowercase 32-hex `guid:`, an `AssemblyDefinitionImporter:` block with `externalObjects: {}`, empty `userData`, `assetBundleName`, `assetBundleVariant`) kept that GUID on import, and a second asmdef referencing it as `"GUID:<that>"` compiled against it, with no editor round trip between writing the two. So an agent can generate the GUID and reference it at once, without falling back to a name reference.
 - **The race, observed** (section 13, check 6): Unity deletes a `.meta` whose asset is missing when it refreshes, so a refresh between writing the `.meta` and the `.asmdef` deletes the `.meta` and the asset later gets a new GUID. Mitigation adopted for the skill: write both in one command, `.meta` first, re-read the `.meta` before using its GUID anywhere else.
 - **Lookup cost**: an asmdef's GUID is the `guid:` line of its `.asmdef.meta`. Name to GUID is a grep for `"name": "<name>"` across `*.asmdef` plus reading the matched `.meta`; GUID to name is a grep for `guid: <guid>` across `*.asmdef.meta`. Registry and Git packages' asmdefs live only in `Library/PackageCache/`, absent on a cold checkout, so their GUIDs cannot be resolved there.
-- **Inference** (from `IsCompatibleWith` in [UnityCsReference](https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Scripting/ScriptCompilation/CustomScriptAssembly.cs)): an Editor-only assembly is not compiled for Player targets, so a runtime assembly that references it compiles in the Editor but breaks the Player build (observed, section 13, check 3). Keep references pointing from Editor to runtime, never the other way.
+- **Inference** (from `IsCompatibleWith` in [UnityCsReference](https://github.com/Unity-Technologies/UnityCsReference/blob/6b50e5544f6efcca1f44dbace3d1778b465ac6d0/Editor/Mono/Scripting/ScriptCompilation/CustomScriptAssembly.cs)): an Editor-only assembly is not compiled for Player targets, so a runtime assembly that references it compiles in the Editor but breaks the Player build (observed, section 13, check 3). Keep references pointing from Editor to runtime, never the other way.
 
 ## 4. Editor vs runtime code and `#if UNITY_EDITOR`
 
@@ -98,7 +100,7 @@ Legacy field: `"optionalUnityReferences": ["TestAssemblies"]` is still read and 
 - `!SYMBOL` negates; `A || B` within one entry means either. Separate entries are ANDed. [inspector ref](https://docs.unity3d.com/6000.0/Documentation/Manual/class-AssemblyDefinitionImporter.html)
 - Any built-in or custom symbol works, including symbols from `versionDefines`. They are evaluated for the currently active platform in Build Profiles. [inspector ref](https://docs.unity3d.com/6000.0/Documentation/Manual/class-AssemblyDefinitionImporter.html), [includes](https://docs.unity3d.com/6000.0/Documentation/Manual/assembly-definition-includes.html)
 - Constraints decide both compiling and including in builds, "including Play mode in the Editor". [includes](https://docs.unity3d.com/6000.0/Documentation/Manual/assembly-definition-includes.html)
-- In source, an assembly whose constraints include `UNITY_INCLUDE_TESTS` is excluded from Player builds unless building with test assemblies, and invalid constraint syntax throws "Invalid Define Constraint". [UnityCsReference](https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Scripting/ScriptCompilation/CustomScriptAssembly.cs)
+- In source, an assembly whose constraints include `UNITY_INCLUDE_TESTS` is excluded from Player builds unless building with test assemblies, and invalid constraint syntax throws "Invalid Define Constraint". [UnityCsReference](https://github.com/Unity-Technologies/UnityCsReference/blob/6b50e5544f6efcca1f44dbace3d1778b465ac6d0/Editor/Mono/Scripting/ScriptCompilation/CustomScriptAssembly.cs)
 
 ### Version defines
 

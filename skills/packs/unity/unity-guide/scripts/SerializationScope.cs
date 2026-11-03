@@ -1,17 +1,5 @@
-// The scope of a reserialize after a serialized rename: every asset file that
-// serializes a changed type, and the reserialize itself. Editor-only; the guide's
-// serialization reference says when to run each entry point. <types> is a comma-separated list of full
-// type names, namespace included.
-//
-// Entry points (how to run C# in the Editor is unity-verification's):
-//   Find(types)                   connected editor, from a scratch copy outside Assets/
-//   Reserialize(types, pathList)  connected editor; pathList is the approved list, one path per line
-//   FindFromCommandLine,          headless, from a copy in an Editor folder under Assets/
-//   ReserializeFromCommandLine    (removed after, with its .meta), reading
-//                                   -serializationScopeTypes <types> -serializationScopeOut <file>
-//                                   and, to reserialize, -serializationScopePaths <file>
-//
-// Find returns one project-relative path per line, sorted; lines starting with "#" are notes.
+// The scope of a reserialize after a serialized rename, and the reserialize itself.
+// Editor-only. Entry points and arguments: scope.sh --help.
 
 using System;
 using System.Collections.Generic;
@@ -116,7 +104,7 @@ public static class SerializationScope
             .Concat(Directory.Exists("Packages") ? Directory.EnumerateFiles("Packages", "*", SearchOption.AllDirectories) : Enumerable.Empty<string>())
             .Where(p => !p.EndsWith(".meta", StringComparison.OrdinalIgnoreCase))
             .Select(p => p.Replace('\\', '/'))
-            .Select(p => (path: p, text: ReadUnityYaml(p)))
+            .Select(p => (path: p, text: ReadUnityYaml(p, notes)))
             .Where(f => f.text != null)
             .ToList();
 
@@ -171,7 +159,8 @@ public static class SerializationScope
         return type ?? throw new ArgumentException("type not found: " + name + " (use the full name, namespace included)");
     }
 
-    static string ReadUnityYaml(string path)
+    // Null for a file that is not UnityYAML, and for one it could not read, which also adds a note.
+    static string ReadUnityYaml(string path, List<string> notes)
     {
         try
         {
@@ -182,7 +171,11 @@ public static class SerializationScope
                 return "%YAML" + reader.ReadToEnd();
             }
         }
-        catch (IOException) { return null; }
+        catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
+        {
+            notes.Add($"# scope incomplete: could not read {path} ({e.GetType().Name}); it may serialize the changed type");
+            return null;
+        }
     }
 
     // Unity's field rules, applied recursively from a host type down to the targets.
@@ -193,20 +186,30 @@ public static class SerializationScope
 
         public Closure(Type[] targets) => this.targets = targets;
 
-        public bool Hosts(Type host) =>
-            targets.Any(t => t.IsAssignableFrom(host)) || Contains(host);
-
-        // Does a value of this type carry a target in its serialized data?
-        bool Contains(Type type)
+        public bool Hosts(Type host)
         {
-            if (memo.TryGetValue(type, out var known)) return known;
-            memo[type] = false; // cycle guard: a type is not assumed to contain itself
-            bool result = SerializedFields(type).Any(CarriesTarget);
-            memo[type] = result;
+            if (targets.Any(t => t.IsAssignableFrom(host))) return true;
+            var visited = new HashSet<Type>();
+            bool result = Contains(host, visited);
+            // Only an exhausted search proves a negative. Inside a successful one, a false can
+            // be a cycle cut short at a type still being searched, so it is left uncached.
+            if (!result)
+                foreach (var type in visited)
+                    memo[type] = false;
             return result;
         }
 
-        bool CarriesTarget(FieldInfo field)
+        // Does a value of this type carry a target in its serialized data?
+        bool Contains(Type type, HashSet<Type> visited)
+        {
+            if (memo.TryGetValue(type, out var known)) return known;
+            if (!visited.Add(type)) return false; // already searched in this query
+            bool result = SerializedFields(type).Any(f => CarriesTarget(f, visited));
+            if (result) memo[type] = true;
+            return result;
+        }
+
+        bool CarriesTarget(FieldInfo field, HashSet<Type> visited)
         {
             bool byReference = field.IsDefined(typeof(SerializeReference), true);
             foreach (var element in Elements(field.FieldType))
@@ -214,14 +217,14 @@ public static class SerializationScope
                 if (typeof(UnityEngine.Object).IsAssignableFrom(element)) continue; // a reference, not inline data
                 if (!byReference)
                 {
-                    if (Matches(element) || (IsSerializableCustom(element) && Contains(element))) return true;
+                    if (Matches(element) || (IsSerializableCustom(element) && Contains(element, visited))) return true;
                     continue;
                 }
                 // [SerializeReference]: the stored object can be any serializable type assignable to the field.
                 if (targets.Any(t => !typeof(UnityEngine.Object).IsAssignableFrom(t) && element.IsAssignableFrom(t))) return true;
                 var candidates = TypeCache.GetTypesDerivedFrom(element).Append(element)
                     .Where(c => !c.IsAbstract && !c.IsInterface && IsSerializableCustom(c));
-                if (candidates.Any(c => Matches(c) || Contains(c))) return true;
+                if (candidates.Any(c => Matches(c) || Contains(c, visited))) return true;
             }
             return false;
         }

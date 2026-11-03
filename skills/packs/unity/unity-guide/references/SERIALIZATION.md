@@ -95,13 +95,15 @@ On the okay:
 - **Scoped**: run `SerializationScope.Reserialize` with the approved list. It calls `AssetDatabase.ForceReserializeAssets(paths)`, which rewrites only the listed files, then re-records the prefab instance overrides in each listed scene.
 - **Whole project**: `ForceReserializeAssets()` with no arguments rewrites every asset: a large diff. Scene overrides still need the re-record pass, so then run `Reserialize` with every `.unity` file in the project.
 
+**An incomplete scope stops the attribute's removal.** `scope.sh` exiting 3, or a `# scope incomplete` line from `Find`, names a file that could not be read. That file may hold the old name and would lose its value once the attribute goes. Name it in the proposal and keep the attribute: neither option above lifts this until a rerun comes back complete.
+
 Then remove the attribute, compile, check, and commit. Prefab files keep a stale entry under the old `propertyPath` beside the new one; it no longer applies to anything and can stay.
 
 ### Building the scope
 
 **Without an Editor**, list the scope with [the scope script](../scripts/scope.sh), which needs bash and grep. Run `bash <this skill's folder>/scripts/scope.sh --help` first and treat the script as a black box. Seed it with every script whose class declares the changed field or holds the changed type, and every subclass of those. It lists every text asset referencing them, following each matched prefab to what nests it. It covers only that grep, so the proposal states that hosts reached through subclasses, nested types or `[SerializeReference]` fields may be missing.
 
-**With an Editor**, use [scripts/SerializationScope.cs](../scripts/SerializationScope.cs); read only its header comment, which names each entry point and its arguments. Copying it into a project is a job, never part of a lookup; how to run C# in the Editor is `unity-verification`'s. `Find` walks every MonoBehaviour and ScriptableObject type that serializes the changed type at any depth, maps them to script GUIDs and greps to the same fixpoint. It over-reaches by type: every file using a host component is listed, whether or not that instance holds the changed type. Over-reaching only adds files to the rewrite; missing one loses data.
+**With an Editor**, use [scripts/SerializationScope.cs](../scripts/SerializationScope.cs). Run `bash <this skill's folder>/scripts/scope.sh --help` first, which names each entry point and its arguments, and treat the `.cs` as a black box too. When `--help` prints nothing, bash cannot run in this shell: say so, skip both scripts and their source, and leave the scope to a shell that has bash. Copying the `.cs` into a project is a job, never part of a lookup; how to run C# in the Editor is `unity-verification`'s. `Find` walks every MonoBehaviour and ScriptableObject type that serializes the changed type at any depth, maps them to script GUIDs and greps to the same fixpoint. It over-reaches by type: every file using a host component is listed, whether or not that instance holds the changed type. Over-reaching only adds files to the rewrite; missing one loses data.
 
 ## Old-save fixtures
 
@@ -229,7 +231,7 @@ Text checks, always, before the merge commit:
   comm -23 <(grep -o '{fileID: -\?[0-9]*}' <file> | grep -o -- '-\?[0-9]*' | grep -vx 0 | sort -u) <(grep -o '^--- !u![0-9]* &-\?[0-9]*' <file> | sed 's/.*&//' | sort -u)
   ```
 - No two `.meta` files share a `guid:`: `grep -rh --include='*.meta' '^guid:' Assets Packages | sort | uniq -d`. Settle any collision before Unity opens the project: Unity keeps the GUID on the asset it already imported and gives the other a new one, rewriting its `.meta`; when both are new to its `Library/`, both get new GUIDs (observed on 6000.6.2f1). Either way, references meant for the re-GUIDed asset now point elsewhere.
-- When an `.asmdef` was conflicted, [the listing script](../scripts/asmdefs.sh) prints no reference as unresolved.
+- When an `.asmdef` was conflicted, [the listing script](../scripts/asmdefs.sh) exits 0 and prints no reference as unresolved.
 
 Then, when Unity can run, import the merged files and grep the Editor log for these strings, each seen on 6000.6.2f1:
 
@@ -262,7 +264,7 @@ Start from `git diff --stat -- '*.unity' '*.prefab' '*.asset' '*.meta'`, and rea
 - `propertyPath` lines: overrides renamed or dropped.
 - Meta churn: a `.meta` whose `guid:` changed, a `.meta` added or deleted without its asset, an asset moved without its `.meta`.
 
-In the code: a serialized field renamed without `FormerlySerializedAs`, a field turned into an auto-property without it, an enum reordered or a value removed, a `[SerializeReference]` type renamed or moved without `MovedFrom`, a MonoBehaviour or ScriptableObject in a file-scoped namespace. A finding is hard when it loses data or breaks a reference; otherwise it is a judgement call.
+In the code: a serialized field renamed without `FormerlySerializedAs`, a field turned into an auto-property without it, an enum reordered or a value removed, a `[SerializeReference]` type renamed or moved without `MovedFrom`, a MonoBehaviour or ScriptableObject in a file-scoped namespace.
 
 A diff cannot establish that values survive import: name that as unverified until [the checks](#check-after-import) ran.
 

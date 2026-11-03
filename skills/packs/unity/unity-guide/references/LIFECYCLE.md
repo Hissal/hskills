@@ -43,7 +43,7 @@ Find what the change touches and check only that row's transitions. A check on a
 | A static field or property | **Repeated Play sessions:** the second Play starts from the same value as the first. **Static cleanup:** it has a reset path or a deliberate opt-out |
 | A static event, or a subscription to one | **Repeated Play sessions:** last session's subscribers are gone. **Event subscriptions:** each subscriber removes itself when it dies, or the event is reset |
 | A MonoBehaviour singleton | **Repeated Play sessions:** the instance field is cleared on Play entry. **Destruction:** see [the fake-null rule](#static-events-and-singletons) |
-| Code that runs on load | **Reload settings:** where it runs with reload on and off. [Load-code hazards](#load-code-hazards) |
+| Code that runs on load | **Reload settings:** where it runs with reload on and off. **Import workers:** it runs there too, so name them in the answer. The rest of [Load-code hazards](#load-code-hazards) |
 | Code that runs on entering or leaving Play mode | **Reload settings:** it fires with both ([What fires](#what-fires-on-a-play-session)). Its order against what it reads ([Observed orders](#observed-orders)) |
 | An object that dies or a scene that unloads while something holds it | **Destruction and unload:** the holder lets go in `OnDisable` or `OnDestroy` |
 | An object returned to a pool and reused | **Pooled reuse:** see [Pooled reuse](#pooled-reuse) |
@@ -92,7 +92,7 @@ For 6.5 and later.
 For 6.5 and later.
 
 - **Per-session state:** `[AutoStaticsCleanup]` for a plain reset, `[OnEnteringPlayMode]` for one that needs a method call.
-- **Once per code load** (a registry built from types, a reflection cache): `[OnCodeInitializing]`. The setup must be safe to run again and hold across sessions, since it runs at Editor startup, after each recompile, on each Play entry with reload on, and at Player startup, and never on a Play entry with reload off. Use it rather than `[OnCodeLoaded]`, which runs before the engine is ready in a player: `Time.frameCount` read there crashed the Windows player, exit 139 (observed on 6000.5.11f1, 6000.6.5f1 and 6000.7.0b2).
+- **Once per code load** (a registry built from types, a reflection cache): `[OnCodeInitializing]`. The setup must be safe to run again and hold across sessions, since it runs at Editor startup, after each recompile, on each Play entry with reload on, and at Player startup, and never on a Play entry with reload off. Import workers run it too. Use it rather than `[OnCodeLoaded]`, which runs before the engine is ready in a player: `Time.frameCount` read there crashed the Windows player, exit 139 (observed on 6000.5.11f1, 6000.6.5f1 and 6000.7.0b2).
 - **The static that load code fills gets `[NoAutoStaticsCleanup]`.** The reset runs after `[OnCodeInitializing]` on every Play entry and at Player startup, so a cleaned static filled there is already empty when Play mode code reads it (observed on 6000.5.11f1, 6000.6.5f1 and 6000.7.0b2, reload on and off).
 
 ## Load-code hazards

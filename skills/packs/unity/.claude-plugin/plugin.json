@@ -6,6 +6,7 @@
     "./unity-debugging",
     "./unity-guide",
     "./unity-networking",
+    "./unity-testing",
     "./unity-verification"
   ]
 }

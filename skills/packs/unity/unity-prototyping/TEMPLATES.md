@@ -23,6 +23,9 @@ namespace Prototypes.<Name>
         const string PrototypeScene = "<Folder>/<Name>/<Name>.unity";
         const string HostScene = "<Host>"; // a standalone greybox scene drops this line and the additive OpenScene
 
+        [MenuItem("Prototypes/<Name>", true)]
+        static bool CanOpen() => !EditorApplication.isPlayingOrWillChangePlaymode; // OpenScene throws during Play
+
         [MenuItem("Prototypes/<Name>")]
         static void Open()
         {

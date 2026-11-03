@@ -18,6 +18,7 @@
     "skills/core/implement",
     "skills/core/implement-spec",
     "skills/core/migrating",
+    "skills/core/pr",
     "skills/core/prototype",
     "skills/core/receiving-review",
     "skills/core/refactoring",

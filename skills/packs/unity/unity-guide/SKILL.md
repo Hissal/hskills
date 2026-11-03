@@ -40,7 +40,7 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 
 ## 3. Answer the need
 
-- **A caller asks.** Find the row for its need, load only that row's target, and answer from it inside the caller's job. Load a file by reading it and a `skill:` target through the skill tool. Skip a target skill that is not installed without a word.
+- **A caller asks.** Find the row for its need, load only that row's target, and answer from it inside the caller's job. A need that spans topics, such as a review's, takes only the rows the work touches, and with none it gets the no-row reply. Load a file by reading it and a `skill:` target through the skill tool. Skip a target skill that is not installed without a word.
 - **No caller.** Take the rows whose need matches the work and load those targets.
 - **No row fits.** Reply `No Unity pack row covers: <need>.`, adding no general advice and doing none of the work. The caller carries on with its own process.
 - **Choosing a workflow.** Follow [Choosing a workflow](#choosing-a-workflow).
@@ -63,7 +63,7 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 | Classifying stack involvement (`triage`) | `skill: unity-verification` |
 | Environment gaps the session hit that are specific to this stack (`retro`) | `skill: unity-verification` |
 | Measuring a change against real data for this stack: which values the run really used, and evidence selection (`risky-changes`) | `skill: unity-verification` |
-| Gameplay authority, replication or observing multiple participants, once a session exists (session, Relay, Lobby or matchmaking setup is no match) | `skill: unity-networking` |
+| Gameplay authority, replication or observing multiple participants, once a session exists (session, Relay, Lobby or matchmaking setup is no match); `code-review` lookups where the change touches networked code | `skill: unity-networking` |
 | Assembly boundaries, script placement, references or compilation problems, including a compile error about a type that exists or a Player build failing where the Editor compiles; `code-review`, `blast-radius`, `migrating`, `refactoring`, `codebase-design`, `architecture-review` and `to-tickets` lookups where assemblies are relevant | [Assembly rules](references/ASSEMBLIES.md) |
 | Checking a UI against worst-case data | [UI worst cases](references/UI-WORST-CASES.md) |
 | Building a feedback loop, instrumenting or profiling for this stack: reproduction, live observation, logs (`diagnosing-bugs`) | `skill: unity-debugging` |

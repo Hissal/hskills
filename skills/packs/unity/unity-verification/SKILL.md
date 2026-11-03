@@ -1,6 +1,6 @@
 ---
 name: unity-verification
-description: Use when checking that a Unity change compiles or works, running Unity tests, building a Player, running C# in the Editor, or when Unity cannot run here or the Editor is locked.
+description: Use when checking that a Unity change compiles or works, running Unity tests, building a Player, running C# in the Editor, classifying Unity involvement for issue triage or selection, or when Unity cannot run here or the Editor is locked.
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/unity-verification"
@@ -68,7 +68,7 @@ For each behaviour the change touches or failure it risks, pick the cheapest che
 
 ## QA checklist
 
-Add a case only where the change risks it, and name its evidence kind. It runs on the targets and devices the project already has.
+Pick the few cases this change most risks, and name each one's evidence kind. They run on the targets and devices the project already has.
 
 - **Interruptions**: focus loss, pause, a scene load or a dialog arriving mid-action.
 - **Input-device switching**: changing device mid-interaction, a device disconnecting, prompts and UI focus following the switch.

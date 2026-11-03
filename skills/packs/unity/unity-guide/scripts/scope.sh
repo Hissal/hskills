@@ -21,6 +21,25 @@ seeded too: say so in the proposal.
 Exit: 0 listed in full (possibly nothing), 1 a seed has no GUID, 2 bad arguments,
 3 scope incomplete: a file could not be read, or a matched prefab's GUID could not
 be followed. Stderr names each one, and the listing prints what could be read.
+
+With an Editor, use SerializationScope.cs, beside this script: it adds the type
+closure this grep lacks. Copy it and call an entry point, treating it as a black
+box. <types> is a comma-separated list of full type names, namespace included.
+
+  Find(types)                   connected Editor, from a scratch copy outside Assets/
+  Reserialize(types, pathList)  connected Editor; pathList is the approved list,
+                                one path per line
+  FindFromCommandLine,          headless, from a copy in an Editor folder under
+  ReserializeFromCommandLine    Assets/ (removed after, with its .meta), reading
+                                  -serializationScopeTypes <types>
+                                  -serializationScopeOut <file>
+                                and, to reserialize,
+                                  -serializationScopePaths <file>
+
+Find returns one project-relative path per line, sorted. A line starting with "#"
+is a note, and "# scope incomplete" names a file it could not read. Reserialize
+skips note lines, re-records each listed scene's prefab overrides, and refuses
+while an open scene has unsaved changes.
 USAGE
 }
 

@@ -1,17 +1,5 @@
-// The scope of a reserialize after a serialized rename: every asset file that
-// serializes a changed type, and the reserialize itself. Editor-only; the guide's
-// serialization reference says when to run each entry point. <types> is a comma-separated list of full
-// type names, namespace included.
-//
-// Entry points (how to run C# in the Editor is unity-verification's):
-//   Find(types)                   connected editor, from a scratch copy outside Assets/
-//   Reserialize(types, pathList)  connected editor; pathList is the approved list, one path per line
-//   FindFromCommandLine,          headless, from a copy in an Editor folder under Assets/
-//   ReserializeFromCommandLine    (removed after, with its .meta), reading
-//                                   -serializationScopeTypes <types> -serializationScopeOut <file>
-//                                   and, to reserialize, -serializationScopePaths <file>
-//
-// Find returns one project-relative path per line, sorted; lines starting with "#" are notes.
+// The scope of a reserialize after a serialized rename, and the reserialize itself.
+// Editor-only. Entry points and arguments: scope.sh --help.
 
 using System;
 using System.Collections.Generic;

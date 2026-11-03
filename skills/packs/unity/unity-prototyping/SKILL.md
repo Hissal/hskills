@@ -61,7 +61,7 @@ Run `git check-ignore -v <folder>/x` before writing:
 
 Do this before the first file. Ask `unity-guide` for checkout isolation, which gives the warm-copy and cold-import rules. Then take the first case that fits:
 
-1. **A `Library/` is available**: a warm copy is possible, or a cold import is permitted or the user approved one. Create the throwaway branch in a separate worktree, and give it its `Library/` under those rules before Unity opens it.
+1. **A `Library/` is available**: a warm copy is possible, or a cold import is permitted or the user approved one. Create the throwaway branch in a separate worktree beside the checkout, and give it its `Library/` under those rules before Unity opens it.
 2. **A cold import is declined, or no row answers and the user has not approved one**: ask once when the user can answer and has not already declined. A decline means a throwaway branch in the current checkout, except when unrelated uncommitted work is present or an Editor holds the project. In either of those cases **stop and ask** how to proceed, with no branch, no file and no Editor started, naming what you found.
 
 ## Isolate it
@@ -102,7 +102,7 @@ Neither goes in the build profile's scene list, since `EditorSceneManager.OpenSc
 
 ## Check it, then hand it over
 
-Ask `unity-guide` for checking a change compiles or works. Through a connected Editor: compile clean, run `EditorApplication.ExecuteMenuItem("Prototypes/<name>")`, confirm Play started with the prototype scene active and a clean console, switch a variant, exit Play. Pass any Game view capture a path outside `Assets/`, or it creates an asset folder. With no connected Editor, compile headless and report the Play check as unvalidated. When Unity cannot run here, report the compile as unvalidated too.
+Ask `unity-guide` for checking a change compiles or works. With an Editor already connected: compile clean, run `EditorApplication.ExecuteMenuItem("Prototypes/<name>")`, confirm Play started with the prototype scene active and a clean console, switch a variant, exit Play. Pass any Game view capture a path outside `Assets/`, or it creates an asset folder. With none connected, compile headless once and report the Play check as unvalidated: the user's own try covers it, so a prototype never earns opening an Editor or scripting a Play run. When Unity cannot run here, report the compile as unvalidated too.
 
 These hold before hand-over, and any miss gets fixed first:
 

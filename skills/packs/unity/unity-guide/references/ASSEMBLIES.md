@@ -25,7 +25,7 @@ This reference owns the **Assemblies** section of `docs/agents/unity.md`.
 | Field | Holds | When unset |
 |---|---|---|
 | **Naming convention** | The scheme a new assembly's name follows | Reverse-DNS, matching the existing asmdefs |
-| **Layout policy** | Which asmdef changes (a new asmdef, a split, code moved out of `Assembly-CSharp`) go ahead without a proposal, and where new asmdefs go | Propose first, as in [Propose boundaries](#propose-boundaries) |
+| **Layout policy** | Which asmdef changes (a new asmdef, a split, code moved out of `Assembly-CSharp`) go ahead without a proposal, and where new asmdefs go | Propose first and write nothing until accepted, as in [Propose boundaries](#propose-boundaries) |
 | **Project-wide defines** | Where the repo keeps project-wide symbols: `csc.rsp`, Player Settings or build profiles | Whichever of those already holds symbols |
 
 ## Trace before assessing
@@ -47,7 +47,7 @@ The trace is done when the listing has run, each touched file has a named owner 
 
 For the mechanics of inspecting a running project, use official tooling: an open Editor's Inspector shows a selected script's assembly, and `CompilationPipeline` lists them. Build no mapping of your own on top.
 
-In a checkout, list every assembly with [the listing script](../scripts/asmdefs.sh), which needs bash and grep. Run `bash <this skill's folder>/scripts/asmdefs.sh --help` first and treat the script as a black box, then run it on the project or package root. Its `?` marks a reference that resolves to nothing, and `no-meta` an asmdef without its `.meta`. With no bash here, say so, and read each `.asmdef` and the `guid:` line of its `.meta` instead.
+In a checkout, list every assembly with [the listing script](../scripts/asmdefs.sh), which needs bash and grep. Run `bash <this skill's folder>/scripts/asmdefs.sh --help` first and treat the script as a black box, then run it on the project or package root. Its `?` marks a reference that resolves to nothing, and `no-meta` an asmdef without its `.meta`. When `--help` prints nothing, bash cannot run in this shell, as in Codex's Windows sandbox: say so, skip the script and its source, and read each `.asmdef` and the `guid:` line of its `.meta` instead.
 
 ## Propose boundaries
 
@@ -60,7 +60,7 @@ A proposal states:
 - the affected code: every `Assembly-CSharp` type the moved code uses, since each must move too or be inverted, and the code that uses what moves;
 - the assemblies that will reference the new one, and those it references.
 
-With the layout policy unset, or silent on this change, stop at the proposal and write nothing, even when asked to set up a layout. When the policy covers the change, follow it without proposing. A script added to an existing folder joins its neighbours' assembly and needs no proposal.
+With the layout policy unset, or silent on this change, the proposal is the whole turn: write no file until the user accepts it. A request to set up a layout or add an asmdef, however open ("whatever you think"), asks for this proposal and accepts nothing. When the policy covers the change, follow it without proposing. A script added to an existing folder joins its neighbours' assembly and needs no proposal.
 
 ## Traps
 

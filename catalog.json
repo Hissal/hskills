@@ -154,15 +154,19 @@
     "path": "skills/core/triage",
     "requires": []
   },
+  "hissal.skill-collection/unity-debugging": {
+    "path": "skills/packs/unity/unity-debugging",
+    "requires": [
+      "hissal.skill-collection/unity-guide"
+    ]
+  },
   "hissal.skill-collection/unity-guide": {
     "path": "skills/packs/unity/unity-guide",
     "requires": []
   },
-  "hissal.skill-collection/unity-prototyping": {
-    "path": "skills/packs/unity/unity-prototyping",
-    "requires": [
-      "hissal.skill-collection/unity-guide"
-    ]
+  "hissal.skill-collection/unity-networking": {
+    "path": "skills/packs/unity/unity-networking",
+    "requires": []
   },
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",

@@ -50,7 +50,14 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 | Need | Target |
 |---|---|
 | A Unity API, Manual or package fact at this repo's versions | [Docs lookup](SKILL.md#docs-lookup) |
-| Test seams, authoring, setup, cadence, test-review idioms or coverage | `skill: unity-testing` |
+| Gameplay authority, replication or observing multiple participants, once a session exists (session, Relay, Lobby or matchmaking setup is no match) | `skill: unity-networking` |
+| Assembly boundaries, script placement, references or compilation problems, including a compile error about a type that exists or a Player build failing where the Editor compiles; `code-review`, `blast-radius`, `migrating`, `refactoring`, `codebase-design`, `architecture-review` and `to-tickets` lookups where assemblies are relevant | [Assembly rules](references/ASSEMBLIES.md) |
+| Building a feedback loop, instrumenting or profiling for this stack: reproduction, live observation, logs (`diagnosing-bugs`) | `skill: unity-debugging` |
+| Capturing visual evidence (`pr`) | `skill: unity-debugging` |
+| Reproduction tools and environment, and required human participation (`triage`) | `skill: unity-debugging` |
+| Measuring a change against real data for this stack: what wrote a value in the run, and measurement (`risky-changes`) | `skill: unity-debugging` |
+| Measuring performance for this stack: choosing the method, and what a number supports (`verifying`, `hillclimb`) | `skill: unity-debugging` |
+| Test seams, authoring, setup, cadence, test-review idioms or coverage (`tdd`, `test-review`, `to-spec`, `implement`, part of `codebase-design`); a lookup during a review supplies knowledge and starts no test authoring | `skill: unity-testing` |
 | Knowledge from an official Unity skill or vendor source this project selected | vendor-guidance: the sources in the project's `### Vendor docs` and `docs/agents/vendor-sources.md`; reading one grants no workflow authority |
 
 ## Docs lookup

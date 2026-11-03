@@ -312,6 +312,7 @@ Each numbered entry identifies affected earlier wording, the later deciding auth
 - **Earlier wording:** setup-matt-pocock-skills is taken and awaits renaming.
 - **Superseded by:** [#34](https://github.com/Hissal/skill-collection/issues/34#issuecomment-6124395889)
 - **Exact suggested replacement:** “The collection skill is setup-project, with catalog/vendor discovery and empty/partial/existing-project configuration under #71.”
+- **Later amended:** The ID is `hissal.skill-collection/setup-project`, set before the first release, when nothing had the old name's ID installed, and it stays stable from the first release on. The source is `mattpocock/skills` at `skills/engineering/setup-matt-pocock-skills`, not the fork; the Unity material stays with the Unity pack's `SETUP.md` ([owner ruling](https://github.com/Hissal/skill-collection/issues/147#issuecomment-6589513206)).
 
 ### S18
 
@@ -676,6 +677,7 @@ changing skill identity or requirements with
 | `hissal.skill-collection/reviewing` | [`reviewing`](../skills/core/reviewing/SKILL.md) | — |
 | `hissal.skill-collection/risky-changes` | [`risky-changes`](../skills/core/risky-changes/SKILL.md) | — |
 | `hissal.skill-collection/second-opinion` | [`second-opinion`](../skills/core/second-opinion/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
+| `hissal.skill-collection/setup-project` | [`setup-project`](../skills/core/setup-project/SKILL.md) | — |
 | `hissal.skill-collection/tdd` | [`tdd`](../skills/core/tdd/SKILL.md) | — |
 | `hissal.skill-collection/test-review` | [`test-review`](../skills/core/test-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/to-questionnaire` | [`to-questionnaire`](../skills/core/to-questionnaire/SKILL.md) | — |

@@ -16,4 +16,4 @@ A choice that adds to the stack brings step 2 back for what is new. Declining a 
 
 The generator's starter is this step's result. Name what the outcome still needs built as later work in the report.
 
-A generator that fails goes through [Open questions](../SKILL.md#open-questions) with its command and output, and the other gaps carry on.
+A generator or restore that fails goes through [Open questions](../SKILL.md#open-questions) with its command and output, and the other gaps carry on. A workaround the tool itself names, such as `--legacy-peer-deps`, is a single approval to ask the owner for; report it either way.

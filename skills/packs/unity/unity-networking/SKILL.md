@@ -1,6 +1,6 @@
 ---
 name: unity-networking
-description: Use when Unity networked gameplay involves authority over shared state, RPC validation, replication through a NetworkVariable or NetworkObject, or what a host, client or late joiner observes.
+description: Use when Unity networked gameplay involves authority over shared state, RPC validation, replication through a NetworkVariable or NetworkObject, or what a host, client or late joiner observes. Setting up sessions, Relay, Lobby or matchmaking is a different job.
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/unity-networking"

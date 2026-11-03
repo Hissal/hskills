@@ -57,6 +57,7 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 | Compile/work checks, reading test results, costs, Editor availability, shared resources or checkout isolation | `skill: unity-verification` |
 | Gameplay authority, replication or observing multiple participants, once a session exists (session, Relay, Lobby or matchmaking setup is no match) | `skill: unity-networking` |
 | Assembly boundaries, script placement, references or compilation problems, including a compile error about a type that exists or a Player build failing where the Editor compiles; `code-review`, `blast-radius`, `migrating`, `refactoring`, `codebase-design`, `architecture-review` and `to-tickets` lookups where assemblies are relevant | [Assembly rules](references/ASSEMBLIES.md) |
+| Checking a UI against worst-case data | [UI worst cases](references/UI-WORST-CASES.md) |
 | Building a feedback loop, instrumenting or profiling for this stack: reproduction, live observation, logs (`diagnosing-bugs`) | `skill: unity-debugging` |
 | Capturing visual evidence (`pr`) | `skill: unity-debugging` |
 | Reproduction tools and environment, and required human participation (`triage`) | `skill: unity-debugging` |

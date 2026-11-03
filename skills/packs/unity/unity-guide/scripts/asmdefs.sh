@@ -13,7 +13,9 @@ Usage: asmdefs.sh [project-or-package-root]   (default: .)
 Prints one tab-separated line per .asmdef:
   name <TAB> guid <TAB> path <TAB> references
 
-guid        the .asmdef.meta's guid, or "no-meta" when the .meta is missing.
+name        empty when the file has none, as in a zero-byte .asmdef.
+guid        the .asmdef.meta's guid, "no-meta" when the .meta is missing, or
+            "unreadable" when it exists and cannot be read.
 path        relative to the root.
 references  comma-separated, each resolved to an assembly name. One that matches
             no listed assembly prints as "?" plus the raw reference.
@@ -32,8 +34,10 @@ Needs bash and grep only. Grep the output either way:
   asmdefs.sh | grep -F "$(printf 'My.Assembly\t')"   name to guid
   asmdefs.sh | grep -F "<guid>"                      guid to name
 
-Exit codes: 0 listed, also when there is no .asmdef to list; 1 the root cannot be
-entered; 2 unknown option.
+Exit codes: 0 listed in full, also when there is no .asmdef to list; 1 the root
+cannot be entered; 2 unknown option; 3 listing incomplete: a file or folder could
+not be read. Stderr names each one, and the listing prints what could be read, so
+a reference with nothing unresolved proves nothing until a rerun exits 0.
 HELP
 }
 
@@ -70,12 +74,25 @@ names=()
 guids=()
 paths=()
 refs=()
+incomplete=0
 
-while IFS= read -r file; do
+# -c prints every matching file as path:count, so a zero-byte .asmdef is listed too.
+# Stdout only is captured, so grep's read errors reach stderr. Above 1 means an error.
+scan=$(grep -rc --include='*.asmdef' '' "${dirs[@]}")
+[ $? -gt 1 ] && incomplete=1
+
+while IFS= read -r line; do
+  [ -n "$line" ] || continue
+  file=${line%:*}
   file=${file#./}
   case "/$file" in
     */.*|*~/*) continue ;;
   esac
+
+  if ! : < "$file"; then
+    incomplete=1
+    continue
+  fi
 
   content=
   IFS= read -r -d '' content < "$file"
@@ -99,16 +116,21 @@ while IFS= read -r file; do
 
   guid=no-meta
   if [ -f "$file.meta" ]; then
-    meta=
-    IFS= read -r -d '' meta < "$file.meta"
-    [[ $meta =~ guid:[[:space:]]*([0-9a-fA-F]{32}) ]] && guid=${BASH_REMATCH[1]}
+    if : < "$file.meta"; then
+      meta=
+      IFS= read -r -d '' meta < "$file.meta"
+      [[ $meta =~ guid:[[:space:]]*([0-9a-fA-F]{32}) ]] && guid=${BASH_REMATCH[1]}
+    else
+      guid=unreadable
+      incomplete=1
+    fi
   fi
 
   names+=("$name")
   guids+=("$guid")
   paths+=("$file")
   refs+=("$reflist")
-done < <(grep -rl --include='*.asmdef' '' "${dirs[@]}" 2>/dev/null)
+done <<< "$scan"
 
 # Lookup tables as newline-framed strings (bash 3.2 has no associative arrays).
 by_guid=$nl
@@ -141,3 +163,8 @@ for i in "${!names[@]}"; do
   done
   printf '%s\t%s\t%s\t%s\n' "${names[$i]}" "${guids[$i]}" "${paths[$i]}" "$out"
 done
+
+if [ $incomplete -eq 1 ]; then
+  echo "asmdefs.sh: listing incomplete: the read errors above name what it could not see. Make them readable and rerun before relying on this listing." >&2
+  exit 3
+fi

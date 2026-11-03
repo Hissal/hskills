@@ -229,7 +229,7 @@ Text checks, always, before the merge commit:
   comm -23 <(grep -o '{fileID: -\?[0-9]*}' <file> | grep -o -- '-\?[0-9]*' | grep -vx 0 | sort -u) <(grep -o '^--- !u![0-9]* &-\?[0-9]*' <file> | sed 's/.*&//' | sort -u)
   ```
 - No two `.meta` files share a `guid:`: `grep -rh --include='*.meta' '^guid:' Assets Packages | sort | uniq -d`. Settle any collision before Unity opens the project: Unity keeps the GUID on the asset it already imported and gives the other a new one, rewriting its `.meta`; when both are new to its `Library/`, both get new GUIDs (observed on 6000.6.2f1). Either way, references meant for the re-GUIDed asset now point elsewhere.
-- When an `.asmdef` was conflicted, [the listing script](../scripts/asmdefs.sh) prints no reference as unresolved.
+- When an `.asmdef` was conflicted, [the listing script](../scripts/asmdefs.sh) exits 0 and prints no reference as unresolved.
 
 Then, when Unity can run, import the merged files and grep the Editor log for these strings, each seen on 6000.6.2f1:
 

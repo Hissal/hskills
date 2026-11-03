@@ -18,7 +18,9 @@ subclasses. Without the Editor's type closure, hosts reached through subclasses,
 nested types or [SerializeReference] fields are missing unless their scripts are
 seeded too: say so in the proposal.
 
-Exit: 0 listed (possibly nothing), 1 a seed has no GUID, 2 bad arguments.
+Exit: 0 listed in full (possibly nothing), 1 a seed has no GUID, 2 bad arguments,
+3 scope incomplete: a file could not be read, or a matched prefab's GUID could not
+be followed. Stderr names each one, and the listing prints what could be read.
 USAGE
 }
 
@@ -40,7 +42,8 @@ project=$1
 shift
 patterns=$(mktemp)
 matched=$(mktemp)
-trap 'rm -f "$patterns" "$matched"' EXIT
+errors=$(mktemp)
+trap 'rm -f "$patterns" "$matched" "$errors"' EXIT
 
 # Prints the GUID from "$1.meta"; prints nothing when the .meta is missing or has none.
 guid_of() {
@@ -65,10 +68,15 @@ done
 cd "$project"
 dirs=(Assets)
 [ -d Packages ] && dirs+=(Packages)
+incomplete=0
 
 while :; do
   added=0
+  code=0
+  hits=$(grep -rlF --exclude='*.meta' -f "$patterns" "${dirs[@]}" 2>>"$errors") || code=$?
+  if [ "$code" -gt 1 ]; then incomplete=1; fi
   while IFS= read -r file; do
+    [ -n "$file" ] || continue
     grep -qxF "$file" "$matched" && continue
     head -c 5 "$file" | grep -q '^%YAML' || continue
     echo "$file" >> "$matched"
@@ -80,11 +88,18 @@ while :; do
           echo "guid: $guid" >> "$patterns"
         else
           echo "scope.sh: no GUID in $file.meta: files nesting it were not followed" >&2
+          incomplete=1
         fi
         ;;
     esac
-  done < <(grep -rlF --exclude='*.meta' -f "$patterns" "${dirs[@]}" || true)
+  done <<< "$hits"
   [ $added -eq 0 ] && break
 done
 
 sort "$matched"
+
+if [ "$incomplete" -eq 1 ]; then
+  sort -u "$errors" >&2
+  echo "scope.sh: scope incomplete: the errors above name what it could not see. Make them readable and rerun before removing a compatibility attribute." >&2
+  exit 3
+fi

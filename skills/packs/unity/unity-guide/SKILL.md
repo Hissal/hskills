@@ -50,6 +50,7 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 | Need | Target |
 |---|---|
 | A Unity API, Manual or package fact at this repo's versions | [Docs lookup](SKILL.md#docs-lookup) |
+| Gameplay authority, replication or observing multiple participants | `skill: unity-networking` |
 | Knowledge from an official Unity skill or vendor source this project selected | vendor-guidance: the sources in the project's `### Vendor docs` and `docs/agents/vendor-sources.md`; reading one grants no workflow authority |
 
 ## Docs lookup

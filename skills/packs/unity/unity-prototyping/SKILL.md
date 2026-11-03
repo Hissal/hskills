@@ -1,6 +1,6 @@
 ---
 name: unity-prototyping
-description: Unity prototyping rules. Use when building a throwaway prototype in a Unity repo; choosing between a browser sketch and Unity; running a Unity prototype or switching its variants; or capturing or removing a Unity prototype.
+description: Unity prototyping rules. Use when prototyping gameplay or other content of a Unity project; choosing between a browser sketch and Unity; running a Unity prototype or switching its variants; or capturing or removing a prototype from a Unity project.
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/unity-prototyping"
@@ -26,7 +26,7 @@ user-invoked workflow; wait for the human to invoke that workflow.
 
 This skill is the Unity layer on core `prototype`, which keeps the brief, the branches, capture, the verdict and test-driving. Load `prototype` too when this skill fired first; when it is not installed, say so once and carry on with these rules. Where the two differ, this skill wins for Unity work: its folder replaces "near its code", and its checkout rule replaces core's worktree rule.
 
-Ask `unity-guide` for the other Unity knowledge named below, by need. A need no row answers leaves you with the rules here.
+A prototype of something outside the Unity project, such as a web app in the same repo, is core's alone: leave this skill. Ask `unity-guide` for the other Unity knowledge named below, by need. A need no row answers leaves you with the rules here.
 
 `docs/agents/unity.md` overrides these defaults, including its **Prototype folder** field.
 

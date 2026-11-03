@@ -125,3 +125,5 @@ For triage or planning, answer from these:
 ## Measuring
 
 Record a baseline before any fix: the same scenario in the same environment, as a number. Compare before and after in one environment. Play mode shares the Editor's main thread and runs Editor-only checks, and a headless Editor is uncapped, so absolute numbers come from a Player build.
+
+Before choosing a method or making a speed claim, read [performance measurement](references/PERFORMANCE.md). It says which quantity a number measures, which method resolves the claim most cheaply, and what the evidence then supports.

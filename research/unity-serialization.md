@@ -1,5 +1,7 @@
 # Research: Unity serialization mechanics
 
+Status: historical evidence for the Unity pack, not a collection decision. The skills it names as planned were built differently: assembly, serialization and lifecycle material lives in `unity-guide`'s references. GitHub links were pinned afterwards, to the last commit on or before the note's date (2026-09-23), not recorded at reading time. The `MovedFromAttribute.cs` link stays on its branch: that path is absent at the commit for that date.
+
 Ticket: [#2](https://github.com/Hissal/mattpocock-skills-unity/issues/2), part of [#1](https://github.com/Hissal/mattpocock-skills-unity/issues/1). Feeds the `unity-serialization` skill.
 
 Sources are primary only: the Unity manual and scripting API on docs.unity3d.com, Unity's [UnityCsReference](https://github.com/Unity-Technologies/UnityCsReference) source, official Unity package docs, and posts on unity.com by Unity staff. Unless a claim says otherwise, it was checked against the Unity 6.0 (6000.0) docs. Claims that only hold from a certain version say so. Anything marked **Unverified** could not be traced to a primary source and should not be stated as fact in the skill without a hedge.

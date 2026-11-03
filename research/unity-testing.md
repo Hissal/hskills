@@ -1,5 +1,7 @@
 # Research: Unity Test Framework (Unity 6)
 
+Status: historical evidence for the Unity pack, not a collection decision. The skills it names as planned were built differently: assembly, serialization and lifecycle material lives in `unity-guide`'s references.
+
 Ticket: [#3](https://github.com/Hissal/mattpocock-skills-unity/issues/3), part of [#1](https://github.com/Hissal/mattpocock-skills-unity/issues/1). Feeds the `unity-testing` skill and the Unity adaptation of the TDD skill.
 
 Researched 2026-09-23. Primary sources only: the Unity 6.3 LTS Manual (which now hosts the Test Framework user guide), the `com.unity.test-framework` package docs and source (registry tarball and the copy bundled with the Editor), the Performance Testing and Code Coverage package docs. Where the docs were silent or wrong, I ran a probe project on Unity 6000.3.20f1 (Test Framework 1.6.0) and say so. Anything neither documented nor observed is marked **unverified**.

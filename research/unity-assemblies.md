@@ -1,5 +1,7 @@
 # Research: Unity assemblies and compilation
 
+Status: historical evidence for the Unity pack, not a collection decision. The skills it names as planned were built differently: assembly, serialization and lifecycle material lives in `unity-guide`'s references. Bare `#N` issue numbers refer to the tracker of the repo this note was written in. GitHub links were pinned afterwards, to the last commit on or before the note's date (2026-09-23), not recorded at reading time.
+
 Ticket: [#5](https://github.com/Hissal/mattpocock-skills-unity/issues/5), part of #1. Feeds the planned `unity-assemblies` skill.
 
 Sources are the Unity Manual and Scripting API on docs.unity3d.com, plus the Unity-Technologies `UnityCsReference` GitHub source. The baseline is Unity 6.0 LTS (6000.0) docs. Where the latest docs (Unity 6.6, 6000.6, built 2026-09-21) differ, both are cited. The `UnityCsReference` master branch was at "Unity 6000.7.0b1" when read (2026-09-23). Anything not stated by a primary source is marked **unverified** or **inference**.

@@ -1,5 +1,7 @@
 # Research: merging Unity assets
 
+Status: historical evidence for the Unity pack, not a collection decision. The skills it names as planned were built differently: assembly, serialization and lifecycle material lives in `unity-guide`'s references. Bare `#N` issue numbers refer to the tracker of the repo this note was written in. GitHub links were pinned afterwards, to the last commit on or before the note's date (2026-09-23), not recorded at reading time.
+
 Ticket: [#6](https://github.com/Hissal/mattpocock-skills-unity/issues/6), part of #1. Feeds `unity-serialization`'s `MERGING.md`. It first fed the Unity delta of the `resolving-merge-conflicts` skill, removed with upstream's v1.3.0 ([#76](https://github.com/Hissal/mattpocock-skills-unity/issues/76)).
 
 Versions checked: Unity manual 6000.3 (6.3 LTS), cross-checked against 6000.0 and 2022.3 where noted; UnityYAMLMerge shipped with Editor 6000.3.20f1 (its `mergespecfile.txt` and `mergerules.txt` are byte-identical in 6000.5.11f1 and 6000.7.0b1); Git 2.55 docs on git-scm.com; Git LFS 3.7.1 locally, docs from `main` (3.8.0).

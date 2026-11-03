@@ -1,5 +1,7 @@
 # Research: Unity verification tooling and environments
 
+Status: historical evidence for the Unity pack, not a collection decision. The skills it names as planned were built differently: assembly, serialization and lifecycle material lives in `unity-guide`'s references. Bare `#N` issue numbers refer to the tracker of the repo this note was written in. GitHub links were pinned afterwards, to the last commit on or before the note's date (2026-09-23), not recorded at reading time.
+
 Ticket: [#4](https://github.com/Hissal/mattpocock-skills-unity/issues/4) (part of #1). Researched 2026-09-23.
 
 Question: which tools can a coding agent use to verify a Unity change, and what can each agent environment actually run? This feeds the generic `unity-verification` skill (a ladder: cheapest check able to catch the failure first, then widen) and the per-repo config file that records how a given repo verifies.

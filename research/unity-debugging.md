@@ -1,5 +1,7 @@
 # Research: Unity debugging mechanics
 
+Status: historical evidence for the Unity pack, not a collection decision. The skills it names as planned were built differently: assembly, serialization and lifecycle material lives in `unity-guide`'s references. Bare `#N` issue numbers refer to the tracker of the repo this note was written in.
+
 Ticket: [#23](https://github.com/Hissal/mattpocock-skills-unity/issues/23), part of [#1](https://github.com/Hissal/mattpocock-skills-unity/issues/1). Feeds `unity-debugging` and the Unity delta of `diagnosing-bugs` ([#16](https://github.com/Hissal/mattpocock-skills-unity/issues/16)). Researched 2026-09-24.
 
 Sourcing rule: every claim cites a primary source (docs.unity3d.com, docs.unity.com, the CLI's embedded skill, IDE vendors' own docs) with the version or date read against. **Observed** means checked on one Windows 11 machine on 2026-09-24 with Unity 6000.6.2f1, Unity CLI 1.0.0-beta.11 and `com.unity.pipeline` 0.7.0-exp.1, in the gitignored `unity-sandbox/` (URP blank, Mono backend); it is evidence, not documentation. The dated subsections at the end of section 7 name their own CLI and Pipeline versions. **Unverified** means neither documented nor observed.

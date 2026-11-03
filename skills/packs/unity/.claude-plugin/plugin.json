@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "Generated unity skill list from collection.json.",
   "skills": [
-    "./unity-guide"
+    "./unity-debugging",
+    "./unity-guide",
+    "./unity-networking",
+    "./unity-prototyping",
+    "./unity-testing",
+    "./unity-verification"
   ]
 }

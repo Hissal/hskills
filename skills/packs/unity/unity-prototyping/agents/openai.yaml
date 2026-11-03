@@ -1,0 +1,5 @@
+interface:
+  display_name: "Unity prototyping"
+  short_description: "Build, run and remove Unity prototypes"
+policy:
+  allow_implicit_invocation: true

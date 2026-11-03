@@ -51,6 +51,8 @@ When the job is a review or a knowledge lookup for another workflow, the map and
 
 ## Report
 
+The final reply holds this block in a fenced code block, one per piece of state, with every label on its own line in this order. A summary may come first; it never replaces a label, and all four case lines appear even when the summary covered them.
+
 ```
 <state>
 Initiator: ...

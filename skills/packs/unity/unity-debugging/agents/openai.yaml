@@ -1,0 +1,5 @@
+interface:
+  display_name: "Unity debugging"
+  short_description: "Reproduce, observe and trace Unity bugs"
+policy:
+  allow_implicit_invocation: true

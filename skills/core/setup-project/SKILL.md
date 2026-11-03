@@ -173,7 +173,7 @@ A GitHub or GitLab tracker needs a reachable repo. When the user picks one and n
 
 ### Triage labels
 
-Ask only for a real tracker: GitHub, GitLab or other. Local markdown has no labels, so this section is skipped there. A real tracker already recorded with no `docs/agents/triage-labels.md` has settled on the defaults. Otherwise read [triage-label-choice.md](references/triage-label-choice.md) and follow it.
+Ask only for a real tracker: GitHub, GitLab or other. Local markdown has no labels, so this section is skipped there. A real tracker already recorded with no `docs/agents/triage-labels.md` has settled on the defaults. Otherwise read [triage-label-choice.md](references/triage-label-choice.md) and follow it, using the seed [triage-labels.md](./triage-labels.md).
 
 ### Domain docs
 

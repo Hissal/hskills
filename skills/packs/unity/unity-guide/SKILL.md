@@ -30,7 +30,7 @@ With no hit, reply `Not a Unity repo.` and return, adding nothing else. The call
 
 > `unity-guide`: installed, not set up: run `<setup-project invocation>`.
 
-**Fact file.** Read `docs/agents/unity.md`. A missing file or field means the owning skill's default. This guide owns **Project** and **Conventions**: read each repo doc under **Conventions** whose scope covers the need.
+**Fact file.** Read `docs/agents/unity.md`, which `setup-project` writes through [SETUP.md](SETUP.md). A missing file or field means the owning skill's default. This guide owns **Project** and **Conventions**: read each repo doc under **Conventions** whose scope covers the need.
 
 **Contradictions.** The repo outranks the record. When a recorded fact disagrees with the repo, use the repo and say:
 

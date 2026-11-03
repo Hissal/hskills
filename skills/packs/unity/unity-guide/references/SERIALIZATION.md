@@ -44,7 +44,7 @@ What a rename, move or delete reaches beyond a symbol search:
 
 - **Serialized consumers.** Every scene, prefab, variant and `.asset` using the host script, found by [the scope](#building-the-scope), plus nested instances that never name the script.
 - **Meta GUIDs.** `grep -rlF 'guid: <guid>' Assets Packages` lists what references an asset, `.meta` files included (a script's default references, a model's remapped materials).
-- **Fields bound by name.** `.anim` curves bind a component field by its serialized name (`attribute:`). Grep `.anim` and `.controller` files for the old name.
+- **Fields bound by name.** An `.anim` curve binds a component field by its serialized name, `attribute: speed` (observed on 6000.3.20f1). Grep `.anim` files for the old name, and read an animated value back after the rename: whether `FormerlySerializedAs` reaches the binding is untested.
 - **`UnityEvent` persistent calls** store strings in the file: `m_TargetAssemblyTypeName: Game.PlayerMover, Assembly-CSharp` and `m_MethodName: Jump` (observed on 6000.3.20f1). Renaming the class, namespace, assembly or method breaks the call with no compile error. Grep the scene and prefab text for the old name.
 - **String lookups.** An Addressables address and a path passed to `Resources.Load` or `Shader.Find` are string contracts: renaming or moving the asset breaks them silently. Grep the code for the string.
 - **Reflection and name-based calls.** `Type.GetType`, `SendMessage`, `BroadcastMessage`, `Invoke` and `StartCoroutine(string)` resolve by name at runtime. `link.xml` names types and assemblies too. Grep for the old name, namespace and assembly.

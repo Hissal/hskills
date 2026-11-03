@@ -22,6 +22,8 @@ Six steps in this order, whatever the project's starting state. Each step ends o
 
 A choice the project's configuration already records is **settled**: state it in one line and keep it, without asking. Reopen a settled choice only when exploration contradicts it (the tracker file names GitHub and the remote now points at GitLab) or the user asks to change it.
 
+An `## Agent skills` block is **in place** once it holds a core sub-block. A block holding only what a one-pack run can write (`### Packs`, `### Guard extensions`, `### Setup handoff`) has settled no core choice, so a full run takes every section as a first run would, and still updates that block where it is.
+
 ### 1. Orient
 
 Look at the current repo to understand its starting state. Read whatever exists; don't assume:
@@ -140,7 +142,7 @@ A single approval or value is a question to ask the owner; a step you can run yo
 
 ### Recommendations
 
-Recommend collection skills, vendor skills and dependency-shipped guidance together, in one view. Follow [recommendations.md](references/recommendations.md) when this run has something new to weigh: the project has no `## Agent skills` block yet, or the stack or dependencies changed since the block did (`git log` on the manifests and the instruction file, or what the owner says when there is no history). It says how to reach the collection catalog and a pack's `SETUP.md` from an installed folder, with no checkout and before any install.
+Recommend collection skills, vendor skills and dependency-shipped guidance together, in one view. Follow [recommendations.md](references/recommendations.md) when this run has something new to weigh: the project has no `## Agent skills` block in place yet, or the stack or dependencies changed since the block did (`git log` on the manifests and the instruction file, or what the owner says when there is no history). It says how to reach the collection catalog and a pack's `SETUP.md` from an installed folder, with no checkout and before any install.
 
 Skills already installed and pointers already in `### Vendor docs` are settled. When nothing new remains to recommend, say so in one line and write nothing.
 

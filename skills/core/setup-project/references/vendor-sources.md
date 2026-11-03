@@ -28,7 +28,7 @@ For each entry whose **Follows** names it, within your task's authority, and oth
 
 - **Docs**: the path in the line still exists at the new version. When it moved, correct the line in `### Vendor docs` and here together, in one word-for-word edit.
 - **Skills**: compare each copy with the package's own folder, `diff -r .agents/skills/<name> <package folder>/<skill folder>`. When they differ, run the entry's **Route** again.
-- **Dependency removed**: delete the **Docs** line from `### Vendor docs`, run `npx skills remove <names> --yes` for its **Skills**, and delete the entry.
+- **Dependency removed**: delete the `### Vendor docs` line that matches **Docs** word for word, and nothing else; a similar line stays and goes in your report. Run `npx skills remove <names> --yes` for those of its **Skills** whose `skills-lock.json` entry names the source in **Route**; a folder whose lock entry names another source, or that the lock does not list, is not this entry's and stays. Then delete the entry.
 
 Run `/setup-project` for anything else. On Node 20 the `skills` CLI fails with a `glob` SyntaxError; run it as `npx -p node@22 -p skills -c '<command>'`.
 
@@ -92,7 +92,7 @@ Fires when the owner deselects a pick, or a followed dependency leaves its manif
 | What | Removal |
 |---|---|
 | **Docs** | Delete the `### Vendor docs` line that matches word for word, and nothing else. A similar line stays and is named in the report. Remove the sub-block only when no line remains. |
-| **Skills** | `npx skills remove <names> --yes`, then confirm both folders and the lock entries are gone. A folder whose lock entry names another source, or that the lock does not list, is not this entry's and stays. |
+| **Skills** | `npx skills remove <names> --yes` for those whose lock entry names the source in **Route**, then confirm both folders and the lock entries are gone. A folder whose lock entry names another source, or that the lock does not list, is not this entry's and stays. |
 | A plugin | `claude plugin uninstall <plugin>@<marketplace> --scope project`. The marketplace stays registered. |
 | Hook or always-on instruction | **Remove**. A block the vendor's tool generated belongs to that tool: edit it only through that command, and otherwise name it for the owner. |
 

@@ -8,7 +8,7 @@ Issues and specs for this repo live as GitLab issues. Use the [`glab`](https://g
 
 - **Create an issue**: `glab issue create --title "..." --description "..."`. Use a heredoc for multi-line descriptions. Pass `--description -` to open an editor.
 - **Read an issue**: `glab issue view <number> --comments`. Use `-F json` for machine-readable output.
-- **List issues**: `glab issue list -O json` with appropriate `--label` filters.
+- **List issues**: `glab issue list -O json --per-page 100` with appropriate `--label` filters. A result of exactly 100, GitLab's page maximum, may be cut off: read `--page 2` and on until a page comes back short before treating it as complete.
 - **Comment on an issue**: `glab issue note <number> --message "..."`. GitLab calls comments "notes".
 - **Apply / remove labels**: `glab issue update <number> --label "..."` / `--unlabel "..."`. Multiple labels can be comma-separated or by repeating the flag.
 - **Close**: `glab issue close <number>`. `glab issue close` does not accept a closing comment, so post the explanation first with `glab issue note <number> --message "..."`, then close.

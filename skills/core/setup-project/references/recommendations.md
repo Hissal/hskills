@@ -116,7 +116,7 @@ List each pick's command and pointer in the draft. After approval:
 | Whole vendor set | The vendor's plugin when it publishes one and the owner takes its hooks and always-on parts, since a plugin update brings new skills. Otherwise `--skill '*'`, and tell the owner later additions arrive only when the command runs again at a newer ref. |
 | Claude Code plugin | `claude plugin install <plugin>@<marketplace> --scope project`, after `claude plugin marketplace add <owner>/<repo>` when the marketplace is new. It enables the whole plugin in `.claude/settings.json`, so offer it for a pick that wants every part. The marketplace is registered per user: tell the owner teammates run the same `marketplace add`. |
 | Hook or always-on instruction | The vendor's own route, after its separate yes. |
-| Arrives with the dependency | Nothing yet. Name it in the run's report as waiting; deliver its pointer or skill once the dependency is restored. |
+| Arrives with the dependency | Nothing yet. Name it in the run's report as waiting; deliver its pointer or skill once the dependency is restored. [Scaffolding](scaffolding.md#run) reads its rules before then, from the published copy. |
 
 The `skills` CLI needs a recent Node: on Node 20 it fails with a `fs/promises` `glob` SyntaxError, and `npx -p node@22 -p skills -c 'skills add ...'` runs it. The draft shows each command as it will run here. On the owner's no to the route's telemetry, each `skills` command starts with `DISABLE_TELEMETRY=1`. Read `npx skills add --help` when a flag is refused. When an install fails, report the command and its output, and carry on with the other picks.
 

@@ -17,7 +17,7 @@ Run these from the project root, each with a time limit and stdin closed. `<inst
 |---|---|---|
 | Claude Code | `claude -p '<instructions>' --output-format stream-json --verbose --max-turns 1 --tools "" </dev/null`, one model call | The `system` `init` event's `skills` array names each skill, and the final `result` holds each pointer and pack line. |
 | Codex | `codex debug prompt-input </dev/null`, no model call | The output names each model-invoked skill and holds each pointer and pack line. |
-| OpenCode | `opencode run 'Name every skill you can load. Then: <instructions> Use no tools.' </dev/null`, one model call; add `-m <provider/model>` when the default model is refused | The reply names each model-invoked skill and holds each pointer and pack line. |
+| OpenCode | `opencode run 'Name every skill you can load. Then: <instructions> Use no tools.' </dev/null`, one model call; add `-m <provider/model>`, from `opencode models`, when the default model is refused | The reply names each model-invoked skill and holds each pointer and pack line. |
 | Another harness | Its documented skill listing | Its listing names each skill. With no listing, write `files only, not verified in <harness>`, as incomplete. |
 
 Each listing should show a pack guide under the exact name its `### Packs` line uses; correct a line that differs.

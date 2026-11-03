@@ -35,7 +35,7 @@ The pointer is one conditional line in the block, under `### Style guide`, namin
 When writing or reviewing code, read the coding guidance in `<guide path>` and the tooling configuration in `<tooling paths>`. Tooling configuration wins; flag any disagreement.
 ```
 
-With no written guide, drop the guide clause. With neither guide nor tooling configuration, write no sub-block.
+With no written guide, the line is `When writing or reviewing code, read the tooling configuration in <tooling paths>.` With neither guide nor tooling configuration, write no sub-block.
 
 ## Flag conflicts
 

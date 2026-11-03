@@ -26,7 +26,7 @@ A choice the project's configuration already records is **settled**: state it in
 
 Look at the current repo to understand its starting state. Read whatever exists; don't assume:
 
-- `git remote -v` and `.git/config`: is this a GitHub repo? Which one?
+- `git remote -v` and `.git/config`: is this a GitHub repo? Which one? A folder with no repo has no remote.
 - `AGENTS.md` and `CLAUDE.md` at the repo root: does either exist? Does `CLAUDE.md` hold only `@AGENTS.md`, or real content? Which of them holds an `## Agent skills` block?
 - `GLOSSARY.md` and `GLOSSARY-MAP.md` at the repo root, and the legacy `CONTEXT.md` / `CONTEXT-MAP.md`. If a legacy file exists, offer to `git mv` it to its `GLOSSARY` name and rewrite those names in `docs/agents/domain.md`.
 - `docs/adr/` and any `src/*/docs/adr/` directories
@@ -36,11 +36,11 @@ Look at the current repo to understand its starting state. Read whatever exists;
 - `.agents/config/`: guard extensions already recorded.
 - `.scratch/`: a sign that a local-markdown issue tracker convention is already in use
 - Monorepo signals: a `pnpm-workspace.yaml`, a `workspaces` field in `package.json`, or a populated `packages/*` with its own `src/`. These are present only in a genuinely large multi-package repo; their absence means single-context, which is almost every repo.
-- Harness configuration: `.claude/`, `.codex/`, `.agents/`, `opencode.json`, `skills-lock.json`.
+- Harness configuration: `.claude/` means Claude Code, `.codex/` or `.agents/` means Codex, `opencode.json` means OpenCode, and `skills-lock.json` shows what is installed.
 
 Bring back any `docs/agents/setup-handoff.md` entries, as [open questions](references/open-questions.md#handoff) says. Then summarise what's present and what's missing, and name the steps that look settled.
 
-Establish the intended outcome, its constraints, the stack and the harnesses the project is meant to work in. State in one line whatever the repo already answers, and ask one question for the rest, helping choose when the owner is undecided. With no harness named or configured, take the one running this conversation.
+Establish the intended outcome, its constraints, the stack and the harnesses the project is meant to work in. State in one line whatever the repo already answers, and ask one question for the rest, helping choose when the owner is undecided. With an `## Agent skills` block in place and nothing else in the invocation, the outcome is keeping this configuration current, so that takes no question. With no harness named or configured, take the one running this conversation.
 
 Done when the starting state, outcome, stack and harnesses are each stated, or routed through [Open questions](#open-questions).
 
@@ -62,7 +62,7 @@ Done when each section is settled, answered, or held on an open question.
 
 Guidance lands before anything is scaffolded, so scaffolding can use it.
 
-Show the user a draft of what this run would change: the `## Agent skills` block, each file a section writes, each pick's command and pointer, the labels to create and each scaffolding command. Name the check commands as derived in step 6 and say each harness check in step 6 that spends a model call. Let them edit before anything is written. Approval covers everything the draft lists.
+Show the user a draft of what this run would change: the `## Agent skills` block, each file a section writes, each pick's command and pointer, the labels to create and each scaffolding command. Say that the check commands come in step 6's draft, and name each harness check there that spends a model call. Let them edit before anything is written. Approval covers everything the draft lists.
 
 When every section is settled, the block already links its files and each file carries the [missing-field header](#defaults), and no gap needs filling, there is no draft: tell the user nothing changed, make the [move offer](#instruction-file) if it applies, and go on to step 6 with every file byte-for-byte as it was.
 
@@ -115,7 +115,7 @@ A fact with no sensible default, such as the tracker or the check commands, is a
 
 Facts live in one prose file per group under `docs/agents/`, linked from the block. A fact moves to `.agents/config/` only when a tool, not an agent, must read it.
 
-Every config file opens with this line, directly under its title; a config file this skill owns that lacks it gets the line through the draft, and `docs/agents/setup-handoff.md` and `docs/agents/setup-research/` are not config files, so neither the line nor the no-change check under [Deliver guidance](#4-deliver-guidance) applies to them. A JSON config file has no title and carries the line as its first key, `$comment`.
+Every config file opens with this line, directly under its title, with or without the `>`; a config file this skill owns that lacks it gets the line through the draft, and `docs/agents/setup-handoff.md` and `docs/agents/setup-research/` are not config files, so neither the line nor the no-change check under [Deliver guidance](#4-deliver-guidance) applies to them. A JSON config file has no title and carries the line as its first key, `$comment`.
 
 > A missing field means the owning skill's default.
 
@@ -140,7 +140,7 @@ A single approval or value is a question to ask the owner; a step you can run yo
 
 ### Recommendations
 
-Recommend collection skills, vendor skills and dependency-shipped guidance together, in one view. Follow [recommendations.md](references/recommendations.md) when this run has something new to weigh: no selection yet, or the stack or dependencies changed. It says how to reach the collection catalog and a pack's `SETUP.md` from an installed folder, with no checkout and before any install.
+Recommend collection skills, vendor skills and dependency-shipped guidance together, in one view. Follow [recommendations.md](references/recommendations.md) when this run has something new to weigh: the project has no `## Agent skills` block yet, or the stack or dependencies changed since the block did (`git log` on the manifests and the instruction file, or what the owner says when there is no history). It says how to reach the collection catalog and a pack's `SETUP.md` from an installed folder, with no checkout and before any install.
 
 Skills already installed and pointers already in `### Vendor docs` are settled. When nothing new remains to recommend, say so in one line and write nothing.
 

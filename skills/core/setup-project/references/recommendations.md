@@ -118,7 +118,7 @@ List each pick's command and pointer in the draft. After approval:
 | Hook or always-on instruction | The vendor's own route, after its separate yes. |
 | Arrives with the dependency | Nothing yet. Name it in the run's report as waiting; deliver its pointer or skill once the dependency is restored. |
 
-The `skills` CLI needs a recent Node: on Node 20 it fails with a `fs/promises` `glob` SyntaxError, and `npx -p node@22 -p skills -c 'skills add ...'` runs it. Read `npx skills add --help` when a flag is refused. When an install fails, report the command and its output, and carry on with the other picks.
+The `skills` CLI needs a recent Node: on Node 20 it fails with a `fs/promises` `glob` SyntaxError, and `npx -p node@22 -p skills -c 'skills add ...'` runs it. The draft shows each command as it will run here. On the owner's no to the route's telemetry, each `skills` command starts with `DISABLE_TELEMETRY=1`. Read `npx skills add --help` when a flag is refused. When an install fails, report the command and its output, and carry on with the other picks.
 
 A skill pick is delivered when its folder is in both `.claude/skills/` and `.agents/skills/` and `skills-lock.json` lists it, at the pinned ref when it has one, or when `.claude/settings.json` enables its plugin.
 

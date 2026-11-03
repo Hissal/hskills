@@ -44,7 +44,7 @@ Run `/setup-project` for anything else. On Node 20 the `skills` CLI fails with a
 - **Waiting**: <what the pick waits for>
 ```
 
-One entry per source and workspace, headed by `<owner>/<repo>`, `<plugin>@<marketplace>` or the dependency's name. Keep only the fields an entry needs:
+One entry per source and workspace, headed by `<owner>/<repo>`, `<plugin>@<marketplace>`, the dependency's name, or the host of a documentation pointer that has none of these. Keep only the fields an entry needs:
 
 | Missing field | Means |
 |---|---|

@@ -9,9 +9,9 @@ metadata:
 
 # Unity guide
 
-Knowledge for Unity projects and UPM packages. You supply knowledge for the job in hand and never start a workflow: a review stays read-only, a gated workflow stays gated, and a lookup writes no file. Invoked with no stated need, take the task in front of you as the need.
+Knowledge for Unity projects and UPM packages. You supply knowledge for the job in hand and never start a workflow: a review stays read-only, a gated workflow stays gated, and a lookup writes no file, temporary ones included. Invoked with no stated need, take the task in front of you as the need.
 
-Take the steps in order. Results and notices carry through the session: say each notice once, and reuse the detection on later lookups.
+Take the steps in order. Your final reply opens with every line steps 1 and 2 ask you to say, even one a progress message already said, then the answer. On a later lookup in the session, reuse the detection and leave out the lines an earlier final reply gave.
 
 ## 1. Detect
 
@@ -20,7 +20,7 @@ A **project** is a folder holding `ProjectSettings/ProjectVersion.txt`. A **pack
 1. **Recorded paths.** When `docs/agents/unity.md` records paths under **Project**, check each for a marker. Name a path with neither as stale, in the wording of [the contradiction notice](#2-read-the-project-facts). Any path that holds a marker settles detection.
 2. **Search.** With no valid recorded path, search from the repo root for both markers, skipping dot-folders, folders ending in `~`, `Library/`, `Temp/`, `Logs/`, `obj/`, `Build/`, `Builds/`, `node_modules/` and a project's `Assets/`. Those hold generated, cached or imported manifests that are not this repo's.
 
-Every hit counts. Say `Unity repo: <shape> at <paths>.`, where the shape is `project`, `package` or `both`; `/setup-project` is what writes it down.
+Every hit counts. Say `Unity repo: <shape> at <paths>.`, where the shape is `project`, `package` or `both`.
 
 With no hit, reply `Not a Unity repo.` and return, adding nothing else. The caller carries on as if this step had not run.
 
@@ -73,7 +73,7 @@ Traps observed on CLI 1.0.0-beta.15:
 - In a subfolder of the project or outside it, the CLI prints the newest docs and says nothing. A version the site lacks falls back to another with a one-line notice. So read the version off the page: the `version:` field of the Markdown, or `--json`.
 - `--url` on a miss exits 0 with a `search?q=` address, `resolvedBy: search`. That is a results list, so it is no page: go on.
 - The Manual has no name lookup: `--content --manual` fails and `--url --manual` returns a search. Take the page's `url` from `unity docs toc --manual`.
-- `--package` reads `Packages/packages-lock.json` from the project folder and takes no `--editor-version`. With no lock entry, it gives the registry's newest. `--content` with it often has no Markdown to print: use its `--url`.
+- `--package` takes no topic and no `--editor-version`. It reads `Packages/packages-lock.json` from the project folder, and with no lock entry gives the registry's newest. Its `--content` often has no Markdown to print, and its `--url` is the manual's index: reach the page through that page's links or step 3.
 
 ## Choosing a workflow
 

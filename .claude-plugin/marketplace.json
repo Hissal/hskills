@@ -43,6 +43,16 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity"
+    },
+    {
+      "name": "collection-pack-unity",
+      "source": "./skills/packs/unity",
+      "description": "Generated unity skill list from collection.json.",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     }
   ],
   "metadata": {

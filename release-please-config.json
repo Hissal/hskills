@@ -47,6 +47,16 @@
           "type": "json",
           "path": "skills/packs/onboarding/.codex-plugin/plugin.json",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "skills/packs/unity/.claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "skills/packs/unity/.codex-plugin/plugin.json",
+          "jsonpath": "$.version"
         }
       ]
     }

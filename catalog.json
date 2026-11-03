@@ -154,6 +154,12 @@
     "path": "skills/core/triage",
     "requires": []
   },
+  "hissal.skill-collection/unity-debugging": {
+    "path": "skills/packs/unity/unity-debugging",
+    "requires": [
+      "hissal.skill-collection/unity-guide"
+    ]
+  },
   "hissal.skill-collection/unity-guide": {
     "path": "skills/packs/unity/unity-guide",
     "requires": []

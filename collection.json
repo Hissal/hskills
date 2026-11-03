@@ -46,6 +46,7 @@
       "skills/packs/onboarding/onboarding-guide"
     ],
     "unity": [
+      "skills/packs/unity/unity-debugging",
       "skills/packs/unity/unity-guide"
     ]
   },

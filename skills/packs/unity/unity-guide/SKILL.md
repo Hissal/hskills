@@ -51,6 +51,8 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 |---|---|
 | A Unity API, Manual or package fact at this repo's versions | [Docs lookup](SKILL.md#docs-lookup) |
 | Prototype medium, placement, running, capture or removal, for gameplay or other Unity project content | `skill: unity-prototyping` |
+| The user asks to set up or change import settings, asset admission or automated import checks, or why one they set up misbehaves (a symptom such as a blurry texture is no match) | [Asset-import rules](references/ASSET-IMPORT-RULES.md) |
+| Compile/work checks, reading test results, costs, Editor availability, shared resources or checkout isolation | `skill: unity-verification` |
 | Gameplay authority, replication or observing multiple participants, once a session exists (session, Relay, Lobby or matchmaking setup is no match) | `skill: unity-networking` |
 | Assembly boundaries, script placement, references or compilation problems, including a compile error about a type that exists or a Player build failing where the Editor compiles; `code-review`, `blast-radius`, `migrating`, `refactoring`, `codebase-design`, `architecture-review` and `to-tickets` lookups where assemblies are relevant | [Assembly rules](references/ASSEMBLIES.md) |
 | Building a feedback loop, instrumenting or profiling for this stack: reproduction, live observation, logs (`diagnosing-bugs`) | `skill: unity-debugging` |
@@ -58,7 +60,9 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 | Reproduction tools and environment, and required human participation (`triage`) | `skill: unity-debugging` |
 | Measuring a change against real data for this stack: what wrote a value in the run, and measurement (`risky-changes`) | `skill: unity-debugging` |
 | Measuring performance for this stack: choosing the method, and what a number supports (`verifying`, `hillclimb`) | `skill: unity-debugging` |
+| Test seams, authoring, setup, cadence, test-review idioms or coverage (`tdd`, `test-review`, `to-spec`, `implement`, part of `codebase-design`); a lookup during a review supplies knowledge and starts no test authoring | `skill: unity-testing` |
 | Knowledge from an official Unity skill or vendor source this project selected | vendor-guidance: the sources in the project's `### Vendor docs` and `docs/agents/vendor-sources.md`; reading one grants no workflow authority |
+| Serialized fields, asset/script moves, prefab overrides, saved-data compatibility or GUIDs; Unity asset merge conflicts; `blast-radius`, `migrating`, `refactoring`, `code-review` and `to-tickets` lookups where serialized data is relevant; what `architecture-review` and `reviewing`'s hotspot survey leave out of the scan | [Serialization rules](references/SERIALIZATION.md) |
 
 ## Docs lookup
 

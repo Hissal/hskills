@@ -168,8 +168,14 @@
     "path": "skills/packs/unity/unity-networking",
     "requires": []
   },
-  "hissal.skill-collection/unity-prototyping": {
-    "path": "skills/packs/unity/unity-prototyping",
+  "hissal.skill-collection/unity-testing": {
+    "path": "skills/packs/unity/unity-testing",
+    "requires": [
+      "hissal.skill-collection/unity-guide"
+    ]
+  },
+  "hissal.skill-collection/unity-verification": {
+    "path": "skills/packs/unity/unity-verification",
     "requires": [
       "hissal.skill-collection/unity-guide"
     ]

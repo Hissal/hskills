@@ -687,7 +687,8 @@ changing skill identity or requirements with
 | `hissal.skill-collection/unity-debugging` | [`unity-debugging`](../skills/packs/unity/unity-debugging/SKILL.md) | `hissal.skill-collection/unity-guide` [`unity-guide`](../skills/packs/unity/unity-guide/SKILL.md) |
 | `hissal.skill-collection/unity-guide` | [`unity-guide`](../skills/packs/unity/unity-guide/SKILL.md) | — |
 | `hissal.skill-collection/unity-networking` | [`unity-networking`](../skills/packs/unity/unity-networking/SKILL.md) | — |
-| `hissal.skill-collection/unity-prototyping` | [`unity-prototyping`](../skills/packs/unity/unity-prototyping/SKILL.md) | `hissal.skill-collection/unity-guide` [`unity-guide`](../skills/packs/unity/unity-guide/SKILL.md) |
+| `hissal.skill-collection/unity-testing` | [`unity-testing`](../skills/packs/unity/unity-testing/SKILL.md) | `hissal.skill-collection/unity-guide` [`unity-guide`](../skills/packs/unity/unity-guide/SKILL.md) |
+| `hissal.skill-collection/unity-verification` | [`unity-verification`](../skills/packs/unity/unity-verification/SKILL.md) | `hissal.skill-collection/unity-guide` [`unity-guide`](../skills/packs/unity/unity-guide/SKILL.md) |
 | `hissal.skill-collection/verifying` | [`verifying`](../skills/core/verifying/SKILL.md) | — |
 | `hissal.skill-collection/wait-what` | [`wait-what`](../skills/core/wait-what/SKILL.md) | — |
 | `hissal.skill-collection/wayfinder` | [`wayfinder`](../skills/core/wayfinder/SKILL.md) | — |

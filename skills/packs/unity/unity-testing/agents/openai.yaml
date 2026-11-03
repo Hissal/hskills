@@ -1,0 +1,5 @@
+interface:
+  display_name: "Unity testing"
+  short_description: "Write and choose Unity tests"
+policy:
+  allow_implicit_invocation: true

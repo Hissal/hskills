@@ -99,7 +99,7 @@ Then remove the attribute, compile, check, and commit. Prefab files keep a stale
 
 ### Building the scope
 
-**Without an Editor**, run [scripts/scope.sh](../scripts/scope.sh) with `--help` first, in Bash (Git Bash on Windows). Seed it with every script whose class declares the changed field or holds the changed type, and every subclass of those. It lists every text asset referencing them, following each matched prefab to what nests it. It covers only that grep, so the proposal states that hosts reached through subclasses, nested types or `[SerializeReference]` fields may be missing.
+**Without an Editor**, list the scope with [the scope script](../scripts/scope.sh), which needs bash and grep. Run `bash <this skill's folder>/scripts/scope.sh --help` first and treat the script as a black box. Seed it with every script whose class declares the changed field or holds the changed type, and every subclass of those. It lists every text asset referencing them, following each matched prefab to what nests it. It covers only that grep, so the proposal states that hosts reached through subclasses, nested types or `[SerializeReference]` fields may be missing.
 
 **With an Editor**, use [scripts/SerializationScope.cs](../scripts/SerializationScope.cs); read only its header comment, which names each entry point and its arguments. Copying it into a project is a job, never part of a lookup; how to run C# in the Editor is `unity-verification`'s. `Find` walks every MonoBehaviour and ScriptableObject type that serializes the changed type at any depth, maps them to script GUIDs and greps to the same fixpoint. It over-reaches by type: every file using a host component is listed, whether or not that instance holds the changed type. Over-reaching only adds files to the rewrite; missing one loses data.
 
@@ -229,7 +229,7 @@ Text checks, always, before the merge commit:
   comm -23 <(grep -o '{fileID: -\?[0-9]*}' <file> | grep -o -- '-\?[0-9]*' | grep -vx 0 | sort -u) <(grep -o '^--- !u![0-9]* &-\?[0-9]*' <file> | sed 's/.*&//' | sort -u)
   ```
 - No two `.meta` files share a `guid:`: `grep -rh --include='*.meta' '^guid:' Assets Packages | sort | uniq -d`. Settle any collision before Unity opens the project: Unity keeps the GUID on the asset it already imported and gives the other a new one, rewriting its `.meta`; when both are new to its `Library/`, both get new GUIDs (observed on 6000.6.2f1). Either way, references meant for the re-GUIDed asset now point elsewhere.
-- When an `.asmdef` was conflicted, each `GUID:` reference in it still matches an `.asmdef.meta`.
+- When an `.asmdef` was conflicted, [the listing script](../scripts/asmdefs.sh) prints no reference as unresolved.
 
 Then, when Unity can run, import the merged files and grep the Editor log for these strings, each seen on 6000.6.2f1:
 

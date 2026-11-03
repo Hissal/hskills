@@ -52,7 +52,7 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 | A Unity API, Manual or package fact at this repo's versions | [Docs lookup](SKILL.md#docs-lookup) |
 | Assembly boundaries, script placement, references or compilation problems, including a compile error about a type that exists or a Player build failing where the Editor compiles; `code-review`, `blast-radius`, `migrating`, `refactoring`, `codebase-design`, `architecture-review` and `to-tickets` lookups where assemblies are relevant | [Assembly rules](references/ASSEMBLIES.md) |
 | Knowledge from an official Unity skill or vendor source this project selected | vendor-guidance: the sources in the project's `### Vendor docs` and `docs/agents/vendor-sources.md`; reading one grants no workflow authority |
-| Serialized fields, asset/script moves, prefab overrides, saved-data compatibility or GUIDs; Unity asset merge conflicts; asset churn in a hotspot scan | [Serialization rules](references/SERIALIZATION.md) |
+| Serialized fields, asset/script moves, prefab overrides, saved-data compatibility or GUIDs; Unity asset merge conflicts; `blast-radius`, `migrating`, `refactoring`, `code-review` and `to-tickets` lookups where serialized data is relevant; what `architecture-review` and `reviewing`'s hotspot survey leave out of the scan | [Serialization rules](references/SERIALIZATION.md) |
 
 ## Docs lookup
 

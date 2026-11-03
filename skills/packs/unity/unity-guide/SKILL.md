@@ -50,6 +50,7 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 | Need | Target |
 |---|---|
 | A Unity API, Manual or package fact at this repo's versions | [Docs lookup](SKILL.md#docs-lookup) |
+| The user asks to set up or change import settings, asset admission or automated import checks, or why one they set up misbehaves (a symptom such as a blurry texture is no match) | [Asset-import rules](references/ASSET-IMPORT-RULES.md) |
 | Compile/work checks, reading test results, costs, Editor availability, shared resources or checkout isolation | `skill: unity-verification` |
 | Gameplay authority, replication or observing multiple participants, once a session exists (session, Relay, Lobby or matchmaking setup is no match) | `skill: unity-networking` |
 | Assembly boundaries, script placement, references or compilation problems, including a compile error about a type that exists or a Player build failing where the Editor compiles; `code-review`, `blast-radius`, `migrating`, `refactoring`, `codebase-design`, `architecture-review` and `to-tickets` lookups where assemblies are relevant | [Assembly rules](references/ASSEMBLIES.md) |

@@ -154,6 +154,10 @@
     "path": "skills/core/triage",
     "requires": []
   },
+  "hissal.skill-collection/unity-guide": {
+    "path": "skills/packs/unity/unity-guide",
+    "requires": []
+  },
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",
     "requires": []

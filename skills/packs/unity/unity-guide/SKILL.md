@@ -55,6 +55,14 @@ Write the invocation as installed in this harness: `/setup-project` on Claude Co
 | This stack's dependency ecosystem: manifests and lockfiles, the audit tool, where versions are decided (`dependency-audit`) | [Dependencies](references/DEPENDENCIES.md) |
 | Adding a dependency or moving one to another version, in any channel: UPM, Asset Store, a vendored DLL, a native plugin or NuGetForUnity | [Dependencies](references/DEPENDENCIES.md) |
 | Compile/work checks, reading test results, costs, Editor availability, shared resources or checkout isolation | `skill: unity-verification` |
+| Ship-readiness for this kind of project (`verifying`) | `skill: unity-verification` |
+| Risk-selected QA cases: interruptions, input-device switching, state transitions | `skill: unity-verification` |
+| The stack's check tools and their cost tiers (`constraints`) | `skill: unity-verification` |
+| Stack-specific shared resources and isolation constraints; running work in parallel worktrees (`delegating`, `implement-spec`) | `skill: unity-verification` |
+| Slicing work: surfaces that cannot be worked in parallel, work that needs a human or a running tool (`to-tickets`) | `skill: unity-verification` |
+| Classifying stack involvement (`triage`) | `skill: unity-verification` |
+| Environment gaps the session hit that are specific to this stack (`retro`) | `skill: unity-verification` |
+| Measuring a change against real data for this stack: which values the run really used, and evidence selection (`risky-changes`) | `skill: unity-verification` |
 | Gameplay authority, replication or observing multiple participants, once a session exists (session, Relay, Lobby or matchmaking setup is no match) | `skill: unity-networking` |
 | Assembly boundaries, script placement, references or compilation problems, including a compile error about a type that exists or a Player build failing where the Editor compiles; `code-review`, `blast-radius`, `migrating`, `refactoring`, `codebase-design`, `architecture-review` and `to-tickets` lookups where assemblies are relevant | [Assembly rules](references/ASSEMBLIES.md) |
 | Checking a UI against worst-case data | [UI worst cases](references/UI-WORST-CASES.md) |

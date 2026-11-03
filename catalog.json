@@ -158,6 +158,12 @@
     "path": "skills/packs/unity/unity-guide",
     "requires": []
   },
+  "hissal.skill-collection/unity-prototyping": {
+    "path": "skills/packs/unity/unity-prototyping",
+    "requires": [
+      "hissal.skill-collection/unity-guide"
+    ]
+  },
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",
     "requires": []

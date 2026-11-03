@@ -116,7 +116,7 @@ public static class SerializationScope
             .Concat(Directory.Exists("Packages") ? Directory.EnumerateFiles("Packages", "*", SearchOption.AllDirectories) : Enumerable.Empty<string>())
             .Where(p => !p.EndsWith(".meta", StringComparison.OrdinalIgnoreCase))
             .Select(p => p.Replace('\\', '/'))
-            .Select(p => (path: p, text: ReadUnityYaml(p)))
+            .Select(p => (path: p, text: ReadUnityYaml(p, notes)))
             .Where(f => f.text != null)
             .ToList();
 
@@ -171,7 +171,8 @@ public static class SerializationScope
         return type ?? throw new ArgumentException("type not found: " + name + " (use the full name, namespace included)");
     }
 
-    static string ReadUnityYaml(string path)
+    // Null for a file that is not UnityYAML, and for one it could not read, which also adds a note.
+    static string ReadUnityYaml(string path, List<string> notes)
     {
         try
         {
@@ -182,7 +183,11 @@ public static class SerializationScope
                 return "%YAML" + reader.ReadToEnd();
             }
         }
-        catch (IOException) { return null; }
+        catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
+        {
+            notes.Add($"# scope incomplete: could not read {path} ({e.GetType().Name}); it may serialize the changed type");
+            return null;
+        }
     }
 
     // Unity's field rules, applied recursively from a host type down to the targets.

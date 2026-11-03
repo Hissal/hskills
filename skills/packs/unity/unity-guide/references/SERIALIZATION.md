@@ -95,6 +95,8 @@ On the okay:
 - **Scoped**: run `SerializationScope.Reserialize` with the approved list. It calls `AssetDatabase.ForceReserializeAssets(paths)`, which rewrites only the listed files, then re-records the prefab instance overrides in each listed scene.
 - **Whole project**: `ForceReserializeAssets()` with no arguments rewrites every asset: a large diff. Scene overrides still need the re-record pass, so then run `Reserialize` with every `.unity` file in the project.
 
+**An incomplete scope stops the attribute's removal.** `scope.sh` exiting 3, or a `# scope incomplete` line from `Find`, names a file that could not be read. That file may hold the old name and would lose its value once the attribute goes. Name it in the proposal and keep the attribute: neither option above lifts this until a rerun comes back complete.
+
 Then remove the attribute, compile, check, and commit. Prefab files keep a stale entry under the old `propertyPath` beside the new one; it no longer applies to anything and can stay.
 
 ### Building the scope

@@ -33,7 +33,7 @@ public static class SerializationScope
         }
     }
 
-    // Rewrites the approved files with ForceReserializeAssets. It leaves a scene's prefab
+    // Rewrites the listed files with ForceReserializeAssets. It leaves a scene's prefab
     // instance overrides on the old propertyPath, so each listed scene is then opened and
     // those overrides re-recorded under the new name before it is saved. It refuses while an
     // open scene has unsaved changes, and reopens the user's scenes after.

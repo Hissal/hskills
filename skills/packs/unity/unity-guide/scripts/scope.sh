@@ -16,7 +16,7 @@ instances, variants and scene instances. Paths print relative to <project>, sort
 Seed with every script whose type serializes the changed type, and their
 subclasses. Without the Editor's type closure, hosts reached through subclasses,
 nested types or [SerializeReference] fields are missing unless their scripts are
-seeded too: say so in the proposal.
+seeded too: say so in the report.
 
 Exit: 0 listed in full (possibly nothing), 1 a seed has no GUID, 2 bad arguments,
 3 scope incomplete: a file could not be read, or a matched prefab's GUID could not
@@ -29,7 +29,7 @@ Reserialize take strings and return a string. <types> is a comma-separated list 
 full type names, namespace included.
 
   Find(types)                   connected Editor, from a scratch copy outside Assets/
-  Reserialize(types, pathList)  connected Editor; pathList is the approved list,
+  Reserialize(types, pathList)  connected Editor; pathList is the scope's list,
                                 one path per line
   FindFromCommandLine,          headless, from a copy in an Editor folder under
   ReserializeFromCommandLine    Assets/ (removed after, with its .meta), reading

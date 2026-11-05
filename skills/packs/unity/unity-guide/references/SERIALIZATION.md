@@ -85,23 +85,21 @@ Moving a script folder or an assembly definition keeps every GUID when the `.met
 
 ## The reserialize follow-up
 
-A rename is **expand then contract**: two commits, the second only on the owner's okay.
+A rename is **expand then contract**: two commits.
 
 1. **Expand**: the rename plus its attribute. Commit. The change is complete here; the attribute is harmless if it stays forever.
-2. **Contract**: propose rewriting the files that still hold the old name, then removing the attribute. Always propose, even when the scope is small: build the scope, then show the file count and the path list and wait. When the scope is uncertain (built by the grep script, or the Editor script printed notes), offer two options: the scoped list, or the whole project.
+2. **Contract**, when an Editor can run: build the scope, rewrite the files that still hold the old name, then remove the attribute. Report the file count and the path list.
 
-On the okay:
+- **Scoped**, the default: run `SerializationScope.Reserialize` with the scope's list. It calls `AssetDatabase.ForceReserializeAssets(paths)`, which rewrites only the listed files, then re-records the prefab instance overrides in each listed scene.
+- **Whole project**, only when the user asks: `ForceReserializeAssets()` with no arguments rewrites every asset, a large diff. Scene overrides still need the re-record pass, so then run `Reserialize` with every `.unity` file in the project.
 
-- **Scoped**: run `SerializationScope.Reserialize` with the approved list. It calls `AssetDatabase.ForceReserializeAssets(paths)`, which rewrites only the listed files, then re-records the prefab instance overrides in each listed scene.
-- **Whole project**: `ForceReserializeAssets()` with no arguments rewrites every asset: a large diff. Scene overrides still need the re-record pass, so then run `Reserialize` with every `.unity` file in the project.
+**An uncertain or incomplete scope keeps the attribute.** A scope built by the grep script can miss hosts, and one with notes from `Find`, or `scope.sh` exiting 3, names a file that could not be read. Either may leave a file holding the old name, which loses its value once the attribute goes. Rewrite the listed files, keep the attribute, and name the possible gaps in the report.
 
-**An incomplete scope stops the attribute's removal.** `scope.sh` exiting 3, or a `# scope incomplete` line from `Find`, names a file that could not be read. That file may hold the old name and would lose its value once the attribute goes. Name it in the proposal and keep the attribute: neither option above lifts this until a rerun comes back complete.
-
-Then remove the attribute, compile, check, and commit. Prefab files keep a stale entry under the old `propertyPath` beside the new one; it no longer applies to anything and can stay.
+Otherwise remove the attribute, compile, check, and commit. Prefab files keep a stale entry under the old `propertyPath` beside the new one; it no longer applies to anything and can stay.
 
 ### Building the scope
 
-**Without an Editor**, list the scope with [the scope script](../scripts/scope.sh), which needs bash and grep. Run `bash <this skill's folder>/scripts/scope.sh --help` first and treat the script as a black box. Seed it with every script whose class declares the changed field or holds the changed type, and every subclass of those. It lists every text asset referencing them, following each matched prefab to what nests it. It covers only that grep, so the proposal states that hosts reached through subclasses, nested types or `[SerializeReference]` fields may be missing.
+**Without an Editor**, list the scope with [the scope script](../scripts/scope.sh), which needs bash and grep. Run `bash <this skill's folder>/scripts/scope.sh --help` first and treat the script as a black box. Seed it with every script whose class declares the changed field or holds the changed type, and every subclass of those. It lists every text asset referencing them, following each matched prefab to what nests it. It covers only that grep, so the report states that hosts reached through subclasses, nested types or `[SerializeReference]` fields may be missing.
 
 **With an Editor**, use [scripts/SerializationScope.cs](../scripts/SerializationScope.cs). Run `bash <this skill's folder>/scripts/scope.sh --help` first, which names each entry point and its arguments, and treat the `.cs` as a black box too. When `--help` prints nothing, bash cannot run in this shell: say so, skip both scripts and their source, and leave the scope to a shell that has bash. Copying the `.cs` into a project is a job, never part of a lookup; how to run C# in the Editor is `unity-verification`'s. `Find` walks every MonoBehaviour and ScriptableObject type that serializes the changed type at any depth, maps them to script GUIDs and greps to the same fixpoint. It over-reaches by type: every file using a host component is listed, whether or not that instance holds the changed type. Over-reaching only adds files to the rewrite; missing one loses data.
 
@@ -271,7 +269,7 @@ A diff cannot establish that values survive import: name that as unverified unti
 ## Slicing work into tickets
 
 - Tickets that touch the same `.unity` or `.prefab` block each other, even when their logic is independent: a structural merge conflict in one scene stops for a human.
-- A serialized rename is two slices, expand then contract, with the contract waiting on the owner's okay.
+- A serialized rename is two slices, expand then contract, the contract after the expand has landed.
 - Authoring slices (building or rewiring scenes and prefabs) need a connected editor or a human.
 
 ## Hotspot scans and friction

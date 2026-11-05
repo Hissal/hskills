@@ -5,7 +5,7 @@ Which assembly each script compiles into, what it can see, where it ships and wh
 - [Project fields](#project-fields)
 - [Trace before assessing](#trace-before-assessing)
 - [List the assemblies](#list-the-assemblies)
-- [Propose boundaries](#propose-boundaries)
+- [Assembly boundaries](#assembly-boundaries)
 - [Traps](#traps)
 - [Editor and runtime code](#editor-and-runtime-code)
 - [References and GUIDs](#references-and-guids)
@@ -25,7 +25,6 @@ This reference owns the **Assemblies** section of `docs/agents/unity.md`.
 | Field | Holds | When unset |
 |---|---|---|
 | **Naming convention** | The scheme a new assembly's name follows | Reverse-DNS, matching the existing asmdefs |
-| **Layout policy** | Which asmdef changes (a new asmdef, a split, code moved out of `Assembly-CSharp`) go ahead without a proposal, and where new asmdefs go | Propose first and write nothing until accepted, as in [Propose boundaries](#propose-boundaries) |
 | **Project-wide defines** | Where the repo keeps project-wide symbols: `csc.rsp`, Player Settings or build profiles | Whichever of those already holds symbols |
 
 ## Trace before assessing
@@ -49,18 +48,17 @@ For the mechanics of inspecting a running project, use official tooling: an open
 
 In a checkout, list every assembly with [the listing script](../scripts/asmdefs.sh), which needs bash and grep. Run `bash <this skill's folder>/scripts/asmdefs.sh --help` first and treat the script as a black box, then run it on the project or package root. Its `?` marks a reference that resolves to nothing, and `no-meta` an asmdef without its `.meta`. When `--help` prints nothing, bash cannot run in this shell, as in Codex's Windows sandbox: say so, skip the script and its source, and read each `.asmdef` and the `guid:` line of its `.meta` instead.
 
-## Propose boundaries
+## Assembly boundaries
 
-Offer an assembly or boundary change whenever it would help: faster iteration, testable code leaving `Assembly-CSharp`, an Editor folder needing its own assembly, a tangle to undo. Existing structure is context for the proposal, and a single assembly is never a goal in itself.
+Add or change an assembly whenever the task would benefit: faster iteration, testable code leaving `Assembly-CSharp`, an Editor folder needing its own assembly, a tangle to undo. Existing structure is context, and a single assembly is never a goal in itself.
 
-A proposal states:
+Before writing, work out:
 
-- the benefit;
 - the folder and assembly name, following the naming convention;
 - the affected code: every `Assembly-CSharp` type the moved code uses, since each must move too or be inverted, and the code that uses what moves;
 - the assemblies that will reference the new one, and those it references.
 
-With the layout policy unset, or silent on this change, the proposal is the whole turn: write no file until the user accepts it. A request to set up a layout or add an asmdef, however open ("whatever you think"), asks for this proposal and accepts nothing. When the policy covers the change, follow it without proposing. A script added to an existing folder joins its neighbours' assembly and needs no proposal.
+Then make the change, compile, and tell the user what it made and why, with the points above. A script added to an existing folder joins its neighbours' assembly.
 
 ## Traps
 
@@ -112,9 +110,9 @@ Use the entry for the caller's need, with only what the change touches.
 
 - **`code-review`.** *Standards:* every reference resolves; no cycle among changed assemblies; no runtime asmdef references an `"includePlatforms": ["Editor"]` one; every `Editor` folder under an asmdef has its own Editor-only asmdef or asmref; every `using UnityEditor` in a runtime assembly sits inside `#if UNITY_EDITOR`; no production code in a test assembly; no `no-meta` on a new asmdef. *Failure:* [Traps](#traps). *Spec:* a diff cannot show that a Player build compiles, what a define resolves to on another target, or the contents of `Library/PackageCache/`.
 - **`blast-radius`.** Dependents from the listing. Changing an assembly's `name` drops every name reference to it silently, while GUID references survive, and stops any `InternalsVisibleTo` string naming it from matching. Grep for both, `.asmref` files included. `[SerializeReference]` data stores the assembly name, so that data is at risk too: look up the serialization need in the guide's table. A platform, constraint or `autoReferenced` change reaches every dependent. Moving a script between assemblies changes what it can see, and which `internal` members it reaches.
-- **`migrating`.** Moving a type to another assembly first traces the types it uses, as in [Propose boundaries](#propose-boundaries). What keeps its serialized data through the move is the serialization need in the guide's table.
+- **`migrating`.** Moving a type to another assembly first traces the types it uses, as in [Assembly boundaries](#assembly-boundaries). What keeps its serialized data through the move is the serialization need in the guide's table.
 - **`refactoring`.** Hazards: the `name` change above; renaming the `.asmdef` file leaves `name` unchanged; a class rename also renames its file. Validate with a compile, and a Player build when the Editor/runtime split moved.
-- **`codebase-design`.** An assembly boundary is a seam with its own rules: `internal` stays inside the assembly, `[assembly: InternalsVisibleTo("<asmdef name>")]` in an `AssemblyInfo.cs` beside the asmdef opens it to one named assembly (*observed*), and references run one way. Deepening a module across a boundary changes references, so [propose it](#propose-boundaries).
+- **`codebase-design`.** An assembly boundary is a seam with its own rules: `internal` stays inside the assembly, `[assembly: InternalsVisibleTo("<asmdef name>")]` in an `AssemblyInfo.cs` beside the asmdef opens it to one named assembly (*observed*), and references run one way. Deepening a module across a boundary changes references, so trace it as in [Assembly boundaries](#assembly-boundaries).
 - **`architecture-review`.** Friction signals: assemblies referencing nearly everything; near-cycles worked around with interfaces or events; Editor-only references from runtime code; one feature's types spread over many assemblies; a split forcing `public` on what should be `internal`.
 - **`to-tickets`.** An asmdef's reference list and a split moving many files are surfaces two workers cannot change in parallel, so slice them on their own and first. Renaming an assembly used by name, or consumed outside this repo, needs expand-contract: move consumers to GUID references before the rename.
 

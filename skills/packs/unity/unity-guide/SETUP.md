@@ -70,7 +70,6 @@ Show every fact as one list, each with its source, its owner's default and wheth
 Ask one question, listing each with its default from its owner, or with the value the file already sets:
 
 - **Allowed environments**, **Cold import**, **Resident headless**, from `unity-verification`.
-- **Layout policy**, from [ASSEMBLIES.md](references/ASSEMBLIES.md).
 
 > Keep these Unity defaults? (recommended: **yes**)
 
@@ -136,7 +135,6 @@ Start the draft from this seed and keep the title, the header line and **Project
 ## Assemblies
 
 - **Naming convention**:
-- **Layout policy**:
 - **Project-wide defines**:
 
 ## Serialization

@@ -35,7 +35,7 @@ Write test assemblies in the explicit form below. The Editor's templates and the
 
 ## Setting up the first test assembly
 
-1. **Code in `Assembly-CSharp`:** stop. Tests cannot see it, so it needs its own asmdef first. Ask `unity-guide` for assembly boundaries, propose the move (folder, assembly name, the other types that move with it) with its benefit and the affected code, and wait for the owner.
+1. **Code in `Assembly-CSharp`:** tests cannot see it, so it needs its own asmdef first. Ask `unity-guide` for assembly boundaries and make the move it describes.
 2. **Check the manifest**, as above.
 3. **Place it** in the project's test assembly layout.
 4. **Write the asmdef and its `.meta`.**

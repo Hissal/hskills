@@ -118,7 +118,12 @@ enabled = true
   assert.match(built.stdout, /--check/);
   const next = built.stdout.split('\n').filter(line => / -- "/.test(line));
   assert.equal(next.length, 2, built.stdout);
-  for (const line of next) assert.ok(line.startsWith(`  cd '${project}' && `), line);
+  // In a subshell, so pasting the block keeps the shell where it was, and the
+  // lines after them name the scripts and files by absolute path.
+  for (const line of next) assert.ok(line.startsWith(`  (cd '${project}' && `) && line.includes(') > '), line);
+  const checkLine = built.stdout.split('\n').find(line => line.includes(' --check '));
+  assert.ok(checkLine.startsWith(`  node ${cli} --check ${path.resolve(scopeFile)} `), checkLine);
+  assert.match(built.stdout, new RegExp(`^RUN: node ${path.resolve(__dirname, '../trigger.js').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} `, 'm'));
   console.log('ok: scope helper builds the project and the queries file');
 
   // A global excludes file that ignores the skill folders cannot leave them

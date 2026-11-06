@@ -152,11 +152,13 @@ function build(options) {
   console.log(`WROTE: ${project}\nWROTE: ${out}`);
   console.log('NEXT: before the first query, confirm no hidden skill is listed. In the project, save one session of each harness and check them:');
   const quote = text => `'${text.replace(/'/g, `'\\''`)}'`;
-  const inProject = `cd ${quote(project)} && `;
-  if (claude) console.log(`  ${inProject}${(claude.command || ['claude']).join(' ')} --setting-sources project -p --model ${claude.model} --output-format stream-json --verbose -- "Reply ok." > ${path.join(run, 'claude-init.jsonl')}`);
-  if (codex) console.log(`  ${inProject}${(codex.command || ['codex']).join(' ')} -c '${toggles}' exec --model ${codex.model} -- "List the name of every skill you can use, one per line." > ${path.join(run, 'codex-listing.txt')}`);
-  console.log(`  node scripts/eval/scope.js --check ${scopeFile} ${claude ? path.join(run, 'claude-init.jsonl') : ''} ${codex ? path.join(run, 'codex-listing.txt') : ''}`.trimEnd());
-  console.log(`RUN: node scripts/eval/trigger.js ${out}`);
+  // Each session runs in a subshell, so a pasted block leaves the shell where
+  // it was; the lines after it name scripts and files by absolute path.
+  const inProject = `(cd ${quote(project)} && `;
+  if (claude) console.log(`  ${inProject}${(claude.command || ['claude']).join(' ')} --setting-sources project -p --model ${claude.model} --output-format stream-json --verbose -- "Reply ok.") > ${path.join(run, 'claude-init.jsonl')}`);
+  if (codex) console.log(`  ${inProject}${(codex.command || ['codex']).join(' ')} -c '${toggles}' exec --model ${codex.model} -- "List the name of every skill you can use, one per line.") > ${path.join(run, 'codex-listing.txt')}`);
+  console.log(`  node ${__filename} --check ${path.resolve(scopeFile)} ${claude ? path.join(run, 'claude-init.jsonl') : ''} ${codex ? path.join(run, 'codex-listing.txt') : ''}`.trimEnd());
+  console.log(`RUN: node ${path.join(__dirname, 'trigger.js')} ${out}`);
 }
 
 // The hidden skills a saved session lists: a Claude stream's init event

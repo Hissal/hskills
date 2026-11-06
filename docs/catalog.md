@@ -663,6 +663,7 @@ changing skill identity or requirements with
 | `hissal.skill-collection/grill-with-docs` | [`grill-with-docs`](../skills/core/grill-with-docs/SKILL.md) | `hissal.skill-collection/domain-modeling` [`domain-modeling`](../skills/core/domain-modeling/SKILL.md), `hissal.skill-collection/grilling` [`grilling`](../skills/core/grilling/SKILL.md) |
 | `hissal.skill-collection/grilling` | [`grilling`](../skills/core/grilling/SKILL.md) | — |
 | `hissal.skill-collection/guide` | [`guide`](../skills/core/guide/SKILL.md) | — |
+| `hissal.skill-collection/handoff` | [`handoff`](../skills/core/handoff/SKILL.md) | — |
 | `hissal.skill-collection/hillclimb` | [`hillclimb`](../skills/core/hillclimb/SKILL.md) | `hissal.skill-collection/verifying` [`verifying`](../skills/core/verifying/SKILL.md) |
 | `hissal.skill-collection/how` | [`how`](../skills/core/how/SKILL.md) | — |
 | `hissal.skill-collection/implement` | [`implement`](../skills/core/implement/SKILL.md) | — |

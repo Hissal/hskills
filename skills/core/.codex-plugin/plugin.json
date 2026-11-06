@@ -16,6 +16,7 @@
     "./grill-with-docs",
     "./grilling",
     "./guide",
+    "./handoff",
     "./hillclimb",
     "./how",
     "./implement",

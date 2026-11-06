@@ -28,7 +28,7 @@ The retro keeps no record of its own: no snapshot file, no score, no learnings s
 
 ## Sources
 
-- **Session logs**, any number: the current session by default, or the sessions the user names (by id, by date, or "the last few sessions in this project"). Find and read them through [session logs](references/session-logs.md). For a harness not in its table, ask the user for a transcript path.
+- **Session logs**, any number: the current session by default, or the sessions the user names (by id, by date, or "the last few sessions in this project"), from one harness or several. Find and read them through [session logs](references/session-logs.md). For a harness not in its table, ask the user for a transcript path.
 - **Git history of the same window**: the commits on the sessions' branches over their time span. Look for reverts, fixup and squash commits, and the owner's edits on top of agent commits: what the owner changed after the agent called the work done.
 - **PR reviews of the same window**: review comments, requested changes and bot findings on the PRs those branches opened. The PR host and tracker come from project configuration (the files linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`). When it names none, say so, suggest `/setup-project`, and retro the logs and git history alone.
 

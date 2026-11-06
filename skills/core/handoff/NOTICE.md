@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/productivity/handoff`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; done line; safe-boundary and no-commit rules; describe state, not actions; fixed template with run/read/assumed tags, user's/agent's/pending decision marks and a closing reader block; one copyable resume line; writing-for-agents pointer; work-brief form filed to the tracker, in a disclosed reference
+- Local changes: collection metadata and gates; done line; safe-boundary and no-commit rules; describe state, not actions; fixed template with run/read/assumed tags, user's/agent's/pending decision marks and a closing reader block; one copyable resume line; writing-for-agents pointer; work-brief form filed to the tracker, in a disclosed reference; argument grammar reference; thread and subagent destinations launched through delegating, with fallback to the resume line; lines from mattpocock/skills skills/in-progress/claude-handoff at 4ec00d966d964d8dd8a67d4f4570e998791152db, MIT, Copyright (c) 2026 Matt Pocock
 
 ## Licence
 

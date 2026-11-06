@@ -1,19 +1,31 @@
 name: Collection check
 
-# Pull requests are checked once per push; main is checked after each merge;
-# any other branch runs by hand (Actions tab, or `gh workflow run`).
+# Ready pull requests are checked once per push, and a newer push cancels the
+# older run; draft pull requests are skipped until marked ready. main is checked
+# after each merge; any other branch, a draft's included, runs by hand (Actions
+# tab, or `gh workflow run`).
 on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# A pull request's runs share a group, so a newer push cancels the older run.
+# Every other run gets its own group: a shared group keeps only one pending
+# run, which would drop queued pushes to main.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('run-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   collection-check:
     name: Collection check (${{ matrix.os }})
+    # Skipped on draft pull requests; ready_for_review starts the real run.
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -42,6 +54,7 @@ jobs:
 
   security-scan:
     name: Security scan (${{ matrix.os }})
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

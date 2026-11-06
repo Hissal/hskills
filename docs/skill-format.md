@@ -374,8 +374,11 @@ such as numbers or booleans that YAML would otherwise interpret as non-strings.
 
 [Collection check](../.github/workflows/collection-check.yml) runs the fixture runner
 and the same collection check command on Windows and Linux: once per push to a
-pull request, after each merge to `main`, and by hand on any other branch
-(`gh workflow run collection-check.yml --ref <branch>`). Either command failing
+ready pull request, after each merge to `main`, and by hand on any other branch
+(`gh workflow run collection-check.yml --ref <branch>`). Draft pull requests skip
+both the collection check and security scan jobs until marked ready for review,
+and a newer push to a pull request cancels its older run; runs on `main` are
+never cancelled. Either command failing
 fails its job; both platforms run even if one fails. Checkout includes history and tags for checks against the last release.
 There is no pre-commit hook.
 
@@ -390,8 +393,8 @@ scanned alike; the only exceptions are single reviewed findings in the accepted
 file (below). The model-judged half of `skill-scanner` belongs to code review
 and skill intake.
 
-Run it locally on demand (needs [uv](https://docs.astral.sh/uv/)); the collection
-check does not run it:
+Run it locally before pushing (needs [uv](https://docs.astral.sh/uv/)); `check.js`
+does not run it:
 
 ```sh
 uv run scripts/security-scan/scan.py --base origin/main

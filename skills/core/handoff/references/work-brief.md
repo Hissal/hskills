@@ -75,10 +75,10 @@ Each Pointers line says what matters at that location, never the path alone. Unr
 
 Form and output location are separate choices: the brief form says what is written, not where.
 
-- **Tracker**: by default the brief goes to the issue tracker the project's configuration names (the tracker file linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`), using the commands that file gives. Search it for an open issue that already tracks this work. When one does, add the brief to it as a comment, so its body, comments and history stay as they were. When none does, file a new issue whose body is the brief. When more than one issue could fit, ask which.
+- **Tracker**: by default the brief goes to the issue tracker the project's configuration names (the tracker file linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`), using the commands that file gives. Search it for an open issue that already tracks this work. When one does, add the brief to it as a comment, so its body, comments and history stay as they were. Post that comment through the `commenting` skill; when `commenting` is not installed, open it with the note `> 🤖 **<model> on behalf of @<user>**` yourself, `> [!NOTE]` on the line above it. When none does, file a new issue whose body is the brief. When more than one issue could fit, ask which.
 - **Standalone document**: when the user asks for a document, or the project names no tracker, write the brief to the path the user names, else to the OS temporary directory as for the continuation document, named `brief-<project>-<YYYYMMDD-HHMM>.md`. Say when it went there because no tracker is configured.
 
-Recording a brief notifies no one. Assign no one, mention no one, and send no message; filing an issue is not a request to anyone.
+Recording a brief notifies no one. Assign no one and send no message. The only `@` in the brief or its comment is the note's own login, the user you post as; mention no one else. Filing an issue is not a request to anyone.
 
 ## Boundaries
 

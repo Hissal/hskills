@@ -193,6 +193,14 @@
       "changes": "collection metadata and gates; AI disclaimer replaced by commenting with a context suffix; project configuration for tracker and labels; pack-guide extension point; maintainer issues triaged alike; process calls; /to-questionnaire and /handoff suggestions and parent-agent return; contents lists in both references; writing-for-agents process call for agent briefs"
     },
     {
+      "skill": "skills/core/unslop",
+      "source": "EveryInc/compound-engineering-plugin",
+      "path": "skills/ce-noslop",
+      "sha": "173bd337fa639aac19ce7363d288836a074231a5",
+      "license": "MIT",
+      "changes": "renamed unslop with collection metadata and gates; user-invoked with a one-line human description and no route to ce-promote; each mode moved into its own reference read exactly one at a time; caller wording becomes the user's; pattern catalogue merged with the owner's pstack unslop catalogue (examples folded into matching rules, the stricter em dash rule, a map of the old pstack rule numbers) and four paragraph-flow rules added in our own words after comparison with vercel-labs/writing-guidelines command.md at 83e2316b034cf572400513538e4e4da01c4cc742, idea-only; lines from cursor/plugins pstack/skills/unslop/SKILL.md at 2776ddd2355d6d6c8747d3964600f28daf62f049, MIT, Copyright (c) 2026 Lauren Tan"
+    },
+    {
       "skill": "skills/core/wait-what",
       "source": "mattpocock/skills",
       "path": "skills/productivity/wait-what",

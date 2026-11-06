@@ -1,0 +1,5 @@
+interface:
+  display_name: "Context Audit"
+  short_description: "Audit and measure what the agent is told; propose a diff"
+policy:
+  allow_implicit_invocation: false

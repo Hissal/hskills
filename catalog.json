@@ -124,6 +124,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/session-report": {
+    "path": "skills/core/session-report",
+    "requires": []
+  },
   "hissal.skill-collection/setup-project": {
     "path": "skills/core/setup-project",
     "requires": []

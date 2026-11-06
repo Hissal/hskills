@@ -29,6 +29,7 @@
     "./reviewing",
     "./risky-changes",
     "./second-opinion",
+    "./session-report",
     "./setup-project",
     "./tdd",
     "./test-review",

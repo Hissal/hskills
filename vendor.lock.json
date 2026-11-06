@@ -129,6 +129,14 @@
       "changes": "trigger narrowed to public APIs, data transforms or drops, pricing or quotas, defaults, and provider or model parameters; collection metadata; evidence path and approver from project configuration; verified, unvalidated and failed statuses; research step and fixed case count dropped; evidence record template; pack-guide extension point and people's reports as their own evidence; approval pending when unattended; post-deployment check kept only as a record line"
     },
     {
+      "skill": "skills/core/session-report",
+      "source": "anthropics/claude-plugins-official",
+      "path": "plugins/session-report/skills/session-report",
+      "sha": "a1ecfbc7f138a0ef455088f7f28cda2d22a0f853",
+      "license": "Apache-2.0",
+      "changes": "collection metadata and gates, set to user-invoked; Claude Code-only opening line and use-not-idle-cost limit; temporary JSON at the path Node reports as the OS temp directory instead of /tmp, quoted paths and a delete step, so the steps run on Windows; template uses a system monospace font stack instead of loading JetBrains Mono from Google Fonts"
+    },
+    {
       "skill": "skills/core/setup-project",
       "source": "mattpocock/skills",
       "path": "skills/engineering/setup-matt-pocock-skills",

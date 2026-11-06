@@ -120,6 +120,12 @@ try {
   pwsh+" -Command 'Get-Content .agents/skills/fixture/SKILL.md; Get-Content docs/agents/fixture.md; Get-Content ProjectSettings/ProjectVersion.txt'",
   pwsh+" -Command 'Get-Content docs/agents/fixture.md && Get-Content C:/project/.agents/skills/fixture/SKILL.md'",
   pwsh+' -Command "Get-Content .agents\\\\skills\\\\fixture\\\\SKILL.md"',
+  // The shapes in the Windows capture (docs/evidence/windows-install-2026-10-31):
+  // -LiteralPath with a quoted path, optionally -Raw, the script in double quotes.
+  pwsh+' -Command "Get-Content -LiteralPath \'C:\\\\project\\\\.agents\\\\skills\\\\fixture\\\\SKILL.md\' -Raw"',
+  pwsh+' -Command "Get-Content -LiteralPath \'C:/project/.agents/skills/fixture/SKILL.md\'; Get-Content -LiteralPath \'C:/project/docs/agents/fixture.md\'"',
+  pwsh+" -Command 'Get-Content -Path .agents/skills/fixture/SKILL.md'",
+  pwsh+" -Command 'gc -Raw .agents/skills/fixture/SKILL.md'",
  ]) {
   process.env.FAKE_COMMAND = command;
   const read = run();
@@ -130,7 +136,8 @@ try {
  for (const command of [
   pwsh+" -Command 'Get-Content .agents/skills/fixture/SKILL.md | Select-String name'",
   pwsh+" -Command 'Get-ChildItem .agents/skills/fixture/SKILL.md'",
-  pwsh+" -Command 'Get-Content -Path .agents/skills/fixture/SKILL.md'",
+  pwsh+" -Command 'Get-Content -Tail 3 .agents/skills/fixture/SKILL.md'",
+  pwsh+" -Command 'Get-Content -LiteralPath -Raw .agents/skills/fixture/SKILL.md'",
   pwsh+" -Command 'Get-Content .agents/skills/fixture/SKILL.md > copy.md'",
   pwsh+" -File 'Get-Content .agents/skills/fixture/SKILL.md'",
   "notpwsh.exe -Command 'Get-Content .agents/skills/fixture/SKILL.md'",

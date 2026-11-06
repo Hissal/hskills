@@ -57,8 +57,9 @@ function slashed(text) { return text.replace(/\\+/g, '/'); }
 // Only successful plain reads of plain paths (one, or several joined by ; or
 // &&), one path the installed entry point, count: cat, optionally wrapped in
 // bash -lc '...', or under PowerShell Get-Content or its aliases gc, type
-// and cat, with no options. Prose, filename searches and other commands
-// merely mentioning it do not.
+// and cat, with no options but -Raw and -LiteralPath or -Path before a
+// path. Prose, filename searches and other commands merely mentioning it do
+// not.
 function plainRead(command, readName) {
   const path = '[\'"]?[^\'"\\s;&|<>$`()]+[\'"]?';
   let script = command;
@@ -66,7 +67,7 @@ function plainRead(command, readName) {
   const shell = command.match(/^\S*(?:bash|sh) -[lc]+ '([^']*)'$/);
   const powershell = shell ? null : powershellScript(command);
   if (shell) script = shell[1];
-  else if (powershell !== null) { script = powershell.trim(); reader = new RegExp(`^(?:get-content|gc|type|cat)(?:\\s+(?!-)${path})+$`, 'i'); }
+  else if (powershell !== null) { script = powershell.trim(); reader = new RegExp(`^(?:get-content|gc|type|cat)(?:\\s+(?:-raw|(?:-literalpath|-path)\\s+(?!-)${path}|(?!-)${path}))+$`, 'i'); }
   const reads = script.split(/\s*(?:;|&&)\s*/);
   return reads.every(read => reader.test(read)) &&
     reads.some(read => read.split(/\s+/).slice(1).some(arg => slashed(arg.replace(/['"]/g, '')).endsWith('/skills/' + readName + '/SKILL.md')));

@@ -191,22 +191,24 @@ Primary sources inspected 2026-10-30; source reading, not a live runtime proof:
   Other failed commands are ignored. This is observed CLI behavior, not a
   dedicated skill event guaranteed by the docs.
   On Windows, Codex runs commands through PowerShell. Its `item.command` is
-  then one string, `shlex_join` of `[shell, -NoProfile?, -Command, script]`
+  then one string: the quoted argv `[shell, -NoProfile?, -Command, script]`
   (codex-rs tag `rust-v0.166.0`: `core/src/shell.rs`,
   `app-server-protocol/src/protocol/item_builders.rs`,
-  `exec/src/event_processor_with_jsonl_output.rs`). A PowerShell read counts
-  when the executable is `pwsh` or `powershell` (any path, optional `.exe`),
-  followed only by `-NoLogo` or `-NoProfile`, then `-Command` or `-c` and the
-  script; the script is `Get-Content`, `gc`, `type` or `cat` (any case) of
-  plain paths, several joined by `;` or `&&`, one ending in
-  `skills/<readName>/SKILL.md` (backslashes too); and the output has `---`
-  and `name: <readName>` (CRLF too). Lookalikes that name the entry point
-  are inconclusive: a pipe (`| Select-String`), a redirect, `$`, another
-  command such as `Get-ChildItem`, or any option. Options include
-  `-Path`, `-LiteralPath` and `-Raw`, which an earlier
+  `exec/src/event_processor_with_jsonl_output.rs`). A
   [Windows capture](evidence/windows-install-2026-10-31/cross-scope-junction/user-to-project-codex.jsonl)
-  shows Codex using; such a read still needs the raw session. This rests on source
-  reading and offline tests, not a live Windows run.
+  shows the shape: the executable path and the script in double quotes, and
+  reads such as `Get-Content -LiteralPath '<path>' -Raw`. A PowerShell read
+  counts when the executable is `pwsh` or `powershell` (any path, optional
+  `.exe`), followed only by `-NoLogo` or `-NoProfile`, then `-Command` or `-c`
+  and the script; the script is `Get-Content`, `gc`, `type` or `cat` (any
+  case) of plain paths, each optionally after `-LiteralPath` or `-Path`, with
+  `-Raw` allowed, several joined by `;` or `&&`, one ending in
+  `skills/<readName>/SKILL.md` (backslashes too); and the output has `---`
+  and `name: <readName>` (CRLF too). Every skill read in that capture
+  matches. Lookalikes that name the entry point are inconclusive: a pipe
+  (`| Select-String`), a redirect, `$`, another command such as
+  `Get-ChildItem`, or any other option (`-Tail`, `-Encoding`). This rests on
+  source reading, that capture and offline tests, not a live Windows eval.
 - [OpenCode CLI](https://opencode.ai/docs/cli/#run) confirms `run --format json
   --model` and provider/model selectors. [Agent Skills](https://opencode.ai/docs/skills/)
   confirms native `skill` loading. The pinned

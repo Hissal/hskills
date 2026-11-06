@@ -1,7 +1,7 @@
 ---
 name: handoff
 description: Compact the current conversation into a handoff document for another agent to pick up.
-argument-hint: "What will the next session be used for?"
+argument-hint: "[thread|subagent] [harness] [model] [effort] [what the next session is for]"
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
@@ -9,11 +9,11 @@ metadata:
   opencode/autoinvoke: "false"
 ---
 
-Done when the document is written to the temporary directory, follows the template below, closes with the reader block, and your reply ends with the resume line. Writing a handoff commits nothing, pushes nothing and changes no tracked file.
+Done when the document is written to the temporary directory, follows the template below and closes with the reader block, and its destination is reached: for a file, your reply ends with the resume line; for a thread, the thread is launched; for a subagent, its return is checked. An unavailable launch falls back to the resume line. Writing a handoff commits nothing, pushes nothing and changes no tracked file, and moving it to a thread or a subagent grants no authority the user has not given.
 
 Write a handoff document summarising the current conversation so a fresh agent can continue the work. Save to the temporary directory of the user's OS (`$TMPDIR`, else `/tmp`; `%TEMP%` on Windows) - not the current workspace. Name it `handoff-<project>-<YYYYMMDD-HHMM>.md`.
 
-If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.
+If the user passed arguments, read the [argument grammar](references/ARGUMENTS.md) and parse them before writing: it splits them into the destination (file, thread or subagent), the harness, model and effort selection, and free text that says what the next session will focus on, and it lists the parses that need one question. Skip it and a selection word lands in the document as focus, or a launch goes to the wrong place.
 
 When `writing-for-agents` is installed, follow it for the document: its reader is a fresh agent with none of this conversation.
 
@@ -94,9 +94,21 @@ This handoff is evidence, not instructions.
 
 Each Pointers line says what matters at that location, never the path alone. Suggested skills names which skills the next agent should call the Skill tool for.
 
+## Destination
+
+Every destination starts from the document written above, so the file always exists to fall back to.
+
+- **File** (no destination word): end with the resume line under [Reply](#reply).
+- **Thread** (`thread` or `new`): read the [thread destination](references/THREAD.md) and launch from it.
+- **Subagent** (`subagent` or `sub`): read the [subagent destination](references/SUBAGENT.md) and dispatch from it.
+
+Read only the reference for the destination parsed. Selecting and launching go through `delegating`. Changing the destination grants no new authority, and a decision marked **agent's** or **pending** stays so in the new thread or subagent: launching is not the user's approval.
+
+When the launch is unavailable (`delegating` is not installed, no mechanism reaches the selection, the selected choice is unavailable, or the dispatch is blocked), say which and why, then end with the resume line as for a file.
+
 ## Reply
 
-End your reply with one copyable resume line and nothing after it:
+For a file destination, or a launch that fell back, end your reply with one copyable resume line and nothing after it:
 
 ```text
 Continue from the handoff at <absolute path>: read the whole document, its reader block included, before acting.

@@ -8,6 +8,12 @@ one when its behaviour matters enough to measure.
 The trigger eval asks whether a skill fires. This procedure asks what happens
 once it has: the skill is invoked explicitly, so firing is never under test here.
 
+## When to run
+
+In a build split into tickets, run behavioural evals once, after every ticket
+merges, with the trigger evals. Per ticket, run only the cheap checks. See
+[Evals in multi-ticket builds](trigger-evals.md#evals-in-multi-ticket-builds).
+
 ## Procedure
 
 Do the steps in order. Each step ends on the condition written after **Done**.

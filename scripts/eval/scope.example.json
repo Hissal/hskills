@@ -1,0 +1,6 @@
+{
+  "pack": "unity",
+  "markers": {"ProjectSettings/ProjectVersion.txt": "m_EditorVersion: 6000.0.0f1\n"},
+  "hidden": ["REPLACE_WITH_PLUGIN:old-copy-of-a-pack-skill"],
+  "colliding": ["REPLACE_WITH_PLUGIN:skill-that-may-collide"]
+}

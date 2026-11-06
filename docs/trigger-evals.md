@@ -14,6 +14,28 @@ Install it in `.claude/skills/fixture/`, `.agents/skills/fixture/` or
 `.opencode/skills/fixture/` as appropriate. Keep any sibling skills present when
 testing collisions. Record harness versions, model IDs and installation scopes.
 
+To test a pack's skills, build that scratch project with the scope helper.
+The scope file names the `pack`, its `markers` (files that give the project
+its stack), the `hidden` skills to switch off, the `colliding` skills, and an
+optional `domain`; see [the example](../scripts/eval/scope.example.json).
+Model IDs stay in the queries file.
+
+```
+node scripts/eval/scope.js <scope.json> <queries.json> <run dir> [--colliding] [--codex-config <path>]
+node scripts/eval/scope.js --check <scope.json> <captured file>...
+```
+
+It writes `<run dir>/project`: a Git baseline with the markers, an
+`AGENTS.md` whose `## Agent skills` block lists the pack's guide, and the
+core and pack skills in `.claude/skills/` and `.agents/skills/`. It also
+writes `<run dir>/evidence` and `<run dir>/queries.json`, where every model
+runs through the [evidence capture](../scripts/eval/test/plugin-fixture/capture.js)
+with `--reset`, and Codex gets your own skill toggles from its config with
+the hidden skills off (colliding ones on only with `--colliding`). Before the
+first query, save the Claude session and Codex listing its `NEXT:` lines
+print, run `--check` on them, and go on only on exit 0. Then run the `RUN:`
+line.
+
 ```
 node scripts/eval/trigger.js queries.json
 node scripts/eval/trigger.js queries.json --full
@@ -57,13 +79,92 @@ noise: repeat a borderline result before changing the trigger. Add a sibling
 exclusion to a description only after the eval demonstrates a collision, then
 rerun both siblings' positive and negative queries.
 
+## Evals in multi-ticket builds
+
+When a spec is built as several tickets, eval details live in this repo's
+guidance and specs, not in general skills.
+
+- **Per ticket**: run only the cheap checks with fixed results: the
+  collection check, the tests, script `--help` and fixture runs.
+- **Once, after every ticket merges**: trigger evals,
+  [behavioural evals](behavioural-evals.md), the missing-requirement case,
+  and every lower-tier or second-harness model, Sol included. Collisions
+  between sibling skills can only be measured then.
+- **Failures** go to fix rounds. A rerun covers the failing skill and its
+  siblings, as the collision rule above requires.
+- **Exception**: run one early smoke eval on the first skill of a new pack,
+  to prove the eval setup works before the rest is built on it.
+- **Quiet queries about another stack** run in a project of that stack, not
+  the pack's. On spec [#85](https://github.com/Hissal/skill-collection/issues/85),
+  "Prototype a landing page for the web app" misfired because it ran in a
+  Unity-shaped project.
+
+Why: on spec #85, eval sessions were 51% of Claude spend (536 sessions), and
+393 Sol eval sessions used 52M input tokens and hit the Codex quota within two
+hours. Specs carry a final eval ticket for this, such as
+[#319](https://github.com/Hissal/skill-collection/issues/319).
+
+## Early stop
+
+A query without `says` ends its session as soon as its firing is known. A
+query with `says` needs the final answer and runs to the end.
+
+- **Fired**: at the load. Claude: the successful `tool_result` of the
+  observed Skill call. Codex: the completed read. OpenCode: the completed
+  `skill` call.
+- **Not fired**: at the first of these, with no load before it:
+  - a write or edit (Claude `Write`, `Edit`, `MultiEdit`, `NotebookEdit`;
+    Codex `file_change`; OpenCode `write`, `edit`, `patch`, `multiedit`,
+    `apply_patch`);
+  - a web call (`WebFetch`, `WebSearch`; Codex `web_search`; OpenCode
+    `webfetch`, `websearch`);
+  - a mutating or long-running shell command: a redirect to anything but
+    `/dev/null`, `$null` or `nul`; file commands (`rm`, `mv`, `cp`, `mkdir`,
+    `sed -i`, PowerShell `Set-Content`, `New-Item` and the like); `curl`,
+    `wget`, `Invoke-WebRequest`; changing `git` subcommands; install, run,
+    build and test commands of package managers and build tools (npm,
+    dotnet, cargo, pytest, docker, Unity and more);
+  - the tool call at index 24, the 25th call.
+
+  `MUTATING` and `SUBCOMMANDS` in [trigger.js](../scripts/eval/trigger.js)
+  hold the full lists. Reads, searches, lists, `git log` and `git status`
+  go on and count toward the 25 calls.
+
+Calls issued in one batch are judged together, so a load sent alongside a
+write still counts. On Codex, a read of the skill's folder already running is
+waited for. The stop takes effect at the first event after the trigger's
+batch, or 2 s later if nothing follows. A deliberate stop is a complete
+observation. An error before it is inconclusive, and an inconclusive is also
+known early and stops the session. Result lines are unchanged.
+
+Why these triggers: on spec [#85](https://github.com/Hissal/skill-collection/issues/85)
+(453 trigger sessions), models made 202 WebFetch, 90 WebSearch and 121 Write
+calls, and some queries started real Unity Editor work. The first skill load
+came at tool-call index 0 in 337 sessions, 2 in 17, 3 in 16, 4 in 8, 5 in 6,
+6 in 3, and once each at 8, 10, 13 and 17; 61 loaded no skill. Before a late
+load only Read (60), Bash (55), Glob (47) and Grep (34) ran. Stopping at the
+first non-skill call would have missed about 14% of loads, so reads go on;
+the 25-call budget leaves 7 calls over the latest load seen. A new harness or
+model whose late loads follow other tools needs this data rechecked.
+
+How it stops: `trigger.js` sets `TRIGGER_EVAL_STOP=<file>`. A wrapper that
+creates `<file>.wrapper`, like the evidence capture, stops itself once
+`<file>` appears: it kills its command's process tree, still writes stdout,
+stderr and metadata (with `stopped`), and runs `--reset`. A wrapper still
+running 30 s later is killed, together with the process group it names
+after its pid in `<file>.wrapper`, where it started its command. Any other
+command has its process group killed (SIGTERM, then SIGKILL after 5 s), or
+its tree with `taskkill /T /F` on
+Windows. The Windows path is untested; the tests run on Linux.
+
 ## Offline injection and evidence limits
 
 An optional model `command` is an argv array, e.g. `["node", "fake.js"]`. The
 script appends the real harness flags and prompt, without a shell. The command
 runs in `cwd`; use absolute fake paths. Offline tests always replace every command,
 including models added to a full run. A two-minute per-process timeout and 16 MiB
-output cap turn hung or oversized runs into inconclusive results. No raw model
+output cap turn hung or oversized runs into inconclusive results, early stop or
+not. No raw model
 response is recorded; the evaluator records only firing outcomes.
 
 Primary sources inspected 2026-10-30; source reading, not a live runtime proof:
@@ -91,6 +192,25 @@ Primary sources inspected 2026-10-30; source reading, not a live runtime proof:
   that entry point, and failed commands naming its folder, are inconclusive.
   Other failed commands are ignored. This is observed CLI behavior, not a
   dedicated skill event guaranteed by the docs.
+  On Windows, Codex runs commands through PowerShell. Its `item.command` is
+  then one string: the quoted argv `[shell, -NoProfile?, -Command, script]`
+  (codex-rs tag `rust-v0.166.0`: `core/src/shell.rs`,
+  `app-server-protocol/src/protocol/item_builders.rs`,
+  `exec/src/event_processor_with_jsonl_output.rs`). A
+  [Windows capture](evidence/windows-install-2026-10-31/cross-scope-junction/user-to-project-codex.jsonl)
+  shows the shape: the executable path and the script in double quotes, and
+  reads such as `Get-Content -LiteralPath '<path>' -Raw`. A PowerShell read
+  counts when the executable is `pwsh` or `powershell` (any path, optional
+  `.exe`), followed only by `-NoLogo` or `-NoProfile`, then `-Command` or `-c`
+  and the script; the script is `Get-Content`, `gc`, `type` or `cat` (any
+  case) of plain paths, each optionally after `-LiteralPath` or `-Path`, with
+  `-Raw` allowed, several joined by `;` or `&&`, one ending in
+  `skills/<readName>/SKILL.md` (backslashes too); and the output has `---`
+  and `name: <readName>` (CRLF too). Every skill read in that capture
+  matches. Lookalikes that name the entry point are inconclusive: a pipe
+  (`| Select-String`), a redirect, `$`, another command such as
+  `Get-ChildItem`, or any other option (`-Tail`, `-Encoding`). This rests on
+  source reading, that capture and offline tests, not a live Windows eval.
 - [OpenCode CLI](https://opencode.ai/docs/cli/#run) confirms `run --format json
   --model` and provider/model selectors. [Agent Skills](https://opencode.ai/docs/skills/)
   confirms native `skill` loading. The pinned

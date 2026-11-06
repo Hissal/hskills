@@ -73,6 +73,14 @@
       "changes": "collection metadata and gates; fact-finding by a native read-only helper, through delegating only when needed; scope, one-decision, map-first and exit-check rules; confirmed assumptions; /to-questionnaire and /wayfinder suggestions and parent-agent return; trigger-only description"
     },
     {
+      "skill": "skills/core/handoff",
+      "source": "mattpocock/skills",
+      "path": "skills/productivity/handoff",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; done line; safe-boundary and no-commit rules; describe state, not actions; fixed template with run/read/assumed tags, user's/agent's/pending decision marks and a closing reader block; one copyable resume line; writing-for-agents pointer"
+    },
+    {
       "skill": "skills/core/how",
       "source": "cursor/plugins",
       "path": "pstack/skills/how",

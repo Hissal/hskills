@@ -64,6 +64,10 @@
     "path": "skills/core/guide",
     "requires": []
   },
+  "hissal.skill-collection/handoff": {
+    "path": "skills/core/handoff",
+    "requires": []
+  },
   "hissal.skill-collection/hillclimb": {
     "path": "skills/core/hillclimb",
     "requires": [

@@ -39,6 +39,7 @@
     "./verifying",
     "./wait-what",
     "./wayfinder",
-    "./why"
+    "./why",
+    "./writing-for-agents"
   ]
 }

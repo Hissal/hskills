@@ -694,4 +694,5 @@ changing skill identity or requirements with
 | `hissal.skill-collection/wait-what` | [`wait-what`](../skills/core/wait-what/SKILL.md) | — |
 | `hissal.skill-collection/wayfinder` | [`wayfinder`](../skills/core/wayfinder/SKILL.md) | — |
 | `hissal.skill-collection/why` | [`why`](../skills/core/why/SKILL.md) | — |
+| `hissal.skill-collection/writing-for-agents` | [`writing-for-agents`](../skills/core/writing-for-agents/SKILL.md) | — |
 <!-- END GENERATED DEPENDENCIES -->

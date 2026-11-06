@@ -27,7 +27,11 @@ Read exactly one mode reference, the one for the chosen mode, and follow it:
 - **edit**: [references/edit.md](references/edit.md). Rewrite only the sentences a test fails on.
 - **detect**: [references/detect.md](references/detect.md). Name each pattern found; do not rewrite.
 
-The pattern catalogue is [references/patterns.md](references/patterns.md); the mode reference says when to read it. On text that is not English, apply the tests only. Note that the pattern catalog did not apply inside detect findings or inside a change line the user asked for, and nowhere else.
+The pattern catalogue is [references/patterns.md](references/patterns.md); the mode reference says when to read it.
+
+When the text is documentation or a README, in any mode, also read [references/docs.md](references/docs.md). It holds the Diátaxis document modes (tutorial, how-to, reference, explanation) and the sentence rules for docs; without it, a page that mixes modes and the docs-specific sentence faults go unchecked. Do not read it for other text, such as a PR body, a commit message, an issue, or a chat reply.
+
+On text that is not English, apply the tests only. Note that the pattern catalog did not apply inside detect findings or inside a change line the user asked for, and nowhere else.
 
 ## Register
 

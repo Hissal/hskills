@@ -201,5 +201,9 @@
   "hissal.skill-collection/why": {
     "path": "skills/core/why",
     "requires": []
+  },
+  "hissal.skill-collection/wizard": {
+    "path": "skills/core/wizard",
+    "requires": []
   }
 }

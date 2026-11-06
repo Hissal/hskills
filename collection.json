@@ -36,7 +36,8 @@
     "skills/core/verifying",
     "skills/core/wait-what",
     "skills/core/wayfinder",
-    "skills/core/why"
+    "skills/core/why",
+    "skills/core/wizard"
   ],
   "packs": {
     "csharp": [

@@ -20,11 +20,11 @@ It measures what sessions actually used, not the idle cost of installed skills, 
 
 Run every command below with the Bash tool (Git Bash on Windows). Quote every path, since a Windows path can hold spaces.
 
-1. **Get a temporary path** that the shell and the Read tool both resolve (on Windows, `/tmp` in Git Bash is not a path the Read tool can open):
+1. **Make this run's own temporary directory** that the shell and the Read tool both resolve (on Windows, `/tmp` in Git Bash is not a path the Read tool can open). Each run gets a new directory, so two reports never share a file:
    ```sh
-   node -p "require('path').join(require('os').tmpdir(), 'session-report.json')"
+   node -e "const p=require('path'),d=require('fs').mkdtempSync(p.join(require('os').tmpdir(),'session-report-'));console.log(d);console.log(p.join(d,'report.json'))"
    ```
-   Call the printed path `<json-path>` and use it exactly as printed in the steps below.
+   Call the first printed line `<tmp-dir>` and the second `<json-path>`, and use both exactly as printed in the steps below.
 
 2. **Get data.** Run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`). The script [analyze-sessions.mjs](analyze-sessions.mjs) lives in the same directory as this SKILL.md — use its absolute path. Run it with `--help` first to see its flags and output; never read the script:
    ```sh
@@ -53,9 +53,9 @@ Run every command below with the Bash tool (Git Bash on Windows). Quote every pa
    - Fill the `<!-- AGENT: optimizations -->` block (at the **bottom** of the page) with 1–4 `<div class="callout">` suggestions tied to specific rows (e.g. "`/weekly-status` spawned 7 subagents for 8.1% of total — scope it to fewer parallel agents").
    - Do not restructure existing sections.
 
-6. **Delete** the temporary file:
+6. **Delete** this run's temporary directory, and nothing else:
    ```sh
-   rm "<json-path>"
+   rm -r "<tmp-dir>"
    ```
 
 7. **Report** the saved file path to the user. Do not open it or render it.

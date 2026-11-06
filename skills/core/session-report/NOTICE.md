@@ -8,7 +8,7 @@ This skill is copied from [anthropics/claude-plugins-official](https://github.co
 - Path: `plugins/session-report/skills/session-report`
 - Pinned commit: `a1ecfbc7f138a0ef455088f7f28cda2d22a0f853`
 - Licence: Apache-2.0
-- Local changes: collection metadata and gates, set to user-invoked; Claude Code-only opening line and use-not-idle-cost limit; temporary JSON at the path Node reports as the OS temp directory instead of /tmp, quoted paths and a delete step, so the steps run on Windows; analyzer gains a --help handler, run before the analysis; bundled analyzer and template linked; template uses a system monospace font stack instead of loading JetBrains Mono from Google Fonts
+- Local changes: collection metadata and gates, set to user-invoked; Claude Code-only opening line and use-not-idle-cost limit; temporary JSON in a per-run directory under the path Node reports as the OS temp directory instead of /tmp, quoted paths and a step deleting that directory, so the steps run on Windows; analyzer gains a --help handler, run before the analysis; bundled analyzer and template linked; template uses a system monospace font stack instead of loading JetBrains Mono from Google Fonts
 
 ## Licence
 

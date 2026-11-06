@@ -28,7 +28,7 @@ The selection is an explicit instruction under `delegating`: it overrides the pe
 
 ## Free text
 
-Whatever is left describes what the next session will focus on; tailor the document to it. When the free text asks for a work brief (`/handoff brief the reconnect bug for a teammate`, `/handoff file a brief about this`), the work-brief form is chosen instead of the continuation document.
+Whatever is left describes what the next session will focus on; tailor the document to it. When the free text asks for a work brief (`/handoff brief the reconnect bug for a teammate`, `/handoff file a brief about this`), the work-brief form is chosen instead of the continuation document. The form does not change the destination: `/handoff thread brief the reconnect bug` seeds a fresh thread with the brief, and `/handoff sub brief the reconnect bug` dispatches the brief to a subagent.
 
 ## Ambiguity
 
@@ -52,3 +52,5 @@ A parse with one sensible reading needs no question.
 | `new sonnet fix the flaky test` | thread | Sonnet, newest stable | `fix the flaky test` |
 | `sub codex low write the changelog` | subagent | Codex, low | `write the changelog` |
 | `sub high high-risk refactor` | subagent | high | `high-risk refactor` |
+| `brief the reconnect bug` | tracker or standalone document, as a work brief | none | `brief the reconnect bug` |
+| `thread brief the reconnect bug` | thread, seeded with a work brief | none (policy) | `brief the reconnect bug` |

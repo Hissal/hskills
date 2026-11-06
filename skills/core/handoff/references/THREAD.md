@@ -1,6 +1,6 @@
 # Thread destination
 
-`/handoff thread` (or `new`) moves the work to an ordinary fresh top-level conversation: one the user opens, reads and talks to like any session they started themselves. Its first prompt is the whole handoff document, so it starts with nothing of this conversation but the document.
+`/handoff thread` (or `new`) moves the work to an ordinary fresh top-level conversation: one the user opens, reads and talks to like any session they started themselves. Its first prompt is the whole handoff document (or the work brief, when one was asked for), so it starts with nothing of this conversation but the document.
 
 ## Launch
 

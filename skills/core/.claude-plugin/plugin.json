@@ -9,6 +9,7 @@
     "./code-review",
     "./codebase-design",
     "./commenting",
+    "./context-audit",
     "./delegating",
     "./dependency-audit",
     "./diagnosing-bugs",

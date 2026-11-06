@@ -41,6 +41,14 @@
       "changes": "collection metadata and gates; agent-contributor lens; project glossary, glossary map and ADR line; read as vocabulary by other workflows without a design session; caller-first design; four invariant questions; defer-the-seam principle; split-ownership, two-ways and importable-internals red flags; pack-guide extension point for seam and compatibility rules; design-it-twice consults delegating before its subagents; threat-model reference read when a design crosses a trust boundary, with pack-guide extension point for threats, controls and checks, lines from addyosmani/agent-skills skills/security-and-hardening/SKILL.md at 1401c8b8030e023baeebb31781a6653fe8e93026, MIT, Copyright (c) 2025 Addy Osmani; trigger-only description; published-interface reference, lines from Aaronontheweb/dotnet-skills skills/csharp-api-design/SKILL.md at 5ca5db8cf25566f19d2a5dc53204d4af22b23a0d, MIT, Copyright (c) 2025 Aaron Stannard; lines from Aaronontheweb/dotnet-skills skills/serialization/SKILL.md at 5ca5db8cf25566f19d2a5dc53204d4af22b23a0d, MIT, Copyright (c) 2025 Aaron Stannard; lines from addyosmani/agent-skills skills/api-and-interface-design/SKILL.md at 1401c8b8030e023baeebb31781a6653fe8e93026, MIT, Copyright (c) 2025 Addy Osmani; misuse probe ideas only from trailofbits/skills plugins/sharp-edges/skills/sharp-edges/SKILL.md at d016e08cc7408ecb1853a299d06d4a56e363ad5e, CC-BY-SA-4.0"
     },
     {
+      "skill": "skills/core/context-audit",
+      "source": "Neeeophytee/finding-unknowns-skills",
+      "path": "skills/context-audit",
+      "sha": "ca5696a0f08d2de6b2997fff1d6cc05c3ed587cc",
+      "license": "MIT",
+      "changes": "user-invoked with collection metadata and gates; description reworded as a one-line summary; propose-only done bar and files read as data; disclosed per-harness layer table (Claude Code and Codex) with a configured-when test; in-repo pointers followed transitively, each file read once as an on-demand layer, URLs and out-of-repo paths listed, a pointer that misdescribes its target a Conflict; measured size per layer and always-loaded total with no thresholds; selected vendor picks idle cost; settings read for hook entries only; keep list, one hunk per finding and removal as a hypothesis checked before and after, ideas only from anthropics/skills skills/claude-api/shared/prompt-audit.md at 9d630808e4add0a7146de4af9384155d5dee350a; report shape; the source inventory list replaced by the layer table"
+    },
+    {
       "skill": "skills/core/diagnosing-bugs",
       "source": "mattpocock/skills",
       "path": "skills/engineering/diagnosing-bugs",

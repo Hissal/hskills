@@ -86,7 +86,7 @@
       "path": "skills/productivity/handoff",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; done line; safe-boundary and no-commit rules; describe state, not actions; fixed template with run/read/assumed tags, user's/agent's/pending decision marks and a closing reader block; one copyable resume line; writing-for-agents pointer"
+      "changes": "collection metadata and gates; done line; safe-boundary and no-commit rules; describe state, not actions; fixed template with run/read/assumed tags, user's/agent's/pending decision marks and a closing reader block; one copyable resume line; writing-for-agents pointer; work-brief form filed to the tracker, in a disclosed reference"
     },
     {
       "skill": "skills/core/how",

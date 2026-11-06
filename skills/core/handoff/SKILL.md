@@ -11,6 +11,8 @@ metadata:
 
 Done when the document is written to the temporary directory, follows the template below, closes with the reader block, and your reply ends with the resume line. Writing a handoff commits nothing, pushes nothing and changes no tracked file.
 
+**Work brief.** When the free text the user passed asks for a brief (`/handoff brief the reconnect bug for a teammate`, `/handoff file a brief about this`), write a work brief instead: read [work brief](references/work-brief.md) and follow it in place of the done line, save location, template and reply here. [Before writing](#before-writing) and [What goes in](#what-goes-in) apply to both forms. Skipping the reference on a brief request yields a continuation document that a teammate cannot pick up from the tracker. A plain `/handoff`, or free text that does not ask for a brief, writes the continuation document.
+
 Write a handoff document summarising the current conversation so a fresh agent can continue the work. Save to the temporary directory of the user's OS (`$TMPDIR`, else `/tmp`; `%TEMP%` on Windows) - not the current workspace. Name it `handoff-<project>-<YYYYMMDD-HHMM>.md`.
 
 If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.

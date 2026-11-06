@@ -94,7 +94,7 @@
       "path": "skills/engineering/implement-spec",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; reports checked through verifying; findings through receiving-review; draft PR closing work only once verified; process calls; /handoff offer and parent-agent return"
+      "changes": "collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; reports checked through verifying; findings through receiving-review; draft PR closing each ticket as it lands and the spec once every ticket lands; process calls; /handoff offer and parent-agent return"
     },
     {
       "skill": "skills/core/pr",

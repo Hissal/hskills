@@ -50,8 +50,9 @@ Once done, call the Skill tool with `code-review` to review the work. Handle its
 
 Commit by the repo's convention, push, and open a PR whose body you write by calling the Skill tool with `pr`.
 
-- **Ready** and closing the ticket only when `verifying` verified every acceptance criterion.
-- **Draft** otherwise: it links the ticket without closing it, and the gaps go on `pr`'s Not done line.
+- **Closes.** The body carries `Closes #<ticket>` (or the tracker's closing keyword) from the first push. Every later body edit keeps it, and so do marking the PR ready and merging. Asked to merge a PR whose body delivers an issue but lacks its closing keyword: add the keyword, then merge.
+- **Ready** only when `verifying` verified every acceptance criterion.
+- **Draft** otherwise, and the gaps go on `pr`'s Not done line. The draft carries the unverified signal; the closing keyword stays.
 - **Existing PR.** When the branch already has a PR, push to it and update its body; never open a second one.
 - **No PR.** With no remote, a project that does not close work through PRs, or the user saying no PR, skip the PR and report the branch.
 

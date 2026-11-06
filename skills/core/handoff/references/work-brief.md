@@ -1,6 +1,6 @@
 # Work brief
 
-Done when the brief is recorded in the project's tracker (added to a suitable existing issue, or filed as a new one) or written as a standalone document, follows the template below, closes with the reader block, and your reply ends with its link or location. The handoff ends there: no planning, no implementation, no assignment.
+Done, when no destination word was passed, when the brief is recorded in the project's tracker (added to a suitable existing issue, or filed as a new one) or written as a standalone document, follows the template below, closes with the reader block, and your reply ends with its link or location. The handoff ends there: no planning, no implementation, no assignment. With a `thread` or `subagent` destination, the brief follows the template below and `SKILL.md`'s done line and Destination take it from there; it is not filed.
 
 A work brief hands a piece of work to a teammate, their agent, or a future session of the user's. Its reader has none of this conversation and no temporary file of yours, so the brief stands alone: everything the reader needs is in it or linked from it.
 
@@ -76,6 +76,7 @@ Each Pointers line says what matters at that location, never the path alone. Unr
 Form and output location are separate choices: the brief form says what is written, not where.
 
 - **Tracker**: by default the brief goes to the issue tracker the project's configuration names (the tracker file linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`), using the commands that file gives. Search it for an open issue that already tracks this work. When one does, add the brief to it as a comment, so its body, comments and history stay as they were. Post that comment through the `commenting` skill; when `commenting` is not installed, open it with the note `> 🤖 **<model> on behalf of @<user>**` yourself, `> [!NOTE]` on the line above it. When none does, file a new issue whose body is the brief. When more than one issue could fit, ask which.
+- **Thread or subagent**: when the arguments start with a destination word, the brief goes there instead, as `SKILL.md`'s Destination says: it seeds the new thread, or becomes the subagent's brief. It is written to the temporary directory and not filed to the tracker.
 - **Standalone document**: when the user asks for a document, or the project names no tracker, write the brief to the path the user names, else to the OS temporary directory as for the continuation document, named `brief-<project>-<YYYYMMDD-HHMM>.md`. Say when it went there because no tracker is configured.
 
 Recording a brief notifies no one. Assign no one and send no message. The only `@` in the brief or its comment is the note's own login, the user you post as; mention no one else. Filing an issue is not a request to anyone.
@@ -86,4 +87,4 @@ Recording a brief notifies no one. Assign no one and send no message. The only `
 
 ## Reply
 
-End your reply with the issue or comment link, or the document's absolute path, and nothing after it.
+For a thread or subagent destination, reply as that destination's reference says. Otherwise, end your reply with the issue or comment link, or the document's absolute path, and nothing after it.

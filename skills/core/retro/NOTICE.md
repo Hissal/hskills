@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/retro`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; any number of session logs through a per-harness log table, plus git history and PR reviews of the same window, transcripts untrusted and repeats ranked as classes; categories widened to the decided signals; fix ladder with proven checks and the hook and text gates; admission bar; report first with per-item approval; skill and guard-rule fixes offered as a source-repo issue or a local edit; style guide via the setup pointer replaces CODING_STANDARDS.md, steering edits follow writing-for-agents and the text gate, line threshold dropped; environment-gap extension point; context-audit and constraints suggestions
+- Local changes: collection metadata and gates; any number of session logs through a per-harness log table, the current session found by its own id or asked when ambiguous, never a subagent's, plus git history and PR reviews of the same window, transcripts untrusted and repeats ranked as classes; categories widened to the decided signals; fix ladder with proven checks and the hook and text gates; admission bar; report first with per-item approval; skill and guard-rule fixes offered as a source-repo issue or a local edit; style guide via the setup pointer replaces CODING_STANDARDS.md, steering edits follow writing-for-agents and the text gate, line threshold dropped; environment-gap extension point; context-audit and constraints suggestions
 
 ## Licence
 

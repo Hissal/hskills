@@ -36,6 +36,25 @@ import readline from 'readline'
 // CLI args
 // ---------------------------------------------------------------------------
 const argv = process.argv.slice(2)
+if (argv.includes('--help') || argv.includes('-h')) {
+  process.stdout.write(`Usage: node analyze-sessions.mjs [options]
+
+Scans Claude Code transcripts (<dir>/**/*.jsonl) and reports token usage,
+message counts, runtime, cache breaks, subagent and skill activity.
+
+Options:
+  --dir <path>          transcript root (default: ~/.claude/projects)
+  --since <7d|24h|ISO>  only count entries at or after this time (default: all history)
+  --top <N>             rows in each top list (default: 15)
+  --cache-break <N>     a call with more than N uncached input tokens is a cache break (default: 100000)
+  --json                print one JSON object (overall, by_project, by_subagent_type,
+                        by_skill, cache_breaks, top_prompts, ...) instead of text
+  -h, --help            print this help and exit without scanning
+
+Output goes to stdout: a text report by default, JSON with --json.
+`)
+  process.exit(0)
+}
 function flag(name, dflt) {
   const i = argv.indexOf(name)
   if (i === -1) return dflt

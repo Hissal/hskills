@@ -14,6 +14,17 @@ Call the Skill tool with `delegating` and dispatch through it: selection, transp
 - **Validation** and **Stop when**: checks a reader can run on the tree, taken from State and the free text.
 - The document follows the brief's fields whole, reader block included, or as a path outside the checkout when it is long.
 
+When a work brief was asked for, map the brief's sections instead:
+
+- **Objective**: Outcome and why, narrowed by the free text.
+- **Validation** and **Stop when**: Completion checks.
+- **Constraints**: Constraints.
+- **Written against** and context: Current state and remaining work and Context and evidence, plus the head commit and whether the tree is dirty, read from the checkout.
+- **Pointers**: Pointers.
+- The brief follows the fields whole, reader block included.
+
+A brief has no Suggested skills or Branch and uncommitted files: say in the dispatch summary which fields it left empty, and fill Skills to call only from what the user asked for.
+
 When the conversation and the free text cannot fill Objective or Stop when, ask the user one question before dispatching.
 
 The subagent runs unattended: the brief's Unattended line is `delegating`'s unattended rule, which waives the reader block's stop-and-confirm.

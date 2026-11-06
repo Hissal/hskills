@@ -186,6 +186,10 @@
       "hissal.skill-collection/unity-guide"
     ]
   },
+  "hissal.skill-collection/unslop": {
+    "path": "skills/core/unslop",
+    "requires": []
+  },
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",
     "requires": []

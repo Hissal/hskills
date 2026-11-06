@@ -36,6 +36,7 @@
     "./to-spec",
     "./to-tickets",
     "./triage",
+    "./unslop",
     "./verifying",
     "./wait-what",
     "./wayfinder",

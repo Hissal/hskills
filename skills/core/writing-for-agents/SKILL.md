@@ -12,6 +12,10 @@ Reference for writing any document an agent consumes: a skill, an `AGENTS.md` / 
 When the document you're writing is a skill, read [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md) for frontmatter, invocation choice, and router skills.
 It also holds the rules for descriptions, modes, freedom, scripts, inputs and versioned-library claims; skip it and the skill you write will read well and trigger wrongly.
 
+When the document is a steering file (`AGENTS.md`, `CLAUDE.md` or the like), read [`STEERING-FILES.md`](STEERING-FILES.md): what earns a line, the pointer table, verifying paths and commands, and the layout for repos both harnesses use. Skip it and the file fills with lines every session pays for and no session needs.
+
+When you test a document on a running agent, read [`TESTING.md`](TESTING.md): reading transcripts, bundling rebuilt scripts, classifying failures and Reader Testing. Skip it and you will rewrite text to fix a failure the text never caused.
+
 ## Context pointers
 
 A **context pointer** is a reference held in the agent's context that names some out-of-context material and encodes the condition for reaching it. A skill's description is one; a line in `AGENTS.md` naming a doc is the same object. The pointer's _wording_, not its target, decides when the agent reaches the material, and how reliably. A must-have target behind a weakly worded pointer is a variance bug: sharpen the wording first, and inline the material only if sharpening fails.

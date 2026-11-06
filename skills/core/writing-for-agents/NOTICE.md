@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/productivity/writing-for-agents`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; trigger-only description; ordering, output-length, form-to-failure and editing rules; description, mode, freedom, script, input and versioned-claim rules in SKILL-MECHANICS.md
+- Local changes: collection metadata and gates; trigger-only description; ordering, output-length, form-to-failure and editing rules; description, mode, freedom, script, input and versioned-claim rules in SKILL-MECHANICS.md; STEERING-FILES.md and TESTING.md references
 
 ## Licence
 

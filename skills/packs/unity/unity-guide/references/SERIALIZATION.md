@@ -166,7 +166,8 @@ Structural text edits (adding or removing `--- !u!` documents, fileIDs, `m_Modif
 - **GUID swap**, repairing references to an asset replaced by one with a new GUID: list the files first, then replace in place. Only a `.meta` whose own `guid:` line is the old GUID stays out. Also check the fileID: a script moved into a DLL, or a sub-asset, changes it too.
   ```bash
   grep -rlF 'guid: <old>' Assets Packages | grep -vxF '<old asset path>.meta'
-  grep -rlF 'guid: <old>' Assets Packages | grep -vxF '<old asset path>.meta' | xargs sed -i 's/guid: <old>/guid: <new>/g'
+  grep -rlF 'guid: <old>' Assets Packages | grep -vxF '<old asset path>.meta' |
+    while IFS= read -r f; do sed 's/guid: <old>/guid: <new>/g' "$f" > "$f.swap" && mv "$f.swap" "$f"; done
   ```
 - **`m_Script` repair**: the same swap on the `m_Script:` lines, with the script's `.meta` GUID and `fileID: 11500000`.
 - **Renamed override**, without an Editor: in each file the scope lists, rewrite `propertyPath: <old>` (or `<parent>.<old>`) to the new name on the `m_Modifications` entries whose `target` points at the changed component.

@@ -152,11 +152,20 @@ public static class SerializationScope
             .ToHashSet();
     }
 
+    // A nested type's runtime name is Outer+Inner, so a dotted name that does not
+    // resolve is retried with its trailing dots turned into '+', one at a time.
     static Type Resolve(string name)
     {
-        var type = Type.GetType(name) ?? AppDomain.CurrentDomain.GetAssemblies()
-            .Select(a => a.GetType(name)).FirstOrDefault(t => t != null);
-        return type ?? throw new ArgumentException("type not found: " + name + " (use the full name, namespace included)");
+        for (var candidate = name; ; )
+        {
+            var type = Type.GetType(candidate) ?? AppDomain.CurrentDomain.GetAssemblies()
+                .Select(a => a.GetType(candidate)).FirstOrDefault(t => t != null);
+            if (type != null) return type;
+            var dot = candidate.LastIndexOf('.');
+            if (dot < 0) break;
+            candidate = candidate.Substring(0, dot) + "+" + candidate.Substring(dot + 1);
+        }
+        throw new ArgumentException("type not found: " + name + " (use the full name, namespace included)");
     }
 
     // Null for a file that is not UnityYAML, and for one it could not read, which also adds a note.

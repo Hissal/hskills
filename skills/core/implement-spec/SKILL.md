@@ -12,7 +12,7 @@ You have been provided a spec. This spec should have tickets associated with it,
 
 Read the issue tracker from the project's configuration: the tracker file linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`. If the project names no tracker, tell the user to run `/setup-project`, and stop.
 
-The goal is the entire spec implemented on a single **integration branch**, with every ticket whose acceptance criteria are verified resolved the way the issue tracker closes work, and every gap reported.
+The goal is the entire spec implemented on a single **integration branch**, with every landed ticket resolved by the rules in steps 3 and 9, and every gap reported.
 
 The tickets are not a list of steps. They are a **task graph** with blocking relationships between them. This means there is always a **frontier** of tickets which are ready to be grabbed.
 
@@ -40,8 +40,8 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 3. Create the integration branch. If the issue tracker closes work through PRs, or the user asks for one, open a draft PR after the first merge in step 5 (a branch with no commits ahead of the default branch can't open one). Write its body through `pr`, and keep its closing keywords by these rules on every update:
    - A ticket gets `Closes #<ticket>` (or the tracker's closing keyword) on the update where its work lands on the integration branch, even when its criteria are not all verified or other tickets are still open. A ticket whose work is not on the branch gets no closing keyword.
-   - The spec is linked without closing (`Refs #<spec>`) until every ticket is implemented, then gets `Closes #<spec>`, even while the PR stays a draft. A partial merge closes the implemented tickets and leaves the spec open.
-   - Every later body edit, marking the PR ready and merging keep each `Closes` already written. Asked to merge: add any missing `Closes` for a ticket whose work is on the branch, and `Closes #<spec>` only when every ticket is implemented, then merge.
+   - The spec is linked without closing (`Refs #<spec>`) until every ticket has landed, then gets `Closes #<spec>`, even while the PR stays a draft. A partial merge closes the landed tickets and leaves the spec open.
+   - Every later body edit, marking the PR ready and merging keep each `Closes` already written while its ticket's work is still on the branch. Asked to merge: add any missing `Closes` for a ticket whose work is on the branch, and `Closes #<spec>` only when every ticket has landed, then merge.
 
 4. Use a fresh **implementer subagent** for each ticket, each in its own worktree on its own branch. Its brief points at the spec, the ticket, the exploration notes and the integration branch, and carries:
    - the project-guidance pointer: load the coding guidance and tooling configuration the project's instructions point to before coding; tooling configuration wins, and a conflict between them is reported;
@@ -60,7 +60,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 8. Check the integration branch tip through `verifying`: the project's checks, and every acceptance criterion of every ticket against the diff or a run, each with its status word. This comes before marking anything ready or reporting.
 
-9. Close on verified work:
+9. Close the work:
    - **Draft PR:** once every criterion is verified, mark it ready for review. Otherwise it stays a draft, with each unverified criterion, unmerged ticket and unfixed finding on `pr`'s **Not done** line. The draft carries the unverified signal; its closing keywords stay as step 3 set them.
    - **No PR:** resolve each ticket whose criteria are all verified the way the issue tracker closes work, and leave the rest open.
 

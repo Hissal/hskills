@@ -26,7 +26,7 @@ Run every command below with the Bash tool (Git Bash on Windows). Quote every pa
    ```
    Call the printed path `<json-path>` and use it exactly as printed in the steps below.
 
-2. **Get data.** Run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`). The script `analyze-sessions.mjs` lives in the same directory as this SKILL.md — use its absolute path. Run it with `--help` first to see its flags and output; never read the script:
+2. **Get data.** Run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`). The script [analyze-sessions.mjs](analyze-sessions.mjs) lives in the same directory as this SKILL.md — use its absolute path. Run it with `--help` first to see its flags and output; never read the script:
    ```sh
    node "<skill-dir>/analyze-sessions.mjs" --help
    ```
@@ -38,7 +38,7 @@ Run every command below with the Bash tool (Git Bash on Windows). Quote every pa
 
 3. **Read** `<json-path>`. Skim `overall`, `by_project`, `by_subagent_type`, `by_skill`, `cache_breaks`, `top_prompts`.
 
-4. **Copy the template** (also bundled alongside this SKILL.md) to the output path in the current working directory:
+4. **Copy the template** ([template.html](template.html), also bundled alongside this SKILL.md) to the output path in the current working directory:
    ```sh
    cp "<skill-dir>/template.html" "./session-report-$(date +%Y%m%d-%H%M).html"
    ```

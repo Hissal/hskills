@@ -31,7 +31,7 @@ Write test assemblies in the explicit form below. The Editor's templates and the
 
 ## The test framework package
 
-`com.unity.test-framework` is a core package with its version fixed to the Editor's, but a project can still lack it: a project created with bare `-batchmode -createProject` has no entry, and its test assemblies fail to compile. Before the first test assembly, read `Packages/manifest.json`. When the entry is missing, propose adding it at the version the Editor bundles and wait: adding a package is the owner's call.
+`com.unity.test-framework` is a core package with its version fixed to the Editor's, but a project can still lack it: a project created with bare `-batchmode -createProject` has no entry, and its test assemblies fail to compile. Before the first test assembly, read `Packages/manifest.json`. When the entry is missing, add it at the version the Editor bundles and say so in the report.
 
 ## Setting up the first test assembly
 

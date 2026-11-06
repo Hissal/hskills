@@ -28,7 +28,7 @@ A restrictive sandbox can hide a running Editor from `unity status`, per the CLI
 
 - **A killed Editor's markers.** `Library/EditorInstance.json` and `Temp/UnityLockfile` stay behind, and the next run proceeds on its own since the PID is dead. They need no cleaning.
 - **`unity close`** closes without saving, and `--force` terminates the process. Both are only for an Editor you started. Without Pipeline it exits 6 with `PROJECTS_CLOSE_PIPELINE_MISSING`.
-- **Installing Pipeline into an open Editor.** It needs a refresh to load the package. Ask the user to switch to the Editor, or to refresh by hand if Auto Refresh is off, then wait for ready. Per the fork's earlier observation, not rechecked.
+- **Installing Pipeline into an open Editor.** It needs a refresh to load the package, and until it loads nothing can reach that Editor to trigger one, nor close it without killing the process and its unsaved work. Ask the user to switch to the Editor, or to refresh by hand if Auto Refresh is off, then wait for ready. Per the fork's earlier observation, not rechecked.
 - **Safe Mode.** A GUI Editor that opens with compile errors boots into Safe Mode: packages do not load, so Pipeline serves nothing and connected commands fail. Per the CLI's docs `unity status` reports it with the compile errors; not rechecked. Fix the source and have the user refresh; the same Editor leaves Safe Mode with no restart. Batch mode never enters it, and exits on compile errors instead.
 
 ## Resident headless

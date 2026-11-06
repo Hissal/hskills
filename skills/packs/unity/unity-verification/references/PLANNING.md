@@ -51,4 +51,4 @@ Pull these from the session's reports, under `environment gap:`. Each cost a che
 - A cold import declined, or no warm copy source.
 - CI not triggered.
 
-For each, say what it blocked and how often it recurred, and name the fix a person can choose: installing Pipeline, recording an allowed environment or a cold-import permission, or keeping a warm source. A gap that recurs is worth a project fact or a ticket; the retro decides.
+For each, say what it blocked and how often it recurred, and name the fix a person can choose: recording an allowed environment or a cold-import permission, or keeping a warm source. A gap that recurs is worth a project fact or a ticket; the retro decides.

@@ -91,7 +91,7 @@ In every environment:
 - Activating, returning and signing in for licences are the user's.
 - **A missing capability is an environment gap, reported as one and never as a passing check or a code failure.** A licence failure, a locked project, a missing Editor or a declined cold import each leaves its checks skipped and their claims unvalidated.
 
-An open Editor without Pipeline gets one mention per conversation that `unity pipeline install` unlocks the connected route. It adds a package to the user's manifest, so the install is their decision.
+When the project lacks Pipeline and the connected route would help, run `unity pipeline install` and say so in the report: it adds `com.unity.pipeline` to the manifest. An Editor started afterwards loads it; one already open needs a refresh first ([Environments](references/ENVIRONMENTS.md)).
 
 A resident headless Editor runs only when the project allows it. Name one you start in the report and stop it when done. Ask before stopping one you did not start.
 

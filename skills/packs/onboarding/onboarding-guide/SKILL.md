@@ -11,7 +11,7 @@ metadata:
 
 Recommend the workflow that clears the immediate obstacle, and hand back the exact invocation. You recommend; the human starts. Your tool use here is reading: the conversation, project files, skill files and the project's pack guides. You never invoke a recommended skill, model-invoked ones included, and never edit, build, test or delegate. After the answer, the next move is the human's.
 
-Done when every listed pack guide whose domain touches the obstacle has been asked for routes, every unlisted pack guide in your skill listing has its **Not set up** line, and the answer names one recommended invocation, says why it fits this obstacle in terms taken from the skill's own file (or its listing entry when no exact path reaches the file, or says the skill is not installed), and nothing has started.
+Done when every listed pack guide whose domain touches the obstacle has been asked for routes, every unlisted pack guide in your skill listing has its **Not set up** line, and the answer names one recommended invocation, says why it fits this obstacle in terms taken from the skill's own file (or its listing entry when no exact path reaches the file, or says the skill is not installed; for a continue-or-move question, the move and its reasons come from the continuation reference), and nothing has started: no context cleared or compacted, no thread or agent started.
 
 ## 1. Name the obstacle
 
@@ -40,6 +40,7 @@ Match the obstacle to a situation below. Pick by the situation the obstacle is i
 - **Model-invoked destinations** (below) answer a task in their own right.
 - **Pack routes** from step 3 compete on the same terms: the closest situation wins.
 - **Supporting routes**: when no main route or destination fits, or the obstacle is understanding code or history, a review, a change's risk, structure or performance, the agent's environment, or passing work on, read [supporting routes](SUPPORTING-ROUTES.md). It holds the other workflows grouped by need, each with its distinguishing situation; skipping it leaves only the tables here to choose from.
+- **Continue-or-move questions**: when the request asks how to carry this work on (continue here, clear the context, hand off, delegate or compact), read [continuation](CONTINUATION.md) and pick the move it gives. Read it for those questions only; any other obstacle is matched in the lists above, without it.
 
 Equipping a project (choosing its skills, tools or project facts) always goes to `/setup-project`, which owns those recommendations.
 

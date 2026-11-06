@@ -26,7 +26,11 @@ Run every command below with the Bash tool (Git Bash on Windows). Quote every pa
    ```
    Call the printed path `<json-path>` and use it exactly as printed in the steps below.
 
-2. **Get data.** Run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`). The script `analyze-sessions.mjs` lives in the same directory as this SKILL.md — use its absolute path:
+2. **Get data.** Run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`). The script `analyze-sessions.mjs` lives in the same directory as this SKILL.md — use its absolute path. Run it with `--help` first to see its flags and output; never read the script:
+   ```sh
+   node "<skill-dir>/analyze-sessions.mjs" --help
+   ```
+   Then run the analysis:
    ```sh
    node "<skill-dir>/analyze-sessions.mjs" --json --since 7d > "<json-path>"
    ```

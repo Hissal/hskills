@@ -46,14 +46,16 @@ Before claiming the work compiles, works or is done, call the Skill tool with `v
 
 Once done, call the Skill tool with `code-review` to review the work. Handle its findings by calling the Skill tool with `receiving-review`, which judges each one and verifies every fix. When the fixes change the tree, rerun through `verifying` the criteria checks they made stale, so every status belongs to the tree you push.
 
+Before opening the PR or reporting the branch, finish every open item an agent can do: a check the branch fails, a fixable finding, an unbuilt or failing criterion, a criterion check you can run. Take each back through steps 3 to 5. What stays open is only what needs the user: a decision, access or authority you lack, or a check only a human can make.
+
 ## 6. Open the pull request
 
 Commit by the repo's convention, push, and open a PR whose body you write by calling the Skill tool with `pr`.
 
-- **Closes.** The body carries `Closes #<ticket>` (or the tracker's closing keyword) from the first push. Every later body edit keeps it, and so do marking the PR ready and merging. Asked to merge a PR whose body delivers an issue but lacks its closing keyword: add the keyword, then merge.
+- **Issue link.** `pr` links the ticket `Closes` or `Refs` by the state of its work, on every write.
 - **Ready** only when `verifying` verified every acceptance criterion.
-- **Draft** otherwise, and the gaps go on `pr`'s Not done line. The draft carries the unverified signal; the closing keyword stays.
-- **Existing PR.** When the branch already has a PR, push to it and update its body, adding the closing keyword when the body lacks it; never open a second one.
+- **Draft** otherwise, and what stays open goes on `pr`'s Not done line, each with what it needs from the user.
+- **Existing PR.** When the branch already has a PR, push to it and update its body; never open a second one.
 - **No PR.** With no remote, a project that does not close work through PRs, or the user saying no PR, skip the PR and report the branch.
 
 ## 7. Report

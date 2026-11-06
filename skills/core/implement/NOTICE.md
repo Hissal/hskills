@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/implement`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; project configuration and a pack-guide extension point; reuse and sizing rules; diagnosing-bugs, verifying and receiving-review as process calls; branch-fit and pull-request rules replace the commit line; report step
+- Local changes: collection metadata and gates; project configuration and a pack-guide extension point; reuse and sizing rules; diagnosing-bugs, verifying and receiving-review as process calls; branch-fit and pull-request rules replace the commit line, with issue links through pr; agent-doable gaps finished before the PR; report step
 
 ## Licence
 

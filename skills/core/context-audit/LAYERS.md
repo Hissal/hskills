@@ -37,3 +37,39 @@ Configured when `~/.codex/` (or `$CODEX_HOME`) exists, or the repo has a `.codex
 | Skill bodies | Each skill's `SKILL.md` body and its reference files | On demand, when the skill is selected or its body points at a reference |
 | Hook output | Hooks in `~/.codex/hooks.json`, `[hooks]` in `~/.codex/config.toml`, `.codex/hooks.json`, `[hooks]` in `.codex/config.toml` (trusted projects only), plugin hooks | `SessionStart` plain stdout always; `UserPromptSubmit` and `SubagentStart` plain stdout, and `additionalContext` from any event, on demand each time the hook fires (2,500 tokens per handler unless `additionalContextLimit` is set). Measure the text the hook script prints |
 | Command rules | `.rules` files in `~/.codex/rules/` and `.codex/rules/` | Not context: they decide which commands run, so they are not audited as instructions |
+
+## OpenCode
+
+Configured when `~/.config/opencode/` exists, or the repo has an `opencode.json`, `opencode.jsonc` or `.opencode/` folder.
+
+| Layer | Location | Loaded |
+|---|---|---|
+| Global instructions | `~/.config/opencode/AGENTS.md`, else `~/.claude/CLAUDE.md` (unless `OPENCODE_DISABLE_CLAUDE_CODE` or `OPENCODE_DISABLE_CLAUDE_CODE_PROMPT` is set) | Always; only the first that exists |
+| Project instructions | `AGENTS.md`, else `CLAUDE.md`, found by walking up from the cwd | Always; when both exist only `AGENTS.md` is used |
+| Config instructions | Paths and globs in the `instructions` key of `~/.config/opencode/opencode.json`, a project `opencode.json` (cwd up to the git root), the file named by `OPENCODE_CONFIG`, or managed config (`/etc/opencode/` on Linux) | Always, added to the `AGENTS.md` files. A URL entry is fetched at load: list it with the file that names it, and do not fetch it |
+| Agent prompts | `prompt` of an agent in any config file above; the body of `.opencode/agents/*.md` or `~/.config/opencode/agents/*.md` | Always for the selected agent; a subagent's prompt when it runs. The docs do not say whether it replaces the base prompt or adds to it |
+| Skill listing | `name` and `description` of each skill in `.opencode/skills/`, `.claude/skills/`, `.agents/skills/` (cwd up to the git worktree), `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.agents/skills/` | Always, in the `skill` tool description; a skill whose permission is `deny`, or every skill for an agent with the `skill` tool off, is not listed |
+| Skill bodies | Each skill's `SKILL.md` body and its reference files | On demand, when the agent calls the `skill` tool or the body points at a reference |
+| Commands | `.opencode/commands/*.md`, `~/.config/opencode/commands/*.md`, `command` in config | On demand, the template when the user runs the command |
+| Plugin output | Plugins in `.opencode/plugins/`, `~/.config/opencode/plugins/` and the `plugin` config key | On demand, when a hook adds context (the documented one is `experimental.session.compacting`, at compaction). Measure the text the hook adds, not the plugin code |
+
+Subdirectory `AGENTS.md` files are not documented as loaded on demand: report one as reached only through an `instructions` glob or a pointer.
+
+## Cursor
+
+Configured when `~/.cursor/` exists, or the repo has a `.cursor/` folder or a `.cursorrules` file.
+
+| Layer | Location | Loaded |
+|---|---|---|
+| User rules | Cursor settings (Customize → Rules), held in Cursor's settings database, not a file | Always, in Agent (Chat). Not readable: report the layer as not read and tell the user to check it in Customize → Rules |
+| Team rules | The Cursor team dashboard (Team and Enterprise plans) | Always; a rule with a glob on demand, when a matching file is in context. Not readable from the repo: report it as not read, to check in the dashboard |
+| Always-apply rules | `.cursor/rules/**/*.mdc` with `alwaysApply: true` | Always |
+| Glob-scoped rules | `.cursor/rules/**/*.mdc` with `alwaysApply: false` and `globs` | On demand, when a matching file is in context |
+| Description-picked rules | `.cursor/rules/**/*.mdc` with `alwaysApply: false`, a `description` and no `globs` | The description always; the rule on demand, when the agent judges it relevant |
+| Manual rules | `.cursor/rules/**/*.mdc` with no `alwaysApply`, `description` or `globs` | On demand, only when the user `@`-mentions it. A plain `.md` file in `.cursor/rules` is ignored: report it as not loaded |
+| Project `AGENTS.md` | `AGENTS.md` in the repo root | Always (the docs offer it as an alternative to `.cursor/rules`; they do not state the loading, so say so) |
+| Nested `AGENTS.md` | `AGENTS.md` in a subdirectory | On demand, when the agent works with files in that directory or below |
+| Legacy `.cursorrules` | `.cursorrules` in the repo root | Current docs no longer mention it: report it as legacy, its loading unverified, and propose moving it into `.cursor/rules` |
+| Skill listing | Skills in `.agents/skills/`, `.cursor/skills/`, `~/.agents/skills/`, `~/.cursor/skills/`, and with Third-Party Imports on (the default) `.claude/skills/`, `.codex/skills/`, `~/.claude/skills/`, `~/.codex/skills/` | Always, the skills presented to the agent; a skill with `disable-model-invocation: true` is not presented, and one with `paths` only when the agent works with a matching file |
+| Skill bodies | Each skill's `SKILL.md` body and its reference files | On demand, when the agent uses the skill or the user runs `/skill-name` |
+| Hook output | `.cursor/hooks.json`, `~/.cursor/hooks.json`, enterprise `hooks.json` (`/etc/cursor/`, `/Library/Application Support/Cursor/`, `C:\ProgramData\Cursor\`), and with Third-Party Imports on `.claude/settings.json`, `.claude/settings.local.json`, `~/.claude/settings.json` | `sessionStart` `additional_context` always; `postToolUse` and `postToolUseFailure` `additional_context` on demand each time the hook fires. Measure the text the hook script prints |

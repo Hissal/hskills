@@ -206,6 +206,10 @@
     "path": "skills/core/why",
     "requires": []
   },
+  "hissal.skill-collection/wizard": {
+    "path": "skills/core/wizard",
+    "requires": []
+  },
   "hissal.skill-collection/writing-for-agents": {
     "path": "skills/core/writing-for-agents",
     "requires": []

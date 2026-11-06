@@ -74,7 +74,9 @@ Every step lands in one commit; the intake is done when that commit passes the c
 
 A skill from Matt Pocock's set is copied straight from `mattpocock/skills`. It follows [Intake](#intake) with `<owner>/<repo>` set to `mattpocock/skills`, so the copy, the baseline (`vendor/mattpocock/skills/<name>/`), the licence (`licenses/mattpocock/skills.txt`), the lock's `source` and `NOTICE.md` all come from that repository at one commit. The only difference is the pin: the `mattpocock/skills` commit the owner or the ticket chooses, which may be behind the default branch's head. Check out that commit in Intake step 1 instead of the head. When it is behind, the drift report lists the new skill as `update-available` or `both`.
 
-The fork (`Hissal/mattpocock-skills-unity`) is not a source for core skills: no fork clone, no merge-base, and none of its text enters a core skill. It differs from `mattpocock/skills` only by Unity lines that core skills drop anyway. Unity material from the fork reaches the Unity pack through ordinary [Intake](#intake), or as [own words](#copy-or-own-words), like any other source.
+The fork (`Hissal/mattpocock-skills-unity`) is not a source for core skills: no fork clone, no merge-base, and none of its text enters a core skill. It differs from `mattpocock/skills` only by Unity lines that core skills drop anyway.
+
+This repo is canonical for the Unity material and the fork is retiring. Fork Unity text comes into the Unity pack as own words: copy it freely, with no credit, no lock entry, no pin, no baseline and no notice for the fork. Lines copied from any other source keep the [rule above](#copy-or-own-words).
 
 Lock entries made under the earlier fork procedure keep their pins and baselines; they take updates through [Taking an update](#taking-an-update) like any other entry.
 

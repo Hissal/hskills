@@ -118,7 +118,7 @@ An external repository the collection may borrow skills, ideas or mechanisms fro
 _Avoid_: upstream (that is `mattpocock/skills`, the source Matt-derived skills are copied from and tracked against)
 
 **The fork**:
-`Hissal/mattpocock-skills-unity`, the Unity edition of Matt Pocock's skills. A source for the Unity pack only: core Matt-derived skills are copied from `mattpocock/skills`, not from it, and it is no longer where any skill is authored.
+`Hissal/mattpocock-skills-unity`, the Unity edition of Matt Pocock's skills, now retiring. This repo is canonical for the Unity material; the fork is a text store the Unity pack drew from once, and no skill is authored there. Core Matt-derived skills are copied from `mattpocock/skills`, not from it.
 _Avoid_: base, member
 
 **Override**:

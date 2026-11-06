@@ -113,9 +113,27 @@ enabled = true
   const toggles = 'skills.config=[{name="user:kept",enabled=true},{name="user:off",enabled=false},{name="fork:old",enabled=false},{name="vendor:collide",enabled=false},{name="fork:never-configured",enabled=false}]';
   assert.deepEqual(out.models[1].command, [...capture, 'codex', '/opt/codex', '-c', toggles, '-c', 'sandbox_mode="workspace-write"']);
   assert.deepEqual(out.models[2].command, [...capture, 'opencode', 'opencode']);
-  // The manual check before the first query is printed.
+  // The manual check before the first query is printed, and its sessions run
+  // in the project, so they list the scope that was built.
   assert.match(built.stdout, /--check/);
+  const next = built.stdout.split('\n').filter(line => / -- "/.test(line));
+  assert.equal(next.length, 2, built.stdout);
+  for (const line of next) assert.ok(line.startsWith(`  cd '${project}' && `), line);
   console.log('ok: scope helper builds the project and the queries file');
+
+  // A global excludes file that ignores the skill folders cannot leave them
+  // out of the baseline, where capture --reset's git clean would delete them.
+  const ignored = path.join(dir, 'ignored');
+  const excludes = path.join(dir, 'global-excludes');
+  fs.writeFileSync(excludes, '.claude/\n.agents/\nEngine/\n');
+  const globalConfig = path.join(dir, 'global-gitconfig');
+  fs.writeFileSync(globalConfig, `[core]\n\texcludesFile = ${excludes}\n`);
+  const ignoredBuild = spawnSync(process.execPath, [cli, scopeFile, queriesFile, ignored, '--root', root, '--codex-config', codexConfig],
+    {encoding: 'utf8', env: {...process.env, GIT_CONFIG_GLOBAL: globalConfig}});
+  assert.equal(ignoredBuild.status, 0, ignoredBuild.stderr);
+  const ignoredFiles = spawnSync('git', ['ls-files'], {cwd: path.join(ignored, 'project'), encoding: 'utf8'}).stdout.trim().split('\n').sort();
+  assert.deepEqual(ignoredFiles, files);
+  console.log('ok: scope helper commits the skills despite global excludes');
 
   // --colliding turns the colliding skills on.
   const loud = path.join(dir, 'loud');

@@ -151,8 +151,10 @@ How it stops: `trigger.js` sets `TRIGGER_EVAL_STOP=<file>`. A wrapper that
 creates `<file>.wrapper`, like the evidence capture, stops itself once
 `<file>` appears: it kills its command's process tree, still writes stdout,
 stderr and metadata (with `stopped`), and runs `--reset`. A wrapper still
-running 30 s later is killed. Any other command has its process group killed
-(SIGTERM, then SIGKILL after 5 s), or its tree with `taskkill /T /F` on
+running 30 s later is killed, together with the process group it names
+after its pid in `<file>.wrapper`, where it started its command. Any other
+command has its process group killed (SIGTERM, then SIGKILL after 5 s), or
+its tree with `taskkill /T /F` on
 Windows. The Windows path is untested; the tests run on Linux.
 
 ## Offline injection and evidence limits

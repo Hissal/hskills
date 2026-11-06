@@ -89,7 +89,9 @@ const BUDGET = 24;
 const SETTLE_MS = 2000;
 const TIMEOUT_MS = 120000;
 const CAP = 16 * 1024 * 1024;
-const STOP_GRACE_MS = 30000;
+// How long a wrapper may take to stop itself before it is killed; tests
+// shorten it.
+const STOP_GRACE_MS = Number(process.env.TRIGGER_EVAL_STOP_GRACE_MS) || 30000;
 const KILL_GRACE_MS = 5000;
 const NULL_TARGET = /^(?:\/dev\/null|\$null|nul)$/i;
 // Programs that change files, build, test, install, run a project or reach
@@ -301,9 +303,22 @@ function runSession(argv, cwd, watch, stoppable) {
     let closed = false;
     const child = spawn(argv[0], argv.slice(1), {cwd, stdio: ['pipe', 'pipe', 'pipe'], detached: process.platform !== 'win32', windowsHide: true, env: {...process.env, TRIGGER_EVAL_STOP: stopFile}});
     current = () => end();
+    // A wrapper names the process groups it started its command in after its
+    // own pid in `<stop>.wrapper`; on POSIX they are outside the wrapper's
+    // group, so killing the wrapper alone would orphan the harness. Windows'
+    // taskkill /T already follows the tree.
+    const groups = () => {
+      if (process.platform === 'win32') return [];
+      try { return fs.readFileSync(stopFile + '.wrapper', 'utf8').trim().split(/\s+/).slice(1).map(Number).filter(pid => Number.isInteger(pid) && pid > 1); }
+      catch { return []; }
+    };
+    const killAll = signal => {
+      killTree(child, signal);
+      for (const pid of groups()) try { process.kill(-pid, signal); } catch { /* already gone */ }
+    };
     const force = () => {
-      killTree(child);
-      if (process.platform !== 'win32') later(KILL_GRACE_MS, () => killTree(child, 'SIGKILL'));
+      killAll('SIGTERM');
+      if (process.platform !== 'win32') later(KILL_GRACE_MS, () => killAll('SIGKILL'));
     };
     function end() {
       if (ending || closed) return;
@@ -431,5 +446,5 @@ async function main() {
   process.exitCode = uncertain ? 2 : failed ? 1 : 0;
 }
 // An interrupted evaluator stops the running session before it exits.
-for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => { interrupted = true; current?.(); setTimeout(() => process.exit(2), STOP_GRACE_MS + KILL_GRACE_MS).unref(); });
+for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => { interrupted = true; current?.(); setTimeout(() => process.exit(2), STOP_GRACE_MS + KILL_GRACE_MS + 1000).unref(); });
 main().catch(error => { console.error(`ERROR: ${error.message}`); process.exitCode = 2; });

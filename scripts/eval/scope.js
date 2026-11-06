@@ -139,7 +139,9 @@ function build(options) {
   git(project, 'init', '-q');
   git(project, 'config', 'user.name', 'eval scope');
   git(project, 'config', 'user.email', 'eval-scope@example.invalid');
-  git(project, 'add', '-A');
+  // --force: a global excludes file must not keep the skills out of the
+  // baseline, or capture --reset's git clean -fdx would delete them.
+  git(project, 'add', '-A', '--force');
   git(project, 'commit', '-q', '--no-verify', '--no-gpg-sign', '-m', 'baseline');
   fs.mkdirSync(evidence, {mode: 0o700});
 
@@ -149,8 +151,10 @@ function build(options) {
   const codex = queries.models.find(model => model.harness === 'codex');
   console.log(`WROTE: ${project}\nWROTE: ${out}`);
   console.log('NEXT: before the first query, confirm no hidden skill is listed. In the project, save one session of each harness and check them:');
-  if (claude) console.log(`  ${(claude.command || ['claude']).join(' ')} --setting-sources project -p --model ${claude.model} --output-format stream-json --verbose -- "Reply ok." > ${path.join(run, 'claude-init.jsonl')}`);
-  if (codex) console.log(`  ${(codex.command || ['codex']).join(' ')} -c '${toggles}' exec --model ${codex.model} -- "List the name of every skill you can use, one per line." > ${path.join(run, 'codex-listing.txt')}`);
+  const quote = text => `'${text.replace(/'/g, `'\\''`)}'`;
+  const inProject = `cd ${quote(project)} && `;
+  if (claude) console.log(`  ${inProject}${(claude.command || ['claude']).join(' ')} --setting-sources project -p --model ${claude.model} --output-format stream-json --verbose -- "Reply ok." > ${path.join(run, 'claude-init.jsonl')}`);
+  if (codex) console.log(`  ${inProject}${(codex.command || ['codex']).join(' ')} -c '${toggles}' exec --model ${codex.model} -- "List the name of every skill you can use, one per line." > ${path.join(run, 'codex-listing.txt')}`);
   console.log(`  node scripts/eval/scope.js --check ${scopeFile} ${claude ? path.join(run, 'claude-init.jsonl') : ''} ${codex ? path.join(run, 'codex-listing.txt') : ''}`.trimEnd());
   console.log(`RUN: node scripts/eval/trigger.js ${out}`);
 }

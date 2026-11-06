@@ -28,7 +28,6 @@ const windows = process.platform === 'win32';
 const stopFile = process.env.TRIGGER_EVAL_STOP;
 const env = {...process.env};
 delete env.TRIGGER_EVAL_STOP;
-if (stopFile) fs.writeFileSync(stopFile + '.wrapper', String(process.pid));
 
 const streams = {stdout: [], stderr: []};
 const sizes = {stdout: 0, stderr: 0};
@@ -39,6 +38,9 @@ let finished = false;
 // The command leads its own process group on POSIX, so killing the group
 // reaches everything it started; Windows kills the tree with taskkill.
 const child = spawn(command, args, {stdio: ['pipe', 'pipe', 'pipe'], detached: !windows, windowsHide: true, env});
+// `<file>.wrapper` holds this pid, then the command's process group, so the
+// evaluator can still kill that group if this capture is killed first.
+if (stopFile) fs.writeFileSync(stopFile + '.wrapper', `${process.pid} ${child.pid ?? ''}`.trim());
 function signalTree(signal) {
   if (child.pid === undefined) return;
   if (windows) spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], {stdio: 'ignore', windowsHide: true});

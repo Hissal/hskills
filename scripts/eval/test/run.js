@@ -426,6 +426,31 @@ try {
   assert.match(fs.readFileSync(path.join(evidence,metadata.slice(0,-5)+'.stdout'),'utf8'),/"name":"Skill"/);
   assert.equal(git('status','--porcelain').stdout,'');
  }
+ // A wrapper that never honours the stop file is killed after the grace, and
+ // so is the process group it started its harness in, which it names in
+ // `<stop>.wrapper` as the capture does.
+ if (process.platform !== 'win32') {
+  const stuck = path.join(dir,'stuck-wrapper.js');
+  fs.writeFileSync(stuck,`const {spawn}=require('child_process');
+const child=spawn(process.argv[2],process.argv.slice(3),{stdio:['ignore','pipe','inherit'],detached:true});
+require('fs').writeFileSync(process.env.TRIGGER_EVAL_STOP+'.wrapper',process.pid+' '+child.pid);
+child.stdout.pipe(process.stdout);`);
+  const late = marker();
+  process.env.TRIGGER_EVAL_STOP_GRACE_MS = '300';
+  const scenario = path.join(dir,'scenario.json');
+  fs.writeFileSync(scenario,JSON.stringify([...load('s1'),{wait:2000},{touch:late},success()]));
+  config.models = [
+   {label:'Opus',harness:'claude',model:'fake',tier:'frontier',command:[process.execPath,stuck,process.execPath,streamFake,scenario]},
+   {label:'Sol',harness:'claude',model:'fake',tier:'frontier',command:[process.execPath,fake]},
+  ];
+  config.skills = [{name:'fixture',queries:[{prompt:'yes',fire:true}]}];
+  delete config.cwd;
+  const result = run();
+  delete process.env.TRIGGER_EVAL_STOP_GRACE_MS;
+  assert.match(result.stdout,/RESULT: fixture Opus q1 fired/,result.stdout+result.stderr);
+  pause(2500);
+  assert.ok(!fs.existsSync(late),'the stuck wrapper\'s harness ran on after the force kill');
+ }
  console.log('ok: sessions stop once their firing is known');
 } finally { fs.rmSync(dir,{recursive:true,force:true}); }
 require('./required-cases/test.js');

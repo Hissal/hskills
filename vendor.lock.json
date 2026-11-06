@@ -121,6 +121,14 @@
       "changes": "collection metadata and gates; trigger-only description for external research; caller-supplied location; dispatch through delegating, none from a researcher or helper; SHA-pinned sources, confidence tiers and a Coverage section; short return with the path"
     },
     {
+      "skill": "skills/core/retro",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/retro",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; any number of session logs through a per-harness log table, plus git history and PR reviews of the same window, transcripts untrusted and repeats ranked as classes; categories widened to the decided signals; fix ladder with proven checks and the hook and text gates; admission bar; report first with per-item approval; skill and guard-rule fixes offered as a source-repo issue or a local edit; style guide via the setup pointer replaces CODING_STANDARDS.md, steering edits follow writing-for-agents and the text gate, line threshold dropped; environment-gap extension point; context-audit and constraints suggestions"
+    },
+    {
       "skill": "skills/core/risky-changes",
       "source": "davidondrej/skills",
       "path": "skills/ops-and-setup/risky-changes",

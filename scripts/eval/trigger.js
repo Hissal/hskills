@@ -14,6 +14,61 @@ function flags(model, prompt) {
 function forHarness(value, harness) {
   return value === undefined || typeof value === 'string' || Array.isArray(value) ? value : value[harness];
 }
+// Codex reports a command as its argv joined with POSIX shell quoting
+// (shlex::try_join in codex-rs). Splits it back into words; null when the
+// quoting is unbalanced.
+function shellWords(text) {
+  const words = [];
+  let word = null;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (/\s/.test(c)) { if (word !== null) words.push(word); word = null; continue; }
+    word ??= '';
+    if (c === "'") {
+      const end = text.indexOf("'", i + 1);
+      if (end < 0) return null;
+      word += text.slice(i + 1, end); i = end;
+    } else if (c === '"') {
+      for (i++; i < text.length && text[i] !== '"'; i++) {
+        if (text[i] === '\\' && '$`"\\\n'.includes(text[i + 1] ?? 'x')) i++;
+        word += text[i];
+      }
+      if (i >= text.length) return null;
+    } else if (c === '\\') { if (++i >= text.length) return null; word += text[i]; }
+    else word += c;
+  }
+  if (word !== null) words.push(word);
+  return words;
+}
+// The script a PowerShell invocation runs: pwsh or powershell (any path,
+// optional .exe), then only -NoLogo or -NoProfile, then -Command or -c and
+// the script as the last word. Mirrors codex-rs extract_powershell_command.
+function powershellScript(command) {
+  const words = shellWords(command);
+  if (!words || words.length < 3) return null;
+  if (!/^(?:pwsh|powershell)(?:\.exe)?$/i.test(words[0].split(/[\\/]/).pop())) return null;
+  let i = 1;
+  while (i < words.length - 2 && /^-(?:nologo|noprofile)$/i.test(words[i])) i++;
+  return i === words.length - 2 && /^-(?:command|c)$/i.test(words[i]) ? words[i + 1] : null;
+}
+function slashed(text) { return text.replace(/\\+/g, '/'); }
+// Only successful plain reads of plain paths (one, or several joined by ; or
+// &&), one path the installed entry point, count: cat, optionally wrapped in
+// bash -lc '...', or under PowerShell Get-Content or its aliases gc, type
+// and cat, with no options. Prose, filename searches and other commands
+// merely mentioning it do not.
+function plainRead(command, readName) {
+  const path = '[\'"]?[^\'"\\s;&|<>$`()]+[\'"]?';
+  let script = command;
+  let reader = new RegExp(`^cat(?:\\s+${path})+$`);
+  const shell = command.match(/^\S*(?:bash|sh) -[lc]+ '([^']*)'$/);
+  const powershell = shell ? null : powershellScript(command);
+  if (shell) script = shell[1];
+  else if (powershell !== null) { script = powershell.trim(); reader = new RegExp(`^(?:get-content|gc|type|cat)(?:\\s+(?!-)${path})+$`, 'i'); }
+  const reads = script.split(/\s*(?:;|&&)\s*/);
+  return reads.every(read => reader.test(read)) &&
+    reads.some(read => read.split(/\s+/).slice(1).some(arg => slashed(arg.replace(/['"]/g, '')).endsWith('/skills/' + readName + '/SKILL.md')));
+}
 function observe(run, harness, skill, says) {
   if (run.error || run.status !== 0) return 'inconclusive';
   let events;
@@ -46,22 +101,13 @@ function observe(run, harness, skill, says) {
       if (e.type === 'item.completed' && item?.type === 'agent_message') answer = item.text || '';
       const readName = skill.readName || skill.name;
       if (e.type === 'item.completed' && item?.type === 'command_execution') {
-        const names = (item.command || '').includes('/skills/' + readName + '/');
+        const mentions = slashed(item.command || '');
+        const names = mentions.includes('/skills/' + readName + '/');
         // A failed command is evidence only when it names the entry point's folder.
         if (item.status !== 'completed' || item.exit_code !== 0) { if (names) return 'inconclusive'; continue; }
-        // Only successful plain cats of plain paths (one, or several joined by
-        // ; or &&), one path the installed entry point, with its name line in
-        // the output, count. Prose, filename searches and other commands
-        // merely mentioning it do not.
-        let command = item.command || '';
-        const shell = command.match(/^\S*(?:bash|sh) -[lc]+ '([^']*)'$/);
-        if (shell) command = shell[1];
-        const cats = command.split(/\s*(?:;|&&)\s*/);
-        const read = cats.every(cat => /^cat(?:\s+['"]?[^'"\s;&|<>$`()]+['"]?)+$/.test(cat)) &&
-          cats.some(cat => cat.slice(3).trim().split(/\s+/).some(arg => arg.replace(/['"]/g, '').replace(/\\/g, '/').endsWith('/skills/' + readName + '/SKILL.md')));
         const lines = (item.aggregated_output || '').split(/\r?\n/);
-        if (read && lines.includes('---') && lines.includes('name: ' + readName)) fired = true;
-        else if ((item.command || '').includes('/skills/' + readName + '/SKILL.md')) return 'inconclusive';
+        if (plainRead(item.command || '', readName) && lines.includes('---') && lines.includes('name: ' + readName)) fired = true;
+        else if (mentions.includes('/skills/' + readName + '/SKILL.md')) return 'inconclusive';
       }
     }
   }

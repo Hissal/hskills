@@ -23,6 +23,12 @@ if (mode === 'codex-multi') {
  console.log(JSON.stringify({type:'item.completed',item:{type:'command_execution',command:"/bin/bash -lc 'cat "+files+"'",aggregated_output:output,exit_code:0,status:'completed'}}));
  console.log(JSON.stringify({type:'turn.completed'})); process.exit(0);
 }
+if (mode === 'codex-command') {
+ // One command execution as Codex reports it: item.command is the argv joined
+ // with POSIX shell quoting (shlex::try_join).
+ console.log(JSON.stringify({type:'item.completed',item:{type:'command_execution',command:process.env.FAKE_COMMAND,aggregated_output:'---\\r\\nname: fixture\\r\\n---\\r\\nCount vowels.\\r\\n',exit_code:0,status:'completed'}}));
+ console.log(JSON.stringify({type:'turn.completed'})); process.exit(0);
+}
 if (mode === 'claude-tool-error') {
  // An errored tool call other than Skill is not evidence either way; an errored Skill call is.
  const skill = prompt === 'skill error';
@@ -100,6 +106,46 @@ try {
  assert.match(multi.stdout,/RESULT: fixture Opus q3 fired/);
  config.skills[0].queries = [{prompt:'no 1',fire:false}];
  assert.equal(run().status,2);
+ // Sol on Windows reads with PowerShell. Plain reads count: Get-Content and
+ // its aliases gc, type and cat, of one or several plain paths, the entry
+ // point among them, with or without -NoProfile and the executable's path.
+ const pwsh = '"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe"';
+ config.models[0].command = [process.execPath,fake,'codex-command'];
+ config.skills[0].queries = [{prompt:'yes 1',fire:true}];
+ for (const command of [
+  pwsh+" -Command 'Get-Content .agents/skills/fixture/SKILL.md'",
+  pwsh+" -NoProfile -Command 'gc .agents/skills/fixture/SKILL.md'",
+  "powershell.exe -c 'type .agents/skills/fixture/SKILL.md'",
+  "pwsh -Command 'cat .agents/skills/fixture/SKILL.md'",
+  pwsh+" -Command 'Get-Content .agents/skills/fixture/SKILL.md; Get-Content docs/agents/fixture.md; Get-Content ProjectSettings/ProjectVersion.txt'",
+  pwsh+" -Command 'Get-Content docs/agents/fixture.md && Get-Content C:/project/.agents/skills/fixture/SKILL.md'",
+  pwsh+' -Command "Get-Content .agents\\\\skills\\\\fixture\\\\SKILL.md"',
+ ]) {
+  process.env.FAKE_COMMAND = command;
+  const read = run();
+  assert.equal(read.status,0,command+'\n'+read.stdout);
+  assert.match(read.stdout,/RESULT: fixture Opus q1 fired/,command);
+ }
+ // Lookalikes naming the entry point do not count: they are inconclusive.
+ for (const command of [
+  pwsh+" -Command 'Get-Content .agents/skills/fixture/SKILL.md | Select-String name'",
+  pwsh+" -Command 'Get-ChildItem .agents/skills/fixture/SKILL.md'",
+  pwsh+" -Command 'Get-Content -Path .agents/skills/fixture/SKILL.md'",
+  pwsh+" -Command 'Get-Content .agents/skills/fixture/SKILL.md > copy.md'",
+  pwsh+" -File 'Get-Content .agents/skills/fixture/SKILL.md'",
+  "notpwsh.exe -Command 'Get-Content .agents/skills/fixture/SKILL.md'",
+ ]) {
+  process.env.FAKE_COMMAND = command;
+  const lookalike = run();
+  assert.equal(lookalike.status,2,command+'\n'+lookalike.stdout);
+  assert.match(lookalike.stdout,/RESULT: fixture Opus q1 inconclusive/,command);
+ }
+ // A read through a variable names no path: it is no evidence either way.
+ process.env.FAKE_COMMAND = pwsh+" -Command 'Get-Content -Path $x'";
+ const variable = run();
+ assert.equal(variable.status,1,variable.stdout);
+ assert.match(variable.stdout,/RESULT: fixture Opus q1 not fired/);
+ delete process.env.FAKE_COMMAND;
  config.models[0].harness = 'claude';
  config.models[0].command = [process.execPath,fake,'claude-tool-error'];
  config.skills[0].queries = [{prompt:'yes 1',fire:true},{prompt:'no 1',fire:false}];

@@ -199,3 +199,4 @@ try {
  console.log('ok: per-harness prompts and required answer text');
 } finally { fs.rmSync(dir,{recursive:true,force:true}); }
 require('./required-cases/test.js');
+require('./scope.js');

@@ -1,13 +1,13 @@
 ---
 name: pr
-description: "Use when writing a PR body."
+description: "Use when writing or updating a PR body, pushing to a PR, or merging one."
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/pr"
   opencode/autoinvoke: "true"
 ---
 
-Done when the body follows this template, every result in it comes from evidence already gathered, and every gap is on the **Not done** line. Writing or updating a body runs nothing.
+Done when the body follows this template, every result in it comes from evidence already gathered, every issue it delivers carries the link its state calls for, and every gap is on the **Not done** line. Writing or updating a body runs nothing.
 
 Use this template for writing the PR body, and when updating one:
 
@@ -35,7 +35,7 @@ Use this template for writing the PR body, and when updating one:
 
 <optional: potential ramifications of merge>
 
-**Not done:** <optional: what was left out or left unfixed>
+**Not done:** <optional: what was left out or left unfixed, and what each needs from a human>
 
 🤖 <model> in <harness>
 ```
@@ -46,7 +46,7 @@ Skip all preambles and keep prose brief. Use the user's domain language from `GL
 
 ### Why
 
-One to three sentences on the problem or need, in glossary language, linking the issue. No technical detail.
+One to three sentences on the problem or need, in glossary language, linking the issue as [Issue links](#issue-links) sets. No technical detail.
 
 ### Summary
 
@@ -189,7 +189,16 @@ The blast radius is the potential impact or scope of the changes introduced by t
 
 ### Not done
 
-One optional line: what was left out or left unfixed, evidence gaps included. Leave it out when there is nothing to say. `implement-spec`, `verifying` and `receiving-review` write into it when running unattended, so when you update the body, keep each entry until evidence already gathered settles it.
+One optional line: what was left out or left unfixed, evidence gaps included, each entry naming what it needs from a human. Leave it out when there is nothing to say. `implement-spec`, `verifying` and `receiving-review` write into it when running unattended, so when you update the body, keep each entry until evidence already gathered settles it.
+
+### Issue links
+
+Link every issue the PR delivers by the state of its work, decided afresh from evidence already gathered on every write, so the link moves both ways as the state changes. After a push, update the body when a link no longer matches.
+
+- **`Closes #N`** (or the tracker's closing keyword): the issue's work is on the branch, and every criterion is verified or waits only on a check a human must make: a listening or visual check, a device run, a run needing access the agent lacks, human review or approval. That check goes on **Not done**; the link still closes.
+- **`Refs #N`**: something on the issue is faulty or unfinished: a criterion that failed, is not built, or has a check an agent could run that has not passed; work not on the branch; an unfixed defect in the issue's work; a decision only the owner can make.
+
+A spec or parent issue closes only when every issue under it closes. A PR that never merges, such as a prototype, delivers nothing and only refs its issue. Before a merge, set every link by this rule and report each `Refs` and each human check still open.
 
 ### Footer
 

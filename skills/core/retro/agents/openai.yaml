@@ -1,0 +1,5 @@
+interface:
+  display_name: "Retro"
+  short_description: "Conduct a retrospective on recent coding sessions and their reviews."
+policy:
+  allow_implicit_invocation: false

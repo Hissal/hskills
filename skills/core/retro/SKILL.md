@@ -47,7 +47,7 @@ The scan is done when all three passes are complete:
 
 - **Every user turn**, for the [user corrections](#signals) in it.
 - **The costliest stretches**, whether or not anyone commented on them. List the session's stretches that cost the most: wall time lost, commands or checks run again and again, the same baseline re-run by several delegates, side threads opened to investigate, tool calls that failed or lost their output, and actions nobody asked for. Read each delegate's and side thread's final report and the turns around each failure: counting runs is not reading them. Trace each stretch to a candidate, or to a one-line reason to drop it.
-- **Loose ends**: questions, offers, warnings and findings nobody answered, in the main session and in every delegate's report (a delegate asking whether to file issues, a warning the orchestrator passed over). Many were likely seen and set aside, but some were glossed over or missed. Make one a candidate when it left real work undone or a risk unhandled, as a delegate report nobody read often does; that is your judgement call. List the rest as [loose ends](#report).
+- **Loose ends**: questions, offers, warnings and findings nobody answered, in the main session and in every delegate's report (a delegate asking whether to file issues, a warning the orchestrator passed over). Many were likely seen and set aside, but some could have been glossed over or missed. Make one a candidate when it left real work undone or a risk unhandled, as a delegate report nobody read often does; that is your judgement call. List the rest as [loose ends](#report).
 
 Weigh every signal equally. An incident nobody commented on can cost more than one the user corrected.
 

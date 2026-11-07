@@ -1,6 +1,6 @@
 # Thread destination
 
-`/handoff thread` (or `new`) moves the work to an ordinary fresh top-level conversation: one the user opens, reads and talks to like any session they started themselves. Its first prompt is the whole handoff document (or the work brief, when one was asked for), so it starts with nothing of this conversation but the document.
+`/handoff thread` (or `new`) moves the work to an ordinary fresh top-level conversation: one the user opens, reads and talks to like any session they started themselves. Its starting context is the whole handoff document (or the work brief, when one was asked for), so it starts with nothing of this conversation but the document.
 
 ## Launch
 
@@ -10,10 +10,10 @@ Resolve the selection through `delegating` first, then launch through the first 
 2. **A harness CLI that starts a background session the user can open.** For Claude Code:
 
    ```bash
-   claude --bg --name "<descriptive name>" [--model <model>] [--effort <level>] -- "$(cat <document path>)"
+   claude --bg --name "<descriptive name>" [--model <model>] [--effort <level>] -- 'Read the file "<document path>" and treat its contents as your first prompt.'
    ```
 
-   Read `claude --help` before the first run in a session. `--name` sets the name shown in `claude agents`, the session picker and the terminal title; name the work, such as `"Fix login bug"`. Passing the file keeps the shell from running backticks or expanding `$` in the document. The session starts in the current working directory and the command returns at once. Another harness's CLI qualifies only when its current `--help` shows a session the user can later open and continue; a one-shot headless run that exits after answering is not a thread.
+   Read `claude --help` before the first run in a session. `--name` sets the name shown in `claude agents`, the session picker and the terminal title; name the work, such as `"Fix login bug"`. In Claude Code 2.1.319 the prompt argument is the only way `--help` shows to give a background session its first prompt (stdin and `--input-format` work only with `--print`), so the argument names the document instead of carrying it. That keeps the document off the command line, where a long one can exceed Windows' length limit and other local users can read it from the process list. The single quotes keep the shell from expanding anything in the path; write a `'` in the path as `'\''`. The session starts in the current working directory and the command returns at once. Another harness's CLI qualifies only when its current `--help` shows a session the user can later open and continue; a one-shot headless run that exits after answering is not a thread.
 
 Pass no permission or sandbox flag wider than this session runs with. The new thread inherits no authority from the launch: its reader block still makes it confirm with the user before acting.
 

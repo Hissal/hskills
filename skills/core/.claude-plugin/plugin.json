@@ -9,6 +9,7 @@
     "./code-review",
     "./codebase-design",
     "./commenting",
+    "./context-audit",
     "./delegating",
     "./dependency-audit",
     "./diagnosing-bugs",
@@ -16,6 +17,7 @@
     "./grill-with-docs",
     "./grilling",
     "./guide",
+    "./handoff",
     "./hillclimb",
     "./how",
     "./implement",
@@ -26,6 +28,7 @@
     "./receiving-review",
     "./refactoring",
     "./research",
+    "./retro",
     "./reviewing",
     "./risky-changes",
     "./second-opinion",
@@ -36,9 +39,12 @@
     "./to-spec",
     "./to-tickets",
     "./triage",
+    "./unslop",
     "./verifying",
     "./wait-what",
     "./wayfinder",
-    "./why"
+    "./why",
+    "./wizard",
+    "./writing-for-agents"
   ]
 }

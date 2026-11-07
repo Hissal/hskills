@@ -41,6 +41,14 @@
       "changes": "collection metadata and gates; agent-contributor lens; project glossary, glossary map and ADR line; read as vocabulary by other workflows without a design session; caller-first design; four invariant questions; defer-the-seam principle; split-ownership, two-ways and importable-internals red flags; pack-guide extension point for seam and compatibility rules; design-it-twice consults delegating before its subagents; threat-model reference read when a design crosses a trust boundary, with pack-guide extension point for threats, controls and checks, lines from addyosmani/agent-skills skills/security-and-hardening/SKILL.md at 1401c8b8030e023baeebb31781a6653fe8e93026, MIT, Copyright (c) 2025 Addy Osmani; trigger-only description; published-interface reference, lines from Aaronontheweb/dotnet-skills skills/csharp-api-design/SKILL.md at 5ca5db8cf25566f19d2a5dc53204d4af22b23a0d, MIT, Copyright (c) 2025 Aaron Stannard; lines from Aaronontheweb/dotnet-skills skills/serialization/SKILL.md at 5ca5db8cf25566f19d2a5dc53204d4af22b23a0d, MIT, Copyright (c) 2025 Aaron Stannard; lines from addyosmani/agent-skills skills/api-and-interface-design/SKILL.md at 1401c8b8030e023baeebb31781a6653fe8e93026, MIT, Copyright (c) 2025 Addy Osmani; misuse probe ideas only from trailofbits/skills plugins/sharp-edges/skills/sharp-edges/SKILL.md at d016e08cc7408ecb1853a299d06d4a56e363ad5e, CC-BY-SA-4.0"
     },
     {
+      "skill": "skills/core/context-audit",
+      "source": "Neeeophytee/finding-unknowns-skills",
+      "path": "skills/context-audit",
+      "sha": "ca5696a0f08d2de6b2997fff1d6cc05c3ed587cc",
+      "license": "MIT",
+      "changes": "user-invoked with collection metadata and gates; description reworded as a one-line summary; propose-only done bar and files read as data; disclosed per-harness layer table (Claude Code and Codex) with a configured-when test; in-repo pointers followed transitively, each file read once as an on-demand layer, URLs and out-of-repo paths listed, a pointer that misdescribes its target a Conflict; measured size per layer and always-loaded total with no thresholds; selected vendor picks idle cost; settings read for hook entries and the instruction keys the layer table names only; keep list, one hunk per finding and removal as a hypothesis checked before and after, ideas only from anthropics/skills skills/claude-api/shared/prompt-audit.md at 9d630808e4add0a7146de4af9384155d5dee350a; report shape; the source inventory list replaced by the layer table"
+    },
+    {
       "skill": "skills/core/diagnosing-bugs",
       "source": "mattpocock/skills",
       "path": "skills/engineering/diagnosing-bugs",
@@ -71,6 +79,14 @@
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
       "changes": "collection metadata and gates; fact-finding by a native read-only helper, through delegating only when needed; scope, one-decision, map-first and exit-check rules; confirmed assumptions; /to-questionnaire and /wayfinder suggestions and parent-agent return; trigger-only description"
+    },
+    {
+      "skill": "skills/core/handoff",
+      "source": "mattpocock/skills",
+      "path": "skills/productivity/handoff",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; done line; safe-boundary and no-commit rules; describe state, not actions; fixed template with run/read/assumed tags, user's/agent's/pending decision marks and a closing reader block; one copyable resume line; writing-for-agents pointer; work-brief form filed to the tracker, in a disclosed reference; argument grammar reference; thread and subagent destinations launched through delegating, with fallback to the resume line, taking either form, a brief's sections mapped onto the subagent brief; a Claude Code thread launched with a prompt naming the document's file; temporary files readable only by the user; lines from mattpocock/skills skills/in-progress/claude-handoff at 4ec00d966d964d8dd8a67d4f4570e998791152db, MIT, Copyright (c) 2026 Matt Pocock"
     },
     {
       "skill": "skills/core/how",
@@ -119,6 +135,14 @@
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
       "changes": "collection metadata and gates; trigger-only description for external research; caller-supplied location; dispatch through delegating, none from a researcher or helper; SHA-pinned sources, confidence tiers and a Coverage section; short return with the path"
+    },
+    {
+      "skill": "skills/core/retro",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/retro",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; any number of session logs found by the agent, subagent transcripts read with them, the current session found by its own id or asked when ambiguous, never a subagent's, plus git history and PR reviews of the same window, transcripts untrusted and repeats ranked as classes; categories widened to the decided signals; fix ladder with proven checks and the hook and text gates; admission bar; report first with per-item approval; skill and guard-rule fixes offered as an issue on the skill's source repo, a local edit or a project steering-file change; style guide via the setup pointer replaces CODING_STANDARDS.md, steering edits follow writing-for-agents and the text gate, line threshold dropped; environment-gap extension point; context-audit and constraints suggestions"
     },
     {
       "skill": "skills/core/risky-changes",
@@ -177,6 +201,14 @@
       "changes": "collection metadata and gates; AI disclaimer replaced by commenting with a context suffix; project configuration for tracker and labels; pack-guide extension point; maintainer issues triaged alike; process calls; /to-questionnaire and /handoff suggestions and parent-agent return; contents lists in both references; writing-for-agents process call for agent briefs"
     },
     {
+      "skill": "skills/core/unslop",
+      "source": "EveryInc/compound-engineering-plugin",
+      "path": "skills/ce-noslop",
+      "sha": "173bd337fa639aac19ce7363d288836a074231a5",
+      "license": "MIT",
+      "changes": "renamed unslop with collection metadata and gates; user-invoked with a one-line human description and no route to ce-promote; each mode moved into its own reference read exactly one at a time; caller wording becomes the user's; pattern catalogue merged with the owner's pstack unslop catalogue (examples folded into matching rules, the stricter em dash rule) and four paragraph-flow rules added in our own words after comparison with vercel-labs/writing-guidelines command.md at 83e2316b034cf572400513538e4e4da01c4cc742, idea-only; docs and README reference read only for documentation, adapted with lines from cursor/plugins pstack/skills/technical-writing/SKILL.md at 2776ddd2355d6d6c8747d3964600f28daf62f049, MIT, Copyright (c) 2026 Lauren Tan (lines the tests or catalogue already cover, the unslop coupling, the PR and commit line and the tab-indent rule dropped); lines from cursor/plugins pstack/skills/unslop/SKILL.md at 2776ddd2355d6d6c8747d3964600f28daf62f049, MIT, Copyright (c) 2026 Lauren Tan"
+    },
+    {
       "skill": "skills/core/wait-what",
       "source": "mattpocock/skills",
       "path": "skills/productivity/wait-what",
@@ -191,6 +223,22 @@
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
       "changes": "collection metadata and gates; project configuration and its wayfinding operations replace the setup pointer and local-markdown default; resolutions name rejected options; researcher subagents through delegating on a throwaway branch, with no tracker edit when isolated from a file tracker; process calls; /to-spec, /to-questionnaire and /handoff suggestions and parent-agent return"
+    },
+    {
+      "skill": "skills/core/wizard",
+      "source": "mattpocock/skills",
+      "path": "skills/engineering/wizard",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; user-invoked with a one-line description; Git Bash target, guard-reserved stage and no-new-permission rules added"
+    },
+    {
+      "skill": "skills/core/writing-for-agents",
+      "source": "mattpocock/skills",
+      "path": "skills/productivity/writing-for-agents",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; trigger-only description; ordering, output-length, form-to-failure and editing rules; description, mode, freedom, script, input and versioned-claim rules in SKILL-MECHANICS.md; STEERING-FILES.md and TESTING.md references"
     }
   ]
 }

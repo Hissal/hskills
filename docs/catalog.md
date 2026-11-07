@@ -49,7 +49,6 @@ As of **2026-10-28 (Europe/Helsinki)**. A transcription of the current blueprint
 | `handoff` | core user-invoked | `mattpocock/skills`, adapted; claude-handoff, pstack, CE, davidondrej prompt-for-others ideas | — | Session continuation or self-contained work brief; evidence/authority tags; file/tracker/thread/subagent | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#41 resolution](https://github.com/Hissal/skill-collection/issues/41#issuecomment-6181216467); [#42 resolution](https://github.com/Hissal/skill-collection/issues/42#issuecomment-6191540887); [#55 resolution](https://github.com/Hissal/skill-collection/issues/55#issuecomment-6218080852); [#62 resolution](https://github.com/Hissal/skill-collection/issues/62#issuecomment-6414951885); [#73 resolution](https://github.com/Hissal/skill-collection/issues/73#issuecomment-6443641717) |
 | `retro` | core user-invoked | `mattpocock/skills`, adapted; pstack correct and others | — | Session/git/PR evidence, fix ladder, admission bar; stack environment gaps; approve writes | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#41 resolution](https://github.com/Hissal/skill-collection/issues/41#issuecomment-6181216467); [#73 resolution](https://github.com/Hissal/skill-collection/issues/73#issuecomment-6443641717) |
 | `context-audit` | core user-invoked | Adapted finding-unknowns; prompt-audit ideas | — | All context layers and transitive in-repo pointers; measured size, conflicts; propose diff only | [#42 resolution](https://github.com/Hissal/skill-collection/issues/42#issuecomment-6191540887); [#73 resolution](https://github.com/Hissal/skill-collection/issues/73#issuecomment-6443641717) |
-| `session-report` | core user-invoked | Copied Anthropic marketplace session-report, Windows temp adapted | — | Claude-only usage measurement; no cross-harness claim | [#17 resolution](https://github.com/Hissal/skill-collection/issues/17#issuecomment-6108951556); [#45 resolution](https://github.com/Hissal/skill-collection/issues/45#issuecomment-6219853780); [#50 resolution](https://github.com/Hissal/skill-collection/issues/50#issuecomment-6426359993) |
 | `setup-project` | core user-invoked | `mattpocock/skills` setup-matt-pocock-skills, renamed and substantially adapted | — | Catalog/vendor discovery; empty/partial/existing projects; select/scaffold/configure/verify; pack SETUP material | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#34 resolution](https://github.com/Hissal/skill-collection/issues/34#issuecomment-6124395889); [#71 resolution](https://github.com/Hissal/skill-collection/issues/71#issuecomment-6419435777); [#72 resolution](https://github.com/Hissal/skill-collection/issues/72#issuecomment-6418702495); supersedes the old name and installed-only #34 discovery |
 | `guide` | core user-invoked | New; `mattpocock/skills` ask-matt PHASE-BOUNDARIES ideas | — | Main workflows plus selective supporting routes; installed pack routes; recommendations only; risky-changes added to model-invoked destinations | [#15 resolution](https://github.com/Hissal/skill-collection/issues/15#issuecomment-6107305243); [#18 resolution](https://github.com/Hissal/skill-collection/issues/18#issuecomment-6108951944); [#50 resolution](https://github.com/Hissal/skill-collection/issues/50#issuecomment-6426359993); [#51 resolution](https://github.com/Hissal/skill-collection/issues/51) |
 | `wizard` | core user-invoked | `mattpocock/skills`, demoted to user-invoked | — | Interactive procedure for steps only a human can perform, when material help is needed | [#32 resolution](https://github.com/Hissal/skill-collection/issues/32#issuecomment-6123240761); [#45 resolution](https://github.com/Hissal/skill-collection/issues/45#issuecomment-6219853780); [#73 resolution](https://github.com/Hissal/skill-collection/issues/73#issuecomment-6443641717) |
@@ -185,7 +184,7 @@ These are **conditional offers**, not automatically selected project installs, c
 | roslyn-language-server / fallback csharp-lsp | external tool trial, not a skill | Microsoft Roslyn; fallback csharp-ls route | Pinned personal lspServers trial; Claude-only plugin capability | Trial authorized, final recommendation not decided; #64 remains open | [#48 resolution](https://github.com/Hissal/skill-collection/issues/48#issuecomment-6371179357) |
 | typescript-lsp | external per-project tool trial, not a skill | Named in web setup decision | Pinned, same trial terms as Roslyn | Optional TypeScript language-server trial | [#49 resolution](https://github.com/Hissal/skill-collection/issues/49#issuecomment-6397980226) |
 
-The vendor table has **19 offer rows**, including grouped skill families, an open-ended category and two tool trials. It has no defensible exact external-skill total; it must not be added to the 79 collection skills. Vercel web-design-guidelines is copied/pinned material **inside web-guide**, not a separate adopted installed skill. Host-provided authoring/document/API capabilities and placeholder generator research are not added to this offer table as invented collection picks.
+The vendor table has **19 offer rows**, including grouped skill families, an open-ended category and two tool trials. It has no defensible exact external-skill total; it must not be added to the 78 collection skills. Vercel web-design-guidelines is copied/pinned material **inside web-guide**, not a separate adopted installed skill. Host-provided authoring/document/API capabilities and placeholder generator research are not added to this offer table as invented collection picks.
 
 ## Supersession list
 
@@ -612,7 +611,7 @@ Other #51 decisions: no agents pack in the first build (setup offers Anthropic's
 
 | Part | Model-invoked | User-invoked | Skills |
 |---|---:|---:|---:|
-| core | 17 | 30 | 47 |
+| core | 17 | 29 | 46 |
 | unity | 6 | 0 | 6 |
 | gamedev | 1 | 5 | 6 |
 | csharp | 1 | 0 | 1 |
@@ -620,9 +619,9 @@ Other #51 decisions: no agents pack in the first build (setup offers Anthropic's
 | in-progress | 1 | 10 | 11 |
 | study | 1 | 1 | 2 |
 | onboarding | 1 | 0 | 1 |
-| **Collection total** | **29** | **50** | **79** |
+| **Collection total** | **29** | **49** | **78** |
 
-Core reconstruction is **42 (14 model + 28 user) in #45 + risky-changes (model) + dependency-audit (user) + break-ui (user) in #49 + reviewing (model) in amended #74 = 46 (16 model + 30 user) + commenting (model) in #88 = 47 (17 model + 30 user)**. architecture-review is one renamed identity, not another addition; teach was already removed from the #45 core census.
+Core reconstruction is **42 (14 model + 28 user) in #45 + risky-changes (model) + dependency-audit (user) + break-ui (user) in #49 + reviewing (model) in amended #74 = 46 (16 model + 30 user) + commenting (model) in #88 = 47 (17 model + 30 user), less session-report (user), dropped by the owner as installable from Anthropic's own marketplace = 46 (17 model + 29 user)**. architecture-review is one renamed identity, not another addition; teach was already removed from the #45 core census.
 
 There are **7 decided packs**, containing **32 skills** (12 model-invoked, 20 user-invoked) beyond core. In-progress has ten user-invoked trials plus its guide; study adds teach plus study-guide; onboarding has the generated automatic guide alone.
 
@@ -655,6 +654,7 @@ changing skill identity or requirements with
 | `hissal.skill-collection/code-review` | [`code-review`](../skills/core/code-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.skill-collection/codebase-design` | [`codebase-design`](../skills/core/codebase-design/SKILL.md) | — |
 | `hissal.skill-collection/commenting` | [`commenting`](../skills/core/commenting/SKILL.md) | — |
+| `hissal.skill-collection/context-audit` | [`context-audit`](../skills/core/context-audit/SKILL.md) | — |
 | `hissal.skill-collection/csharp-guide` | [`csharp-guide`](../skills/packs/csharp/csharp-guide/SKILL.md) | — |
 | `hissal.skill-collection/delegating` | [`delegating`](../skills/core/delegating/SKILL.md) | — |
 | `hissal.skill-collection/dependency-audit` | [`dependency-audit`](../skills/core/dependency-audit/SKILL.md) | — |
@@ -663,6 +663,7 @@ changing skill identity or requirements with
 | `hissal.skill-collection/grill-with-docs` | [`grill-with-docs`](../skills/core/grill-with-docs/SKILL.md) | `hissal.skill-collection/domain-modeling` [`domain-modeling`](../skills/core/domain-modeling/SKILL.md), `hissal.skill-collection/grilling` [`grilling`](../skills/core/grilling/SKILL.md) |
 | `hissal.skill-collection/grilling` | [`grilling`](../skills/core/grilling/SKILL.md) | — |
 | `hissal.skill-collection/guide` | [`guide`](../skills/core/guide/SKILL.md) | — |
+| `hissal.skill-collection/handoff` | [`handoff`](../skills/core/handoff/SKILL.md) | — |
 | `hissal.skill-collection/hillclimb` | [`hillclimb`](../skills/core/hillclimb/SKILL.md) | `hissal.skill-collection/verifying` [`verifying`](../skills/core/verifying/SKILL.md) |
 | `hissal.skill-collection/how` | [`how`](../skills/core/how/SKILL.md) | — |
 | `hissal.skill-collection/implement` | [`implement`](../skills/core/implement/SKILL.md) | — |
@@ -674,6 +675,7 @@ changing skill identity or requirements with
 | `hissal.skill-collection/receiving-review` | [`receiving-review`](../skills/core/receiving-review/SKILL.md) | — |
 | `hissal.skill-collection/refactoring` | [`refactoring`](../skills/core/refactoring/SKILL.md) | — |
 | `hissal.skill-collection/research` | [`research`](../skills/core/research/SKILL.md) | — |
+| `hissal.skill-collection/retro` | [`retro`](../skills/core/retro/SKILL.md) | — |
 | `hissal.skill-collection/reviewing` | [`reviewing`](../skills/core/reviewing/SKILL.md) | — |
 | `hissal.skill-collection/risky-changes` | [`risky-changes`](../skills/core/risky-changes/SKILL.md) | — |
 | `hissal.skill-collection/second-opinion` | [`second-opinion`](../skills/core/second-opinion/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
@@ -690,8 +692,11 @@ changing skill identity or requirements with
 | `hissal.skill-collection/unity-prototyping` | [`unity-prototyping`](../skills/packs/unity/unity-prototyping/SKILL.md) | `hissal.skill-collection/unity-guide` [`unity-guide`](../skills/packs/unity/unity-guide/SKILL.md) |
 | `hissal.skill-collection/unity-testing` | [`unity-testing`](../skills/packs/unity/unity-testing/SKILL.md) | `hissal.skill-collection/unity-guide` [`unity-guide`](../skills/packs/unity/unity-guide/SKILL.md) |
 | `hissal.skill-collection/unity-verification` | [`unity-verification`](../skills/packs/unity/unity-verification/SKILL.md) | `hissal.skill-collection/unity-guide` [`unity-guide`](../skills/packs/unity/unity-guide/SKILL.md) |
+| `hissal.skill-collection/unslop` | [`unslop`](../skills/core/unslop/SKILL.md) | — |
 | `hissal.skill-collection/verifying` | [`verifying`](../skills/core/verifying/SKILL.md) | — |
 | `hissal.skill-collection/wait-what` | [`wait-what`](../skills/core/wait-what/SKILL.md) | — |
 | `hissal.skill-collection/wayfinder` | [`wayfinder`](../skills/core/wayfinder/SKILL.md) | — |
 | `hissal.skill-collection/why` | [`why`](../skills/core/why/SKILL.md) | — |
+| `hissal.skill-collection/wizard` | [`wizard`](../skills/core/wizard/SKILL.md) | — |
+| `hissal.skill-collection/writing-for-agents` | [`writing-for-agents`](../skills/core/writing-for-agents/SKILL.md) | — |
 <!-- END GENERATED DEPENDENCIES -->

@@ -29,6 +29,10 @@
     "path": "skills/core/commenting",
     "requires": []
   },
+  "hissal.skill-collection/context-audit": {
+    "path": "skills/core/context-audit",
+    "requires": []
+  },
   "hissal.skill-collection/csharp-guide": {
     "path": "skills/packs/csharp/csharp-guide",
     "requires": []
@@ -62,6 +66,10 @@
   },
   "hissal.skill-collection/guide": {
     "path": "skills/core/guide",
+    "requires": []
+  },
+  "hissal.skill-collection/handoff": {
+    "path": "skills/core/handoff",
     "requires": []
   },
   "hissal.skill-collection/hillclimb": {
@@ -108,6 +116,10 @@
   },
   "hissal.skill-collection/research": {
     "path": "skills/core/research",
+    "requires": []
+  },
+  "hissal.skill-collection/retro": {
+    "path": "skills/core/retro",
     "requires": []
   },
   "hissal.skill-collection/reviewing": {
@@ -186,6 +198,10 @@
       "hissal.skill-collection/unity-guide"
     ]
   },
+  "hissal.skill-collection/unslop": {
+    "path": "skills/core/unslop",
+    "requires": []
+  },
   "hissal.skill-collection/verifying": {
     "path": "skills/core/verifying",
     "requires": []
@@ -200,6 +216,14 @@
   },
   "hissal.skill-collection/why": {
     "path": "skills/core/why",
+    "requires": []
+  },
+  "hissal.skill-collection/wizard": {
+    "path": "skills/core/wizard",
+    "requires": []
+  },
+  "hissal.skill-collection/writing-for-agents": {
+    "path": "skills/core/writing-for-agents",
     "requires": []
   }
 }

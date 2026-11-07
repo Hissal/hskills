@@ -6,6 +6,7 @@
     "skills/core/code-review",
     "skills/core/codebase-design",
     "skills/core/commenting",
+    "skills/core/context-audit",
     "skills/core/delegating",
     "skills/core/dependency-audit",
     "skills/core/diagnosing-bugs",
@@ -13,6 +14,7 @@
     "skills/core/grill-with-docs",
     "skills/core/grilling",
     "skills/core/guide",
+    "skills/core/handoff",
     "skills/core/hillclimb",
     "skills/core/how",
     "skills/core/implement",
@@ -23,6 +25,7 @@
     "skills/core/receiving-review",
     "skills/core/refactoring",
     "skills/core/research",
+    "skills/core/retro",
     "skills/core/reviewing",
     "skills/core/risky-changes",
     "skills/core/second-opinion",
@@ -33,10 +36,13 @@
     "skills/core/to-spec",
     "skills/core/to-tickets",
     "skills/core/triage",
+    "skills/core/unslop",
     "skills/core/verifying",
     "skills/core/wait-what",
     "skills/core/wayfinder",
-    "skills/core/why"
+    "skills/core/why",
+    "skills/core/wizard",
+    "skills/core/writing-for-agents"
   ],
   "packs": {
     "csharp": [

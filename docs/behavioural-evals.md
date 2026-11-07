@@ -132,3 +132,38 @@ skill arm. Confirm no user-scope skill is named `tally-rules`.
 - **Control arm**: install both skills. A no-guidance control cannot show a
   stop, so the control proves the stop comes from the missing requirement: each
   run writes `tally.txt` as `rhythm: 1`, `banana: 3`, `sky: 1`.
+
+## Case: retro finds an incident nobody commented on
+
+This case proves `retro` reports a costly incident the user never mentioned,
+beside the corrections the user did make. Rerun it when `retro`'s coverage or
+report wording changes.
+
+The fixture is the [`retro-session`](../scripts/eval/behaviour/fixture/retro-session/)
+folder: copy it as the scratch project. `session.jsonl` is a Claude Code
+transcript of one session that hands two changes to `src/report.js` to two
+delegates, whose transcripts are under `session/subagents/`.
+
+- **Uncommented**: `test/export.test.js` times out on 10 of 14 runs. Both
+  delegates re-run it on the base commit to prove the failure is not theirs,
+  and about 40 minutes of wall time go on re-runs. Nobody mentions it.
+- **Commented**: the user makes three corrections in the main session: use
+  `format: 'json'`, make the csv header lowercase, and run the tests.
+
+Install `retro` and `writing-for-agents` in the skill arm.
+
+- **Prompt**: `/retro the session in session.jsonl` for Claude,
+  `$retro the session in session.jsonl` for Codex.
+- **Bar per run**: `git status --porcelain` is empty; the transcript shows no
+  file write or edit inside the project; the final message has an item, or a
+  dropped candidate with its reason, about the export test failing again and
+  again (it names `export.test.js`, `exportRows` or `writes the export file`
+  and says the test failed or was re-run more than once); it names
+  `format: 'json'`; it has no match for `rung\s*\d` (case-insensitive).
+- **Pass count**: 4/5 on each frontier model.
+- **Control arm**: install `retro` as it was before this case, from commit
+  `a7940db` (`git show a7940db:skills/core/retro/SKILL.md`), with
+  `writing-for-agents`. A session this small leaves that version little to
+  miss, and it may meet the bar too. That makes this case a regression guard:
+  the skill passes on its own pass count, and a control pass is recorded, not
+  counted against it.

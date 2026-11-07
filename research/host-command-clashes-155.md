@@ -5,7 +5,7 @@ Status: results for the owner's decision. **No clash found.** Nothing was rename
 
 ## Question
 
-Does any user-invoked name in spec 7, plus `/pr`, equal a built-in command or bundled skill of a supported harness? Names: `/guide`, `/setup-project`, `/handoff`, `/retro`, `/wizard`, `/unslop`, `/context-audit`, `/session-report`, `/pr`. Harnesses: Claude Code, Codex, OpenCode, Cursor.
+Does any user-invoked name in spec 7, plus `/pr`, equal a built-in command or bundled skill of a supported harness? Names: `/guide`, `/setup-project`, `/handoff`, `/retro`, `/wizard`, `/unslop`, `/context-audit`, `/pr`. Harnesses: Claude Code, Codex, OpenCode, Cursor.
 
 ## Result
 
@@ -18,7 +18,6 @@ Does any user-invoked name in spec 7, plus `/pr`, equal a built-in command or bu
 | `wizard` | free | free | free | free | clash-free |
 | `unslop` | free | free | free | free | clash-free |
 | `context-audit` | free | free | free | free | clash-free |
-| `session-report` | free | free | free | free | clash-free |
 | `pr` | free | free | free | free | clash-free |
 
 **Plugin-prefixed names.** These skills ship in `collection-core` (`skills/core/.claude-plugin/plugin.json`, `skills/core/.codex-plugin/plugin.json`), so the effective names are `/collection-core:<name>` on Claude Code and `collection-core:<name>` on Codex. No harness has a built-in with a `collection-core:` prefix, so every prefixed name is clash-free. OpenCode and Cursor use the folder route, so only the short names apply. This assumes the final plugin name stays `collection-core`; the final effective names remain a build check under item 9.

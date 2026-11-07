@@ -8,7 +8,7 @@ const jobs = typeof os.availableParallelism === 'function' ? os.availableParalle
 
 // unit: { args, timeout? }. Resolves to one result per unit, in unit order:
 // { status, stdout, stderr, timedOut, error }.
-function runAll(units, limit = jobs) {
+function runAll(units) {
   const results = new Array(units.length);
   let next = 0;
   function start() {
@@ -27,13 +27,15 @@ function runAll(units, limit = jobs) {
       child.on('close', settle);
     }).then(start);
   }
-  return Promise.all(Array.from({ length: Math.min(limit, units.length) }, start)).then(() => results);
+  return Promise.all(Array.from({ length: Math.min(jobs, units.length) }, start)).then(() => results);
 }
 
 // A case process that failed without printing its own FAIL line still reports one.
+// It starts on a fresh line even when a killed process left a partial one.
 function report(unit, result, label = unit.name) {
-  if (result.timedOut) return 'FAIL ' + label + ': timed out after ' + unit.timeout / 1000 + 's\n';
-  if (result.status !== 0 && !/^FAIL /m.test(result.stdout)) return 'FAIL ' + label + ': exited ' + result.status + (result.error ? ' (' + result.error.message + ')' : '') + '\n';
+  const line = text => (result.stdout && !result.stdout.endsWith('\n') ? '\n' : '') + 'FAIL ' + label + ': ' + text + '\n';
+  if (result.timedOut) return line('timed out after ' + unit.timeout / 1000 + 's');
+  if (result.status !== 0 && !/^FAIL /m.test(result.stdout)) return line('exited ' + result.status + (result.error ? ' (' + result.error.message + ')' : ''));
   return '';
 }
 module.exports = { runAll, report };

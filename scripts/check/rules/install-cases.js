@@ -2,9 +2,11 @@
 const path = require('path');
 const { spawnSync } = require('child_process');
 const HARNESS = 'scripts/install/test/run.js';
-// The harness gives its plugin, trust and lifecycle sub-harnesses 180s, 60s
-// and 180s, then runs its own cases; a healthy run on a slow machine took
-// 305s (#216). The limit only stops a hung harness, so it sits well past that.
+// The harness runs its plugin and trust sub-harnesses, each lifecycle case and
+// its own cases in parallel, with 180s for plugin, 60s for trust and 180s per
+// lifecycle case. A healthy serial run on a slow machine took 305s (#216); the
+// parallel run takes far less (#241). The limit only stops a hung harness, so
+// it sits well past that.
 // COLLECTION_INSTALL_CASES_TIMEOUT_MS (a positive whole number) overrides it.
 const DEFAULT_TIMEOUT_MS = 900000;
 module.exports = {

@@ -7,7 +7,7 @@ import json
 import os
 import sys
 
-dump = lambda value: json.dumps(value, separators=(',', ':'))
+dump = lambda value: json.dumps(value, separators=(',', ':'), ensure_ascii=False)
 host = 'codex' if 'codex' in os.path.basename(sys.argv[0]) else 'claude'
 root = os.environ['CODEX_HOME' if host == 'codex' else 'CLAUDE_CONFIG_DIR']
 plugins = os.path.join(root, 'plugins')
@@ -15,6 +15,7 @@ os.makedirs(plugins, exist_ok=True)
 market = os.path.join(plugins, 'market.json')
 installed = os.path.join(plugins, 'installed.json')
 args = sys.argv[1:]
+arg = lambda i: args[i] if len(args) > i else None  # like a JS array, a missing argument is empty
 exists = lambda name: os.path.exists(os.path.join(root, name))
 
 
@@ -36,13 +37,16 @@ if args[:1] == ['app-server']:
         if not line:
             break
         request = json.loads(line)
-        if request.get('id') == 1:
+        # Only the integer ids match, as with === in host.cjs.
+        rid = request.get('id') if type(request.get('id')) is int else None
+        if rid == 1:
             print(dump({'id': 1, 'result': {}}), flush=True)
-        if request.get('id') == 2:
+        if rid == 2:
             user = []
             if exists('hooks.json'):
                 groups = json.loads(read(os.path.join(root, 'hooks.json')))['hooks'].get('PreToolUse') or []
-                user = [{'source': 'user', 'command': h['command'], 'enabled': True,
+                # A hook without a command leaves the key out, as JSON.stringify drops undefined.
+                user = [{'source': 'user', **({'command': h['command']} if 'command' in h else {}), 'enabled': True,
                          'trustStatus': 'trusted' if exists('legacy-trusted') else 'untrusted'}
                         for g in groups for h in (g.get('hooks') or [])]
             hooks = [{'source': 'plugin', 'pluginId': 'command-guard@skill-collection-guard', 'enabled': True,
@@ -50,11 +54,11 @@ if args[:1] == ['app-server']:
             print(dump({'id': 2, 'result': {'data': [{'hooks': hooks, 'errors': []}]}}), flush=True)
 else:
     output = {}
-    command = args[1] if len(args) > 1 else None
+    command = arg(1)
     if command == 'marketplace':
-        if args[2] == 'add':
-            write(market, dump({'source': args[3]}))
-        elif args[2] == 'remove':
+        if arg(2) == 'add':
+            write(market, dump({} if arg(3) is None else {'source': arg(3)}))
+        elif arg(2) == 'remove':
             os.unlink(market)
     elif command in ('add', 'install'):
         source = json.loads(read(market))['source']

@@ -487,7 +487,8 @@ const at = process.argv.indexOf('--case');
 if (at !== -1) process.exitCode = runCase(process.argv[at + 1]);
 else {
   // Every sub-harness, lifecycle case and install case is an independent process;
-  // they share one pool, longest first, each under its sub-harness's time limit.
+  // they share one pool, longest first. Plugin and trust keep their 180s and 60s
+  // limits; each lifecycle case gets the lifecycle suite's 180s; install cases have none.
   const lifecycle = require('./lifecycle');
   const plugin = { name: 'plugin registration lifecycle (plugin.js)', timeout: 180000, args: [path.join(__dirname, 'plugin.js')] };
   const trust = { name: 'trust delta regression (trust.js)', timeout: 60000, args: [path.join(__dirname, 'trust.js')] };
@@ -506,7 +507,7 @@ else {
     }
     for (const unit of lifecycleUnits) print(unit, report(unit, result(unit), 'guard lifecycle regressions (lifecycle.js): ' + unit.name));
     const lifecycleFailures = lifecycleUnits.filter(failed).length;
-    console.log('guard lifecycle CLI regressions: ' + lifecycleFailures + ' failures');
+    console.log(lifecycle.summary(lifecycleFailures));
     if (lifecycleFailures) { console.log('FAIL guard lifecycle regressions (lifecycle.js)'); failures++; }
     for (const unit of caseUnits) {
       print(unit, report(unit, result(unit)));

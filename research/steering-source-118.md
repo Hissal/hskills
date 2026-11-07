@@ -6,7 +6,10 @@ Current scope: the naming-only source completes #118. The unidentifiable histori
 tooling-note requirement was [retired on 2026-10-31](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
 The implementation snapshot below predates that correction. Its unsuccessful
 recovery investigation is preserved in [Recovery search](steering-notes-recovery.md).
-Admission reasons and the size figure are now recorded on #118.
+Admission reasons and the size figure are now recorded on #118. The
+labels-in-reports section (lines 11–13) was added later, from the retros of the
+spec #83 build thread (PR #323), and its admission reasons are in the table
+below; the size figure under it predates that section.
 
 ## Sources and limits
 
@@ -53,6 +56,8 @@ below explain that admitted policy, rather than claiming new observations.
 | 7: allowed types | Defines the fallback vocabulary used by lines 5–6 | Same admitted naming policy | Needed to interpret the standing syntax; moving only this list to a skill leaves the fallback incomplete |
 | 8: breaking-change syntax and footer | Conditional clause of the same fallback | Same admitted naming policy | Keeps meaning consistent when ordinary work creates a breaking-change title or commit |
 | 9: optional body purpose and wrapping | Conditional clause when writing a commit body | Same admitted naming policy | Applies outside any particular commit skill; hooks cannot choose a useful explanation of why |
+| 11: labels heading | Identifies the reporting rule below | Owner-approved retro change after PR #323 | Organises the rule; no separate behaviour |
+| 13: say what each cited label is | Any report or reply that cites an issue, finding label, check or error code | In the spec #83 build thread (PR #323), the owner asked 6–8 times what a cited label meant, such as "what are the static checks?" | About half the questions followed replies outside any skill's final report, so no single skill can carry it |
 
 Conditional syntax clauses belong to the admitted convention; they are not
 claims that every session creates a branch, breaking change or commit body.

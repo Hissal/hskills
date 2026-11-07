@@ -7,3 +7,7 @@ Write all four in the repo's own convention, found in its docs (CONTRIBUTING, CL
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 - Breaking change: `!` after the type or scope, plus a `BREAKING CHANGE:` footer in the commit body.
 - Commit body (optional): explain why, not what; wrap at 72.
+
+## Labels in reports
+
+Beside every issue or PR number, review-finding label, check name or error code you cite to the user, in a final report or a follow-up reply, say in a few words what it is: "#42 (the login timeout bug)", not "#42".

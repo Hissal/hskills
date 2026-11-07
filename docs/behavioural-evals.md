@@ -27,8 +27,19 @@ alone ("`tally.txt` exists with one line per word"; "no file write before the
 plan is shown"). Record the bar where the results will go (the issue or PR for
 the change) before the first run.
 
-**Done** when the bar is recorded and every observation in it is checkable
-without judgement calls.
+Pick observations an agent without the skill could plausibly miss. Prefer
+observations on what the output contains and whether it is correct over the
+absence of an action any agent avoids unasked: an agent not asked to edit does
+not edit. The prompt gives the task only, never the behaviour under test. The
+prompt of #137 (the `handoff` eval) said nothing was approved, so the control
+kept its guess unapproved too, and the case tested the prompt, not the skill
+(owner rulings on
+[#137](https://github.com/Hissal/skill-collection/issues/137#issuecomment-6708124892)
+and on [#140](https://github.com/Hissal/skill-collection/issues/140#issuecomment-6708125077),
+the `retro` eval).
+
+**Done** when the bar is recorded, every observation in it is checkable on the
+files and transcript, and the prompt does not state the behaviour under test.
 
 ### 2. Build the fixture
 
@@ -75,11 +86,24 @@ Grade each run against the bar on two sources:
 - **Transcript**: read it end to end. Note what the agent read, each tool call
   and file write, and where its path diverged from other runs.
 
+Grade what the run found or did on its merits, not only by exact match to an
+expected list. An item worded differently from the bar still meets the
+observation it matches; a correct finding the bar did not list is recorded in
+the run's favour but never stands in for a missed observation; a wrong one
+counts against the run.
+
 Report the pass count per arm per model (`4/5`). Variance is a metric: runs
 that disagree mean the behaviour is unreliable, and a split count is a finding
 in itself, never rounded to a pass. The skill passes when every frontier model
-meets the bar's pass count and the skill arm beats the control. Lower-tier
-misses are advisory, as in the trigger eval.
+meets the bar's pass count. Lower-tier misses are advisory, as in the trigger
+eval. The control arm shows what agents do by default. An observation the
+control also meets is default behaviour: record it, and never count it against
+the skill. When the control meets the whole bar, the case cannot show what the
+skill adds; sharpen the bar or prompt in a later case.
+
+A run whose prompt states the behaviour under test proves nothing either way:
+a pass only shows the agent followed the prompt. Count none of its runs, fix
+the prompt, and rerun both arms.
 
 **Done** when every run has a verdict per bar observation and every differing
 path in the transcripts is explained.

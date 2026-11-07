@@ -71,7 +71,3 @@ Rule numbers are stable ids. A removed rule leaves a gap; never renumber. Each r
 45. **Chopped sentences.** One connected idea split into short sentences that each state a step: "The cache was cold. Requests timed out. Users saw errors." Join them so the link shows: "Requests timed out against the cold cache, so users saw errors." A single short sentence for emphasis stays; rule 27 covers fragments.
 46. **Datasheet voice.** A sentence that lists a property instead of saying who does what: "a retry limit is provided", "the timeout is configurable", "logging is supported". Say who acts and how: "set `retries` in `config.yml` to change the limit".
 47. **Cold-open paragraph.** A body paragraph whose first sentence would work as a heading on its own and ignores the paragraph before. Tie the opening to what the reader just read, or make it a heading.
-
-## Earlier pstack numbers
-
-The owner's pstack `unslop` catalogue numbered its rules differently. Its rules map here: 3 to 2; 5 to 4; 7 to 10; 8 to 11; 9 to 12; 10 to 13; 11 to 14; 12 to 15; 13 to 29; 14 to 28; 15 to 31; 16 to 30; 17 to 32; 18 to 33; 19 to 35; 20 to 36; 22 to 37; 23 to 16; 24 to 17; 25 to 5; 26 to 20; 27 to 21 and tests 1 and 2; 28 to 22; 29 to 23; 30 to 18; 31 to 10 and 16; 32 to 43 and 27; 33 to 42.

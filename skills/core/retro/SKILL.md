@@ -28,7 +28,8 @@ The retro keeps no record of its own: no snapshot file, no score, no learnings s
 
 ## Sources
 
-- **Session logs**, any number: the current session by default, or the sessions the user names (by id, by date, or "the last few sessions in this project"), from one harness or several. Find and read them through [session logs](references/session-logs.md). For a harness not in its table, ask the user for a transcript path.
+- **Session logs**, any number: the current session by default, or the sessions the user names (by id, by date, or "the last few sessions in this project"), from one harness or several. Find the harness's logs yourself; their formats are undocumented and change between versions, so read what is there. When you cannot find them, ask the user for a transcript path. Read each session's subagent transcripts as part of it: problems often hide in subagent work. Claude Code keeps them in `<session-id>/subagents/`; other harnesses link them to the parent session.
+  - **The current session**: newest is not always current, since another session or a subagent can have written a newer log. Take this session's own id when the harness exposes it. Otherwise take the newest log that is not a subagent's. When several sessions were active in the same window, list the candidates (id, start time, first user message) and ask which is this one. A subagent log is never the current session.
 - **Git history of the same window**: the commits on the sessions' branches over their time span. Look for reverts, fixup and squash commits, and the owner's edits on top of agent commits: what the owner changed after the agent called the work done.
 - **PR reviews of the same window**: review comments, requested changes and bot findings on the PRs those branches opened. The PR host and tracker come from project configuration (the files linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`). When it names none, say so, suggest `/setup-project`, and retro the logs and git history alone.
 
@@ -62,7 +63,7 @@ Route each candidate to the first rung that holds the fix, strongest first. One 
 2. **A check**: a lint rule, a type check, a filesystem linter, a pre-commit hook or a CI job, whichever the repo's language and existing guardrail make cheapest. Classify the violation first: a **mechanical** one (a fixed syntactic pattern, a banned API, an import shape, a file-location rule) gets a deterministic check, full stop. A proposed check must be proven to fail on the actual mistake from the session: run it against that commit or line, show it failing, and show it passing on the fix. An unproven check is not offered as a check.
 3. **A test** that fails on the mistake and passes on the fix.
 4. **A guard rule**, through the hook gate: it prints nothing when it does not apply, never repeats itself every turn, fails open, ships with block and allow test cases, and works on Claude Code and Codex or is declared Claude-only on purpose.
-5. **A skill edit**: see [where a skill or guard-rule fix goes](#where-a-skill-or-guard-rule-fix-goes).
+5. **A skill fix**: an issue on the skill's source repo, a local edit or a project steering change; see [where a skill or guard-rule fix goes](#where-a-skill-or-guard-rule-fix-goes).
 6. **Project configuration**: a fact the project states about itself (its tracker, commands, file locations, what needs approval), in the files linked from the `## Agent skills` block.
 7. **Harness settings or tooling**: permissions, hook settings, an MCP server, a CLI.
 8. **A steering line**, only when it passes the text gate: it applies in nearly every session where it loads; the agent was seen getting it wrong without it; and no skill or hook could carry it instead. Write it by `writing-for-agents`' steering-files reference.
@@ -85,16 +86,17 @@ Present every candidate before writing anything. For each, give:
 - for a check or test, the run that shows it failing on the mistake;
 - for a steering line, the diff to the steering file with a one-line why;
 - for a guard rule, how it meets each point of the hook gate;
-- for a skill or guard-rule fix, both destinations below.
+- for a skill or guard-rule fix, the three destinations below.
 
 The owner approves, changes or drops each item separately. An item not approved is not written.
 
 ### Where a skill or guard-rule fix goes
 
-Offer both, with no default, and let the owner pick:
+Offer all three, with no default, and let the owner pick:
 
-- **An issue on the collection's source repo**, offered only when the finding is demonstrable: the issue quotes the session or commit. Find the repo from the installed skill itself, never from project configuration: follow the skill's folder to where it is installed, then read its identity (the publisher prefix of `agent-skills-sync.id` in its `SKILL.md`) and where the install came from (the checkout's git remote for a folder-linked install, the marketplace a plugin was installed from). A `NOTICE.md` in the folder names the upstream the skill was copied from, which is not the collection. When these do not settle it, ask. Show the issue text in the report before filing: transcripts can hold private data.
+- **An issue on the skill's source repo**, offered only when the finding is demonstrable: the issue quotes the session or commit. This fixes the source; a local edit is a patch the next update overwrites. Find the repo from where the skill was installed from, never from project configuration: follow the skill's folder to its install, then read the git remote of a folder-linked checkout, or the marketplace or repo a plugin was installed from. A `NOTICE.md` in the folder names where a copied skill came from, which may not be where this install came from. When these do not settle it, ask. Show the issue text in the report before filing: transcripts can hold private data.
 - **An edit where the skill is installed**, at project or user scope, stating the cost: a plugin install loses the edit on its next update; a folder-linked install edits the source checkout, so the edit reaches every project using that checkout.
+- **A steering-file change in the project** that corrects the behaviour and leaves the skill as it is, when the skill is right in general and this project needs something different.
 
 ## Suggestions
 

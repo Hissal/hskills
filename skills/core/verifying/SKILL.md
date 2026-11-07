@@ -60,7 +60,7 @@ A failure is the branch's fault unless you show otherwise. Showing otherwise mea
 - **In-branch failure:** stop the work that builds on it, then fix it or report it as a blocker.
 - **A declared suite cannot run:** the claims it would back are unvalidated. Report the blocker in prose with its command, tree and exit code.
 - **Pre-existing failure:** keep its fix out of the branch's change.
-  - Unattended: put it on the PR's **Not done** line with the evidence that it is pre-existing (base commit, command, exit code, what failed), and carry on.
+  - Unattended: put it on the PR's **Not done** line with the evidence that it is pre-existing (base commit, command, exit code, what failed) and the owner's choice it waits on, as below, and carry on.
   - With the owner present: put the choice to them: fix it in a separate commit, record it, or knowingly skip it.
 
 ## 6. Floor guard at task end

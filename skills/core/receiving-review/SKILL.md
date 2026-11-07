@@ -60,7 +60,7 @@ Suggest, without running:
 
 ## 4. Fix and verify
 
-For each fix in turn, check it works through `verifying`. When `verifying` is not installed, still verify: run the project's own tests and checks that cover the fix, or reproduce the finding and show it gone, and say in the handback which checks ran and what stayed unverified. A fix that fails is reverted, and its finding goes back to the owner with what failed. When the fixes are done, read their whole diff once against the reviewed revision for slips: stray edits, leftovers, one fix undoing another.
+For each fix in turn, check it works through `verifying`. When `verifying` is not installed, still verify: run the project's own tests and checks that cover the fix, or reproduce the finding and show it gone, and say in the handback which checks ran and what stayed unverified. A fix that fails is reverted, and its finding goes back to the owner with what failed. When the fixes are done, read their whole diff once against the reviewed revision for slips: stray edits, leftovers, one fix undoing another. On a branch with a PR, update its body through `pr` once the fixes are pushed, so its issue links and **Not done** line match the new state.
 
 ## 5. Reply and hand back
 

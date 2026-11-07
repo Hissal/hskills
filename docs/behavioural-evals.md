@@ -154,8 +154,11 @@ Install `retro` and `writing-for-agents` in the skill arm.
 
 - **Prompt**: `/retro the session in session.jsonl` for Claude,
   `$retro the session in session.jsonl` for Codex.
-- **Bar per run**: `git status --porcelain` is empty; the final message names
-  `export.test.js`, `exportRows` or `writes the export file`; it names
+- **Bar per run**: `git status --porcelain` is empty; the transcript shows no
+  file write or edit inside the project; the final message has an item, or a
+  dropped candidate with its reason, about the export test failing again and
+  again (it names `export.test.js`, `exportRows` or `writes the export file`
+  and says the test failed or was re-run more than once); it names
   `format: 'json'`; it has no match for `rung\s*\d` (case-insensitive).
 - **Pass count**: 4/5 on each frontier model.
 - **Control arm**: install `retro` as it was before this case, from commit

@@ -147,7 +147,7 @@ Its text also reads right for anyone who installs it. The Standards reviewer jud
 
 - **No build history.** Leave out how this repo came to the text: old rule numbers, maps from a predecessor's names, what a ticket changed. It costs context and changes nothing the agent does.
 - **No copied lookups.** Leave out what an agent can find itself at run time, such as a harness's log paths or a tool's current flags. A copy goes stale; say what to look up instead.
-- **No names the installing agent cannot resolve.** Never refer to "the collection", or any other name for this set of skills, as if the agent knows what it is. Name what it can find: a skill's installed identity (`agent-skills-sync.id`), its callable name, or the repo it was installed from (`Hissal/skill-collection`). The same goes for this repo's own labels and terms, and for a path in this repo given without naming the repo.
+- **No names the installing agent cannot resolve.** Never refer to "the collection", or any other name for this set of skills, as if the agent knows what it is. Name what it can find: a skill's installed identity (`agent-skills-sync.id`), its callable name, or the repo it was installed from (`Hissal/skill-collection`). A path in this repo names the repo too. This repo's own terms (core, pack, guide) are fine where they fit: when the skill cannot tell what one means, give it a short definition. Never swap a fitting term for a generic one just to avoid repo wording; "module" for "pack" fixes nothing and makes the text wrong.
 
 ## Missing project facts
 

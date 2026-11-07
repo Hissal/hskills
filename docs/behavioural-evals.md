@@ -101,6 +101,10 @@ control also meets is default behaviour: record it, and never count it against
 the skill. When the control meets the whole bar, the case cannot show what the
 skill adds; sharpen the bar or prompt in a later case.
 
+A run whose prompt states the behaviour under test proves nothing either way:
+a pass only shows the agent followed the prompt. Count none of its runs, fix
+the prompt, and rerun both arms.
+
 **Done** when every run has a verdict per bar observation and every differing
 path in the transcripts is explained.
 
@@ -108,10 +112,9 @@ path in the transcripts is explained.
 
 Classify each failing run before you rewrite any skill text:
 
-- **Fixture**: the scenario or bar is wrong: an ambiguous prompt, a prompt
-  that states the behaviour under test, a bar that rewards the wrong thing, or
-  user-scope material leaking guidance. Fix the fixture or bar, then rerun
-  both arms.
+- **Fixture**: the scenario or bar is wrong: an ambiguous prompt, a bar that
+  rewards the wrong thing, or user-scope material leaking guidance. Fix the
+  fixture or bar, then rerun both arms.
 - **Harness**: the run never tested the skill: a permission or sandbox denial,
   a tool error, a timeout, a malformed transcript, or the skill missing from
   the listing. Fix the setup, then rerun.

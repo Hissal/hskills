@@ -72,7 +72,7 @@ Route each candidate to the first rung that holds the fix, strongest first. One 
 
 ## Admission bar
 
-Every write-it-down candidate (a skill edit, project configuration, a steering line, a doc, ADR or glossary entry, an issue) must hold reasoning that cannot be recovered from the code, the tests or the docs, and whose loss would cost something real. Effort and completion do not count: that the session was long or the work got done is no reason to record it. Invoking `/retro` does not lower the bar. Drop a candidate that fails it.
+Every write-it-down candidate (a skill fix, project configuration, a steering line, a doc, ADR or glossary entry, an issue) must hold reasoning that cannot be recovered from the code, the tests or the docs, and whose loss would cost something real. Effort and completion do not count: that the session was long or the work got done is no reason to record it. Invoking `/retro` does not lower the bar. Drop a candidate that fails it.
 
 "Nothing worth recording" is a valid result; say so plainly rather than padding the report. Checks and tests do not take this bar: they have their own proof, failing on the mistake.
 

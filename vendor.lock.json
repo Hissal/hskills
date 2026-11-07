@@ -118,7 +118,7 @@
       "path": "skills/engineering/pr",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; Why section and one optional Not done line; evidence taken only from what was already gathered, with pr running nothing; pack-guide extension point; writing-for-agents pointer; attribution footer; done line; issue links set Closes or Refs by state on every write, with the description covering updates, pushes and merges; Not done entries name what they need from a human; CREDITS.md and the credits metadata moved here: the Summary section's menu of visuals and placement guidance are Dex Horthy's show-me, lines from humanlayer/skills plugins/show-me/skills/show-me/SKILL.md at 4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329, MIT, Copyright (c) 2026 HumanLayer"
+      "changes": "collection metadata and gates; Why section and one optional Not done line; evidence taken only from what was already gathered, with pr running nothing; pack-guide extension point; attribution footer; done line; issue links set Closes or Refs by state on every write, with the description covering updates, pushes and merges; Not done entries name what they need from a human; CREDITS.md and the credits metadata moved here: the Summary section's menu of visuals and placement guidance are Dex Horthy's show-me, lines from humanlayer/skills plugins/show-me/skills/show-me/SKILL.md at 4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329, MIT, Copyright (c) 2026 HumanLayer"
     },
     {
       "skill": "skills/core/prototype",

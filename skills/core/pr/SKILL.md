@@ -42,7 +42,7 @@ Use this template for writing the PR body, and when updating one:
 
 ## Sections
 
-Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`. When `writing-for-agents` is installed, follow it for the prose.
+Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
 
 ### Why
 

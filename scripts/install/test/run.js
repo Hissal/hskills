@@ -1,9 +1,9 @@
 'use strict';
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
+const { tempDir, testRunDir } = require('../../test-util');
 const cli = path.resolve(__dirname, '../install.js');
 const cases = [
   ...(process.platform === 'win32' ? [false, true].map(deny => [
@@ -457,6 +457,9 @@ fs.symlinkSync = function(target, dest, type) {
     assert.match(f.last.stdout, /Read\(/);
   }],
 ];
+// Made before the sub-harnesses start, so their folders land in this run's
+// folder and go with it even when a timeout kills one mid-run.
+testRunDir();
 const plugins = spawnSync(process.execPath, [path.join(__dirname, 'plugin.js')], { encoding: 'utf8', timeout: 180000 });
 process.stdout.write(plugins.stdout || ''); process.stderr.write(plugins.stderr || '');
 let failures = plugins.status === 0 ? 0 : 1;
@@ -467,7 +470,7 @@ const lifecycle = spawnSync(process.execPath, [path.join(__dirname, 'lifecycle.j
 process.stdout.write(lifecycle.stdout || ''); process.stderr.write(lifecycle.stderr || '');
 if (lifecycle.status !== 0) { console.log('FAIL guard lifecycle regressions (lifecycle.js)'); failures++; }
 for (const [name, test] of cases) {
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'collection-install-'));
+  const temp = tempDir('collection-install-');
   try {
     const repo = path.join(temp, 'repo');
     const home = path.join(temp, 'home');

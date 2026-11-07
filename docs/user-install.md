@@ -158,6 +158,7 @@ Use temporary directories for all of these to avoid touching a real home.
 The table-driven CLI cases run with real temporary directories through
 `node scripts/install/test/run.js` and inside the collection check. They
 exercise ownership, reconciliation, no-change reruns and doctor failures.
+Outside Windows, the harness's host CLI doubles need `python3` on `PATH`.
 
 Native Windows hosts read installed bodies and references through real directory
 symlinks and installer-created junctions in all 12 matrix cells. Junction creation

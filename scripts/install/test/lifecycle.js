@@ -5,7 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
-const { tempDir } = require('../../test-util');
+const { tempDir, testRunDir } = require('../../test-util');
+const hostDoubles = require('./doubles');
 const cli = path.resolve(__dirname, '../install.js');
 const hash = c => '"sha256:' + c.repeat(64) + '"';
 // Native writer output after human /hooks review: bare parent, basic plugin key, literal user key.
@@ -21,12 +22,12 @@ function fixture(name) {
   const home = tempDir('guard-lifecycle-' + name + '-');
   fs.mkdirSync(path.join(home, '.codex'));
   fs.writeFileSync(path.join(home, '.codex/config.toml'), personal);
-  for (const host of ['claude', 'codex']) fs.copyFileSync(path.join(__dirname, 'host.cjs'), path.join(home, host + '.cjs'));
+  const doubles = hostDoubles(home);
   const source = path.join(home, 'source');
   fs.cpSync(path.resolve(__dirname, '../../../hooks/command-guard'), path.join(source, 'hooks/command-guard'), { recursive: true });
   // The human already reviewed the plugin hook in /hooks.
   fs.writeFileSync(path.join(home, '.codex/human-trusted'), 'human fixture decision');
-  const env = { ...process.env, COMMAND_GUARD_CLAUDE: path.join(home, 'claude.cjs'), COMMAND_GUARD_CODEX: path.join(home, 'codex.cjs') };
+  const env = { ...process.env, COMMAND_GUARD_CLAUDE: doubles.claude, COMMAND_GUARD_CODEX: doubles.codex };
   const f = {
     home, source,
     config: path.join(home, '.codex/config.toml'),
@@ -42,18 +43,7 @@ function fixture(name) {
   };
   return f;
 }
-function cases(...list) {
-  let failures = 0;
-  for (const [name, test] of list) {
-    const f = fixture(name.replace(/\W+/g, '-').slice(0, 24));
-    try { test(f); console.log('ok ' + name); }
-    catch (e) { console.log('FAIL ' + name + ': ' + e.message); failures++; }
-    finally { fs.rmSync(f.home, { recursive: true, force: true }); }
-  }
-  return failures;
-}
-
-const failures = cases(
+const cases = [
   ['directory removal errors leave a journal that supports retry', f => {
     f.ok('install');
     const preload = path.join(f.home, 'busy-directory.cjs');
@@ -215,6 +205,39 @@ fs.rmdirSync = function(dir, ...args) {
     f.run('uninstall');
     assert.deepEqual(fs.readdirSync(snapshot).sort(), ['.claude-plugin', 'adapters', 'rules']);
   }],
-);
-console.log('guard lifecycle CLI regressions: ' + failures + ' failures');
-process.exitCode = failures ? 1 : 0;
+];
+// Cases run by name, so a repeated name would run one case twice and skip the other.
+assert.equal(new Set(cases.map(([n]) => n)).size, cases.length, 'case names must be unique');
+// One case in this process, against its own temporary home.
+function runCase(name) {
+  const [, test] = cases.find(([n]) => n === name);
+  const f = fixture(name.replace(/\W+/g, '-').slice(0, 24));
+  try { test(f); console.log('ok ' + name); return 0; }
+  catch (e) { console.log('FAIL ' + name + ': ' + e.message); return 1; }
+  finally { fs.rmSync(f.home, { recursive: true, force: true }); }
+}
+// Each case runs in its own process so independent cases run in parallel.
+const units = timeout => cases.map(([name]) => ({ name, timeout, args: [__filename, '--case', name] }));
+const summary = failures => 'guard lifecycle CLI regressions: ' + failures + ' failures';
+module.exports = { units, summary };
+
+if (require.main === module) {
+  const at = process.argv.indexOf('--case');
+  if (at !== -1) process.exitCode = runCase(process.argv[at + 1]);
+  else {
+    // Made before the cases start, so each case process puts its home in this
+    // run's folder, which goes with this process even when a case is killed.
+    testRunDir();
+    const all = units();
+    const { runAll, report } = require('./pool');
+    runAll(all).then(results => {
+      let failures = 0;
+      results.forEach((result, i) => {
+        process.stdout.write(result.stdout + report(all[i], result)); process.stderr.write(result.stderr);
+        if (result.status !== 0 || result.timedOut) failures++;
+      });
+      console.log(summary(failures));
+      process.exitCode = failures ? 1 : 0;
+    });
+  }
+}

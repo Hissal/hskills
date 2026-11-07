@@ -33,9 +33,9 @@ try {
   }
 
 
-  for (const host of ['claude', 'codex']) { fs.copyFileSync(path.join(__dirname, 'host.cjs'), path.join(home, host + '.cjs')); fs.chmodSync(path.join(home, host + '.cjs'), 0o755); }
-  const claude = real ? '/home/agent/.local/bin/claude' : path.join(home, 'claude.cjs');
-  const codex = real ? '/home/agent/.npm-global/bin/codex' : path.join(home, 'codex.cjs');
+  const doubles = require('./doubles')(home);
+  const claude = real ? '/home/agent/.local/bin/claude' : doubles.claude;
+  const codex = real ? '/home/agent/.npm-global/bin/codex' : doubles.codex;
   const cli = path.resolve(__dirname, '../install.js');
   const source = path.join(home, 'source');
   fs.cpSync(path.resolve(__dirname, '../../../hooks/command-guard'), path.join(source, 'hooks/command-guard'), { recursive: true });

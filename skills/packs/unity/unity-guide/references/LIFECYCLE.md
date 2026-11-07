@@ -1,8 +1,8 @@
 # Unity code-lifecycle rules
 
-Keeping statics, singletons, static events and load-time code correct across Play sessions and code reloads. Test cleanup belongs to `unity-testing`, and running the checks to `unity-verification`, both through the guide's table. Evidence and tested versions: `research/unity-assemblies.md` section 8 in the skill-collection repo.
+Keeping statics, singletons, static events and load-time code correct across Play sessions and code reloads. Test cleanup belongs to `unity-testing`, and running the checks to `unity-verification`, both through the guide's table. Evidence and tested versions: `research/unity-assemblies.md` section 8 in the `Hissal/skill-collection` GitHub repo.
 
-Claims carry one of three labels. **Documented** means Unity's docs state it. **Observed** means it ran on the named versions, and a later version may differ. **Inference** follows from the two. An unlabelled rule is this collection's choice.
+Claims carry one of three labels. **Documented** means Unity's docs state it. **Observed** means it ran on the named versions, and a later version may differ. **Inference** follows from the two. An unlabelled rule is this guide's choice.
 
 Load only the sections the need reaches.
 

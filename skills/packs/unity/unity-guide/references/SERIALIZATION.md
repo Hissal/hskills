@@ -1,6 +1,6 @@
 # Unity serialization rules
 
-Changing serialized data: trace what is saved, choose a compatible migration, check preservation after import. Evidence and tested versions: `research/unity-serialization.md` and `research/unity-merging.md` in the skill-collection repo. Unless a line names a version, it comes from the Unity 6.0 docs; "observed" means run on the named version. When a version gate matters, read the version the guide's docs lookup names.
+Changing serialized data: trace what is saved, choose a compatible migration, check preservation after import. Evidence and tested versions: `research/unity-serialization.md` and `research/unity-merging.md` in the `Hissal/skill-collection` GitHub repo. Unless a line names a version, it comes from the Unity 6.0 docs; "observed" means run on the named version. When a version gate matters, read the version the guide's docs lookup names.
 
 Load only the sections the need reaches.
 

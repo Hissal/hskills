@@ -19,7 +19,7 @@
       "type": "boolean"
     },
     "effortDefaults": {
-      "description": "Personal effort for each difficulty when a matching rule names none. Unset difficulties keep the collection's defaults (low, medium, high).",
+      "description": "Personal effort for each difficulty when a matching rule names none. Unset difficulties keep delegating's defaults (low, medium, high).",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -40,7 +40,7 @@
   },
   "$defs": {
     "effort": {
-      "description": "The collection's effort intent; each harness maps it to its own control.",
+      "description": "The effort intent delegating uses; each harness maps it to its own control.",
       "enum": ["low", "medium", "high", "xhigh", "max"]
     },
     "name": {
@@ -81,7 +81,7 @@
           "$ref": "#/$defs/choices"
         },
         "effort": {
-          "description": "Effort for every choice in this rule. Unset: effortDefaults, then the collection's defaults.",
+          "description": "Effort for every choice in this rule. Unset: effortDefaults, then delegating's defaults.",
           "$ref": "#/$defs/effort"
         },
         "autoFallback": {

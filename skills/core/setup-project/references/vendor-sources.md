@@ -1,6 +1,6 @@
 # Vendor sources
 
-What [Recommendations](recommendations.md) delivered stays known and current through one prose file, `docs/agents/vendor-sources.md`. It covers vendor skills and plugins, skills copied from a dependency, documentation pointers, hooks and always-on instructions. Collection skills and packs stay with `skills-lock.json` and the `### Packs` list.
+What [Recommendations](recommendations.md) delivered stays known and current through one prose file, `docs/agents/vendor-sources.md`. It covers vendor skills and plugins, skills copied from a dependency, documentation pointers, hooks and always-on instructions. Skills and packs from `Hissal/skill-collection` stay with `skills-lock.json` and the `### Packs` list.
 
 Done when every delivered or waiting pick has its entry, every entry has a one-line result in the run's report, each change is delivered or named as declined or not checked, and anything setup did not write is byte-for-byte as it was.
 

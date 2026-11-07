@@ -1,9 +1,9 @@
 'use strict';
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
+const { tempDir, testRunDir } = require('../../test-util');
 const cli = path.resolve(__dirname, '../install.js');
 const cases = [
   ...(process.platform === 'win32' ? [false, true].map(deny => [
@@ -462,7 +462,7 @@ assert.equal(new Set(cases.map(([n]) => n)).size, cases.length, 'case names must
 // One install case in this process, against its own temporary home and source.
 function runCase(name) {
   const [, test] = cases.find(([n]) => n === name);
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'collection-install-'));
+  const temp = tempDir('collection-install-');
   try {
     const repo = path.join(temp, 'repo');
     const home = path.join(temp, 'home');
@@ -489,6 +489,9 @@ else {
   // Every sub-harness, lifecycle case and install case is an independent process;
   // they share one pool, longest first. Plugin and trust keep their 180s and 60s
   // limits; each lifecycle case gets the lifecycle suite's 180s; install cases have none.
+  // Made before any unit starts, so every unit's folders land in this run's
+  // folder and go with it even when a timeout kills one mid-run.
+  testRunDir();
   const lifecycle = require('./lifecycle');
   const plugin = { name: 'plugin registration lifecycle (plugin.js)', timeout: 180000, args: [path.join(__dirname, 'plugin.js')] };
   const trust = { name: 'trust delta regression (trust.js)', timeout: 60000, args: [path.join(__dirname, 'trust.js')] };

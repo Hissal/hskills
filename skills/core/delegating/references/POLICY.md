@@ -9,7 +9,7 @@ A file is **invalid** when it cannot be read, is not plain JSON (comments and tr
 - `version`: `1`. Required.
 - `rules`: rules for every workflow, in order.
 - `workflows`: per-workflow overrides. Each key is a workflow's callable name (`code-review`, `implement-spec`); its value is a list of rules shaped like `rules`.
-- `effortDefaults`: personal effort for `simple`, `normal` and `difficult` work, replacing the collection's low, medium and high for any difficulty set.
+- `effortDefaults`: personal effort for `simple`, `normal` and `difficult` work, replacing `delegating`'s defaults of low, medium and high for any difficulty set.
 - `autoFallback`: `true` lets a suitable model outside a rule's choices run, unasked, once its choices are exhausted. Default `false`.
 
 A rule holds:
@@ -43,7 +43,7 @@ Each choice must still be suitable for the role's difficulty and available (skil
 
 ## Effort
 
-The rule's `effort`, else `effortDefaults` for the difficulty, else the collection's defaults. Map it to the harness's own control as `delegating` step 3 says.
+The rule's `effort`, else `effortDefaults` for the difficulty, else `delegating`'s defaults (low, medium, high). Map it to the harness's own control as `delegating` step 3 says.
 
 - A rule's `effort` is the owner's stated choice: it may be `xhigh` or `max`, and a choice with no supported equivalent for it is unavailable.
 - An `effortDefaults` value is a default: an approximation is allowed and reported, and it never lands upward on max unless max is the value.

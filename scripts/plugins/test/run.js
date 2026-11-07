@@ -1,10 +1,12 @@
 'use strict';
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
 const {spawnSync} = require('node:child_process');
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'plugins-124-'));
+const {tempDir, testRunDir} = require('../../test-util');
+// KEEP_PLUGIN_FIXTURE keeps the fixture, so it goes beside the run folder,
+// which is removed when the run ends.
+const root = process.env.KEEP_PLUGIN_FIXTURE ? fs.mkdtempSync(path.join(path.dirname(testRunDir()), 'plugins-124-')) : tempDir('plugins-124-');
 const repo = path.resolve(__dirname, '../../..');
 function write(p, data) { fs.mkdirSync(path.dirname(path.join(root,p)), {recursive:true}); fs.writeFileSync(path.join(root,p), data); }
 function run(p) { return spawnSync(process.execPath,[path.join(repo,p),root],{encoding:'utf8',env:{...process.env,COLLECTION_CHECK_AGNIX:path.join(repo,'scripts/check/test/agnix-stub.js')}}); }

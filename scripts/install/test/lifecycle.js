@@ -2,10 +2,10 @@
 // Repeated trusted lifecycles through the CLI: disposable HOME, CLI host doubles,
 // real journal and filesystem. Shapes follow docs/evidence/windows-guard-followup.md.
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
+const { tempDir, testRunDir } = require('../../test-util');
 const hostDoubles = require('./doubles');
 const cli = path.resolve(__dirname, '../install.js');
 const hash = c => '"sha256:' + c.repeat(64) + '"';
@@ -19,7 +19,7 @@ const preferences = '\n[tui]\nscreen_reader_detection_done = true\n\n[windows]\n
 const personal = 'hide_agent_reasoning = true\n';
 
 function fixture(name) {
-  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'guard-lifecycle-' + name + '-'));
+  const home = tempDir('guard-lifecycle-' + name + '-');
   fs.mkdirSync(path.join(home, '.codex'));
   fs.writeFileSync(path.join(home, '.codex/config.toml'), personal);
   const doubles = hostDoubles(home);
@@ -225,6 +225,9 @@ if (require.main === module) {
   const at = process.argv.indexOf('--case');
   if (at !== -1) process.exitCode = runCase(process.argv[at + 1]);
   else {
+    // Made before the cases start, so each case process puts its home in this
+    // run's folder, which goes with this process even when a case is killed.
+    testRunDir();
     const all = units();
     const { runAll, report } = require('./pool');
     runAll(all).then(results => {

@@ -119,7 +119,7 @@ manage all three files, including adding the native target to an older two-targe
 record. Without opt-in, no steering file is touched.
 The [approved native steering policy and global probe](../research/opencode-install-125.md#approved-native-global-steering-2026-10-31)
 supersede the historical Claude fallback assumption.
-The source follows the current naming-only user text. The unidentifiable historical
+The source follows the current user text: the naming convention and the labels-in-reports line. The unidentifiable historical
 tooling-note requirement was [retired in #118](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
 
 An existing unrecorded entry is a conflict, even a link to this source.

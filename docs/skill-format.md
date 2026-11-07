@@ -78,9 +78,9 @@ For owner installation, conflicts or drift verification, read
 Attribution belongs to the comment and PR skills, per [the superseding owner
 decision](https://github.com/Hissal/skill-collection/issues/88#issuecomment-6512311352),
 and is absent from this source. For line admission and the measured source snapshot, read
-[#118 evidence](../research/steering-source-118.md). The current naming-only text
-is authoritative; the historical tooling-note requirement was
-[retired](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
+[#118 evidence](../research/steering-source-118.md). The current text (the naming
+convention and the labels-in-reports line) is authoritative; the historical
+tooling-note requirement was [retired](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
 The source is user scope: it is linked into `~/.claude/CLAUDE.md` and the
 global `AGENTS.md` and loaded in every project, so no path in it resolves
 against this repository. The `steering-paths` rule therefore fails any relative
@@ -142,6 +142,12 @@ It writes only those two values, leaving every other line of `SKILL.md` and `age
 ## Portability
 
 A skill's folder works wherever it is installed. It never assumes a sibling folder, a repository checkout or one installation scope (user, project or plugin). Knowledge a skill requires from another skill resolves through that skill's installed identity, not through a path.
+
+Its text also reads right for anyone who installs it. The Standards reviewer judges each of these in shipped skill text (`skills/**`), even when a spec asks for the opposite:
+
+- **No build history.** Leave out how this repo came to the text: old rule numbers, maps from a predecessor's names, what a ticket changed. It costs context and changes nothing the agent does.
+- **No copied lookups.** Leave out what an agent can find itself at run time, such as a harness's log paths or a tool's current flags. A copy goes stale; say what to look up instead.
+- **No names the installing agent cannot resolve.** Never refer to "the collection", or any other name for this set of skills, as if the agent knows what it is. Name what it can find: a skill's installed identity (`agent-skills-sync.id`), its callable name, or the repo it was installed from (`Hissal/skill-collection`). A path in this repo names the repo too. This repo's own terms (core, pack, guide) are fine where they fit: when the skill cannot tell what one means, give it a short definition. Never swap a fitting term for a generic one just to avoid repo wording; "module" for "pack" fixes nothing and makes the text wrong.
 
 ## Missing project facts
 

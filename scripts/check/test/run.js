@@ -13,11 +13,11 @@
 //                                  is skipped, and said so, when it is absent
 
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const cases = require('./cases');
-const { git, write } = require('../../test-util');
+const { git, write, tempDir } = require('../../test-util');
+require('./temp-cases');
 require('./catalog');
 require('../../plugins/test/run');
 
@@ -35,7 +35,7 @@ let skipped = 0;
 // An expectation line is "<fail|warn> <rule> <file>".
 const key = (level, rule, file) => level.toLowerCase() + ' ' + rule + ' ' + file;
 
-const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'collection-check-test-'));
+const scratch = tempDir('collection-check-test-');
 try {
   cases.forEach((c, i) => {
     if (c.agnix === 'real' && !fs.existsSync(REAL_AGNIX)) {

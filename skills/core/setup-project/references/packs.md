@@ -1,6 +1,6 @@
 # Packs
 
-The `### Packs` list is how core skills reach pack knowledge: they read it to find which pack guides to ask. It says which packs apply to this project, one line per pack, and each line names the pack's guide, never its other skills.
+Core skills are the general ones, useful in any project; a pack is an optional, separately installed set of skills for one stack or job, led by its `<pack>-guide` skill. The `### Packs` list is how core skills reach pack knowledge: they read it to find which pack guides to ask. It says which packs apply to this project, one line per pack, and each line names the pack's guide, never its other skills.
 
 Either run ends with the same [line](#the-pack-line) and [fact file](#the-fact-file). The draft, approval and write stay with [Deliver guidance](../SKILL.md#4-deliver-guidance): a pack's writes join that draft and land after the core files.
 

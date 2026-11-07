@@ -74,8 +74,16 @@ for a skill to pass. Lower-tier misses are advisory. Repeats that disagree are
 inconclusive, not majority-voted; errors, malformed/incomplete streams and
 unobservable invocation are also inconclusive. Exit 0 means frontier pass, 1 means
 frontier failure, 2 means inconclusive or invalid input. Inconclusive takes
-precedence over failure, and never counts as a pass. One pass cannot estimate
-noise: repeat a borderline result before changing the trigger. Add a sibling
+precedence over failure. An inconclusive result is not yet a pass: settle each
+inconclusive session by reading its transcript. A session whose commands did
+what the query expects passes even though the script could not see it, such as
+a successful read of the skill's entry point inside a command the script does
+not parse, and the script gap is filed as an issue
+([owner ruling on #131](https://github.com/Hissal/skill-collection/issues/131#issuecomment-6708124690),
+the `pr` and `writing-for-agents` trigger eval).
+A denied or errored call never counts as doing it, and a session the
+transcript cannot settle stays inconclusive. One pass cannot estimate noise:
+repeat a borderline result before changing the trigger. Add a sibling
 exclusion to a description only after the eval demonstrates a collision, then
 rerun both siblings' positive and negative queries.
 

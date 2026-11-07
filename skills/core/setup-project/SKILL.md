@@ -142,7 +142,7 @@ A single approval or value is a question to ask the owner; a step you can run yo
 
 ### Recommendations
 
-Recommend collection skills, vendor skills and dependency-shipped guidance together, in one view. Follow [recommendations.md](references/recommendations.md) when this run has something new to weigh: the project has no `## Agent skills` block in place yet, or the stack or dependencies changed since the block did (`git log` on the manifests and the instruction file, or what the owner says when there is no history). It says how to reach the collection catalog and a pack's `SETUP.md` from an installed folder, with no checkout and before any install.
+Recommend skills from `Hissal/skill-collection` (the repo these skills come from), vendor skills and dependency-shipped guidance together, in one view. Follow [recommendations.md](references/recommendations.md) when this run has something new to weigh: the project has no `## Agent skills` block in place yet, or the stack or dependencies changed since the block did (`git log` on the manifests and the instruction file, or what the owner says when there is no history). It says how to reach that repo's catalog and a pack's `SETUP.md` from an installed folder, with no checkout and before any install.
 
 Skills already installed and pointers already in `### Vendor docs` are settled. When nothing new remains to recommend, say so in one line and write nothing.
 

@@ -2,10 +2,10 @@
 // Repeated trusted lifecycles through the CLI: disposable HOME, CLI host doubles,
 // real journal and filesystem. Shapes follow docs/evidence/windows-guard-followup.md.
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
+const { tempDir } = require('../../test-util');
 const cli = path.resolve(__dirname, '../install.js');
 const hash = c => '"sha256:' + c.repeat(64) + '"';
 // Native writer output after human /hooks review: bare parent, basic plugin key, literal user key.
@@ -18,7 +18,7 @@ const preferences = '\n[tui]\nscreen_reader_detection_done = true\n\n[windows]\n
 const personal = 'hide_agent_reasoning = true\n';
 
 function fixture(name) {
-  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'guard-lifecycle-' + name + '-'));
+  const home = tempDir('guard-lifecycle-' + name + '-');
   fs.mkdirSync(path.join(home, '.codex'));
   fs.writeFileSync(path.join(home, '.codex/config.toml'), personal);
   for (const host of ['claude', 'codex']) fs.copyFileSync(path.join(__dirname, 'host.cjs'), path.join(home, host + '.cjs'));

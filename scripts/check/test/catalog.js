@@ -2,10 +2,10 @@
 // Exercise the writer and check CLIs against a real fixture tree.
 const assert = require('assert');
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'catalog-test-'));
+const { tempDir } = require('../../test-util');
+const root = tempDir('catalog-test-');
 const writer = path.resolve(__dirname, '../../catalog/generate.js');
 const check = path.resolve(__dirname, '../check.js');
 function run(script) { return spawnSync(process.execPath, [script, root], { encoding: 'utf8' }); }

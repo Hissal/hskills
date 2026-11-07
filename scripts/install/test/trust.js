@@ -1,11 +1,11 @@
 'use strict';
 // Public registration lifecycle with a disposable Codex config and real journal.
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const assert = require('assert/strict');
 const { registration } = require('../plugin');
-const home = fs.mkdtempSync(path.join(os.tmpdir(), 'guard-trust-'));
+const { tempDir } = require('../../test-util');
+const home = tempDir('guard-trust-');
 const encode = text => Buffer.from(text).toString('base64');
 const hash = c => '"sha256:' + c.repeat(64) + '"';
 const plugin = '\n[plugins."command-guard@skill-collection-guard"]\nenabled = true\n';

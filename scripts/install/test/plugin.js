@@ -1,11 +1,11 @@
 'use strict';
 // Real host CLIs, disposable HOME only; no credentials or trust state.
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
-const home = fs.mkdtempSync(path.join(os.tmpdir(), 'guard-plugin-test-'));
+const { tempDir } = require('../../test-util');
+const home = tempDir('guard-plugin-test-');
 try {
   fs.mkdirSync(path.join(home, '.codex'));
   const personalConfig = 'hide_agent_reasoning = true\ndeveloper_instructions = """\n[hooks.state."fake"]\nenabled = true\n"""\n';
@@ -114,7 +114,7 @@ try {
   assert.match(normal.stdout, /REGISTERED codex/, normal.stdout + normal.stderr);
   const config = path.join(home, '.codex/config.toml');
   if (!real) {
-    const saved = fs.mkdtempSync(path.join(os.tmpdir(), 'trust-baseline-'));
+    const saved = tempDir('trust-baseline-');
     fs.cpSync(home, saved, { recursive: true });
     // Native Windows writer shape: bare parent, basic plugin key, literal backslash key.
     const trust = '[hooks.state]\n\n[hooks.state."command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = "sha256:' + 'a'.repeat(64) + '"\ntrusted_content_hash = "sha256:' + 'b'.repeat(64) + '"\nenabled = true\n'

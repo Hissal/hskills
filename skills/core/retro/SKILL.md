@@ -18,13 +18,15 @@ The user has asked for a **retrospective**. You are suggesting improvements to t
 
 3. Look for candidates for improvement under the [signals](#signals) until the [coverage bar](#coverage) holds. Scan wide before you go deep: finish this scan before you route or prove any candidate.
 
-4. Check each candidate against the open issues in the project's tracker. A candidate an open issue already covers is reported as tracked under that issue, not proposed as new.
+4. **Connect** the candidates: look across all of them, dropped ones included, for a shared cause, file, skill or phase of the work. Candidates that connect become one item naming each; a connection can turn several small candidates into one worth reporting. Then pass through every dropped candidate again with the connections in view: it stays dropped only when its reason still holds.
 
-5. Route each remaining candidate through the [fix ladder](#fix-ladder), and hold every write-it-down candidate to the [admission bar](#admission-bar).
+5. Check each candidate against the open issues in the project's tracker. A candidate an open issue already covers is reported as tracked under that issue, not proposed as new.
 
-6. [Report](#report) the candidates to the owner, classes first, then in order of severity. Offer `/context-audit` here when its [condition](#suggestions) holds.
+6. Route each remaining candidate through the [fix ladder](#fix-ladder), and hold every write-it-down candidate to the [admission bar](#admission-bar).
 
-7. Write only the items the owner approves, each as approved. Then hand back: what was written or filed, and where. Offer `/constraints` here when its [condition](#suggestions) holds.
+7. [Report](#report) the candidates to the owner, classes first, then in order of severity. Offer `/context-audit` here when its [condition](#suggestions) holds.
+
+8. Write only the items the owner approves, each as approved. Then hand back: what was written or filed, and where. Offer `/constraints` here when its [condition](#suggestions) holds.
 
 The retro keeps no record of its own: no snapshot file, no score, no learnings store. Accepted items live only in the edits and issues the owner approved.
 
@@ -41,10 +43,11 @@ A pattern seen twice, across sessions or twice in one, is a class: report it as 
 
 ## Coverage
 
-The scan is done when both passes are complete:
+The scan is done when all three passes are complete:
 
 - **Every user turn**, for the [user corrections](#signals) in it.
-- **The costliest stretches**, whether or not anyone commented on them. List the session's stretches that cost the most: wall time lost, commands or checks run again and again, the same baseline re-run by several delegates, side threads opened to investigate, tool calls that failed or lost their output, and actions nobody asked for. Trace each to a candidate, or to a one-line reason to drop it.
+- **The costliest stretches**, whether or not anyone commented on them. List the session's stretches that cost the most: wall time lost, commands or checks run again and again, the same baseline re-run by several delegates, side threads opened to investigate, tool calls that failed or lost their output, and actions nobody asked for. Read each delegate's and side thread's final report and the turns around each failure: counting runs is not reading them. Trace each stretch to a candidate, or to a one-line reason to drop it.
+- **Loose ends**: questions, offers, warnings and findings nobody answered, in the main session and in every delegate's report (a delegate asking whether to file issues, a warning the orchestrator passed over). Most were seen and set aside on purpose. Make one a candidate when it left real work undone or a risk unhandled, as a delegate report nobody read often does; that is your judgement call. List the rest as [loose ends](#report).
 
 Weigh every signal equally. An incident nobody commented on can cost more than one the user corrected.
 
@@ -102,7 +105,7 @@ For each item, give:
 - for a skill or guard-rule fix, the three destinations below;
 - for an issue, the draft title and body.
 
-After the items, list the candidates already tracked, each with its open issue, and the dropped candidates, each with its reason.
+After the items, list the candidates already tracked, each with its open issue, and the dropped candidates, each with its reason. End with **Loose ends**: one short line each, what was left open and where, for the owner to skim for anything they missed. Keep it brief; a loose end that deserves more is an item above.
 
 The owner approves, changes or drops each item separately. An item not approved is not written.
 

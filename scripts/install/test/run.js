@@ -457,16 +457,11 @@ fs.symlinkSync = function(target, dest, type) {
     assert.match(f.last.stdout, /Read\(/);
   }],
 ];
-const plugins = spawnSync(process.execPath, [path.join(__dirname, 'plugin.js')], { encoding: 'utf8', timeout: 180000 });
-process.stdout.write(plugins.stdout || ''); process.stderr.write(plugins.stderr || '');
-let failures = plugins.status === 0 ? 0 : 1;
-const trust = spawnSync(process.execPath, [path.join(__dirname, 'trust.js')], { encoding: 'utf8', timeout: 60000 });
-process.stdout.write(trust.stdout || ''); process.stderr.write(trust.stderr || '');
-if (trust.status !== 0) { console.log('FAIL trust delta regression (trust.js)'); failures++; }
-const lifecycle = spawnSync(process.execPath, [path.join(__dirname, 'lifecycle.js')], { encoding: 'utf8', timeout: 180000 });
-process.stdout.write(lifecycle.stdout || ''); process.stderr.write(lifecycle.stderr || '');
-if (lifecycle.status !== 0) { console.log('FAIL guard lifecycle regressions (lifecycle.js)'); failures++; }
-for (const [name, test] of cases) {
+// Cases run by name, so a repeated name would run one case twice and skip the other.
+assert.equal(new Set(cases.map(([n]) => n)).size, cases.length, 'case names must be unique');
+// One install case in this process, against its own temporary home and source.
+function runCase(name) {
+  const [, test] = cases.find(([n]) => n === name);
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'collection-install-'));
   try {
     const repo = path.join(temp, 'repo');
@@ -483,8 +478,41 @@ for (const [name, test] of cases) {
     fs.writeFileSync(path.join(repo, 'steering.md'), 'personal steering\n');
     f.manifest(['skills/core/alpha']);
     test(f);
-  } catch (e) { console.log('FAIL ' + name + ': ' + e.message); failures++; }
+    return 0;
+  } catch (e) { console.log('FAIL ' + name + ': ' + e.message); return 1; }
   finally { fs.rmSync(temp, { recursive: true, force: true }); }
 }
-console.log(`${cases.length} install cases, ${failures} failures`);
-process.exitCode = failures ? 1 : 0;
+
+const at = process.argv.indexOf('--case');
+if (at !== -1) process.exitCode = runCase(process.argv[at + 1]);
+else {
+  // Every sub-harness, lifecycle case and install case is an independent process;
+  // they share one pool, longest first, each under its sub-harness's time limit.
+  const lifecycle = require('./lifecycle');
+  const plugin = { name: 'plugin registration lifecycle (plugin.js)', timeout: 180000, args: [path.join(__dirname, 'plugin.js')] };
+  const trust = { name: 'trust delta regression (trust.js)', timeout: 60000, args: [path.join(__dirname, 'trust.js')] };
+  const lifecycleUnits = lifecycle.units(180000);
+  const caseUnits = cases.map(([name]) => ({ name, args: [__filename, '--case', name] }));
+  const units = [plugin, ...lifecycleUnits, trust, ...caseUnits];
+  const { runAll, report } = require('./pool');
+  runAll(units).then(results => {
+    const result = unit => results[units.indexOf(unit)];
+    const print = (unit, line = '') => { const r = result(unit); process.stdout.write(r.stdout + line); process.stderr.write(r.stderr); };
+    const failed = unit => result(unit).status !== 0 || result(unit).timedOut;
+    let failures = 0;
+    for (const unit of [plugin, trust]) {
+      print(unit, report(unit, result(unit)));
+      if (failed(unit)) failures++;
+    }
+    for (const unit of lifecycleUnits) print(unit, report(unit, result(unit), 'guard lifecycle regressions (lifecycle.js): ' + unit.name));
+    const lifecycleFailures = lifecycleUnits.filter(failed).length;
+    console.log('guard lifecycle CLI regressions: ' + lifecycleFailures + ' failures');
+    if (lifecycleFailures) { console.log('FAIL guard lifecycle regressions (lifecycle.js)'); failures++; }
+    for (const unit of caseUnits) {
+      print(unit, report(unit, result(unit)));
+      if (failed(unit)) failures++;
+    }
+    console.log(`${cases.length} install cases, ${failures} failures`);
+    process.exitCode = failures ? 1 : 0;
+  });
+}

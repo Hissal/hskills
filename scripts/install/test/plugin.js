@@ -33,9 +33,11 @@ try {
   }
 
 
-  for (const host of ['claude', 'codex']) { fs.copyFileSync(path.join(__dirname, 'host.cjs'), path.join(home, host + '.cjs')); fs.chmodSync(path.join(home, host + '.cjs'), 0o755); }
-  const claude = real ? '/home/agent/.local/bin/claude' : path.join(home, 'claude.cjs');
-  const codex = real ? '/home/agent/.npm-global/bin/codex' : path.join(home, 'codex.cjs');
+  // host.py starts faster; Windows cannot start it directly (see host.py).
+  const double = process.platform === 'win32' ? 'host.cjs' : 'host.py';
+  for (const host of ['claude', 'codex']) { fs.copyFileSync(path.join(__dirname, double), path.join(home, host + path.extname(double))); fs.chmodSync(path.join(home, host + path.extname(double)), 0o755); }
+  const claude = real ? '/home/agent/.local/bin/claude' : path.join(home, 'claude' + path.extname(double));
+  const codex = real ? '/home/agent/.npm-global/bin/codex' : path.join(home, 'codex' + path.extname(double));
   const cli = path.resolve(__dirname, '../install.js');
   const source = path.join(home, 'source');
   fs.cpSync(path.resolve(__dirname, '../../../hooks/command-guard'), path.join(source, 'hooks/command-guard'), { recursive: true });

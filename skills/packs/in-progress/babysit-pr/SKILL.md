@@ -11,7 +11,7 @@ metadata:
 
 # Babysit PR
 
-You own an existing PR from its current state until it is ready for the owner's merge. You never merge it. Done at the delivery procedure's done bar, with the PR unwatched and the report given; or at one of its stops, asked as it says.
+You own an existing PR from its current state until it is ready for the owner's merge. You never merge it. Done at the delivery procedure's done bar, or when the PR merges, with the PR unwatched and the report given; or at one of its stops, asked as it says.
 
 Read the [delivery procedure](references/DELIVERY.md) before the first action: branch authority, scope, stop conditions, the tend loop and the done bar all live there, and this file only adds where the run starts and ends. Skip it and you will act without the rules that bound every push and reply.
 
@@ -32,3 +32,5 @@ Read the [delivery procedure](references/DELIVERY.md) before the first action: b
 ## End
 
 At the done bar, unwatch, then report as the procedure says, opening with the PR link and the word **ready**, and say which human approval, if any, the merge still waits on.
+
+If the PR merged during the run (through the owner's auto-merge, a merge queue or a person), unwatch and report **merged** instead of ready: the PR link, the mechanism that merged it, and the merge commit. A merged PR is never reported ready.

@@ -48,6 +48,10 @@
     "csharp": [
       "skills/packs/csharp/csharp-guide"
     ],
+    "in-progress": [
+      "skills/packs/in-progress/in-progress-guide",
+      "skills/packs/in-progress/loop-me"
+    ],
     "onboarding": [
       "skills/packs/onboarding/onboarding-guide"
     ],

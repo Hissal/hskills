@@ -111,6 +111,12 @@ As of **2026-10-28 (Europe/Helsinki)**. A transcription of the current blueprint
 | `placeholder-assets` | in-progress pack user-invoked | Trial synthesis from #63 research/donors | — | Greybox/CC0/SFX/generator ladder, style anchor, measured files, licence traps and AI-file disclosure list | [#63 resolution](https://github.com/Hissal/skill-collection/issues/63#issuecomment-6367394607); [#50 resolution](https://github.com/Hissal/skill-collection/issues/50#issuecomment-6426359993); [#73 resolution](https://github.com/Hissal/skill-collection/issues/73#issuecomment-6443641717) |
 | `in-progress-guide` | in-progress pack model-invoked | New | — | Primarily routes to installed experiments; labelled experimental, no automatic execution/promotion | [#50 resolution](https://github.com/Hissal/skill-collection/issues/50#issuecomment-6426359993) |
 
+**Trials.** Each built trial's question and owner criteria, for the owner's adopt, revise or drop decision (no automatic promotion or expiry, [#53 resolution](https://github.com/Hissal/skill-collection/issues/53#issuecomment-6214483933)). Each trial's ticket adds its row; its route row lives in [`in-progress-guide`'s routes](../skills/packs/in-progress/in-progress-guide/ROUTES.md).
+
+| Trial | Question | Keep if | Reconsider if |
+|---|---|---|---|
+| `loop-me` | Does the recurring-work focus uncover useful workflows or decisions that ordinary `grilling` and `to-spec` miss? | On a real recurring activity the owner chooses, it produces a spec the owner judges worth implementing, and the owner can name what the specialised questioning contributed. | The useful parts fit existing skills equally well, or the workspace notes add upkeep without helping. |
+
 ## study
 
 | Skill | Address | Source / provenance | Hard requirements | Extension points it carries / Needs it answers | Decided in |
@@ -668,6 +674,8 @@ changing skill identity or requirements with
 | `hissal.skill-collection/how` | [`how`](../skills/core/how/SKILL.md) | — |
 | `hissal.skill-collection/implement` | [`implement`](../skills/core/implement/SKILL.md) | — |
 | `hissal.skill-collection/implement-spec` | [`implement-spec`](../skills/core/implement-spec/SKILL.md) | — |
+| `hissal.skill-collection/in-progress-guide` | [`in-progress-guide`](../skills/packs/in-progress/in-progress-guide/SKILL.md) | — |
+| `hissal.skill-collection/loop-me` | [`loop-me`](../skills/packs/in-progress/loop-me/SKILL.md) | — |
 | `hissal.skill-collection/migrating` | [`migrating`](../skills/core/migrating/SKILL.md) | — |
 | `hissal.skill-collection/onboarding-guide` | [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md) | — |
 | `hissal.skill-collection/pr` | [`pr`](../skills/core/pr/SKILL.md) | — |

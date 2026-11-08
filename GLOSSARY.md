@@ -12,8 +12,9 @@ _Avoid_: global, always-active layer
 An optional add-on to core: a named list of skills, installed separately so that taking core never brings it along. A project takes the whole list or picks single skills from it. Usually installed per project (the Unity pack in a Unity project), sometimes at user scope when it serves a person (the onboarding pack). A pack can be narrower than a domain, so two people on one project may pick different packs.
 _Avoid_: domain layer, local, kit
 
-**In-progress pack**:
+**Experimental pack**:
 The optional pack for experimental skills being tried before a decision to adopt them into core or another pack.
+_Avoid_: in-progress pack
 
 ## How it reaches the agent
 

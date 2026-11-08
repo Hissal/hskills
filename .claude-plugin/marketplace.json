@@ -35,9 +35,9 @@
       "category": "Productivity"
     },
     {
-      "name": "collection-pack-in-progress",
-      "source": "./skills/packs/in-progress",
-      "description": "Generated in-progress skill list from collection.json.",
+      "name": "collection-pack-experimental",
+      "source": "./skills/packs/experimental",
+      "description": "Generated experimental skill list from collection.json.",
       "policy": {
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"

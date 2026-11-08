@@ -1,13 +1,13 @@
 ---
-name: in-progress-guide
+name: experimental-guide
 description: Use when asked which experimental workflows are installed, or when looking for one to try.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/in-progress-guide"
+  agent-skills-sync.id: "hissal.skill-collection/experimental-guide"
   opencode/autoinvoke: "true"
 ---
 
-# In-progress guide
+# Experimental guide
 
 Routes to **trials**: experimental workflows installed beside the core workflows, each on trial until its owner adopts, revises or drops it. A trial never replaces a core workflow. You recommend; the human starts. Your tool use here is reading. You never invoke a trial, never start one for the human, and never edit, build or delegate.
 

@@ -59,8 +59,8 @@ Check (the default)
   Compares a copy with this guard. Prints GUARD, GUARD_STATE
   (missing|current|outdated|edited), COPY_VERSION, BUNDLED_VERSION,
   UPDATE_LOOSENS (no|yes|unknown), LOOSENED (when yes: each default rule
-  or pattern the copy has and this guard lacks), DATA and DATA_STATE
-  (missing|present|invalid). UPDATE_LOOSENS is no only when the update drops
+  or pattern the copy has and this guard lacks, read from the copy's text;
+  the copy is never run), DATA and DATA_STATE (missing|present|invalid). UPDATE_LOOSENS is no only when the update drops
   no rule or pattern and the copy is an unedited install of an older
   version; the same version with another body, a downgrade, an edited copy
   or a copy whose rules could not be read is unknown. Exit 0, or 2 when it
@@ -681,10 +681,42 @@ function check(args) {
 
 // ---- install and compare -------------------------------------------------
 
+// A copy's rules and default patterns, read from its text and never run: the
+// copy is project code, and running it would run whatever it was edited to
+// do. Read as this guard lays them out; any other layout gives null.
 function rulesOf(file) {
-  const r = spawnSync(process.execPath, [file, '--rules'], { encoding: 'utf8' });
-  if (r.status !== 0) return null;
-  return r.stdout.split('\n').filter((l) => /^(RULE|PATTERN): /.test(l));
+  const text = fs.readFileSync(file, 'utf8');
+  const unquote = (q) => q.slice(1, -1).replace(/\\(.)/g, '$1');
+  const literals = (src) => src.match(/'(?:[^'\\\n]|\\.)*'/g) || [];
+  const arrayOf = (name) => {
+    const m = text.match(new RegExp('^const ' + name + ' = \\[(.*)\\];$', 'm'));
+    return m ? m[1] : null;
+  };
+  const all = arrayOf('RULES');
+  if (all === null) return null;
+  const rules = [];
+  for (const part of all.split(',').map((x) => x.trim()).filter(Boolean)) {
+    const spread = part.match(/^\.\.\.(\w+)$/);
+    const src = spread ? arrayOf(spread[1]) : part;
+    if (src === null) return null;
+    rules.push(...literals(src).map(unquote));
+  }
+  const start = text.search(/^const DEFAULT_PATTERNS = \{$/m);
+  if (start < 0) return null;
+  const end = text.indexOf('\n};', start);
+  if (end < 0) return null;
+  const patterns = [];
+  let category = null;
+  for (const line of text.slice(start, end).split('\n').slice(1)) {
+    const key = line.match(/^\s*'?([\w-]+)'?:\s*\[\s*$/);
+    const item = line.match(/^\s*('(?:[^'\\]|\\.)*'),?\s*$/);
+    if (key) category = key[1];
+    else if (item && category) patterns.push('PATTERN: ' + category + ' ' + unquote(item[1]));
+    else if (/^\s*\],?\s*$/.test(line)) category = null;
+    else if (!/^\s*(?:\/\/.*)?$/.test(line)) return null;
+  }
+  if (!rules.length || !patterns.length) return null;
+  return [...rules.map((r) => 'RULE: ' + r), ...patterns];
 }
 
 function ownRules() {

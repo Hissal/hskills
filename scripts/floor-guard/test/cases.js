@@ -359,6 +359,19 @@ module.exports = [
     prepare: (dir, t) => t.installVariant(dir, (s) => t.addDefault(s, 'suppression', '\\\\bHUSH\\\\b'), '9.0.0'),
     run: { guard: 'bundled', args: ['--compare', COPY] }, exit: 0,
     keys: { GUARD_STATE: 'outdated', UPDATE_LOOSENS: 'yes', LOOSENED: 'pattern suppression \\bHUSH\\b' } },
+  { name: 'compare reads the copy\'s rules without running it', base: project,
+    prepare: (dir, t) => {
+      t.installVariant(dir, (s) => t.dropDefault(s, 'suppression', 'NOSONAR'), '0.0.1');
+      t.edit(dir, COPY, (s) => s.replace("if (args.rules) {", "if (args.rules) { fs.writeFileSync('copy-ran', '');"));
+    },
+    run: { guard: 'bundled', args: ['--compare', COPY] }, exit: 0,
+    keys: { GUARD_STATE: 'edited', UPDATE_LOOSENS: 'unknown' },
+    after: (dir, t) => t.assert(!require('fs').existsSync(require('path').join(dir, 'copy-ran')), 'compare ran the copy') },
+  { name: 'install reads an outdated copy\'s rules without running it', base: project,
+    prepare: (dir, t) => t.installVariant(dir, (s) => t.addDefault(s, 'suppression', '\\\\bHUSH\\\\b').replace("if (args.rules) {", "if (args.rules) { fs.writeFileSync('copy-ran', '');"), '0.0.1'),
+    run: { guard: 'bundled', args: ['--install', COPY] }, exit: 1,
+    keys: { GUARD_STATE: 'outdated', UPDATE_LOOSENS: 'yes', LOOSENED: 'pattern suppression \\bHUSH\\b' },
+    after: (dir, t) => t.assert(!require('fs').existsSync(require('path').join(dir, 'copy-ran')), 'install ran the copy') },
   { name: 'install: an update of the same version with a different body is refused and may loosen', base: project,
     prepare: (dir, t) => t.installVariant(dir, (s) => s.replace("console.log('floor-guard: clean ' + against);", "console.log('floor-guard: clean ' + against + '.');"), BUNDLED_VERSION),
     run: { guard: 'bundled', args: ['--install', COPY] }, exit: 1,

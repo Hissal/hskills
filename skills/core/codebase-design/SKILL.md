@@ -3,7 +3,7 @@ name: codebase-design
 description: Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/codebase-design"
+  agent-skills-sync.id: "hissal.hskills/codebase-design"
   opencode/autoinvoke: "true"
 ---
 

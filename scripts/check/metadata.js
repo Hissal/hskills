@@ -3,7 +3,7 @@
 // single/double quoted, or literal/folded block scalar values. No YAML objects,
 // aliases or implicit scalar coercion are accepted for contract fields.
 const PREFIX = 'agent-skills-sync.';
-const ID = /^hissal\.skill-collection\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const ID = /^hissal\.hskills\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 const { read: scalar, block: blockScalar } = require('./scalar');
 
@@ -46,7 +46,7 @@ function parseMetadata(frontmatter) {
   }
   if (schema !== '1') errors.push('declare agent-skills-sync.schema as "1"');
   if (!/^[a-z0-9]+(?:[.-][a-z0-9]+)*\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id || '')) errors.push('ID is not publisher-qualified; use <publisher>/<lowercase-kebab-case-slug>');
-  else if (!ID.test(id)) errors.push("another publisher's ID is not allowed in this collection; use hissal.skill-collection/");
+  else if (!ID.test(id)) errors.push("another publisher's ID is not allowed in this collection; use hissal.hskills/");
   return { values, schema, id, requires, errors };
 }
 

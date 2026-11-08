@@ -4,7 +4,7 @@ description: Audit dependency and supply-chain risk in the project's own package
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/dependency-audit"
+  agent-skills-sync.id: "hissal.hskills/dependency-audit"
   opencode/autoinvoke: "false"
 ---
 

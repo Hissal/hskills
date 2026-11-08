@@ -3,7 +3,7 @@ name: commenting
 description: Use when posting a comment, reply or dismissal reason on a PR or issue on the user's behalf.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/commenting"
+  agent-skills-sync.id: "hissal.hskills/commenting"
   opencode/autoinvoke: "true"
 ---
 

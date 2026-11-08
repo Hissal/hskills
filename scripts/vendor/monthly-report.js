@@ -2,7 +2,7 @@
 'use strict';
 const path = require('path');
 const { spawnSync } = require('child_process');
-const MARKER = '<!-- skill-collection:monthly-vendor-drift -->';
+const MARKER = '<!-- hskills:monthly-vendor-drift -->';
 const TITLE = 'chore(vendoring): review the monthly drift report';
 
 function publishReport({ github, report, status, errors = '' }) {

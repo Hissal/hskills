@@ -3,7 +3,7 @@ name: tdd
 description: Use when writing, changing or fixing any test, including building features or fixing bugs test-first (red-green-refactor). Not for reviewing a test suite's quality.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/tdd"
+  agent-skills-sync.id: "hissal.hskills/tdd"
   opencode/autoinvoke: "true"
 ---
 

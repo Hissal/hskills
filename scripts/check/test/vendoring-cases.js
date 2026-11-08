@@ -54,7 +54,7 @@ module.exports = ({ skill, skillMd }) => {
     { name: 'a lock entry with a source that is not owner/repo fails', files: tree(lock(entry(a.skill, { source: 'https://github.com/acme/skills' })), copied(a)), expect: ['fail vendor-lock vendor.lock.json'] },
     { name: 'a lock entry naming a folder that is not a skill fails', files: tree(lock(a, entry('skills/core/gone')), copied(a)), expect: ['fail vendor-lock vendor.lock.json', 'fail vendor-baseline vendor.lock.json'] },
     { name: 'two lock entries for one skill fail', files: tree(lock(a, a), copied(a)), expect: ['fail vendor-lock vendor.lock.json'] },
-    { name: 'two copied skills that would share a baseline folder fail', files: tree(lock(a, entry('skills/packs/web/alpha')), copied(a), skill('skills/packs/web/alpha', { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/web-alpha"' } })), expect: ['fail vendor-lock vendor.lock.json'] },
+    { name: 'two copied skills that would share a baseline folder fail', files: tree(lock(a, entry('skills/packs/web/alpha')), copied(a), skill('skills/packs/web/alpha', { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.hskills/web-alpha"' } })), expect: ['fail vendor-lock vendor.lock.json'] },
 
     // ---- baselines -------------------------------------------------------------
     { name: 'a lock entry with no baseline fails', files: tree(lock(a), copied(a, { omit: 'baseline' })), expect: ['fail vendor-baseline vendor.lock.json'] },

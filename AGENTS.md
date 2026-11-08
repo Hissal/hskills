@@ -2,7 +2,7 @@
 
 ### Issue tracker
 
-Issues are tracked in GitHub Issues on `Hissal/skill-collection` via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+Issues are tracked in GitHub Issues on `Hissal/hskills` via the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

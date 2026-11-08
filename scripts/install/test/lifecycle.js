@@ -10,7 +10,7 @@ const hostDoubles = require('./doubles');
 const cli = path.resolve(__dirname, '../install.js');
 const hash = c => '"sha256:' + c.repeat(64) + '"';
 // Native writer output after human /hooks review: bare parent, basic plugin key, literal user key.
-const trust = '\n[hooks.state]\n\n[hooks.state."command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0"]\n'
+const trust = '\n[hooks.state]\n\n[hooks.state."command-guard@hskills-guard:hooks/codex.json:pre_tool_use:0:0"]\n'
   + 'trusted_hash = ' + hash('a') + '\ntrusted_content_hash = ' + hash('b') + '\nenabled = true\n'
   + "\n[hooks.state.'C:\\Users\\human\\AppData\\Local\\Temp\\fixture\\home\\.codex\\hooks.json:pre_tool_use:0:0']\n"
   + 'trusted_hash = ' + hash('c') + '\nenabled = true\n';
@@ -31,8 +31,8 @@ function fixture(name) {
   const f = {
     home, source,
     config: path.join(home, '.codex/config.toml'),
-    journal: path.join(home, '.skill-collection/plugins.json'),
-    cache: path.join(home, '.skill-collection/plugin-cache'),
+    journal: path.join(home, '.hskills/plugins.json'),
+    cache: path.join(home, '.hskills/plugin-cache'),
     run(command, extraEnv = {}) {
       const args = command === 'install' ? ['prepare-plugin', '--home', home, '--source', source] : [command, '--home', home];
       const r = spawnSync(process.execPath, [cli, ...args], { encoding: 'utf8', env: { ...env, ...extraEnv } });

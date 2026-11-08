@@ -3,7 +3,7 @@ name: writing-for-agents
 description: Use when creating or editing a skill, AGENTS.md or CLAUDE.md, or any doc an agent reaches by a pointer, such as coding standards, a code map or an issue body an agent works from.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/writing-for-agents"
+  agent-skills-sync.id: "hissal.hskills/writing-for-agents"
   opencode/autoinvoke: "true"
 ---
 

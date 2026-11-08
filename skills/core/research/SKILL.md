@@ -3,7 +3,7 @@ name: research
 description: "Use when the user wants a question researched from external primary sources, such as official docs, specs or upstream source code, and the findings written up."
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/research"
+  agent-skills-sync.id: "hissal.hskills/research"
   opencode/autoinvoke: "true"
 ---
 

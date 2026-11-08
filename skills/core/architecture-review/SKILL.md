@@ -4,8 +4,8 @@ description: Scan a codebase for deepening opportunities, present them as a visu
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/architecture-review"
-  agent-skills-sync.requires: '["hissal.skill-collection/reviewing"]'
+  agent-skills-sync.id: "hissal.hskills/architecture-review"
+  agent-skills-sync.requires: '["hissal.hskills/reviewing"]'
   opencode/autoinvoke: "false"
 ---
 
@@ -22,12 +22,12 @@ Only `reviewing` gates this review. The calls to `codebase-design`, `grilling` a
 
 The review is read-only until the owner chooses: the report goes to the OS temp directory, glossary and ADR edits happen only in the grilling loop of a candidate the owner picked, and code changes only in a continuation the owner chose.
 
-Before doing any work, load reviewing (hissal.skill-collection/reviewing) and its needed
+Before doing any work, load reviewing (hissal.hskills/reviewing) and its needed
 reference files through the installed skill listing. Begin work only after all
 requirements and needed references have loaded. If any cannot load, stop
 without partial work and print:
 
-Stopped: required skill reviewing (hissal.skill-collection/reviewing) could not be loaded
+Stopped: required skill reviewing (hissal.hskills/reviewing) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
 `npx skills` do not install requirements; `agent-skills-sync` resolves them
 from this metadata. Install or repair the requirement, then retry.

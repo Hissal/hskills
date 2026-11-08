@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Personal delegation policy",
-  "description": "The file at ~/.config/skill-collection/delegation.json. Fields and matching: POLICY.md beside this file.",
+  "description": "The file at ~/.config/hskills/delegation.json. Fields and matching: POLICY.md beside this file.",
   "type": "object",
   "required": ["version"],
   "additionalProperties": false,

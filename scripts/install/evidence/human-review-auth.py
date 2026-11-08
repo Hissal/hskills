@@ -15,16 +15,16 @@ parser.add_argument('--cached-home', action='store_true', help='inspect isolated
 args = parser.parse_args()
 cache_home = args.artifact.resolve() / 'home/.codex'
 config = tomllib.loads((cache_home / 'config.toml').read_text())
-source = config['marketplaces']['skill-collection-guard']['source']
+source = config['marketplaces']['hskills-guard']['source']
 argv = ['/home/agent/.npm-global/bin/codex']
 env = os.environ.copy()
 if args.cached_home:
     env['CODEX_HOME'] = str(cache_home)
 else:
     # Keep the caller’s normal home and authentication store.
-    argv += ['-c', 'marketplaces.skill-collection-guard.source_type="local"',
-             '-c', 'marketplaces.skill-collection-guard.source=' + json.dumps(source),
-             '-c', 'plugins."command-guard@skill-collection-guard".enabled=true']
+    argv += ['-c', 'marketplaces.hskills-guard.source_type="local"',
+             '-c', 'marketplaces.hskills-guard.source=' + json.dumps(source),
+             '-c', 'plugins."command-guard@hskills-guard".enabled=true']
 normal_home = Path(os.environ.get('CODEX_HOME', str(Path.home() / '.codex')))
 def settings_digest():
     return {str(p): hashlib.sha256(p.read_bytes()).hexdigest()

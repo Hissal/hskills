@@ -4,7 +4,7 @@ description: "Use for \"how does X work\" in the local codebase or an installed 
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/how"
+  agent-skills-sync.id: "hissal.hskills/how"
   opencode/autoinvoke: "false"
 ---
 

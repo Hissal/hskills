@@ -5,8 +5,8 @@ disable-model-invocation: true
 argument-hint: "A spec, ticket or goal"
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/full-send"
-  agent-skills-sync.requires: '["hissal.skill-collection/babysit-pr"]'
+  agent-skills-sync.id: "hissal.hskills/full-send"
+  agent-skills-sync.requires: '["hissal.hskills/babysit-pr"]'
   opencode/autoinvoke: "false"
 ---
 
@@ -14,12 +14,12 @@ metadata:
 
 You take a goal from its first framing to a merged PR, unattended. Done when GitHub reports the PR merged, the PR is unwatched and the handoff below is given; or when a required human review is the only thing left, reported as below; or at one of the procedure's stops, asked as it says.
 
-Before doing any work, load babysit-pr (hissal.skill-collection/babysit-pr) and its needed
+Before doing any work, load babysit-pr (hissal.hskills/babysit-pr) and its needed
 reference files through the installed skill listing. Begin work only after all
 requirements and needed references have loaded. If any cannot load, stop
 without partial work and print:
 
-Stopped: required skill babysit-pr (hissal.skill-collection/babysit-pr) could not be loaded
+Stopped: required skill babysit-pr (hissal.hskills/babysit-pr) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
 `npx skills` do not install requirements; `agent-skills-sync` resolves them
 from this metadata. Install or repair the requirement, then retry.

@@ -16,7 +16,7 @@ if (args[0] === 'app-server') {
     const request = JSON.parse(line);
     if (request.id === 1) console.log(JSON.stringify({ id: 1, result: {} }));
     if (request.id === 2) console.log(JSON.stringify({ id: 2, result: { data: [{ hooks: [{
-      source: 'plugin', pluginId: 'command-guard@skill-collection-guard', enabled: true,
+      source: 'plugin', pluginId: 'command-guard@hskills-guard', enabled: true,
       trustStatus: fs.existsSync(path.join(root, 'human-trusted')) ? 'trusted' : 'untrusted'
     }, ...(fs.existsSync(path.join(root, 'hooks.json')) ? (JSON.parse(fs.readFileSync(path.join(root, 'hooks.json'))).hooks.PreToolUse || []).flatMap(g => (g.hooks || []).map(h => ({
       source: 'user', command: h.command, enabled: true,
@@ -30,11 +30,11 @@ if (args[1] === 'marketplace') {
   else if (args[2] === 'remove') fs.unlinkSync(market);
 } else if (['add', 'install'].includes(args[1])) {
   const source = JSON.parse(fs.readFileSync(market)).source;
-  fs.writeFileSync(installed, JSON.stringify({ id: 'command-guard@skill-collection-guard', pluginId: 'command-guard@skill-collection-guard', enabled: true, readFromFolder: source, source: { path: source } }));
+  fs.writeFileSync(installed, JSON.stringify({ id: 'command-guard@hskills-guard', pluginId: 'command-guard@hskills-guard', enabled: true, readFromFolder: source, source: { path: source } }));
   const config = path.join(root, host === 'codex' ? 'config.toml' : 'settings.json');
   if (!fs.existsSync(config)) fs.writeFileSync(config, host === 'codex' ? '# installed\n' : '{}');
-  if (host === 'codex' && !fs.readFileSync(config, 'utf8').includes('[plugins."command-guard@skill-collection-guard"]')) {
-    fs.appendFileSync(config, '\n[plugins."command-guard@skill-collection-guard"]\nenabled = true\n');
+  if (host === 'codex' && !fs.readFileSync(config, 'utf8').includes('[plugins."command-guard@hskills-guard"]')) {
+    fs.appendFileSync(config, '\n[plugins."command-guard@hskills-guard"]\nenabled = true\n');
   }
 
 } else if (args[1] === 'list') {

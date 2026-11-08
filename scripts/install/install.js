@@ -22,7 +22,7 @@ let command = 'install';
 function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help')) {
-    console.log('Usage: node scripts/install/install.js [install|doctor|uninstall|prepare-plugin] [--owner-steering] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR] [--pack NAME] [--skill NAME [--project DIR]]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.skill-collection/install.json. Prints Claude Read rules; writes no permissions.');
+    console.log('Usage: node scripts/install/install.js [install|doctor|uninstall|prepare-plugin] [--owner-steering] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR] [--pack NAME] [--skill NAME [--project DIR]]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.hskills/install.json. Prints Claude Read rules; writes no permissions.');
     return;
   }
   command = args[0] && !args[0].startsWith('--') ? args.shift() : 'install';
@@ -42,7 +42,7 @@ function main() {
   }
   const source = options['--source'] || path.resolve(__dirname, '../..');
   const roots = [...new Set([options['--claude-root'] || path.join(home, '.claude/skills'), options['--agents-root'] || path.join(home, '.agents/skills')])];
-  const record = path.join(home, '.skill-collection/install.json');
+  const record = path.join(home, '.hskills/install.json');
   const previous = stat(record);
   if (previous && !previous.isFile()) throw new Error('ownership record must be a regular file');
   const before = previous ? fs.readFileSync(record, 'utf8') : null;
@@ -212,7 +212,7 @@ function main() {
     }
   }
   if (command !== 'uninstall') doctor();
-  if (command === 'uninstall' && fs.existsSync(path.join(home, '.skill-collection/plugins.json'))) {
+  if (command === 'uninstall' && fs.existsSync(path.join(home, '.hskills/plugins.json'))) {
     if (!require('./plugin').registration(home, path.join(source, 'hooks/command-guard'), command)) { process.exitCode = 1; return; }
   }
   {
@@ -225,7 +225,7 @@ function main() {
   if (!failed && command === 'install' && fs.existsSync(path.join(source, 'hooks/command-guard/.claude-plugin/plugin.json'))) {
     if (!require('./plugin').registration(home, path.join(source, 'hooks/command-guard'))) failed = true;
   }
-  if (command === 'doctor' && fs.existsSync(path.join(home, '.skill-collection/plugins.json'))) {
+  if (command === 'doctor' && fs.existsSync(path.join(home, '.hskills/plugins.json'))) {
     if (!require('./plugin').registration(home, path.join(source, 'hooks/command-guard'), command)) failed = true;
   }
   if (failed) process.exitCode = 1;

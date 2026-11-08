@@ -1,6 +1,6 @@
 # Skill format
 
-What a skill folder in this collection holds, and the check that keeps the tree sound. Specs and tickets that build skills use this format and do not restate it. Decided in [#42](https://github.com/Hissal/skill-collection/issues/42#issuecomment-6191540887) (disclosure, modes, scripts), [#74](https://github.com/Hissal/skill-collection/issues/74#issuecomment-6442601759) (reachability) and [#18](https://github.com/Hissal/skill-collection/issues/18#issuecomment-6108951944) (layout); specified in [#77](https://github.com/Hissal/skill-collection/issues/77).
+What a skill folder in this collection holds, and the check that keeps the tree sound. Specs and tickets that build skills use this format and do not restate it. Decided in [#42](https://github.com/Hissal/hskills/issues/42#issuecomment-6191540887) (disclosure, modes, scripts), [#74](https://github.com/Hissal/hskills/issues/74#issuecomment-6442601759) (reachability) and [#18](https://github.com/Hissal/hskills/issues/18#issuecomment-6108951944) (layout); specified in [#77](https://github.com/Hissal/hskills/issues/77).
 
 - [Skill tree](#skill-tree)
 - [Collection manifest](#collection-manifest)
@@ -76,11 +76,11 @@ For owner installation, conflicts or drift verification, read
 [Owner-only personal steering](user-install.md#owner-only-personal-steering).
 
 Attribution belongs to the comment and PR skills, per [the superseding owner
-decision](https://github.com/Hissal/skill-collection/issues/88#issuecomment-6512311352),
+decision](https://github.com/Hissal/hskills/issues/88#issuecomment-6512311352),
 and is absent from this source. For line admission and the measured source snapshot, read
 [#118 evidence](../research/steering-source-118.md). The current text (the naming
 convention and the labels-in-reports line) is authoritative; the historical
-tooling-note requirement was [retired](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
+tooling-note requirement was [retired](https://github.com/Hissal/hskills/issues/118#issuecomment-6543671754).
 The source is user scope: it is linked into `~/.claude/CLAUDE.md` and the
 global `AGENTS.md` and loaded in every project, so no path in it resolves
 against this repository. The `steering-paths` rule therefore fails any relative
@@ -147,11 +147,11 @@ Its text also reads right for anyone who installs it. The Standards reviewer jud
 
 - **No build history.** Leave out how this repo came to the text: old rule numbers, maps from a predecessor's names, what a ticket changed. It costs context and changes nothing the agent does.
 - **No copied lookups.** Leave out what an agent can find itself at run time, such as a harness's log paths or a tool's current flags. A copy goes stale; say what to look up instead.
-- **No names the installing agent cannot resolve.** Never refer to "the collection", or any other name for this set of skills, as if the agent knows what it is. Name what it can find: a skill's installed identity (`agent-skills-sync.id`), its callable name, or the repo it was installed from (`Hissal/skill-collection`). A path in this repo names the repo too. This repo's own terms (core, pack, guide) are fine where they fit: when the skill cannot tell what one means, give it a short definition. Never swap a fitting term for a generic one just to avoid repo wording; "module" for "pack" fixes nothing and makes the text wrong.
+- **No names the installing agent cannot resolve.** Never refer to "the collection", or any other name for this set of skills, as if the agent knows what it is. Name what it can find: a skill's installed identity (`agent-skills-sync.id`), its callable name, or the repo it was installed from (`Hissal/hskills`). A path in this repo names the repo too. This repo's own terms (core, pack, guide) are fine where they fit: when the skill cannot tell what one means, give it a short definition. Never swap a fitting term for a generic one just to avoid repo wording; "module" for "pack" fixes nothing and makes the text wrong.
 
 ## Missing project facts
 
-A skill that needs a project fact with no default, and finds none in the project's configuration (the files linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`), tells the user to run `/setup-project`. A fact with a default is never missing: an absent value means the owning skill's default ([#34](https://github.com/Hissal/skill-collection/issues/34#issuecomment-6124395889)).
+A skill that needs a project fact with no default, and finds none in the project's configuration (the files linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`), tells the user to run `/setup-project`. A fact with a default is never missing: an absent value means the owning skill's default ([#34](https://github.com/Hissal/hskills/issues/34#issuecomment-6124395889)).
 
 ## Line endings
 
@@ -159,9 +159,9 @@ The repository is LF everywhere, with no UTF-8 BOM: either breaks frontmatter an
 
 ## Copied skills
 
-A skill copied from a source keeps its provenance in plain files (ADR 0002, [#17](https://github.com/Hissal/skill-collection/issues/17#issuecomment-6108951556), [#51](https://github.com/Hissal/skill-collection/issues/51#issuecomment-6477057987)). An idea taken without copying text needs no record, and no skill carries a `SPEC.md` or `SOURCES.md`.
+A skill copied from a source keeps its provenance in plain files (ADR 0002, [#17](https://github.com/Hissal/hskills/issues/17#issuecomment-6108951556), [#51](https://github.com/Hissal/hskills/issues/51#issuecomment-6477057987)). An idea taken without copying text needs no record, and no skill carries a `SPEC.md` or `SOURCES.md`.
 
-The copying rule ([#263](https://github.com/Hissal/skill-collection/issues/263)):
+The copying rule ([#263](https://github.com/Hissal/hskills/issues/263)):
 
 - Copy source lines that are good; change them only where a change is warranted, never for its own sake.
 - A skill mostly copied from one source is a copied skill: lock entry, pin, baseline, licence file and generated `NOTICE.md`, as below.
@@ -192,7 +192,7 @@ The files:
   ```
 
   `NOTICE.md` is not a reference: it needs no link from `SKILL.md`.
-- **Adapted skills**: a skill written in our own words has no lock entry, even when it keeps some verbatim lines from a permissive source. When it copies lines, or its ticket asks for provenance pointers, keep the pointers out of the files an agent reads: a link to the source invites the agent to fetch it. Write them in a hand-written `NOTICE.md` in the skill folder instead. It names each adapted source with a GitHub link pinned to a full commit SHA and that source's licence identifier, travels with installs and is never loaded. It records provenance, so a source can be compared against its newer commits ([#157](https://github.com/Hissal/skill-collection/issues/157)). A source the skill copies lines from is also named with its copyright line, and the entry says which lines are copied:
+- **Adapted skills**: a skill written in our own words has no lock entry, even when it keeps some verbatim lines from a permissive source. When it copies lines, or its ticket asks for provenance pointers, keep the pointers out of the files an agent reads: a link to the source invites the agent to fetch it. Write them in a hand-written `NOTICE.md` in the skill folder instead. It names each adapted source with a GitHub link pinned to a full commit SHA and that source's licence identifier, travels with installs and is never loaded. It records provenance, so a source can be compared against its newer commits ([#157](https://github.com/Hissal/hskills/issues/157)). A source the skill copies lines from is also named with its copyright line, and the entry says which lines are copied:
 
   ```markdown
   - `SKILL.md`, the two lines of the stop rule, copied verbatim: obra/superpowers [`verification-before-completion`](https://github.com/obra/superpowers/blob/8ca22dba9a94f28898bbce59f2537ff4d87c747d/skills/verification-before-completion/SKILL.md). MIT, Copyright (c) 2025 Jesse Vincent.
@@ -280,12 +280,12 @@ Run `npm ci` before the check and its fixtures to install pinned agnix; real-agn
 
 ## agnix (on trial)
 
-[agnix](https://github.com/agent-sh/agnix) lints harness format mechanics beside the collection's own rules ([#93](https://github.com/Hissal/skill-collection/issues/93)). The check runs the version pinned in `package.json` as its `agnix` rule.
+[agnix](https://github.com/agent-sh/agnix) lints harness format mechanics beside the collection's own rules ([#93](https://github.com/Hissal/hskills/issues/93)). The check runs the version pinned in `package.json` as its `agnix` rule.
 
 - **Scope and rules off**: [`.agnix.toml`](../.agnix.toml) scopes it to Claude Code and Codex. It turns off `CX-SK-001`, `XP-SK-001`, and for good the wording-opinion rules: every `PE-*`, `AGM-002`, `AGM-004` and `CC-MEM-017`. `CC-MEM-005` to `009` and `CDX-AG-004` are off too: the pinned version has retired them, so they are not listed. Their size replacements, `CC-MEM-014` and `CDX-AG-009`/`010`, stay on.
 - **Autofix**: never run. The check passes no fix flag, and its fixture runner fails any case where the check changed a file.
 - **Output**: agnix errors and warnings print as `WARN <file>:<line> [agnix] <agnix rule> ...`; its info-level advice is not printed. A missing agnix, a version other than the pin, or a failed run is one warning on `package.json`. Nothing agnix reports fails the run.
-- **Trial**: decided in [#77, owner answer 10](https://github.com/Hissal/skill-collection/issues/77#issuecomment-6509966712). The owner judges agnix after its first run over the first real batch of skills, then promotes it to failing (the rule's level becomes `fail`) or drops it (the rule, `.agnix.toml` and the pin go). The collection's own rules stay either way.
+- **Trial**: decided in [#77, owner answer 10](https://github.com/Hissal/hskills/issues/77#issuecomment-6509966712). The owner judges agnix after its first run over the first real batch of skills, then promotes it to failing (the rule's level becomes `fail`) or drops it (the rule, `.agnix.toml` and the pin go). The collection's own rules stay either way.
 - **Decision**: pending. Record the owner's promote-or-drop decision here, with its date and issue link.
 - **Bumping the pin**: change `package.json`, run `npm install`, and re-check `.agnix.toml` against agnix's changelog, since releases retire and rename rules.
 
@@ -349,12 +349,12 @@ Author identity once, in string-valued `metadata` in `SKILL.md`:
 ```yaml
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/example"
-  agent-skills-sync.requires: '["hissal.skill-collection/knowledge"]'
+  agent-skills-sync.id: "hissal.hskills/example"
+  agent-skills-sync.requires: '["hissal.hskills/knowledge"]'
 ```
 
 Schema is the string `"1"`, not the number `1`. IDs use the publisher prefix
-`hissal.skill-collection/` and a lowercase kebab-case slug. Each ID is unique
+`hissal.hskills/` and a lowercase kebab-case slug. Each ID is unique
 and survives callable renames, folder moves, address and installation scope
 changes. Other publishers can adopt the same metadata keys with their own
 prefix; this collection currently rejects external IDs and requirements until
@@ -415,7 +415,7 @@ setup error. Run the scan's fixtures with `node scripts/security-scan/test/run.j
 
 - **Pin**: [`scan.py`](../scripts/security-scan/scan.py) holds the getsentry/skills
   commit and the sha256 of `scan_skill.py`; it downloads that file once into
-  `~/.cache/skill-collection/skill-scanner/` (`SKILL_SCANNER_CACHE` overrides)
+  `~/.cache/hskills/skill-scanner/` (`SKILL_SCANNER_CACHE` overrides)
   and stops on a hash mismatch. Bump both together. The workflow pins uv.
 - **Coverage**: a changed file inside a skill folder gets the scanner's whole-skill
   scan, reported only for the changed files. Changed files the scanner's walk
@@ -453,7 +453,7 @@ Guides recommend workflows; they never run them. A recommendation returns the
 exact user invocation and leaves starting a user-invoked workflow to the human.
 A small guide is primarily routes and has a needs table only when it supplies
 knowledge. These rules follow [ADR 0003](adr/0003-core-reaches-packs-through-the-pack-list.md)
-and [#100](https://github.com/Hissal/skill-collection/issues/100).
+and [#100](https://github.com/Hissal/hskills/issues/100).
 
 ### Pack guides and needs tables
 
@@ -604,11 +604,11 @@ direct skill IDs:
 
 ```json
 {
-  "hissal.skill-collection/example": {
+  "hissal.hskills/example": {
     "path": "skills/core/example",
-    "requires": ["hissal.skill-collection/knowledge"]
+    "requires": ["hissal.hskills/knowledge"]
   },
-  "hissal.skill-collection/knowledge": {
+  "hissal.hskills/knowledge": {
     "path": "skills/packs/study/knowledge",
     "requires": []
   }
@@ -659,7 +659,7 @@ collection's existing NUL-byte exclusion. An invalid lock is reported by
 
 The automatic guide is the core guide (`skills/core/guide/`) published
 model-invoked as `onboarding-guide`
-([#88, owner answer 13](https://github.com/Hissal/skill-collection/issues/88#issuecomment-6512311352)),
+([#88, owner answer 13](https://github.com/Hissal/hskills/issues/88#issuecomment-6512311352)),
 the onboarding pack's one skill (`skills/packs/onboarding/onboarding-guide/`).
 Never edit it: edit the core guide, then regenerate and commit the output:
 
@@ -680,7 +680,7 @@ changes nothing. The description is fixed in
 generator's output, so the check fails until it is regenerated. The guide is
 a one-skill pack: install it at user scope with
 `node scripts/install/install.js install --pack onboarding`, or as the
-`collection-pack-onboarding` plugin. Core installs never include it, and its
+`hskills-onboarding` plugin. Core installs never include it, and its
 description counts against the onboarding pack's
 [idle-cost tripwire](#idle-cost-tripwires), not core's.
 
@@ -694,7 +694,7 @@ manifest fails. Two rules read the same lists: `plugin-paths` fails `paths:` on 
 listed skill, since plugin installs ignore it and the skill would be silently
 unlisted; `plugin-requirements` fails a requirement that resolves outside its
 plugin, where core resolves within core and a pack within itself plus core
-([#77, owner answer 2](https://github.com/Hissal/skill-collection/issues/77#issuecomment-6509966712)).
+([#77, owner answer 2](https://github.com/Hissal/hskills/issues/77#issuecomment-6509966712)).
 
 Each nonempty group publishes two host manifests at its skill-tree root:
 `skills/core` or `skills/packs/<pack>`. Paths stay inside that root; a selection

@@ -4,7 +4,7 @@ description: "Turn the current conversation into a spec and publish it to the pr
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/to-spec"
+  agent-skills-sync.id: "hissal.hskills/to-spec"
   opencode/autoinvoke: "false"
 ---
 

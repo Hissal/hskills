@@ -6,7 +6,7 @@ Done when the owner confirmed the file shown to them and the file on disk is tha
 
 ## 1. Read what exists
 
-Read `~/.config/skill-collection/delegation.json` (`~` is the home directory on every system). It is in one of three states:
+Read `~/.config/hskills/delegation.json` (`~` is the home directory on every system). It is in one of three states:
 
 - **Absent**: a fresh setup. Start from `{ "version": 1 }`.
 - **Valid** against the schema: an edit. Summarise it for the owner in plain words, rule by rule and in file order (which agents each rule matches, its choices, effort and fallback), plus `effortDefaults`, `autoFallback` and each workflow override. Ask which parts to change, add, remove or reorder. Every part they leave stays exactly as it is.
@@ -49,4 +49,4 @@ Validate it before showing it: parse it as plain JSON (no comments, no trailing 
 
 Show the whole file. With an existing file, show the changes as a diff against it as well, and confirm that every rule the owner did not change is untouched. Ask the owner to confirm, and write only on their explicit yes; a change request goes back to the round it belongs to.
 
-On yes, create `~/.config/skill-collection/` when missing. Write the file as UTF-8 with LF line endings, two-space indentation and a final newline. Read it back and validate it again, then report its path and that the next dispatch reads it.
+On yes, create `~/.config/hskills/` when missing. Write the file as UTF-8 with LF line endings, two-space indentation and a final newline. Read it back and validate it again, then report its path and that the next dispatch reads it.

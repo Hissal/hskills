@@ -24,7 +24,7 @@ const CODEX_HOOKS = path.join(CODEX_DIR, 'hooks.json');
 const OPENCODE_DIR = path.join(HOME, '.config', 'opencode');
 const OPENCODE_PLUGIN = path.join(OPENCODE_DIR, 'plugins', 'command-guard.js');
 const args = new Set(process.argv.slice(2));
-const RECORD = path.join(HOME, '.skill-collection', 'guard.json');
+const RECORD = path.join(HOME, '.hskills', 'guard.json');
 let record = readJson(RECORD, { groups: [], files: [] });
 function save() { fs.mkdirSync(path.dirname(RECORD), { recursive: true }); fs.writeFileSync(RECORD, JSON.stringify(record, null, 2) + '\n'); }
 const fwd = (p) => p.replace(/\\/g, '/');

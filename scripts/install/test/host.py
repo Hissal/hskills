@@ -49,7 +49,7 @@ if args[:1] == ['app-server']:
                 user = [{'source': 'user', **({'command': h['command']} if 'command' in h else {}), 'enabled': True,
                          'trustStatus': 'trusted' if exists('legacy-trusted') else 'untrusted'}
                         for g in groups for h in (g.get('hooks') or [])]
-            hooks = [{'source': 'plugin', 'pluginId': 'command-guard@skill-collection-guard', 'enabled': True,
+            hooks = [{'source': 'plugin', 'pluginId': 'command-guard@hskills-guard', 'enabled': True,
                       'trustStatus': 'trusted' if exists('human-trusted') else 'untrusted'}, *user]
             print(dump({'id': 2, 'result': {'data': [{'hooks': hooks, 'errors': []}]}}), flush=True)
 else:
@@ -62,13 +62,13 @@ else:
             os.unlink(market)
     elif command in ('add', 'install'):
         source = json.loads(read(market))['source']
-        write(installed, dump({'id': 'command-guard@skill-collection-guard', 'pluginId': 'command-guard@skill-collection-guard',
+        write(installed, dump({'id': 'command-guard@hskills-guard', 'pluginId': 'command-guard@hskills-guard',
                                'enabled': True, 'readFromFolder': source, 'source': {'path': source}}))
         config = os.path.join(root, 'config.toml' if host == 'codex' else 'settings.json')
         if not os.path.exists(config):
             write(config, '# installed\n' if host == 'codex' else '{}')
-        if host == 'codex' and '[plugins."command-guard@skill-collection-guard"]' not in read(config):
-            write(config, '\n[plugins."command-guard@skill-collection-guard"]\nenabled = true\n', 'a')
+        if host == 'codex' and '[plugins."command-guard@hskills-guard"]' not in read(config):
+            write(config, '\n[plugins."command-guard@hskills-guard"]\nenabled = true\n', 'a')
     elif command == 'list':
         listed = [json.loads(read(installed))] if os.path.exists(installed) else []
         output = {'installed': listed} if host == 'codex' else listed

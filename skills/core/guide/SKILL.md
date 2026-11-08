@@ -4,7 +4,7 @@ description: Find the next workflow for your task.
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/guide"
+  agent-skills-sync.id: "hissal.hskills/guide"
   opencode/autoinvoke: "false"
 ---
 

@@ -1,6 +1,6 @@
 # Disposable plugin reach fixture (#123)
 
-Use this fixture only for the [plugin gate](https://github.com/Hissal/skill-collection/issues/123).
+Use this fixture only for the [plugin gate](https://github.com/Hissal/hskills/issues/123).
 Plugin manifests are templates materialized only in the scratch copy, outside
 release stamping. Its separate test marketplace is outside the release marketplace, collection
 manifest, catalog and install selection. The one-skill pack is test data.
@@ -37,7 +37,7 @@ cannot expose auth safely to the scratch config, report that blocker.
 
 In that environment register the scratch marketplace with
 `codex plugin marketplace add <root>/marketplace --json`, then
-`codex plugin add reach-fixture@skill-collection-reach-fixture --json` and
+`codex plugin add reach-fixture@hskills-reach-fixture --json` and
 `codex plugin list --json`. Claude uses the scratch pack via `--plugin-dir`;
 validate it with `claude plugin validate <root>/marketplace/pack`.
 Run `node scripts/eval/trigger.js <root>/bare.json` and then the qualified config.

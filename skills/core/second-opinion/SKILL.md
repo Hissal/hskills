@@ -4,8 +4,8 @@ description: Get a fresh second read of a diff, claim or decision, preferably fr
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/second-opinion"
-  agent-skills-sync.requires: '["hissal.skill-collection/reviewing"]'
+  agent-skills-sync.id: "hissal.hskills/second-opinion"
+  agent-skills-sync.requires: '["hissal.hskills/reviewing"]'
   opencode/autoinvoke: "false"
 ---
 
@@ -13,12 +13,12 @@ metadata:
 
 Put something already made in front of a fresh reader, preferably from another model family, and relay what it says. The first opinion is the review, claim or decision being checked; the second reader adds to it rather than repeating it. You settle the target, brief the reader, dispatch it and report. You change nothing in the project, and the reader's output is evidence for the owner, never a vote.
 
-Before doing any work, load reviewing (hissal.skill-collection/reviewing) and its needed
+Before doing any work, load reviewing (hissal.hskills/reviewing) and its needed
 reference files through the installed skill listing. Begin work only after all
 requirements and needed references have loaded. If any cannot load, stop
 without partial work and print:
 
-Stopped: required skill reviewing (hissal.skill-collection/reviewing) could not be loaded
+Stopped: required skill reviewing (hissal.hskills/reviewing) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
 `npx skills` do not install requirements; `agent-skills-sync` resolves them
 from this metadata. Install or repair the requirement, then retry.

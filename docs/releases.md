@@ -1,6 +1,6 @@
 # Releases and commit convention
 
-The [owner decision](https://github.com/Hissal/skill-collection/issues/78#issuecomment-6510537918)
+The [owner decision](https://github.com/Hissal/hskills/issues/78#issuecomment-6510537918)
 sets one version for the collection, including pack-only changes. Use
 Conventional Commits: `<type>(<optional scope>): <lowercase imperative description>`,
 with no trailing period and at most 72 characters. Scopes are free-form; use the
@@ -47,7 +47,7 @@ node scripts/check/check.js
 
 Use Node 22 or newer (also used by CI). The onboarding generator regenerates
 the automatic guide from the core guide so the release tag carries it
-([#175](https://github.com/Hissal/skill-collection/issues/175)); when it changes
+([#175](https://github.com/Hissal/hskills/issues/175)); when it changes
 a file, commit the change to the release PR before merging. The check fails on
 a stale automatic guide either way. The offline dry run builds release-please
 candidates from synthetic Conventional Commits and applies the actual proposed

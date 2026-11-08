@@ -3,8 +3,8 @@ name: code-review
 description: "Use when the user wants code changes reviewed for problems: a branch, a pull request, or their work in progress, such as before opening a PR."
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/code-review"
-  agent-skills-sync.requires: '["hissal.skill-collection/reviewing"]'
+  agent-skills-sync.id: "hissal.hskills/code-review"
+  agent-skills-sync.requires: '["hissal.hskills/reviewing"]'
   opencode/autoinvoke: "true"
 ---
 
@@ -18,12 +18,12 @@ Each axis runs as its own **parallel sub-agent**, so none pollutes another's con
 
 The review is read-only. It changes nothing in the project, runs no check, and does not call `verifying`. Sorting and fixing findings belong to `receiving-review`.
 
-Before doing any work, load reviewing (hissal.skill-collection/reviewing) and its needed
+Before doing any work, load reviewing (hissal.hskills/reviewing) and its needed
 reference files through the installed skill listing. Begin work only after all
 requirements and needed references have loaded. If any cannot load, stop
 without partial work and print:
 
-Stopped: required skill reviewing (hissal.skill-collection/reviewing) could not be loaded
+Stopped: required skill reviewing (hissal.hskills/reviewing) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
 `npx skills` do not install requirements; `agent-skills-sync` resolves them
 from this metadata. Install or repair the requirement, then retry.
@@ -124,7 +124,7 @@ Each reviewer's model, harness and effort come from `delegating` and the persona
 
 With no spec available, skip the Spec reviewer; Standards and Failure still run.
 
-**Security findings**: check the installed skill listing for `receiving-review` (`hissal.skill-collection/receiving-review`). When it is installed with its `references/SECURITY-FINDING.md`, paste that procedure into every brief, and have each reviewer assess any security finding with it before reporting, giving the finding its verdict. When it is not installed, proceed without it; it is never a requirement.
+**Security findings**: check the installed skill listing for `receiving-review` (`hissal.hskills/receiving-review`). When it is installed with its `references/SECURITY-FINDING.md`, paste that procedure into every brief, and have each reviewer assess any security finding with it before reporting, giving the finding its verdict. When it is not installed, proceed without it; it is never a requirement.
 
 ### 6. Aggregate
 

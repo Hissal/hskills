@@ -3,7 +3,7 @@ name: pr
 description: "Use when writing or updating a PR body, pushing to a PR, or merging one."
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/pr"
+  agent-skills-sync.id: "hissal.hskills/pr"
   opencode/autoinvoke: "true"
 ---
 

@@ -5,7 +5,7 @@ disable-model-invocation: true
 argument-hint: "A goal or spec to build twice, with any constraints"
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/arena"
+  agent-skills-sync.id: "hissal.hskills/arena"
   opencode/autoinvoke: "false"
 ---
 

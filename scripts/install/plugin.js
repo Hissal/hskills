@@ -49,7 +49,7 @@ function prepare(home, source = path.resolve(__dirname, '../../hooks/command-gua
   const hash = crypto.createHash('sha256');
   for (const [name, content] of files) hash.update(name).update('\0').update(content).update('\0');
   const version = JSON.parse(fs.readFileSync(path.join(source, '.claude-plugin/plugin.json'))).version;
-  const dest = path.join(home, '.skill-collection/plugin-cache', version + '-' + hash.digest('hex'));
+  const dest = path.join(home, '.hskills/plugin-cache', version + '-' + hash.digest('hex'));
   if (replacedParent(dest, home)) throw new Error('CONFLICT replaced snapshot parent preserved: ' + dest);
   if (fs.existsSync(dest) && !reclaim(dest, directories)) {
     if (!fs.lstatSync(dest).isDirectory() || fs.lstatSync(dest).isSymbolicLink()) throw new Error('CONFLICT plugin snapshot entry: ' + dest);
@@ -92,7 +92,7 @@ module.exports = { prepare };
 
 const { spawnSync } = require('child_process');
 function registration(home, source, action = 'install') {
-  const file = path.join(home, '.skill-collection/plugins.json');
+  const file = path.join(home, '.hskills/plugins.json');
   if (replacedParent(file, home)) throw new Error('CONFLICT plugin ownership record parent');
   let record;
   try { record = fs.lstatSync(file); } catch (e) { if (e.code !== 'ENOENT') throw e; }
@@ -100,7 +100,7 @@ function registration(home, source, action = 'install') {
   const data = record ? JSON.parse(fs.readFileSync(file)) : { hosts: [], writes: [] };
   // Journals from before directory provenance: a recorded snapshot file the
   // installer created proves it also created that snapshot's directories.
-  const cache = path.join(home, '.skill-collection/plugin-cache');
+  const cache = path.join(home, '.hskills/plugin-cache');
   if (data.directories === undefined) {
     data.directories = [];
     for (const w of data.writes.filter(w => w.before === null)) {
@@ -193,12 +193,12 @@ function registration(home, source, action = 'install') {
     const settings = path.join(home, '.claude/settings.json');
     if (host === 'claude' && fs.existsSync(settings) && JSON.parse(fs.readFileSync(settings)).disableAllHooks) throw new Error('disabled Claude hooks');
     const list = call(host, ['plugin', 'list', '--json']);
-    const entry = (Array.isArray(list) ? list : list.installed).find(p => (p.id || p.pluginId) === 'command-guard@skill-collection-guard');
+    const entry = (Array.isArray(list) ? list : list.installed).find(p => (p.id || p.pluginId) === 'command-guard@hskills-guard');
     const effective = entry && (entry.readFromFolder || entry.source?.path || entry.installPath);
     if (!entry || !entry.enabled || !effective || fs.realpathSync(effective) !== fs.realpathSync(snapshot)) throw new Error('missing, disabled or overridden plugin: ' + host);
   }
   // The previous installer's record of its own settings handlers, if any.
-  const legacyFile = path.join(home, '.skill-collection/guard.json');
+  const legacyFile = path.join(home, '.hskills/guard.json');
   function legacyRecord() { return fs.existsSync(legacyFile) ? JSON.parse(fs.readFileSync(legacyFile)) : null; }
   let codexGroups = null;
   function ready(host) {
@@ -210,7 +210,7 @@ function registration(home, source, action = 'install') {
       if (!Array.isArray(groups)) throw new Error('Codex hook status unavailable');
       codexGroups = groups;
       return groups.length > 0 && groups.every(group => {
-        const hooks = group.hooks.filter(h => h.source === 'plugin' && h.pluginId === 'command-guard@skill-collection-guard');
+        const hooks = group.hooks.filter(h => h.source === 'plugin' && h.pluginId === 'command-guard@hskills-guard');
         return !(group.errors || []).length && hooks.length > 0 && hooks.every(h => h.enabled && h.trustStatus === 'trusted');
       });
     } catch { codexGroups = null; return false; }
@@ -258,7 +258,7 @@ function registration(home, source, action = 'install') {
   probeSnapshot(snapshot);
   const market = snapshot;
   const manifest = path.join(market, '.claude-plugin/marketplace.json');
-  const content = JSON.stringify({ name: 'skill-collection-guard', owner: { name: 'Hissal' }, plugins: [{ name: 'command-guard', source: './', policy: { installation: 'AVAILABLE', authentication: 'ON_INSTALL' } }] }, null, 2) + '\n';
+  const content = JSON.stringify({ name: 'hskills-guard', owner: { name: 'Hissal' }, plugins: [{ name: 'command-guard', source: './', policy: { installation: 'AVAILABLE', authentication: 'ON_INSTALL' } }] }, null, 2) + '\n';
   if (fs.existsSync(manifest) && (!fs.lstatSync(manifest).isFile() || fs.lstatSync(manifest).isSymbolicLink())) throw new Error('CONFLICT marketplace snapshot entry');
   if (fs.existsSync(manifest) && fs.readFileSync(manifest, 'utf8') !== content) throw new Error('CONFLICT marketplace snapshot');
   if (!fs.existsSync(manifest)) { fs.mkdirSync(path.dirname(manifest), { recursive: true }); fs.writeFileSync(manifest, content); data.writes.push({ path: manifest, before: null, after: Buffer.from(content).toString('base64') }); save(); }
@@ -274,14 +274,14 @@ function registration(home, source, action = 'install') {
       const existing = data.hosts.find(h => h.host === host);
       if (!existing) {
         const list = call(host, ['plugin', 'list', '--json']);
-        if (JSON.stringify(list).includes('command-guard@skill-collection-guard')) throw new Error('CONFLICT unrecorded plugin');
+        if (JSON.stringify(list).includes('command-guard@hskills-guard')) throw new Error('CONFLICT unrecorded plugin');
       }
       if (existing && existing.snapshot !== snapshot && host === 'codex') {
         inspect(host, existing.snapshot);
-        call(host, ['plugin', 'marketplace', 'remove', 'skill-collection-guard', '--json']);
+        call(host, ['plugin', 'marketplace', 'remove', 'hskills-guard', '--json']);
       }
       call(host, ['plugin', 'marketplace', 'add', market, '--json']);
-      call(host, ['plugin', host === 'claude' ? 'install' : 'add', 'command-guard@skill-collection-guard', '--json']);
+      call(host, ['plugin', host === 'claude' ? 'install' : 'add', 'command-guard@hskills-guard', '--json']);
       inspect(host, snapshot);
       data.hosts = data.hosts.filter(h => h.host !== host).concat({ host, snapshot });
       console.log('REGISTERED ' + host + ': ' + snapshot);

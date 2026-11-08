@@ -1,6 +1,6 @@
 # Research area rules
 
-Use this when adding or updating `research/` notes and source ledgers. The [maintenance decision (#17)](https://github.com/Hissal/skill-collection/issues/17) assigns these rules to collection maintenance. The conventions below come from existing notes; they do not turn research recommendations into collection decisions.
+Use this when adding or updating `research/` notes and source ledgers. The [maintenance decision (#17)](https://github.com/Hissal/hskills/issues/17) assigns these rules to collection maintenance. The conventions below come from existing notes; they do not turn research recommendations into collection decisions.
 
 ## Research notes
 
@@ -23,4 +23,4 @@ Keep per-source candidate inventories in `research/ledgers/`. A ledger is a prop
 - Give candidates stable numbered entries and an index so later themes can cite them. For each candidate record what it is and its source, kind, proposed address, fit, misfit, copy/adapt/idea-only treatment, overlap, idle-context cost and a proposed recommendation. This is the repeated entry shape in both example ledgers.
 - State how costs were measured or estimated and mark estimates as such. Record harness and platform assumptions, blockers, disagreements and open questions. Both example ledgers distinguish measured description characters from token estimates and call out portability limits.
 
-A ledger is research evidence, not the installed-copy provenance record. [#17](https://github.com/Hissal/skill-collection/issues/17) assigns copied-skill provenance to `vendor.lock.json`, whole-folder baselines and licences, and gives idea-only takes no provenance record. [ADR 0002](../adr/0002-every-skill-lives-in-this-repo.md) records the fork's role as a source. Do not revive the ledger's proposed per-skill `SPEC.md`/`SOURCES.md` convention: #17 rejected it in favor of the shared provenance machinery.
+A ledger is research evidence, not the installed-copy provenance record. [#17](https://github.com/Hissal/hskills/issues/17) assigns copied-skill provenance to `vendor.lock.json`, whole-folder baselines and licences, and gives idea-only takes no provenance record. [ADR 0002](../adr/0002-every-skill-lives-in-this-repo.md) records the fork's role as a source. Do not revive the ledger's proposed per-skill `SPEC.md`/`SOURCES.md` convention: #17 rejected it in favor of the shared provenance machinery.

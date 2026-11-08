@@ -3,7 +3,7 @@ name: reviewing
 description: "Use when a review's scope needs settling before reviewing: exactly which changes a branch adds over its merge target, only this session's changes, or which modules changed most recently and deserve review."
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/reviewing"
+  agent-skills-sync.id: "hissal.hskills/reviewing"
   opencode/autoinvoke: "true"
 ---
 

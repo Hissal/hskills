@@ -4,7 +4,7 @@ description: "Conduct a retrospective on recent coding sessions and their review
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/retro"
+  agent-skills-sync.id: "hissal.hskills/retro"
   opencode/autoinvoke: "false"
 ---
 

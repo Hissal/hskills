@@ -24,10 +24,10 @@ try {
  write('.claude-plugin/marketplace.json',JSON.stringify({name:'fixture-124',owner:{name:'Hissal'},plugins:[{name:'command-guard',source:'./hooks/command-guard'}]}));
  for (const [p,name,body] of [
  ['skills/core/fixture-required','fixture-required','Read references/token.md and return its token.'],
- ['skills/packs/demo/fixture-work','fixture-work','Before work, load fixture-required (hissal.skill-collection/fixture-required). Stop and name the missing requirement if unavailable. Otherwise return the required token.'],
+ ['skills/packs/demo/fixture-work','fixture-work','Before work, load fixture-required (hissal.hskills/fixture-required). Stop and name the missing requirement if unavailable. Otherwise return the required token.'],
  ['skills/packs/onboarding/fixture-auto','fixture-auto','Suggest fixture-work when asked about the fixture task.'],
  ]) {
- write(p+'/SKILL.md',`---\nname: ${name}\ndescription: Use when asked for the issue 124 fixture task.\nmetadata:\n  opencode/autoinvoke: "true"\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/${name}"\n  agent-skills-sync.requires: '${name === 'fixture-work' ? '["hissal.skill-collection/fixture-required"]' : '[]'}'\n---\n${body}\n`);
+ write(p+'/SKILL.md',`---\nname: ${name}\ndescription: Use when asked for the issue 124 fixture task.\nmetadata:\n  opencode/autoinvoke: "true"\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.hskills/${name}"\n  agent-skills-sync.requires: '${name === 'fixture-work' ? '["hissal.hskills/fixture-required"]' : '[]'}'\n---\n${body}\n`);
  write(p+'/agents/openai.yaml','policy:\n  allow_implicit_invocation: true\n');
  }
  write('skills/core/fixture-required/references/token.md','# Token\n\nPLUGIN-124-IRIS\n');

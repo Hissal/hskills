@@ -4,7 +4,7 @@ description: Write an interactive bash script that walks you through steps only 
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/wizard"
+  agent-skills-sync.id: "hissal.hskills/wizard"
   opencode/autoinvoke: "false"
 ---
 

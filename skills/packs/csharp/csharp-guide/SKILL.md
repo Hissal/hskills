@@ -3,7 +3,7 @@ name: csharp-guide
 description: Use when designing, changing, reviewing or diagnosing SDK-style .NET code; when a workflow requests C# or .NET-specific knowledge; or when choosing a C# workflow.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/csharp-guide"
+  agent-skills-sync.id: "hissal.hskills/csharp-guide"
   opencode/autoinvoke: "true"
 ---
 

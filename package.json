@@ -1,5 +1,5 @@
 {
-  "name": "skill-collection",
+  "name": "hskills",
   "private": true,
   "description": "Tooling for the skill collection. `npm ci` installs the pinned agnix the collection check runs.",
   "devDependencies": {

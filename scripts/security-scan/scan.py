@@ -50,7 +50,7 @@ def git(root: Path, *args: str) -> str:
 
 def load_scanner():
     """Fetch the pinned scan_skill.py into the cache once, verify it, import it."""
-    cache = Path(os.environ.get("SKILL_SCANNER_CACHE") or Path.home() / ".cache" / "skill-collection" / "skill-scanner")
+    cache = Path(os.environ.get("SKILL_SCANNER_CACHE") or Path.home() / ".cache" / "hskills" / "skill-scanner")
     file = cache / SCANNER_COMMIT / "scan_skill.py"
     if not file.exists():
         try:

@@ -3,7 +3,7 @@ name: receiving-review
 description: Use when acting on review feedback (PR review comments, a review workflow's findings, a bot's flagged issue) or when asked whether a finding is real.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/receiving-review"
+  agent-skills-sync.id: "hissal.hskills/receiving-review"
   opencode/autoinvoke: "true"
 ---
 

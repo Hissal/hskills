@@ -8,7 +8,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { tempDir } = require('../../test-util');
 const UTIL = path.resolve(__dirname, '../../test-util.js');
-const RUN_ENV = 'SKILL_COLLECTION_TEST_TMP';
+const RUN_ENV = 'HSKILLS_TEST_TMP';
 
 const pause = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 // Runs `body` in a fresh runner whose os.tmpdir() is `tmp`. The runner
@@ -67,15 +67,15 @@ const cases = [
     assert.deepEqual(fs.readdirSync(tmp), ['parent-run']);
   }],
   ['a new run removes run folders over a day old and keeps recent ones', (tmp) => {
-    const old = path.join(tmp, 'skill-collection-test-old');
-    const recent = path.join(tmp, 'skill-collection-test-recent');
+    const old = path.join(tmp, 'hskills-test-old');
+    const recent = path.join(tmp, 'hskills-test-recent');
     fs.mkdirSync(old);
     fs.mkdirSync(recent);
     const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
     fs.utimesSync(old, twoDaysAgo, twoDaysAgo);
     const r = runner(tmp, made);
     assert.equal(r.status, 0, r.stderr);
-    assert.deepEqual(fs.readdirSync(tmp), ['skill-collection-test-recent']);
+    assert.deepEqual(fs.readdirSync(tmp), ['hskills-test-recent']);
   }],
 ];
 let failures = 0;

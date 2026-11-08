@@ -53,7 +53,7 @@ fs.symlinkSync = function(target, dest, type) {
   }],
   ['preserves a recorded guard file replaced by a matching symlink', f => {
     f.run(0);
-    const record = path.join(f.home, '.skill-collection/guard.json');
+    const record = path.join(f.home, '.hskills/guard.json');
     const dest = path.join(f.home, '.agents/command-guard/engine/index.js');
     const outside = path.join(f.repo, 'outside');
     const content = fs.readFileSync(dest);
@@ -100,7 +100,7 @@ fs.symlinkSync = function(target, dest, type) {
     f.run(1, 'prepare-plugin');
     assert.match(f.last.stderr, /FAIL prepare-plugin/);
     assert.equal(fs.readFileSync(settings, 'utf8'), before);
-    const cache = path.join(f.home, '.skill-collection/plugin-cache');
+    const cache = path.join(f.home, '.hskills/plugin-cache');
     const versions = fs.readdirSync(cache);
     assert.equal(versions.length, 1);
     const snapshot = path.join(cache, versions[0]);
@@ -127,7 +127,7 @@ fs.symlinkSync = function(target, dest, type) {
     fs.writeFileSync(settings, '{}');
     f.run(1, 'install', ['--pack', 'study', '--skill', 'beta', '--project', project, '--owner-steering']);
     const before = fs.readFileSync(f.record, 'utf8');
-    const guard = JSON.parse(fs.readFileSync(path.join(f.home, '.skill-collection/guard.json')));
+    const guard = JSON.parse(fs.readFileSync(path.join(f.home, '.hskills/guard.json')));
     assert.ok(guard.settings.some(s => s.path === settings && s.backup === settings + '.before-command-guard'));
     f.run(1); f.run(1, 'doctor');
     assert.equal(fs.readFileSync(f.record, 'utf8'), before);
@@ -379,7 +379,7 @@ fs.symlinkSync = function(target, dest, type) {
     f.run(0);
     const rule = file => 'Read(/' + file.replace(/\\/g, '/').replace(/^([A-Za-z]):/, (_, drive) => '/' + drive.toLowerCase()) + '/**)';
     for (const file of [path.join(f.targets[0], 'alpha'), path.join(f.targets[1], 'alpha'), path.join(f.repo, 'skills/core/alpha')]) assert.ok(f.last.stdout.includes(JSON.stringify(rule(file))));
-    assert.deepEqual(fs.readdirSync(f.home), ['.agents', '.claude', '.skill-collection']);
+    assert.deepEqual(fs.readdirSync(f.home), ['.agents', '.claude', '.hskills']);
   }],
   ...['file', 'directory', 'link', 'dangling link'].map(kind => ['preserves unrecorded ' + kind, (f) => {
     fs.mkdirSync(f.targets[0], { recursive: true });
@@ -468,7 +468,7 @@ function runCase(name) {
     const home = path.join(temp, 'home');
     const targets = [path.join(temp, 'claude'), path.join(temp, 'agents')];
     fs.mkdirSync(path.join(repo, 'skills/core/alpha'), { recursive: true });
-    const f = { repo, home, targets, record: path.join(home, '.skill-collection/install.json'),
+    const f = { repo, home, targets, record: path.join(home, '.hskills/install.json'),
       manifest(core, packs = {}) { fs.writeFileSync(path.join(repo, 'collection.json'), JSON.stringify({ core, packs, expensive: [] })); },
       run(status, command = 'install', extra = []) {
         this.last = spawnSync(process.execPath, [...(this.nodeArgs || []), cli, command, '--home', home, '--source', repo, '--claude-root', targets[0], '--agents-root', targets[1], ...extra], { encoding: 'utf8', env: this.env || process.env });

@@ -4,7 +4,7 @@ description: Use when asked to babysit, watch, monitor or tend a pull request.
 argument-hint: "A PR number or URL"
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/babysit-pr"
+  agent-skills-sync.id: "hissal.hskills/babysit-pr"
   opencode/autoinvoke: "true"
 ---
 

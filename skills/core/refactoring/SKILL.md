@@ -3,7 +3,7 @@ name: refactoring
 description: "Use when restructuring code while its behaviour stays the same: a rename, move, extract or split, including tidying mid-task when nobody asked."
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/refactoring"
+  agent-skills-sync.id: "hissal.hskills/refactoring"
   opencode/autoinvoke: "true"
 ---
 

@@ -1,264 +1,264 @@
 {
-  "hissal.skill-collection/architecture-review": {
+  "hissal.hskills/architecture-review": {
     "path": "skills/core/architecture-review",
     "requires": [
-      "hissal.skill-collection/reviewing"
+      "hissal.hskills/reviewing"
     ]
   },
-  "hissal.skill-collection/arena": {
+  "hissal.hskills/arena": {
     "path": "skills/packs/experimental/arena",
     "requires": []
   },
-  "hissal.skill-collection/babysit-pr": {
+  "hissal.hskills/babysit-pr": {
     "path": "skills/packs/experimental/babysit-pr",
     "requires": []
   },
-  "hissal.skill-collection/blast-radius": {
+  "hissal.hskills/blast-radius": {
     "path": "skills/core/blast-radius",
     "requires": [
-      "hissal.skill-collection/verifying"
+      "hissal.hskills/verifying"
     ]
   },
-  "hissal.skill-collection/break-ui": {
+  "hissal.hskills/break-ui": {
     "path": "skills/core/break-ui",
     "requires": []
   },
-  "hissal.skill-collection/code-review": {
+  "hissal.hskills/code-review": {
     "path": "skills/core/code-review",
     "requires": [
-      "hissal.skill-collection/reviewing"
+      "hissal.hskills/reviewing"
     ]
   },
-  "hissal.skill-collection/codebase-design": {
+  "hissal.hskills/codebase-design": {
     "path": "skills/core/codebase-design",
     "requires": []
   },
-  "hissal.skill-collection/commenting": {
+  "hissal.hskills/commenting": {
     "path": "skills/core/commenting",
     "requires": []
   },
-  "hissal.skill-collection/constraints": {
+  "hissal.hskills/constraints": {
     "path": "skills/core/constraints",
     "requires": []
   },
-  "hissal.skill-collection/context-audit": {
+  "hissal.hskills/context-audit": {
     "path": "skills/core/context-audit",
     "requires": []
   },
-  "hissal.skill-collection/council": {
+  "hissal.hskills/council": {
     "path": "skills/packs/experimental/council",
     "requires": []
   },
-  "hissal.skill-collection/csharp-guide": {
+  "hissal.hskills/csharp-guide": {
     "path": "skills/packs/csharp/csharp-guide",
     "requires": []
   },
-  "hissal.skill-collection/delegating": {
+  "hissal.hskills/delegating": {
     "path": "skills/core/delegating",
     "requires": []
   },
-  "hissal.skill-collection/dependency-audit": {
+  "hissal.hskills/dependency-audit": {
     "path": "skills/core/dependency-audit",
     "requires": []
   },
-  "hissal.skill-collection/diagnosing-bugs": {
+  "hissal.hskills/diagnosing-bugs": {
     "path": "skills/core/diagnosing-bugs",
     "requires": []
   },
-  "hissal.skill-collection/domain-modeling": {
+  "hissal.hskills/domain-modeling": {
     "path": "skills/core/domain-modeling",
     "requires": []
   },
-  "hissal.skill-collection/experimental-guide": {
+  "hissal.hskills/experimental-guide": {
     "path": "skills/packs/experimental/experimental-guide",
     "requires": []
   },
-  "hissal.skill-collection/full-send": {
+  "hissal.hskills/full-send": {
     "path": "skills/packs/experimental/full-send",
     "requires": [
-      "hissal.skill-collection/babysit-pr"
+      "hissal.hskills/babysit-pr"
     ]
   },
-  "hissal.skill-collection/full-stop": {
+  "hissal.hskills/full-stop": {
     "path": "skills/packs/experimental/full-stop",
     "requires": [
-      "hissal.skill-collection/babysit-pr"
+      "hissal.hskills/babysit-pr"
     ]
   },
-  "hissal.skill-collection/grill-with-docs": {
+  "hissal.hskills/grill-with-docs": {
     "path": "skills/core/grill-with-docs",
     "requires": [
-      "hissal.skill-collection/domain-modeling",
-      "hissal.skill-collection/grilling"
+      "hissal.hskills/domain-modeling",
+      "hissal.hskills/grilling"
     ]
   },
-  "hissal.skill-collection/grilling": {
+  "hissal.hskills/grilling": {
     "path": "skills/core/grilling",
     "requires": []
   },
-  "hissal.skill-collection/guide": {
+  "hissal.hskills/guide": {
     "path": "skills/core/guide",
     "requires": []
   },
-  "hissal.skill-collection/handoff": {
+  "hissal.hskills/handoff": {
     "path": "skills/core/handoff",
     "requires": []
   },
-  "hissal.skill-collection/hillclimb": {
+  "hissal.hskills/hillclimb": {
     "path": "skills/core/hillclimb",
     "requires": [
-      "hissal.skill-collection/verifying"
+      "hissal.hskills/verifying"
     ]
   },
-  "hissal.skill-collection/how": {
+  "hissal.hskills/how": {
     "path": "skills/core/how",
     "requires": []
   },
-  "hissal.skill-collection/implement": {
+  "hissal.hskills/implement": {
     "path": "skills/core/implement",
     "requires": []
   },
-  "hissal.skill-collection/implement-spec": {
+  "hissal.hskills/implement-spec": {
     "path": "skills/core/implement-spec",
     "requires": []
   },
-  "hissal.skill-collection/loop-me": {
+  "hissal.hskills/loop-me": {
     "path": "skills/packs/experimental/loop-me",
     "requires": []
   },
-  "hissal.skill-collection/migrating": {
+  "hissal.hskills/migrating": {
     "path": "skills/core/migrating",
     "requires": []
   },
-  "hissal.skill-collection/onboarding-guide": {
+  "hissal.hskills/onboarding-guide": {
     "path": "skills/packs/onboarding/onboarding-guide",
     "requires": []
   },
-  "hissal.skill-collection/pr": {
+  "hissal.hskills/pr": {
     "path": "skills/core/pr",
     "requires": []
   },
-  "hissal.skill-collection/prototype": {
+  "hissal.hskills/prototype": {
     "path": "skills/core/prototype",
     "requires": []
   },
-  "hissal.skill-collection/receiving-review": {
+  "hissal.hskills/receiving-review": {
     "path": "skills/core/receiving-review",
     "requires": []
   },
-  "hissal.skill-collection/refactoring": {
+  "hissal.hskills/refactoring": {
     "path": "skills/core/refactoring",
     "requires": []
   },
-  "hissal.skill-collection/research": {
+  "hissal.hskills/research": {
     "path": "skills/core/research",
     "requires": []
   },
-  "hissal.skill-collection/retro": {
+  "hissal.hskills/retro": {
     "path": "skills/core/retro",
     "requires": []
   },
-  "hissal.skill-collection/reviewing": {
+  "hissal.hskills/reviewing": {
     "path": "skills/core/reviewing",
     "requires": []
   },
-  "hissal.skill-collection/risky-changes": {
+  "hissal.hskills/risky-changes": {
     "path": "skills/core/risky-changes",
     "requires": []
   },
-  "hissal.skill-collection/second-opinion": {
+  "hissal.hskills/second-opinion": {
     "path": "skills/core/second-opinion",
     "requires": [
-      "hissal.skill-collection/reviewing"
+      "hissal.hskills/reviewing"
     ]
   },
-  "hissal.skill-collection/setup-project": {
+  "hissal.hskills/setup-project": {
     "path": "skills/core/setup-project",
     "requires": []
   },
-  "hissal.skill-collection/tdd": {
+  "hissal.hskills/tdd": {
     "path": "skills/core/tdd",
     "requires": []
   },
-  "hissal.skill-collection/test-review": {
+  "hissal.hskills/test-review": {
     "path": "skills/core/test-review",
     "requires": [
-      "hissal.skill-collection/reviewing"
+      "hissal.hskills/reviewing"
     ]
   },
-  "hissal.skill-collection/to-questionnaire": {
+  "hissal.hskills/to-questionnaire": {
     "path": "skills/core/to-questionnaire",
     "requires": []
   },
-  "hissal.skill-collection/to-spec": {
+  "hissal.hskills/to-spec": {
     "path": "skills/core/to-spec",
     "requires": []
   },
-  "hissal.skill-collection/to-tickets": {
+  "hissal.hskills/to-tickets": {
     "path": "skills/core/to-tickets",
     "requires": []
   },
-  "hissal.skill-collection/triage": {
+  "hissal.hskills/triage": {
     "path": "skills/core/triage",
     "requires": []
   },
-  "hissal.skill-collection/unity-debugging": {
+  "hissal.hskills/unity-debugging": {
     "path": "skills/packs/unity/unity-debugging",
     "requires": [
-      "hissal.skill-collection/unity-guide"
+      "hissal.hskills/unity-guide"
     ]
   },
-  "hissal.skill-collection/unity-guide": {
+  "hissal.hskills/unity-guide": {
     "path": "skills/packs/unity/unity-guide",
     "requires": []
   },
-  "hissal.skill-collection/unity-networking": {
+  "hissal.hskills/unity-networking": {
     "path": "skills/packs/unity/unity-networking",
     "requires": []
   },
-  "hissal.skill-collection/unity-prototyping": {
+  "hissal.hskills/unity-prototyping": {
     "path": "skills/packs/unity/unity-prototyping",
     "requires": [
-      "hissal.skill-collection/unity-guide"
+      "hissal.hskills/unity-guide"
     ]
   },
-  "hissal.skill-collection/unity-testing": {
+  "hissal.hskills/unity-testing": {
     "path": "skills/packs/unity/unity-testing",
     "requires": [
-      "hissal.skill-collection/unity-guide"
+      "hissal.hskills/unity-guide"
     ]
   },
-  "hissal.skill-collection/unity-verification": {
+  "hissal.hskills/unity-verification": {
     "path": "skills/packs/unity/unity-verification",
     "requires": [
-      "hissal.skill-collection/unity-guide"
+      "hissal.hskills/unity-guide"
     ]
   },
-  "hissal.skill-collection/unslop": {
+  "hissal.hskills/unslop": {
     "path": "skills/core/unslop",
     "requires": []
   },
-  "hissal.skill-collection/verifying": {
+  "hissal.hskills/verifying": {
     "path": "skills/core/verifying",
     "requires": []
   },
-  "hissal.skill-collection/wait-what": {
+  "hissal.hskills/wait-what": {
     "path": "skills/core/wait-what",
     "requires": []
   },
-  "hissal.skill-collection/wayfinder": {
+  "hissal.hskills/wayfinder": {
     "path": "skills/core/wayfinder",
     "requires": []
   },
-  "hissal.skill-collection/why": {
+  "hissal.hskills/why": {
     "path": "skills/core/why",
     "requires": []
   },
-  "hissal.skill-collection/wizard": {
+  "hissal.hskills/wizard": {
     "path": "skills/core/wizard",
     "requires": []
   },
-  "hissal.skill-collection/writing-for-agents": {
+  "hissal.hskills/writing-for-agents": {
     "path": "skills/core/writing-for-agents",
     "requires": []
   }

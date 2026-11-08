@@ -8,7 +8,7 @@ function outputs(c) {
  if (!/^\d+\.\d+\.\d+(?:-[\w.-]+)?$/.test(version)) throw new Error('invalid version.txt');
  const market = JSON.parse(c.text('.claude-plugin/marketplace.json'));
  // This namespace is owned by the generator; guard and other entries survive.
- market.plugins = market.plugins.filter(p => p.name !== 'collection-core' && !p.name.startsWith('collection-pack-'));
+ market.plugins = market.plugins.filter(p => !p.name.startsWith('hskills-'));
  const out = {};
  const groups = [['core',parsed.data.core,true],...Object.entries(parsed.data.packs).sort(([a],[b])=>a < b ? -1 : a > b ? 1 : 0)];
  for (const [group,paths,isCore] of groups) {
@@ -19,7 +19,7 @@ function outputs(c) {
    if (p.slice(0,p.lastIndexOf('/')) !== root) throw new Error(p+' must be inside plugin root '+root);
    if (!c.exists(p+'/SKILL.md')) throw new Error('missing '+p+'/SKILL.md');
   }
-  const name = isCore ? 'collection-core' : 'collection-pack-'+group;
+  const name = isCore ? 'hskills-core' : 'hskills-'+group;
   const manifest = {name,version,description:'Generated '+group+' skill list from collection.json.',skills:[...new Set(paths)].sort().map(p=>'./'+p.slice(root.length+1))};
   for (const host of ['claude','codex']) out[root+'/.'+host+'-plugin/plugin.json']=encode(manifest);
   market.plugins.push({name,source:'./'+root,description:manifest.description,policy:{installation:'AVAILABLE',authentication:'ON_INSTALL'},category:'Productivity'});

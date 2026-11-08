@@ -4,7 +4,7 @@ description: Turn a decision you can't fully answer into a questionnaire for som
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/to-questionnaire"
+  agent-skills-sync.id: "hissal.hskills/to-questionnaire"
   opencode/autoinvoke: "false"
 ---
 

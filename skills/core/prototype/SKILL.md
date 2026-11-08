@@ -3,7 +3,7 @@ name: prototype
 description: "Build a throwaway prototype to answer a design question. Use when the user wants to check a state model or logic, explore what a UI should look like, or try how something works in use."
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/prototype"
+  agent-skills-sync.id: "hissal.hskills/prototype"
   opencode/autoinvoke: "true"
 ---
 

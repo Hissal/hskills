@@ -34,8 +34,8 @@ not edit. The prompt gives the task only, never the behaviour under test. The
 prompt of #137 (the `handoff` eval) said nothing was approved, so the control
 kept its guess unapproved too, and the case tested the prompt, not the skill
 (owner rulings on
-[#137](https://github.com/Hissal/skill-collection/issues/137#issuecomment-6708124892)
-and on [#140](https://github.com/Hissal/skill-collection/issues/140#issuecomment-6708125077),
+[#137](https://github.com/Hissal/hskills/issues/137#issuecomment-6708124892)
+and on [#140](https://github.com/Hissal/hskills/issues/140#issuecomment-6708125077),
 the `retro` eval).
 
 **Done** when the bar is recorded, every observation in it is checkable on the
@@ -142,7 +142,7 @@ on a real harness. Rerun it when the shared stop template changes, when a
 harness pin is bumped, and when a new frontier model ships.
 
 The fixture pair is [`tally`](../scripts/eval/behaviour/fixture/tally/SKILL.md),
-which requires `tally-rules` (`hissal.skill-collection/eval-tally-rules`) and
+which requires `tally-rules` (`hissal.hskills/eval-tally-rules`) and
 carries the shared stop template, and
 [`tally-rules`](../scripts/eval/behaviour/fixture/tally-rules/SKILL.md) itself. Install only `tally` in the
 skill arm. Confirm no user-scope skill is named `tally-rules`.
@@ -151,7 +151,7 @@ skill arm. Confirm no user-scope skill is named `tally-rules`.
   for Codex.
 - **Bar per run**: `git status --porcelain` is empty; the transcript shows no
   file write or edit; the final message starts `Stopped:` and names
-  `tally-rules` and `hissal.skill-collection/eval-tally-rules`.
+  `tally-rules` and `hissal.hskills/eval-tally-rules`.
 - **Pass count**: 5/5 on each frontier model.
 - **Control arm**: install both skills. A no-guidance control cannot show a
   stop, so the control proves the stop comes from the missing requirement: each

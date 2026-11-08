@@ -4,7 +4,7 @@ description: Plan a huge chunk of work (more than one agent session can hold) as
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/wayfinder"
+  agent-skills-sync.id: "hissal.hskills/wayfinder"
   opencode/autoinvoke: "false"
 ---
 

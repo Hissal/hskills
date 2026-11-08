@@ -79,7 +79,7 @@ inconclusive session by reading its transcript. A session whose commands did
 what the query expects passes even though the script could not see it, such as
 a successful read of the skill's entry point inside a command the script does
 not parse, and the script gap is filed as an issue
-([owner ruling on #131](https://github.com/Hissal/skill-collection/issues/131#issuecomment-6708124690),
+([owner ruling on #131](https://github.com/Hissal/hskills/issues/131#issuecomment-6708124690),
 the `pr` and `writing-for-agents` trigger eval).
 A denied or errored call never counts as doing it, and a session the
 transcript cannot settle stays inconclusive. One pass cannot estimate noise:
@@ -103,14 +103,14 @@ guidance and specs, not in general skills.
 - **Exception**: run one early smoke eval on the first skill of a new pack,
   to prove the eval setup works before the rest is built on it.
 - **Quiet queries about another stack** run in a project of that stack, not
-  the pack's. On spec [#85](https://github.com/Hissal/skill-collection/issues/85),
+  the pack's. On spec [#85](https://github.com/Hissal/hskills/issues/85),
   "Prototype a landing page for the web app" misfired because it ran in a
   Unity-shaped project.
 
 Why: on spec #85, eval sessions were 51% of Claude spend (536 sessions), and
 393 Sol eval sessions used 52M input tokens and hit the Codex quota within two
 hours. Specs carry a final eval ticket for this, such as
-[#319](https://github.com/Hissal/skill-collection/issues/319).
+[#319](https://github.com/Hissal/hskills/issues/319).
 
 ## Early stop
 
@@ -145,7 +145,7 @@ batch, or 2 s later if nothing follows. A deliberate stop is a complete
 observation. An error before it is inconclusive, and an inconclusive is also
 known early and stops the session. Result lines are unchanged.
 
-Why these triggers: on spec [#85](https://github.com/Hissal/skill-collection/issues/85)
+Why these triggers: on spec [#85](https://github.com/Hissal/hskills/issues/85)
 (453 trigger sessions), models made 202 WebFetch, 90 WebSearch and 121 Write
 calls, and some queries started real Unity Editor work. The first skill load
 came at tool-call index 0 in 337 sessions, 2 in 17, 3 in 16, 4 in 8, 5 in 6,
@@ -261,7 +261,7 @@ frontmatter name when `name` is plugin-qualified. Claude still matches the exact
 
 Proves that the core guide asks a listed pack guide for routes and flags every
 unlisted one, relevant or not
-([#145](https://github.com/Hissal/skill-collection/issues/145)).
+([#145](https://github.com/Hissal/hskills/issues/145)).
 Rerun it when the guide's discovery or skill lookup steps change, when a harness
 pin is bumped, and when a new frontier model ships. The fixture pack is
 [`orbit-guide`](../scripts/eval/test/guide-discovery/pack/orbit-guide/SKILL.md)
@@ -303,7 +303,7 @@ sessions stay under `<root>/evidence/`, kept by the plugin fixture's `capture.js
 ## Required cases: the two discovery paths on real skills
 
 Proves both discovery paths with the collection's own skills
-([#113](https://github.com/Hissal/skill-collection/issues/113)): the automatic
+([#113](https://github.com/Hissal/hskills/issues/113)): the automatic
 guide [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md)
 fires at task start, and the core [`guide`](../skills/core/guide/SKILL.md)
 finds the installed pack guide
@@ -383,7 +383,7 @@ up in that session's `changes` rather than in the tree after the run.
       unlisted pack guide in about 1 of 3 sessions (8 of 12 had it across two
       runs). The project still works; the user is not told the pack is
       not set up. Follow-up:
-      [#215](https://github.com/Hissal/skill-collection/issues/215).
+      [#215](https://github.com/Hissal/hskills/issues/215).
 - **All**: every frontier model passes. In the raw sessions, no `onboarding-guide`
   session that fired, and no `guide` session, writes or edits a file, starts a
   recommended skill (a Skill call to anything but the guides), or enumerates

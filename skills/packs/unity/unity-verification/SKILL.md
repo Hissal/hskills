@@ -3,19 +3,19 @@ name: unity-verification
 description: Use when checking that a Unity change compiles or works, running Unity tests, building a Player, running C# in the Editor, classifying Unity involvement for issue triage or selection, or when Unity cannot run here or the Editor is locked.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/unity-verification"
-  agent-skills-sync.requires: '["hissal.skill-collection/unity-guide"]'
+  agent-skills-sync.id: "hissal.hskills/unity-verification"
+  agent-skills-sync.requires: '["hissal.hskills/unity-guide"]'
   opencode/autoinvoke: "true"
 ---
 
 # Unity verification
 
-Before doing any work, load unity-guide (hissal.skill-collection/unity-guide) and
+Before doing any work, load unity-guide (hissal.hskills/unity-guide) and
 its needed reference files through the installed skill listing. Begin work only
 after all requirements and needed references have loaded. If any cannot load,
 stop without partial work and print:
 
-Stopped: required skill unity-guide (hissal.skill-collection/unity-guide) could
+Stopped: required skill unity-guide (hissal.hskills/unity-guide) could
 not be loaded completely. Unavailable: <unloadable-material>. Ordinary installers
 such as `npx skills` do not install requirements; `agent-skills-sync` resolves
 them from this metadata. Install or repair the requirement, then retry.

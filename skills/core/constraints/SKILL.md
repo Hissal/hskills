@@ -14,6 +14,8 @@ A quality bar written only as prose is read, and then followed or not. This skil
 
 Done when the project holds a guard copy that `--compare` reports `current`, or a differing copy the owner chose to keep; its data file sits beside it; each check the owner accepted has its row in the check-commands file with a cost tier, or the report says why it has none; every ratchet records a value measured on a named tree; at least one check is External, or the report says why none is; each prose rule the owner gave is in the project's standards file, or the report says why it is not; every new or changed check has run once on the current tree with its real exit code recorded; and the report is written.
 
+The setup is the owner's: the interview, the guard's place and every value written are their decisions. With no owner present to answer, such as a headless run, change nothing: install no copy, write no file, and report only that the setup needs the owner present.
+
 A check already configured that has broken (its command no longer starts, or its row names a moved file) is repaired in the task that found it, not left for a later run of this skill.
 
 ## The guard
@@ -49,7 +51,7 @@ The guard's check command is `CHECK_COMMAND` from the install output, run from t
 
 ## 3. Detect before you ask
 
-With no owner present to answer, skip to [Unattended runs](#unattended-runs). Otherwise never ask what the project shows. Before the first question, read:
+Never ask what the project shows. Before the first question, read:
 
 - the stack: its manifests and build files;
 - the checks it already runs: the check-commands file's rows, linter, analyzer, formatter and type-checker configuration, the test runner, and the CI configuration;
@@ -133,12 +135,3 @@ Then offer, only when the condition was observed, the invocation as this harness
 A suggestion is the owner's to start; you never run it.
 
 When you run for a parent agent, hand back the evidence and any follow-up needs; the parent owns the recommendations the user sees.
-
-## Unattended runs
-
-When no owner is present to answer, ask nothing, and run steps 1, 2 and the guard's part of 7, 8 and 9 only:
-
-- Install a missing copy at the path the check-commands file names, else at `tools/floor-guard.mjs`, with the default rules.
-- Refresh an `outdated` copy only when `UPDATE_LOOSENS` is `no`. Keep an `edited` copy, or one whose `UPDATE_LOOSENS` is `yes` or `unknown`, as it is, and put the reason on the **Not done** line.
-- Invent no ratchet values, add no exceptions or patterns, and write no prose quality rules.
-- Put "interview not run" on the **Not done** line.

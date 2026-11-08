@@ -247,6 +247,14 @@
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
       "changes": "collection metadata and gates; designs workflows and never builds or runs one; grilling and delegating as process calls; agent model, effort and transport left to delegating; implementation choices and code exploration left to the implementer"
+    },
+    {
+      "skill": "skills/packs/in-progress/babysit-pr",
+      "source": "t3dotgg/tstack",
+      "path": "skills/babysit-pr",
+      "sha": "1085050f3baed1ac724caa4a8166145fb2ac88af",
+      "license": "MIT",
+      "changes": "collection metadata and gates; user-invoked with a summary description; SKILL.md rewritten in own words as an entry onto a shared delivery procedure (references/DELIVERY.md) holding branch authority, scope, stop conditions, the tend loop, done bar, bounds and the /retro offer; host-neutral PR monitoring with pr-wait as the fallback; review through receiving-review, comments through commenting, fixes proved through verifying; no merge authority; someone else's PR gets new commits and base merges only; testing permission limited to re-proving its own fixes; scripts/pr-wait copied unchanged; procedure ideas and lines adapted from t3dotgg/tstack skills/full-send/SKILL.md at 1085050f3baed1ac724caa4a8166145fb2ac88af, MIT, Copyright (c) 2026 Theo Browne"
     }
   ]
 }

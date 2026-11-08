@@ -1,0 +1,5 @@
+interface:
+  display_name: "Babysit PR"
+  short_description: "Bring an existing PR to ready without merging"
+policy:
+  allow_implicit_invocation: false

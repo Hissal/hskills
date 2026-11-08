@@ -5,6 +5,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/babysit-pr": {
+    "path": "skills/packs/in-progress/babysit-pr",
+    "requires": []
+  },
   "hissal.skill-collection/blast-radius": {
     "path": "skills/core/blast-radius",
     "requires": [

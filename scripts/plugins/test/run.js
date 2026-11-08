@@ -16,7 +16,11 @@ try {
  write('version.txt','0.1.0\n');
  for (const host of ['claude','codex']) write('hooks/command-guard/.'+host+'-plugin/plugin.json',JSON.stringify({name:'fixture-guard',version:'0.1.0'}));
  write('collection.json',JSON.stringify({core:['skills/core/fixture-required'],packs:{demo:['skills/packs/demo/fixture-work'],onboarding:['skills/packs/onboarding/fixture-auto']},expensive:[]}));
- write('release-please-config.json',fs.readFileSync(path.join(repo,'release-please-config.json'),'utf8'));
+ // The real release settings, without the stamps of files this fixture lacks
+ // (the floor guard's version file); the generator adds the plugin stamps.
+ const releaseConfig=JSON.parse(fs.readFileSync(path.join(repo,'release-please-config.json'),'utf8'));
+ releaseConfig.packages['.']['extra-files']=releaseConfig.packages['.']['extra-files'].filter(s=>!/(^|\/)version\.json$/.test(s.path));
+ write('release-please-config.json',JSON.stringify(releaseConfig,null,2)+'\n');
  write('.claude-plugin/marketplace.json',JSON.stringify({name:'fixture-124',owner:{name:'Hissal'},plugins:[{name:'command-guard',source:'./hooks/command-guard'}]}));
  for (const [p,name,body] of [
  ['skills/core/fixture-required','fixture-required','Read references/token.md and return its token.'],

@@ -150,6 +150,9 @@ const PASS = /^\s*pass\s*(?:#.*)?$/;
 const COMMENT = /^\s*#/;
 const BLANK = /^\s*$/;
 
+// A suppression marker that covers its own or the next line, not a block.
+const LINE_SCOPED = /(?:next-?line|disable-line)\b/i;
+
 const LINE_RULES = ['suppression-added', 'unfinished-work', 'test-skipped', 'test-deleted', 'assertion-removed'];
 const DATA_RULES = ['ratchet-loosened', 'pattern-removed', 'exception-added'];
 const RULES = [...LINE_RULES, ...DATA_RULES, 'guard-edited', 'ratchet-regressed'];
@@ -547,7 +550,35 @@ function check(args) {
   const blobs = readBlobs(tree, files.filter((f) => f.new !== null && (f.added.length || f.gaps.length)).map((f) => f.new));
   const isEnd = (text) => any(re['suppression-end'], text);
   const isStart = (text) => !isEnd(text) && any(re.suppression, text);
-  const oldBlobs = readBlobs(mb, files.filter((f) => f.old !== null && f.new !== null && f.removed.some((r) => isEnd(r.text))).map((f) => f.old));
+  const hasEnd = (text) => typeof text === 'string' && text.split('\n').some(isEnd);
+  const oldBlobs = readBlobs(mb, files.filter((f) => f.old !== null && f.new !== null && (f.removed.some((r) => isEnd(r.text)) || hasEnd(blobs.get(f.new)))).map((f) => f.old));
+  // A text's closed block suppressions, and its code lines by trimmed text:
+  // how many there are, the 1-based numbers of those inside a closed block,
+  // and how many sit outside every block, counting a start no end closes as
+  // covering the rest of the file. A block runs from the first start since
+  // the end before it to the end; a one-line marker starts none. Blank and
+  // marker lines are not code.
+  const regions = (text) => {
+    const src = text.split('\n');
+    const closed = [];
+    let from = null;
+    src.forEach((l, i) => {
+      if (isEnd(l)) { if (from !== null) closed.push({ start: from, to: i + 1 }); from = null; }
+      else if (from === null && isStart(l) && !LINE_SCOPED.test(l)) from = i + 1;
+    });
+    const byText = new Map();
+    src.forEach((l, i) => {
+      if (BLANK.test(l) || isEnd(l) || isStart(l)) return;
+      const n = i + 1;
+      const key = l.trim();
+      if (!byText.has(key)) byText.set(key, { inside: [], outside: 0, all: 0 });
+      const entry = byText.get(key);
+      entry.all++;
+      if (closed.some((b) => n > b.start && n < b.to)) entry.inside.push(n);
+      else if (from === null || n < from) entry.outside++;
+    });
+    return { closed, byText };
+  };
   const deeper = (l, indent) => !BLANK.test(l) && l.match(/^\s*/)[0].length > indent;
   const removedFrom = (h, g) => g.after >= h.open && (g.after < h.close || (h.indent !== undefined && g.after === h.close && deeper(g.removed.find((l) => !BLANK.test(l)) || '', h.indent)));
   for (const f of files) {
@@ -574,6 +605,8 @@ function check(args) {
     // the end before it, so a start removed from another block excuses
     // nothing.
     const ends = f.removed.filter((r) => isEnd(r.text));
+    // The new lines of kept starts whose block already lost its end.
+    const reported = [];
     if (ends.length) {
       const removedLines = new Set(f.removed.map((r) => r.line));
       const addedLines = new Set(f.added.map((a) => a.line));
@@ -590,7 +623,30 @@ function check(args) {
         // Back after every kept start, and with only added lines, if any,
         // between the old place and the new one.
         const fits = (a) => kept.every((s) => s < a.line) && (a.line <= r.at + 1 || Array.from({ length: a.line - r.at - 1 }, (_, k) => r.at + 1 + k).every((l) => addedLines.has(l)));
-        if (!takeEnd(r, fits)) lineFinding('suppression-added', f.new, shown(f.old || f.new) + ':' + r.line);
+        if (takeEnd(r, fits)) continue;
+        lineFinding('suppression-added', f.new, shown(f.old || f.new) + ':' + r.line);
+        reported.push(...kept);
+      }
+    }
+    // However the diff shows it, a block that now covers code which sat
+    // outside every block at the merge base widens: per text, as many lines
+    // as both joined a closed block and left the unsuppressed rest of the
+    // file. A line new to the file is not counted, nor one in a block whose
+    // lost end was reported above.
+    const oldText = oldBlobs.get(f.old);
+    if (typeof oldText === 'string' && hasEnd(text)) {
+      const was = regions(oldText).byText;
+      const { closed, byText } = regions(text);
+      const addedLines = new Set(f.added.map((a) => a.line));
+      for (const [key, is] of byText) {
+        const before = was.get(key) || { outside: 0, all: 0 };
+        const moved = Math.min(is.inside.length - (before.all - before.outside), before.outside - is.outside);
+        if (moved <= 0) continue;
+        const order = [...is.inside.filter((n) => addedLines.has(n)), ...is.inside.filter((n) => !addedLines.has(n))];
+        for (const n of order.slice(0, moved)) {
+          const block = closed.find((b) => n > b.start && n < b.to);
+          if (!reported.some((s) => s >= block.start && s < block.to)) lineFinding('suppression-added', f.new, shown(f.new) + ':' + n);
+        }
       }
     }
     if (isTest(f.new)) {

@@ -35,7 +35,7 @@ For each route whose situation fits:
 2. **Label it experimental**, every time it is named.
 3. **Say the useful difference**: what the trial does that the established workflow does not, from the route's row.
 4. **Show the established alternative** from the row when it also fits this request, with its invocation. Prefer neither: the situation decides, and when both fit equally, say so and leave the choice to the human.
-5. **Give the exact invocation** as installed in this harness: `/name` on Claude Code (`/plugin:name` for a plugin skill), `$name` on Codex. Add arguments only when the request already supplies them.
+5. **Give the exact invocation** as installed in this harness: `/name` on Claude Code (`/plugin:name` for a plugin skill), `$name` on Codex. On OpenCode, a skill is not a slash command: tell the human to ask for it by name, such as "use the `name` skill". Add arguments only when the request already supplies them.
 
 A trial keeps its own prerequisites: what its file asks the human to have ready still applies. A route grants no authority: no production operations, no messages to anyone, and no permission beyond what the trial's own invocation grants. Present a trial as an experiment beside core, never as an upgrade or a replacement.
 

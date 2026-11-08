@@ -116,6 +116,7 @@ As of **2026-10-28 (Europe/Helsinki)**. A transcription of the current blueprint
 | Trial | Question | Keep if | Reconsider if |
 |---|---|---|---|
 | `loop-me` | Does the recurring-work focus uncover useful workflows or decisions that ordinary `grilling` and `to-spec` miss? | On a real recurring activity the owner chooses, it produces a spec the owner judges worth implementing, and the owner can name what the specialised questioning contributed. | The useful parts fit existing skills equally well, or the workspace notes add upkeep without helping. |
+| `arena` | Does building one goal twice independently, then judging the artifacts, give a better result than a single `implement` run often enough to justify about twice the cost? | On real goals the owner chooses where more than one approach is plausible, the evaluator's rulings rest on its own runs, and the owner can name runs where the comparison changed the outcome: a flaw in one candidate caught, or an idea carried over that a single build lacked. | The candidates routinely converge on the same design, the evaluator's pick rarely differs from what a review of one build would have said, or the extra build and evaluation cost more than the comparison adds. |
 
 ## study
 
@@ -655,6 +656,7 @@ changing skill identity or requirements with
 | Skill ID | Callable / source | Hard requirements |
 |---|---|---|
 | `hissal.skill-collection/architecture-review` | [`architecture-review`](../skills/core/architecture-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
+| `hissal.skill-collection/arena` | [`arena`](../skills/packs/in-progress/arena/SKILL.md) | — |
 | `hissal.skill-collection/blast-radius` | [`blast-radius`](../skills/core/blast-radius/SKILL.md) | `hissal.skill-collection/verifying` [`verifying`](../skills/core/verifying/SKILL.md) |
 | `hissal.skill-collection/break-ui` | [`break-ui`](../skills/core/break-ui/SKILL.md) | — |
 | `hissal.skill-collection/code-review` | [`code-review`](../skills/core/code-review/SKILL.md) | `hissal.skill-collection/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |

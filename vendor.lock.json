@@ -14,7 +14,7 @@
       "path": "pstack/skills/blast-radius",
       "sha": "ccb5507cec1546dc88135c1139c811e6c59115ba",
       "license": "MIT",
-      "changes": "collection metadata and gates; verifying declared as a hard requirement with the shared stop template; the own evidence ladder replaced by a link to verifying's, with its status words (unvalidated for unproven); arena step and the how, why and unslop references dropped; web timing examples made stack-neutral and the pack-guide extension point added; change scope, done line, capture rules for the proving script, a Not searched part, the /handoff offer and the subordinate-agent return added"
+      "changes": "collection metadata and gates; verifying declared as a hard requirement with the shared stop template; the own evidence ladder replaced by a link to verifying's, with its status words (unvalidated for unproven); multi-model comparison step and the how, why and unslop references dropped; web timing examples made stack-neutral and the pack-guide extension point added; change scope, done line, capture rules for the proving script, a Not searched part, the /handoff offer and the subordinate-agent return added"
     },
     {
       "skill": "skills/core/break-ui",

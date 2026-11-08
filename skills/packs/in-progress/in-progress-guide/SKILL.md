@@ -1,6 +1,6 @@
 ---
 name: in-progress-guide
-description: Use when choosing a workflow to design or specify a recurring activity (a routine, a repeated chore, something that should run on a schedule or an event) without building it, or when asked which experimental workflows are installed.
+description: Use when choosing a workflow to design or specify a recurring activity (a routine, a repeated chore, something that should run on a schedule or an event) without building it, or to compare competing implementations of one goal and keep the stronger, or when asked which experimental workflows are installed.
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/in-progress-guide"

@@ -49,6 +49,7 @@
       "skills/packs/csharp/csharp-guide"
     ],
     "in-progress": [
+      "skills/packs/in-progress/arena",
       "skills/packs/in-progress/in-progress-guide",
       "skills/packs/in-progress/loop-me"
     ],
@@ -67,6 +68,7 @@
   "expensive": [
     "skills/core/implement-spec",
     "skills/core/research",
-    "skills/core/wayfinder"
+    "skills/core/wayfinder",
+    "skills/packs/in-progress/arena"
   ]
 }

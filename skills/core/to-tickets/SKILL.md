@@ -49,7 +49,7 @@ Give each ticket its **blocking edges**: the other tickets that must complete be
 
 Write each **acceptance criterion** as pass/fail: an observable behaviour, an output, a command result or a file anyone can check the same way. Wording that needs judgement ("clean", "intuitive", "fast enough", "well tested", "where appropriate") becomes the measure behind it; when there is no measure to name, ask the user for one.
 
-**Expensive end-of-build checks get one ticket.** A criterion for a `task end` check (the cost tiers are in the project's check commands) whose result each later merge makes stale goes in one final ticket, blocked by every ticket it covers, instead of in each ticket.
+**Shared `task end` checks get one final ticket.** A criterion for a `task end` check (cost tiers are in the project's check commands) whose result other tickets' merges can change goes in one final ticket, blocked by every ticket it covers, instead of in each ticket.
 
 Add a **Proof** note to a ticket that test-first work cannot prove (a visual result, a manual or device run, a measurement, a step only a human can perform): how to prove it is done. When nothing can prove it, write "none" with the reason. A ticket that tests prove carries no Proof note.
 

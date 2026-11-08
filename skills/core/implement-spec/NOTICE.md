@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/implement-spec`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; reports checked through verifying; findings through receiving-review; issue links through pr; stale-making task end checks run once after the last merge; agent-doable gaps finished before closing, one retry each; process calls; /handoff offer and parent-agent return
+- Local changes: collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; reports checked through verifying; findings through receiving-review; issue links through pr; task end checks other tickets' merges change run once after the last ticket merges; agent-doable gaps finished before closing, one retry each; process calls; /handoff offer and parent-agent return
 
 ## Licence
 

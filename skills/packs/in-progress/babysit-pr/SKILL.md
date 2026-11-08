@@ -1,6 +1,6 @@
 ---
 name: babysit-pr
-description: Use when asked to babysit, watch, monitor or tend a pull request until it is ready, handling its checks, conflicts and review feedback along the way.
+description: Use when asked to babysit, watch, monitor or tend a pull request.
 argument-hint: "A PR number or URL"
 metadata:
   agent-skills-sync.schema: "1"

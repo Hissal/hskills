@@ -20,6 +20,11 @@
         },
         {
           "type": "json",
+          "path": "skills/core/constraints/scripts/version.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
           "path": "skills/core/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },

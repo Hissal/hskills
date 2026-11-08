@@ -139,6 +139,41 @@ class RequiredChecks(PrWaitCase):
         self.assertIn(f"#{PR} required check failed: build https://ci/build", lines)
 
 
+    def test_an_unreadable_required_check_source_is_reported_as_an_event(self) -> None:
+        def gh(args: list[str]) -> Proc:
+            if args[:2] == ["api", "graphql"]:
+                return Proc(pr_payload(args[3]))
+            if args[:2] == ["pr", "checks"]:
+                return checks(("lint", "pending"))
+            if args[0] == "api" and "/rules/branches/" in args[1]:
+                return not_found()
+            if args[0] == "api" and "/protection/" in args[1]:
+                return Proc(stderr="gh: Resource not accessible by integration (HTTP 403)", returncode=1)
+            raise AssertionError(f"unexpected gh call {args}")
+
+        watcher = self.watcher("green")
+        code, lines = self.poll(watcher, gh)
+        self.assertEqual(code, None)
+        self.assertTrue([line for line in lines if "could not read required checks" in line and "HTTP 403" in line
+                         and "every visible check" in line], lines)
+        self.assertEqual(self.poll(watcher, gh), (None, []))
+
+    def test_an_unreadable_source_beside_a_readable_one_names_the_checks_it_read(self) -> None:
+        def gh(args: list[str]) -> Proc:
+            if args[:2] == ["api", "graphql"]:
+                return Proc(pr_payload(args[3]))
+            if args[:2] == ["pr", "checks"]:
+                return checks(("lint", "pending"))
+            if args[0] == "api" and "/rules/branches/" in args[1]:
+                return Proc("lint\n")
+            if args[0] == "api" and "/protection/" in args[1]:
+                return Proc(stderr="gh: Must have admin rights to Repository. (HTTP 403)", returncode=1)
+            raise AssertionError(f"unexpected gh call {args}")
+
+        code, lines = self.poll(self.watcher("green"), gh)
+        self.assertEqual(code, None)
+        self.assertTrue([line for line in lines if "gating on the required checks it could read" in line], lines)
+
 class ReviewThreads(PrWaitCase):
     def test_ready_is_never_reported_when_more_threads_exist_than_were_read(self) -> None:
         resolved = [{"isResolved": True, "path": "a.py", "line": 1, "comments": {"nodes": [

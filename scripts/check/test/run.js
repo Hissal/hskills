@@ -11,6 +11,9 @@
 //   'missing'                      no agnix installed
 //   'real'                         the pinned agnix from node_modules; the case
 //                                  is skipped, and said so, when it is absent
+//
+// It also runs babysit-pr's pr-wait tests (scripts/pr-wait/test/run.py) as
+// one case, skipped on Windows or without python3.
 
 const fs = require('fs');
 const path = require('path');
@@ -104,6 +107,27 @@ try {
   });
 } finally {
   fs.rmSync(scratch, { recursive: true, force: true });
+}
+
+// babysit-pr's bundled pr-wait has Python behaviour tests. pr-wait runs on
+// Linux and macOS only (it locks with fcntl), so Windows skips them, as does a
+// machine without python3.
+const PR_WAIT_TESTS = path.join(REPO, 'scripts', 'pr-wait', 'test', 'run.py');
+if (process.platform === 'win32') {
+  skipped++;
+  console.log('skip pr-wait tests: pr-wait does not run on Windows');
+} else {
+  const res = spawnSync('python3', [PR_WAIT_TESTS], { encoding: 'utf8' });
+  if (res.error && res.error.code === 'ENOENT') {
+    skipped++;
+    console.log('skip pr-wait tests: python3 not found');
+  } else if (res.status === 0) {
+    passed++;
+  } else {
+    failed++;
+    console.log('FAIL pr-wait tests (python3 ' + path.relative(REPO, PR_WAIT_TESTS) + ')');
+    console.log('     ' + (res.stderr || res.stdout).trim().split('\n').slice(-20).join('\n     '));
+  }
 }
 
 console.log((failed ? 'FAILED' : 'ok') + ': ' + passed + ' passed, ' + failed + ' failed' + (skipped ? ', ' + skipped + ' skipped' : ''));

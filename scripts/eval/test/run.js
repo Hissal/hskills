@@ -26,7 +26,7 @@ if (mode === 'codex-multi') {
 if (mode === 'codex-command') {
  // One command execution as Codex reports it: item.command is the argv joined
  // with POSIX shell quoting (shlex::try_join).
- console.log(JSON.stringify({type:'item.completed',item:{type:'command_execution',command:process.env.FAKE_COMMAND,aggregated_output:'---\\r\\nname: fixture\\r\\n---\\r\\nCount vowels.\\r\\n',exit_code:0,status:'completed'}}));
+ console.log(JSON.stringify({type:'item.completed',item:{type:'command_execution',command:process.env.FAKE_COMMAND,aggregated_output:process.env.FAKE_OUTPUT ?? '---\\r\\nname: fixture\\r\\n---\\r\\nCount vowels.\\r\\n',exit_code:Number(process.env.FAKE_EXIT ?? 0),status:process.env.FAKE_EXIT ? 'failed' : 'completed'}}));
  console.log(JSON.stringify({type:'turn.completed'})); process.exit(0);
 }
 if (mode === 'claude-tool-error') {
@@ -147,6 +147,53 @@ try {
   assert.equal(lookalike.status,2,command+'\n'+lookalike.stdout);
   assert.match(lookalike.stdout,/RESULT: fixture Opus q1 inconclusive/,command);
  }
+ // A plain cat of the entry point counts inside a compound command whose
+ // other ; or && steps only read, the shape Sol used in #131.
+ const compound = "/bin/bash -lc 'pwd && git status --short && git branch --show-current && git remote -v && cat AGENTS.md && cat .agents/skills/fixture/SKILL.md && cat .agents/skills/verifying/SKILL.md'";
+ for (const command of [
+  compound,
+  "/bin/bash -lc 'ls .agents/skills; rg -n fixture docs && cat .agents/skills/fixture/SKILL.md'",
+ ]) {
+  process.env.FAKE_COMMAND = command;
+  const read = run();
+  assert.equal(read.status,0,command+'\n'+read.stdout);
+  assert.match(read.stdout,/RESULT: fixture Opus q1 fired/,command);
+ }
+ // Compound lookalikes naming the entry point stay inconclusive: a mutating
+ // step, a pipe, a redirect, a substitution, a nonzero exit, and output
+ // without the frontmatter.
+ for (const [command,output,exit] of [
+  ["/bin/bash -lc 'git status --short && rm -rf dist && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'git checkout main && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'pwd && cat .agents/skills/fixture/SKILL.md | head -20'"],
+  ["/bin/bash -lc 'git log --oneline > log.txt && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'echo $(touch x) && cat .agents/skills/fixture/SKILL.md'"],
+  // Steps whose first word hides the command from the mutating check: a
+  // write inside shlex quoting, a runner, a group and a shell keyword.
+  ["/bin/bash -lc 'rm -f '\"'\"'a b'\"'\"' && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'eval rm x && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc '{ rm x; } && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'if true; then rm x; fi; cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc '/usr/bin/eval rm x && cat .agents/skills/fixture/SKILL.md'"],
+  // An option before the subcommand, a script run, and an exit before the read.
+  ["/bin/bash -lc 'git -C . checkout other && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'python3 tools/setup.py && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'env python3 tools/setup.py && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'CI=1 python3 tools/setup.py && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'cat docs/copy.md; exit 0; cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'ls .agents/skills/fixture && grep -n name .agents/skills/fixture/SKILL.md'"],
+  [compound,undefined,'1'],
+  [compound,'# Facts\nNo frontmatter here.'],
+ ]) {
+  process.env.FAKE_COMMAND = command;
+  if (output === undefined) delete process.env.FAKE_OUTPUT; else process.env.FAKE_OUTPUT = output;
+  if (exit === undefined) delete process.env.FAKE_EXIT; else process.env.FAKE_EXIT = exit;
+  const lookalike = run();
+  assert.equal(lookalike.status,2,command+'\n'+lookalike.stdout);
+  assert.match(lookalike.stdout,/RESULT: fixture Opus q1 inconclusive/,command);
+ }
+ delete process.env.FAKE_OUTPUT;
+ delete process.env.FAKE_EXIT;
  // A read through a variable names no path: it is no evidence either way.
  process.env.FAKE_COMMAND = pwsh+" -Command 'Get-Content -Path $x'";
  const variable = run();

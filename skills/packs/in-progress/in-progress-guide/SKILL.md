@@ -1,6 +1,6 @@
 ---
 name: in-progress-guide
-description: Use when choosing a workflow to design or specify a recurring activity (a routine, a repeated chore, something that should run on a schedule or an event) without building it; to hand an agent a goal or spec to take unattended to a PR you merge yourself or all the way to a merge, or an existing PR's checks, conflicts and review feedback until it is ready; to compare competing implementations of one goal and keep the stronger; or when asked which experimental workflows are installed.
+description: Use when asked which experimental workflows are installed, or when looking for one to try.
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.skill-collection/in-progress-guide"
@@ -23,7 +23,7 @@ Done when every route whose situation fits the request is answered as below, or 
 
 For each route whose situation fits:
 
-1. **Installed only.** Trials are user-invoked, so a harness may leave an installed trial out of your skill listing. Find the trial's `SKILL.md` by its callable name, in this order:
+1. **Installed only.** Most trials are user-invoked, so a harness may leave an installed trial out of your skill listing. Find the trial's `SKILL.md` by its callable name, in this order:
    1. **Your skill listing.** The trial is installed when its name is there, with a plugin prefix when a plugin installed it.
    2. **Beside this guide.** Otherwise try `../<name>/SKILL.md` relative to this guide's own `SKILL.md`: the folder next to this guide's skill folder. This pack installs its trials beside its guide, through its plugin and as folders alike. When this guide is listed with a plugin prefix, a trial found here is invoked with the same prefix: `/<plugin>:<name>`.
    3. **This harness's documented locations.** Otherwise try these exact paths in order, project scope (from the project root) first; the first that exists is the installed trial:

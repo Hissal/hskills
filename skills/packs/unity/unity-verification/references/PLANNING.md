@@ -10,7 +10,7 @@ The commands and the project's cost tiers live in project configuration: the che
 |---|---|---|
 | No Unity | Text checks | Seconds, anywhere |
 | Connected Editor | Compile, tests, inspection in an Editor already open | No start cost. Needs the Editor and Pipeline, and it blocks on a modal dialog |
-| Batch launch | Compile, tests, `-executeMethod` | An Editor start per run and a licence seat, and the project must be free |
+| Batch launch | Compile, tests, `-executeMethod` | An Editor start per run, and the project must be free |
 | Player build | One per target | A batch launch plus the build. Dearest of the routine checks, so only where the risk calls for it |
 | Cold import | The first open of a checkout with no `Library/` | Can be many minutes, needs permission, one at a time |
 | CI | Whatever the workflow runs | The repo's CI minutes. Only the owner pushes |
@@ -23,7 +23,7 @@ What workers cannot share, and how to isolate them:
 
 - **Project locks.** One Editor holds a project folder. A batch run against a held project refuses within seconds, so two workers cannot run Unity in one checkout, and the user's open Editor keeps its checkout. Give each worker that runs Unity its own checkout. Workers that only need text checks can skip Unity altogether.
 - **Per-checkout generated state.** `Library/`, `Temp/`, `Logs/` and `obj/` belong to one checkout and are never shared or linked. Fill a new checkout's `Library/` by the [warm copy](../SKILL.md#new-checkout), including its marker cleanup.
-- **One cold import at a time.** Ask once for the whole batch and run them in sequence, per [New checkout](../SKILL.md#new-checkout). Warm runs in separate checkouts can run side by side, within the memory and licence seats the machine has.
+- **One cold import at a time.** Ask once for the whole batch and run them in sequence, per [New checkout](../SKILL.md#new-checkout). Warm runs in separate checkouts can run side by side, within the memory the machine has.
 - **A connected Editor is one shared state.** A recompile or a Play session one worker starts reaches every other worker driving it, so give live-Editor work to one worker.
 - **Player builds** are batch launches with their own cost: one checkout each, and they count toward the machine's memory.
 

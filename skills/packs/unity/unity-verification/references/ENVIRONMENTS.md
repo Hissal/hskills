@@ -12,9 +12,9 @@ Observed on CLI 1.0.0-beta.15 with Editor 6000.3.20f1, unless a line says otherw
 | PlayMode tests | `test run`, asynchronous | `unity test` | No | Yes, with GPU caveats |
 | Player build | Possible; a batch job is usual | `unity build` | No | Yes |
 | C# in the Editor | `script run`, `script eval` | `-executeMethod` | No | `-executeMethod` |
-| Cost | Nothing extra | Editor start per run, under a minute on a tiny warm project, and a licence seat | Installing an Editor plus a licence, with no documented unattended route for Personal | The repo's CI minutes |
+| Cost | Nothing extra | Editor start per run, under a minute on a tiny warm project | Installing an Editor plus a licence, with no documented unattended route for Personal | The repo's CI minutes |
 
-A resident Editor holds a licence seat while it lives. A connected Editor verifies its in-memory state, which can differ from disk (unsaved scenes), and a modal dialog blocks it.
+A connected Editor verifies its in-memory state, which can differ from disk (unsaved scenes), and a modal dialog blocks it.
 
 ## Detecting the route
 

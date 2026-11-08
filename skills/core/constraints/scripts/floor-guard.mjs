@@ -17,6 +17,7 @@ Usage:
   node floor-guard.mjs [--base <ref>]          check the change
   node floor-guard.mjs --install <path.mjs> [--replace]
   node floor-guard.mjs --compare <path.mjs>
+  node floor-guard.mjs --ratchet <name> <measured>
   node floor-guard.mjs --rules
   node floor-guard.mjs --help
 
@@ -58,6 +59,16 @@ Check (the default)
   UPDATE_LOOSENS (no|yes|unknown), LOOSENED (when yes: each default rule
   or pattern the copy has and this guard lacks), DATA and DATA_STATE
   (missing|present|invalid). Exit 0, or 2 when it could not compare.
+
+--ratchet <name> <measured>
+  Compares a value just measured with the value ratchets.<name> records in
+  the data file beside this guard (the working tree's copy of it); <measured>
+  is a plain number. Prints RATCHET, BETTER, RECORDED, MEASURED and
+  RATCHET_STATE (held|improved|regressed). Held or improved exits 0;
+  regressed prints "VIOLATION: ratchet-regressed <location>" and exits 1. A
+  ratchet the data file does not record, a measurement that is not a plain
+  number or no data file exits 2. It never writes the data file: record an
+  improved value there yourself, which tightens the ratchet.
 
 --rules
   Prints this guard's rules (RULE: <name>) and default patterns
@@ -134,7 +145,7 @@ const BLANK = /^\s*$/;
 
 const LINE_RULES = ['suppression-added', 'unfinished-work', 'test-skipped', 'test-deleted', 'assertion-removed'];
 const DATA_RULES = ['ratchet-loosened', 'pattern-removed', 'exception-added'];
-const RULES = [...LINE_RULES, ...DATA_RULES, 'guard-edited'];
+const RULES = [...LINE_RULES, ...DATA_RULES, 'guard-edited', 'ratchet-regressed'];
 
 class CannotRun extends Error {}
 
@@ -620,6 +631,27 @@ function install(args) {
   return 0;
 }
 
+// ---- ratchet -------------------------------------------------------------
+
+// A measured value against the value its ratchet records in the data file.
+function ratchet(args) {
+  const file = dataPathOf(SELF);
+  const where = slash(path.relative(process.cwd(), file));
+  if (!fs.existsSync(file)) throw new CannotRun('no data file at ' + where + '; install the guard with --install first');
+  const data = parseData(fs.readFileSync(file, 'utf8'), where);
+  if (!Object.hasOwn(data.ratchets, args.ratchet)) throw new CannotRun(where + ' records no ratchet ' + args.ratchet + '; record a measured value there first');
+  const recorded = data.ratchets[args.ratchet];
+  if (!/^\s*[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?\s*$/.test(args.measured)) throw new CannotRun('the measurement for ' + args.ratchet + ' is not a plain number');
+  const measured = Number(args.measured);
+  const worse = recorded.better === 'higher' ? measured < recorded.value : measured > recorded.value;
+  const better = recorded.better === 'higher' ? measured > recorded.value : measured < recorded.value;
+  const out = ['RATCHET: ' + args.ratchet, 'BETTER: ' + recorded.better, 'RECORDED: ' + recorded.value, 'MEASURED: ' + measured,
+    'RATCHET_STATE: ' + (worse ? 'regressed' : better ? 'improved' : 'held')];
+  if (worse) out.push('VIOLATION: ratchet-regressed ' + where + ' ratchets.' + args.ratchet);
+  console.log(out.join('\n'));
+  return worse ? 1 : 0;
+}
+
 // ---- entry ---------------------------------------------------------------
 
 function parseArgs(argv) {
@@ -637,6 +669,7 @@ function parseArgs(argv) {
     else if (a === '--base') args.base = value();
     else if (a === '--install') args.install = value();
     else if (a === '--compare') args.compare = value();
+    else if (a === '--ratchet') { args.ratchet = value(); args.measured = value(); }
     else throw new CannotRun('unknown argument ' + a + '; see --help');
   }
   return args;
@@ -651,6 +684,7 @@ function main(argv) {
   if (args.rules) { console.log(ownRules().join('\n')); return 0; }
   if (args.install) return install(args);
   if (args.compare) return compare(args);
+  if (args.ratchet !== undefined) return ratchet(args);
   return check(args);
 }
 

@@ -229,6 +229,29 @@ module.exports = [
   { name: 'removing a data-file pattern is loud', base: project, data: { patterns: { stub: ['\\bLATER\\b'] } },
     work: { [DATA]: json({ patterns: { stub: [] } }) }, exit: 1, violations: ['pattern-removed ' + DATA + ' patterns.stub'] },
 
+  // ---- a measured value against its ratchet (#202) -----------------------
+  { name: 'a measurement worse than a higher-is-better ratchet is a violation', base: project, data: { ratchets },
+    run: { args: ['--ratchet', 'coverage', '61.9'] }, exit: 1,
+    violations: ['ratchet-regressed ' + DATA + ' ratchets.coverage'],
+    keys: { RATCHET: 'coverage', BETTER: 'higher', RECORDED: '62.4', MEASURED: '61.9', RATCHET_STATE: 'regressed' } },
+  { name: 'a measurement worse than a lower-is-better ratchet is a violation', base: project, data: { ratchets },
+    run: { args: ['--ratchet', 'bundle-kb', '190'] }, exit: 1,
+    violations: ['ratchet-regressed ' + DATA + ' ratchets.bundle-kb'], keys: { RATCHET_STATE: 'regressed' } },
+  { name: 'a measurement equal to its ratchet holds', base: project, data: { ratchets },
+    run: { args: ['--ratchet', 'coverage', '62.4'] }, exit: 0, violations: [], keys: { RATCHET_STATE: 'held' } },
+  { name: 'a measurement better than its ratchet passes and says it improved', base: project, data: { ratchets },
+    run: { args: ['--ratchet', 'bundle-kb', '150'] }, exit: 0, violations: [], keys: { RATCHET_STATE: 'improved', MEASURED: '150' } },
+  { name: 'a ratchet the data file does not record exits 2', base: project, data: { ratchets },
+    run: { args: ['--ratchet', 'mutation', '70'] }, exit: 2, out: [/could not run/, /mutation/] },
+  { name: 'a measurement that is not a number exits 2', base: project, data: { ratchets },
+    run: { args: ['--ratchet', 'coverage', ''] }, exit: 2, out: [/could not run/] },
+  { name: 'a measurement with trailing text exits 2', base: project, data: { ratchets },
+    run: { args: ['--ratchet', 'coverage', '62.4%'] }, exit: 2, out: [/could not run/] },
+  { name: 'a ratchet run with no data file exits 2', base: project, data: { ratchets },
+    work: { [DATA]: null }, run: { args: ['--ratchet', 'coverage', '70'] }, exit: 2, out: [/could not run/] },
+  { name: 'a ratchet run with no measurement exits 2', base: project, data: { ratchets },
+    run: { args: ['--ratchet', 'coverage'] }, exit: 2, out: [/could not run/] },
+
   // ---- install, stamp and update -----------------------------------------
   { name: 'install writes a stamped copy and an empty data file', install: false, base: project,
     run: { guard: 'bundled', args: ['--install', COPY] }, exit: 0,
@@ -273,5 +296,5 @@ module.exports = [
       t.assert.deepEqual(JSON.parse(t.read(dir, DATA)).ratchets, ratchets);
     } },
   { name: '--help prints usage and exits 0', install: false, base: {}, run: { guard: 'bundled', args: ['--help'] }, exit: 0,
-    out: [/--install/, /--compare/, /--base/, /exit/i] },
+    out: [/--install/, /--compare/, /--ratchet/, /--base/, /exit/i] },
 ];

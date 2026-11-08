@@ -177,6 +177,15 @@ const slash = (p) => p.split(path.sep).join('/');
 // A path as printed: quoted when it holds a control character or a quote, so
 // that each finding stays one line.
 const shown = (p) => (/[\x00-\x1f\x7f"]/.test(p) ? JSON.stringify(p) : p);
+// A path with its links and, on Windows, its 8.3 short names resolved, so
+// that git's top level and this file's own path compare equal. A missing
+// file resolves through its folder.
+const canonicalPath = (p) => {
+  const abs = path.resolve(p);
+  try { return fs.realpathSync.native(abs); } catch {
+    try { return path.join(fs.realpathSync.native(path.dirname(abs)), path.basename(abs)); } catch { return abs; }
+  }
+};
 const dataPathOf = (guard) => guard.replace(/\.[^./\\]*$/, '') + '.json';
 
 // A guard file's body (without its stamp, LF line endings) and its stamp.
@@ -508,7 +517,7 @@ function newLineOf(f, oldLine) {
 function check(args) {
   const top = git(['rev-parse', '--show-toplevel'], { allowFail: true });
   if (top === null) throw new CannotRun('not inside a git work tree');
-  const root = path.resolve(top.trim());
+  const root = canonicalPath(top.trim());
   process.chdir(root);
   const base = resolveBase(args.base);
   const mergeBase = git(['merge-base', base, 'HEAD'], { allowFail: true });
@@ -516,9 +525,9 @@ function check(args) {
   const mb = mergeBase.trim();
 
   const inside = (abs) => { const r = path.relative(root, abs); return r && !r.startsWith('..') && !path.isAbsolute(r) ? slash(r) : null; };
-  const selfRel = inside(SELF);
+  const selfRel = inside(canonicalPath(SELF));
   const dataAbs = dataPathOf(SELF);
-  const dataRel = inside(dataAbs);
+  const dataRel = inside(canonicalPath(dataAbs));
   const where = dataRel || slash(dataAbs);
   const nowText = fs.existsSync(dataAbs) ? fs.readFileSync(dataAbs, 'utf8') : null;
   const now = parseData(nowText, 'the data file ' + where);
@@ -586,7 +595,7 @@ function check(args) {
     if (f.new === null) continue;
     f.added.forEach((a) => {
       const at = shown(f.new) + ':' + a.line;
-      if (any(re.suppression, a.text)) lineFinding('suppression-added', f.new, at);
+      if (isStart(a.text)) lineFinding('suppression-added', f.new, at);
       if (any(re.stub, a.text)) lineFinding('unfinished-work', f.new, at);
       if (isTest(f.new) && any(re.skip, a.text)) lineFinding('test-skipped', f.new, at);
     });

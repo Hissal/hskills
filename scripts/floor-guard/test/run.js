@@ -51,6 +51,9 @@ const tools = {
     const blob = path.join(scratch, 'blob-' + variants++);
     fs.writeFileSync(blob, content);
     const oid = git(dir, ['hash-object', '-w', blob]);
+    // Git for Windows refuses such a path, in this and the guard's later git
+    // calls, unless the repository turns NTFS protection off.
+    git(dir, ['config', 'core.protectNTFS', 'false']);
     git(dir, ['update-index', '--add', '--cacheinfo', '100644,' + oid + ',' + file]);
     git(dir, ['update-index', '--skip-worktree', file]);
     git(dir, ['commit', '-q', '-m', message]);

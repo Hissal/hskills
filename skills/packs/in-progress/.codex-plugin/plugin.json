@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Generated in-progress skill list from collection.json.",
   "skills": [
+    "./arena",
     "./babysit-pr",
     "./in-progress-guide",
     "./loop-me"

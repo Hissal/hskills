@@ -5,6 +5,10 @@
       "hissal.skill-collection/reviewing"
     ]
   },
+  "hissal.skill-collection/arena": {
+    "path": "skills/packs/in-progress/arena",
+    "requires": []
+  },
   "hissal.skill-collection/babysit-pr": {
     "path": "skills/packs/in-progress/babysit-pr",
     "requires": []

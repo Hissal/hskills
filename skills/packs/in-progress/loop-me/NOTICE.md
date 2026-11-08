@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/in-progress/loop-me`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; designs workflows and never builds or runs one; grilling and delegating as process calls; agent model, effort and transport left to delegating; implementation choices and code exploration left to the implementer
+- Local changes: collection metadata and gates; designs workflows and never builds or runs one; grilling and delegating as process calls; agent model, effort and transport left to delegating; implementation choices and code exploration left to the implementer; offers /handoff when the user stops or defers with open questions
 
 ## Licence
 

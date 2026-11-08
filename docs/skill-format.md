@@ -258,7 +258,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `agnix` | warn | an agnix error or warning; agnix missing, not the pinned version, or failing to run (on trial: see [agnix (on trial)](#agnix-on-trial)) |
 | `copied-file-safety` | fail | a text file in a lock-listed copied skill contains hidden Unicode controls or a Windows, macOS or Linux personal home path; reports the line and, for Unicode, the code point |
 | `automatic-guide-sync` | fail | a skill in the onboarding pack's folder differs from what `node scripts/onboarding/generate.js` writes from the core guide: its `SKILL.md` body or a bundled file differs from the core guide's, one guide bundles a file the other lacks, or its frontmatter or Codex gate file is not the generated one; silent until both guides exist |
-| `delivery-procedure-sync` | fail | the delivery skills' copies of `references/DELIVERY.md` (in `full-stop`, `full-send` and `babysit-pr`) are not byte-identical; fails the copies outside the largest identical group, or every copy when there is none; silent while fewer than two copies exist |
+| `delivery-procedure-sync` | fail | the delivery skills' copies of `references/DELIVERY.md` (in `full-stop`, `full-send` and `babysit-pr`) are not byte-identical; fails the copies outside the largest identical group, or every copy when there is none; fails a delivery skill that lacks its copy while another has one; otherwise silent while fewer than two copies exist |
 
 Test the check with its fixture runner:
 

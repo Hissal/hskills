@@ -90,7 +90,7 @@ Everything here comes from the project as it now stands, so an empty project nee
 2. **Derive.** Take [Check commands](#check-commands), and the [Style guide](#style-guide) pointer and conflicts.
 3. **Confirm.** Show the rows and any line the look changed as a short draft, approved like step 4's. When it changes guidance and step 4 had no draft, it also lists the harness checks. Nothing to change means no draft. Run and write what it approves; harness checks wait for item 4.
 4. **Verify guidance.** When this run delivered or changed guidance, read [verify guidance](references/verify-guidance.md) and follow it. On any other run, confirm that each selected skill's folder and each pointer's path still exist.
-5. **Report.** Tell the user what this run wrote and which skills read it, then each step's result: done, skipped with its reason, or **incomplete** with its next step. List every question still open: its handoff entry or issue, any research still running, and what each one blocks. Mention they can edit `docs/agents/*.md` directly later, and that a re-run reads the current state, keeps what is settled and revisits only what changed.
+5. **Report.** Tell the user what this run wrote and which skills read it, then each step's result: done, skipped with its reason, or **incomplete** with its next step. List every question still open: its handoff entry or issue, any research still running, and what each one blocks. Mention they can edit `docs/agents/*.md` directly later, and that a re-run reads the current state, keeps what is settled and revisits only what changed. When the check-commands file has a `task end` row but no row whose "What it checks" starts with `Floor guard`, offer `/constraints` last, in one line: nothing in the project yet stops an agent reaching green by deleting a test or silencing a checker.
 
 A check that cannot finish here stays incomplete and goes through [Open questions](#open-questions) with the exact command as its next step. Independent work finishes either way.
 
@@ -136,7 +136,7 @@ An open question never stalls the run, whether a section raised it or the owner 
 
 A single approval or value is a question to ask the owner; a step you can run yourself is yours to run.
 
-`delegating` is a process call, and `/wayfinder`, `/wizard` and `/handoff` are suggestions the owner starts. None is a requirement: the run works without them.
+`delegating` is a process call, and `/wayfinder`, `/wizard`, `/handoff` and `/constraints` are suggestions the owner starts. None is a requirement: the run works without them.
 
 ## Sections
 

@@ -37,6 +37,10 @@
     "path": "skills/core/commenting",
     "requires": []
   },
+  "hissal.skill-collection/constraints": {
+    "path": "skills/core/constraints",
+    "requires": []
+  },
   "hissal.skill-collection/context-audit": {
     "path": "skills/core/context-audit",
     "requires": []

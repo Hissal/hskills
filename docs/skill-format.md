@@ -274,6 +274,8 @@ node scripts/gates/test/run.js
 
 Every change to the check keeps both green: the runner, and the check on the real tree.
 
+The fixture runner also runs the `constraints` floor guard's contract cases, [`scripts/floor-guard/test/cases.js`](../scripts/floor-guard/test/cases.js), against real git repositories; `node scripts/floor-guard/test/run.js` runs them alone.
+
 Run `npm ci` before the check and its fixtures to install pinned agnix; real-agnix cases then run rather than skip.
 
 ## agnix (on trial)

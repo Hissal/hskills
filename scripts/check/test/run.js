@@ -23,6 +23,7 @@ const { git, write, tempDir } = require('../../test-util');
 require('./temp-cases');
 require('./catalog');
 require('../../plugins/test/run');
+require('../../floor-guard/test/run');
 
 const CHECK = path.join(__dirname, '..', 'check.js');
 const REPO = path.join(__dirname, '..', '..', '..');

@@ -20,7 +20,12 @@ Bug Fixes and breaking-change notes. Other types alone may not trigger a release
 When adding a Claude or Codex plugin manifest, add a typed `json` entry to the
 root package's `extra-files` in `release-please-config.json`, with its repository
 path and `jsonpath: "$.version"`. The `release-config` check catches omissions.
-The marketplace lists sources and has no version field to stamp. The separate
+The marketplace lists sources and has no version field to stamp.
+`skills/core/constraints/scripts/version.json` has its own hand-kept entry.
+It holds the floor guard's version. When the guard installs a copy into a
+project, it writes a stamp line at the top of the copy with that version and
+a hash of the copy, which `--compare` reads to tell an outdated copy from an
+edited one. So each release must set the release's version there. The separate
 `release-version` check fails when a manifest's version differs from the last
 release tag; on a release PR it expects the newer version recorded in the
 release manifest instead.

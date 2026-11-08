@@ -24,7 +24,7 @@ Its data file sits beside the copy, with the same name and `.json`. The guard re
 
 - **ratchets**: measured values the project must not fall back from, each with which way is better. Write a value only from a measurement on a named tree; never invent a target.
 - **exceptions**: floor exceptions, each exempting one rule on one path glob, with a reason, an owner and an expiry. They are the owner's to add. A new or changed exception is itself a violation until it reaches the merge base.
-- **patterns**: the project's own suppression, stub, skip, test-file and assertion forms, added to the guard's stack-neutral defaults.
+- **patterns**: the project's own suppression, suppression-end (a block suppression's closing marker), stub, skip, test-file and assertion forms, added to the guard's stack-neutral defaults.
 
 Tightening the data file passes silently; loosening it is a violation. Commit the copy and its data file with the project: the guard compares against the merge base, so it protects a change only once they are in it.
 

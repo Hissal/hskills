@@ -81,6 +81,15 @@ const DEFAULT_PATTERNS = {
     '\\b[Ss]uppress(?:Message|Warnings|ions?)\\b',
     '\\b[Rr]e[Ss]harper\\s+disable\\b',
   ],
+  // The end of a block suppression: deleting one, but not its start, widens
+  // the suppression with a removal alone.
+  'suppression-end': [
+    '(?:[Ll]int|[Cc]heck|[Ww]arning|[Ii]nspection|[Aa]naly[sz]er)s?[-_ :]*(?:enable|restore)\\b',
+    '\\bNOLINTEND\\b',
+    '\\b(?:istanbul|c8|v8)\\s+ignore\\s+(?:stop|end)\\b',
+    '\\b[Ss]tryker\\s+restore\\b',
+    '\\b[Rr]e[Ss]harper\\s+restore\\b',
+  ],
   stub: [
     '\\b[Nn]ot\\s+[Ii]mplemented\\b',
     '\\bNotImplemented(?:Error|Exception)?\\b',
@@ -115,9 +124,15 @@ const DEFAULT_PATTERNS = {
     '\\brequire\\.\\w+\\s*\\(',
   ],
 };
-// An empty catch over two lines: an opening line, then a lone closing brace.
+// An empty handler over several lines, read from the changed file itself so
+// that one emptied by a deletion alone is found: a catch whose opening line
+// ends in a brace, then only blank lines before a closing brace; or an except
+// whose block holds nothing but pass.
 const CATCH_OPEN = /\bcatch\b[^{}]*\{\s*$/;
 const CLOSE = /^\s*\}/;
+const EXCEPT_OPEN = /^(\s*)except\b[^:]*:\s*(?:#.*)?$/;
+const PASS = /^\s*pass\s*(?:#.*)?$/;
+const BLANK = /^\s*$/;
 
 const LINE_RULES = ['suppression-added', 'unfinished-work', 'test-skipped', 'test-deleted', 'assertion-removed'];
 const DATA_RULES = ['ratchet-loosened', 'pattern-removed', 'exception-added'];
@@ -263,8 +278,10 @@ function readDiff(top, mergeBase) {
     if (fs.existsSync(real)) fs.copyFileSync(real, index);
     const env = Object.assign({}, process.env, { GIT_INDEX_FILE: index });
     git(['add', '-A', '--', '.'], { env });
-    return git(['-c', 'diff.relative=false', 'diff', '--cached', '-M', '--unified=0', '--no-color', '--no-ext-diff', '--no-textconv',
+    const tree = git(['write-tree'], { env }).trim();
+    const diff = git(['-c', 'diff.relative=false', 'diff', '--cached', '-M', '--unified=0', '--no-color', '--no-ext-diff', '--no-textconv',
       '--ignore-submodules', '--src-prefix=a/', '--dst-prefix=b/', mergeBase, '--'], { env });
+    return { diff, tree };
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
@@ -276,10 +293,12 @@ function parseDiff(diff) {
   let inHeader = false;
   let oldLine = 0;
   let newLine = 0;
+  let gap = null;
   for (const line of diff.split('\n')) {
     if (line.startsWith('diff --git ')) {
-      cur = { old: null, new: null, added: [], removed: [] };
+      cur = { old: null, new: null, added: [], removed: [], gaps: [] };
       files.push(cur);
+      gap = null;
       inHeader = true;
       const rest = line.slice(11);
       const half = (rest.length - 1) / 2;
@@ -291,9 +310,12 @@ function parseDiff(diff) {
     } else if (!cur) continue;
     else if (line.startsWith('@@')) {
       inHeader = false;
-      const m = line.match(/^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+      const m = line.match(/^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,(\d+))? @@/);
       oldLine = Number(m[1]);
       newLine = Number(m[2]);
+      // A hunk that adds nothing removes lines after new line m[2].
+      gap = m[3] === '0' ? { after: newLine, removed: [] } : null;
+      if (gap) cur.gaps.push(gap);
     } else if (inHeader) {
       if (line.startsWith('new file mode')) cur.old = null;
       else if (line.startsWith('deleted file mode')) cur.new = null;
@@ -302,9 +324,61 @@ function parseDiff(diff) {
       else if (line.startsWith('--- ')) cur.old = line.slice(4) === '/dev/null' ? null : unquote(line.slice(4)).replace(/^a\//, '');
       else if (line.startsWith('+++ ')) cur.new = line.slice(4) === '/dev/null' ? null : unquote(line.slice(4)).replace(/^b\//, '');
     } else if (line.startsWith('+')) cur.added.push({ line: newLine++, text: line.slice(1) });
-    else if (line.startsWith('-')) cur.removed.push({ line: oldLine++, text: line.slice(1) });
+    else if (line.startsWith('-')) {
+      cur.removed.push({ line: oldLine++, text: line.slice(1) });
+      if (gap) gap.removed.push(line.slice(1));
+    }
   }
   return files;
+}
+
+// The text of each path in a tree, by path; a path that is not a readable
+// blob maps to null.
+function readBlobs(tree, paths) {
+  const out = new Map();
+  if (!paths.length) return out;
+  const r = spawnSync('git', ['cat-file', '--batch'], { input: paths.map((p) => tree + ':' + p).join('\n') + '\n', maxBuffer: 1 << 30 });
+  if (r.error || r.status !== 0) throw new CannotRun('git cat-file failed: ' + (r.error ? r.error.message : String(r.stderr).trim().split('\n')[0]));
+  const buf = r.stdout;
+  let at = 0;
+  for (const p of paths) {
+    const end = buf.indexOf(10, at);
+    const header = buf.subarray(at, end).toString('utf8').split(' ');
+    at = end + 1;
+    if (header[1] !== 'blob') { out.set(p, null); continue; }
+    const size = Number(header[2]);
+    out.set(p, buf.subarray(at, at + size).toString('utf8'));
+    at += size + 1;
+  }
+  return out;
+}
+
+// The empty handlers over several lines in a file's text, as 1-based
+// { open, close } line spans; an except span also carries its indent, since
+// its block has no closing line.
+function emptyHandlers(text) {
+  const src = text.split('\n').map((l) => l.replace(/\r$/, ''));
+  const spans = [];
+  src.forEach((l, i) => {
+    if (CATCH_OPEN.test(l)) {
+      let j = i + 1;
+      while (j < src.length && BLANK.test(src[j])) j++;
+      if (j < src.length && CLOSE.test(src[j])) spans.push({ open: i + 1, close: j + 1 });
+      return;
+    }
+    const m = l.match(EXCEPT_OPEN);
+    if (!m) return;
+    let last = -1;
+    let j = i + 1;
+    for (; j < src.length; j++) {
+      if (BLANK.test(src[j])) continue;
+      if (src[j].match(/^\s*/)[0].length <= m[1].length) break;
+      if (!PASS.test(src[j])) return;
+      last = j;
+    }
+    if (last >= 0) spans.push({ open: i + 1, close: last + 1, indent: m[1].length });
+  });
+  return spans;
 }
 
 // ---- check ---------------------------------------------------------------
@@ -339,23 +413,52 @@ function check(args) {
   const isTest = (f) => f !== null && any(re['test-file'], f);
   // An exception counts only when the merge base already has it, unchanged.
   const exempt = was.exceptions.filter((x) => now.exceptions.some((y) => canonical(x) === canonical(y))).map((x) => ({ rule: x.rule, match: globRegex(x.path) }));
+  const seen = new Set();
   const lineFinding = (rule, file, at) => {
+    if (seen.has(rule + ' ' + at)) return;
+    seen.add(rule + ' ' + at);
     if (!exempt.some((x) => x.rule === rule && x.match.test(file))) findings.push({ rule, at });
   };
 
-  const files = parseDiff(readDiff(root, mb)).filter((f) => ![selfRel, dataRel].includes(f.new || f.old));
+  const { diff, tree } = readDiff(root, mb);
+  const files = parseDiff(diff).filter((f) => ![selfRel, dataRel].includes(f.new || f.old));
+  // A path holding a newline cannot be named to cat-file, so its empty
+  // handlers over several lines go unread; single-line ones are still found.
+  const blobs = readBlobs(tree, files.filter((f) => f.new !== null && !f.new.includes('\n') && (f.added.length || f.gaps.length)).map((f) => f.new));
+  const deeper = (l, indent) => !BLANK.test(l) && l.match(/^\s*/)[0].length > indent;
+  const removedFrom = (h, g) => g.after >= h.open && (g.after < h.close || (h.indent !== undefined && g.after === h.close && deeper(g.removed.find((l) => !BLANK.test(l)) || '', h.indent)));
   for (const f of files) {
     if (f.old !== null && isTest(f.old) && (f.new === null || !isTest(f.new))) lineFinding('test-deleted', f.old, f.old);
     if (f.new === null) continue;
     const addedText = new Map();
-    f.added.forEach((a, i) => {
+    f.added.forEach((a) => {
       addedText.set(a.text.trim(), (addedText.get(a.text.trim()) || 0) + 1);
       const at = f.new + ':' + a.line;
       if (any(re.suppression, a.text)) lineFinding('suppression-added', f.new, at);
-      const next = f.added[i + 1];
-      if (any(re.stub, a.text) || (CATCH_OPEN.test(a.text) && next && next.line === a.line + 1 && CLOSE.test(next.text))) lineFinding('unfinished-work', f.new, at);
+      if (any(re.stub, a.text)) lineFinding('unfinished-work', f.new, at);
       if (isTest(f.new) && any(re.skip, a.text)) lineFinding('test-skipped', f.new, at);
     });
+    // An empty handler the change made: one of its lines is added, or lines
+    // were removed from inside it (for an except, also from just after its
+    // last pass, when the first removed line sat inside its block).
+    const text = blobs.get(f.new);
+    if (text) {
+      for (const h of emptyHandlers(text)) {
+        if (f.added.some((a) => a.line >= h.open && a.line <= h.close) || f.gaps.some((g) => removedFrom(h, g))) lineFinding('unfinished-work', f.new, f.new + ':' + h.open);
+      }
+    }
+    // A removed block-suppression end widens the block, unless a suppression
+    // start went with it or the same end was added back.
+    const ends = f.removed.filter((r) => any(re['suppression-end'], r.text));
+    if (ends.length && !f.removed.some((r) => any(re.suppression, r.text) && !any(re['suppression-end'], r.text))) {
+      const readded = new Map();
+      for (const a of f.added) if (any(re['suppression-end'], a.text)) readded.set(a.text.trim(), (readded.get(a.text.trim()) || 0) + 1);
+      for (const r of ends) {
+        const left = readded.get(r.text.trim()) || 0;
+        if (left > 0) { readded.set(r.text.trim(), left - 1); continue; }
+        lineFinding('suppression-added', f.new, (f.old || f.new) + ':' + r.line);
+      }
+    }
     if (isTest(f.new)) {
       for (const r of f.removed) {
         if (!any(re.assertion, r.text)) continue;

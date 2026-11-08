@@ -40,8 +40,8 @@ From the project root, run the bundled guard with `--compare <path>` and act on 
 
 - **missing**: run the bundled guard with `--install <path>`. It writes the stamped copy and, when absent, an empty data file. It never overwrites a data file.
 - **current**: nothing to install.
-- **outdated**: the copy is an unedited install of a different guard. Offer the update, naming `COPY_VERSION` and `BUNDLED_VERSION`. When `UPDATE_LOOSENS` is `yes` or `unknown`, say so first and loudly: the update would weaken the floor, and `LOOSENED` lists each rule or pattern it drops. On the owner's yes, run `--install <path> --replace`; otherwise keep the copy and report it as outdated.
-- **edited**: the copy changed since it was stamped, and the guard reports it as `guard-edited` until it is restamped. Show the owner how the copy differs from the bundled guard before offering the update, since replacing discards the edits, with the same loosening warning. Replace only on the owner's yes.
+- **outdated**: the copy is an unedited install of a different guard. Offer the update, naming `COPY_VERSION` and `BUNDLED_VERSION`. When `UPDATE_LOOSENS` is `yes`, say so first and loudly: the update would weaken the floor, and `LOOSENED` lists each rule or pattern it drops. When it is `unknown`, say as loudly that the update may weaken the floor: the copy is the same version with a different body, a newer version than the bundled guard (a downgrade), or its rules could not be read. On the owner's yes, run `--install <path> --replace`; otherwise keep the copy and report it as outdated.
+- **edited**: the copy changed since it was stamped or lost its stamp, and the guard reports it as `guard-edited` until it is restamped. Show the owner how the copy differs from the bundled guard before offering the update, since replacing discards the edits, with the same loosening warning. Replace only on the owner's yes.
 
 When `DATA_STATE` is `invalid`, leave the file as it is: the guard exits 2 until it is fixed. Name the problem the guard's run reports.
 
@@ -139,6 +139,6 @@ When you run for a parent agent, hand back the evidence and any follow-up needs;
 When no owner is present to answer, ask nothing, and run steps 1, 2 and the guard's part of 7, 8 and 9 only:
 
 - Install a missing copy at the path the check-commands file names, else at `tools/floor-guard.mjs`, with the default rules.
-- Refresh an `outdated` copy only when `UPDATE_LOOSENS` is `no`. Keep an `edited` copy, or one whose update loosens, as it is, and put the reason on the **Not done** line.
+- Refresh an `outdated` copy only when `UPDATE_LOOSENS` is `no`. Keep an `edited` copy, or one whose `UPDATE_LOOSENS` is `yes` or `unknown`, as it is, and put the reason on the **Not done** line.
 - Invent no ratchet values, add no exceptions or patterns, and write no prose quality rules.
 - Put "interview not run" on the **Not done** line.

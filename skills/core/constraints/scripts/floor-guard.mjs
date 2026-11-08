@@ -24,7 +24,8 @@ Usage:
 Check (the default)
   Diffs the merge base of <ref> and HEAD against the working tree: commits,
   staged and unstaged changes and untracked files (ignored files are not
-  read). With no --base, the first of ${BASES.join(', ')} that exists.
+  read). Every changed file is read as text, whatever its attributes. With
+  no --base, the first of ${BASES.join(', ')} that exists.
   Prints one "VIOLATION: <rule> <location>" line per finding, never the
   matched text. Exit 0 clean, 1 at least one violation, 2 could not run
   (not a git work tree, no merge base, an unreadable data file). Exit 2 is
@@ -42,8 +43,9 @@ Check (the default)
   exception. Loosening is a violation: a ratchet moved the worse way,
   flipped or removed, a removed pattern, a new or changed exception. An
   exception exempts its rule on its path only once it is in the merge base.
-  The guard copy and its data file are not scanned as code; a copy edited
-  since it was stamped is a violation (guard-edited).
+  The guard copy and its data file are not scanned as code; a copy in the
+  work tree that was edited since it was stamped, or lost its stamp, is a
+  violation (guard-edited).
 
 --install <path.mjs>
   Copies this guard to <path.mjs>, stamped with its version and sha256, and
@@ -58,7 +60,11 @@ Check (the default)
   (missing|current|outdated|edited), COPY_VERSION, BUNDLED_VERSION,
   UPDATE_LOOSENS (no|yes|unknown), LOOSENED (when yes: each default rule
   or pattern the copy has and this guard lacks), DATA and DATA_STATE
-  (missing|present|invalid). Exit 0, or 2 when it could not compare.
+  (missing|present|invalid). UPDATE_LOOSENS is no only when the update drops
+  no rule or pattern and the copy is an unedited install of an older
+  version; the same version with another body, a downgrade, an edited copy
+  or a copy whose rules could not be read is unknown. Exit 0, or 2 when it
+  could not compare.
 
 --ratchet <name> <measured>
   Compares a value just measured with the value ratchets.<name> records in
@@ -138,9 +144,10 @@ const DEFAULT_PATTERNS = {
 // An empty handler, read from the changed file itself so that one emptied by
 // a deletion alone is found: a catch whose braces hold only whitespace and
 // comments, wherever its lines break; or an except whose block holds nothing
-// but pass.
+// but pass and comments.
 const EXCEPT_OPEN = /^(\s*)except\b[^:]*:\s*(?:#.*)?$/;
 const PASS = /^\s*pass\s*(?:#.*)?$/;
+const COMMENT = /^\s*#/;
 const BLANK = /^\s*$/;
 
 const LINE_RULES = ['suppression-added', 'unfinished-work', 'test-skipped', 'test-deleted', 'assertion-removed'];
@@ -281,17 +288,26 @@ function resolveBase(explicit) {
 }
 
 // The merge base against the working tree, untracked files included, read
-// through a throwaway index so the real one is never touched.
+// through a throwaway index so the real one is never touched. Every file is
+// diffed as text, so neither git's binary guess nor a -diff attribute leaves
+// a changed file unread.
 function readDiff(top, mergeBase) {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'floor-guard-'));
   try {
     const index = path.join(tmp, 'index');
     const real = path.resolve(top, git(['rev-parse', '--git-path', 'index']).trim());
-    if (fs.existsSync(real)) fs.copyFileSync(real, index);
+    // The copy keeps the index's mtime: git rereads a file changed in the
+    // same instant the index was written only while the index looks that
+    // old, so a fresh mtime would hide a same-size edit.
+    if (fs.existsSync(real)) {
+      fs.copyFileSync(real, index);
+      const { atime, mtime } = fs.statSync(real);
+      fs.utimesSync(index, atime, mtime);
+    }
     const env = Object.assign({}, process.env, { GIT_INDEX_FILE: index });
     git(['add', '-A', '--', '.'], { env });
     const tree = git(['write-tree'], { env }).trim();
-    const diff = git(['-c', 'diff.relative=false', 'diff', '--cached', '-M', '--unified=0', '--no-color', '--no-ext-diff', '--no-textconv',
+    const diff = git(['-c', 'diff.relative=false', 'diff', '--cached', '-M', '--unified=0', '--no-color', '--no-ext-diff', '--no-textconv', '--text',
       '--ignore-submodules', '--src-prefix=a/', '--dst-prefix=b/', mergeBase, '--'], { env });
     return { diff, tree };
   } finally {
@@ -306,9 +322,10 @@ function parseDiff(diff) {
   let oldLine = 0;
   let newLine = 0;
   let gap = null;
+  let at = 0;
   for (const line of diff.split('\n')) {
     if (line.startsWith('diff --git ')) {
-      cur = { old: null, new: null, added: [], removed: [], gaps: [] };
+      cur = { old: null, new: null, added: [], removed: [], gaps: [], hunks: [] };
       files.push(cur);
       gap = null;
       inHeader = true;
@@ -322,11 +339,15 @@ function parseDiff(diff) {
     } else if (!cur) continue;
     else if (line.startsWith('@@')) {
       inHeader = false;
-      const m = line.match(/^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,(\d+))? @@/);
+      const m = line.match(/^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/);
       oldLine = Number(m[1]);
-      newLine = Number(m[2]);
-      // A hunk that adds nothing removes lines after new line m[2].
-      gap = m[3] === '0' ? { after: newLine, removed: [] } : null;
+      newLine = Number(m[3]);
+      cur.hunks.push({ old: oldLine, oldCount: m[2] === undefined ? 1 : Number(m[2]), newCount: m[4] === undefined ? 1 : Number(m[4]) });
+      // Where the hunk's removed lines sat, as the count of new lines before
+      // them: a hunk lists its removed lines before its added ones.
+      at = m[4] === '0' ? newLine : newLine - 1;
+      // A hunk that adds nothing removes lines after its new start line.
+      gap = m[4] === '0' ? { after: newLine, removed: [] } : null;
       if (gap) cur.gaps.push(gap);
     } else if (inHeader) {
       if (line.startsWith('new file mode')) cur.old = null;
@@ -337,7 +358,7 @@ function parseDiff(diff) {
       else if (line.startsWith('+++ ')) cur.new = line.slice(4) === '/dev/null' ? null : unquote(line.slice(4)).replace(/^b\//, '');
     } else if (line.startsWith('+')) cur.added.push({ line: newLine++, text: line.slice(1) });
     else if (line.startsWith('-')) {
-      cur.removed.push({ line: oldLine++, text: line.slice(1) });
+      cur.removed.push({ line: oldLine++, text: line.slice(1), at });
       if (gap) gap.removed.push(line.slice(1));
     }
   }
@@ -433,17 +454,50 @@ function emptyHandlers(text) {
   src.forEach((l, i) => {
     const m = l.match(EXCEPT_OPEN);
     if (!m) return;
+    // Comment lines count as blank, at any indent; one indented into the
+    // block still extends the span.
     let last = -1;
-    let j = i + 1;
-    for (; j < src.length; j++) {
+    let passed = false;
+    for (let j = i + 1; j < src.length; j++) {
       if (BLANK.test(src[j])) continue;
-      if (src[j].match(/^\s*/)[0].length <= m[1].length) break;
+      const deeper = src[j].match(/^\s*/)[0].length > m[1].length;
+      if (COMMENT.test(src[j])) { if (deeper) last = j; continue; }
+      if (!deeper) break;
       if (!PASS.test(src[j])) return;
+      passed = true;
       last = j;
     }
-    if (last >= 0) spans.push({ open: i + 1, close: last + 1, indent: m[1].length });
+    if (passed) spans.push({ open: i + 1, close: last + 1, indent: m[1].length });
   });
   return spans;
+}
+
+// A taker over added lines: take(removed, fits) consumes one added line with
+// the removed line's text, whitespace trimmed, that fits allows, and says
+// whether it found one. Each added line is taken at most once.
+function takeBack(added) {
+  const byText = new Map();
+  for (const a of added) {
+    const key = a.text.trim();
+    if (!byText.has(key)) byText.set(key, []);
+    byText.get(key).push(a);
+  }
+  return (removed, fits = () => true) => {
+    const list = byText.get(removed.text.trim()) || [];
+    const i = list.findIndex(fits);
+    if (i >= 0) list.splice(i, 1);
+    return i >= 0;
+  };
+}
+
+// The new line number of an old line the diff kept.
+function newLineOf(f, oldLine) {
+  let shift = 0;
+  for (const h of f.hunks) {
+    const before = h.oldCount === 0 ? h.old < oldLine : h.old + h.oldCount - 1 < oldLine;
+    if (before) shift += h.newCount - h.oldCount;
+  }
+  return oldLine + shift;
 }
 
 // ---- check ---------------------------------------------------------------
@@ -469,8 +523,11 @@ function check(args) {
   const was = parseData(baseText, 'the data file ' + where + ' at the merge base');
 
   const findings = compareData(was, now, where);
+  // A copy in the work tree must carry a stamp that matches it, so deleting
+  // the stamp line is an edit too. A guard outside it (the bundled one, which
+  // has no stamp) is not part of the change.
   const { body, stamp } = readGuard(SELF);
-  if (stamp && sha256(body) !== stamp.hash) findings.push({ rule: 'guard-edited', at: selfRel || slash(SELF) });
+  if (stamp ? sha256(body) !== stamp.hash : selfRel !== null) findings.push({ rule: 'guard-edited', at: selfRel || slash(SELF) });
 
   const compile = (category) => [...new Set([...DEFAULT_PATTERNS[category], ...(was.patterns[category] || []), ...(now.patterns[category] || [])])].map((p) => new RegExp(p));
   const re = Object.fromEntries(Object.keys(DEFAULT_PATTERNS).map((c) => [c, compile(c)]));
@@ -488,14 +545,15 @@ function check(args) {
   const { diff, tree } = readDiff(root, mb);
   const files = parseDiff(diff).filter((f) => ![selfRel, dataRel].includes(f.new || f.old));
   const blobs = readBlobs(tree, files.filter((f) => f.new !== null && (f.added.length || f.gaps.length)).map((f) => f.new));
+  const isEnd = (text) => any(re['suppression-end'], text);
+  const isStart = (text) => !isEnd(text) && any(re.suppression, text);
+  const oldBlobs = readBlobs(mb, files.filter((f) => f.old !== null && f.new !== null && f.removed.some((r) => isEnd(r.text))).map((f) => f.old));
   const deeper = (l, indent) => !BLANK.test(l) && l.match(/^\s*/)[0].length > indent;
   const removedFrom = (h, g) => g.after >= h.open && (g.after < h.close || (h.indent !== undefined && g.after === h.close && deeper(g.removed.find((l) => !BLANK.test(l)) || '', h.indent)));
   for (const f of files) {
     if (f.old !== null && isTest(f.old) && (f.new === null || !isTest(f.new))) lineFinding('test-deleted', f.old, shown(f.old));
     if (f.new === null) continue;
-    const addedText = new Map();
     f.added.forEach((a) => {
-      addedText.set(a.text.trim(), (addedText.get(a.text.trim()) || 0) + 1);
       const at = shown(f.new) + ':' + a.line;
       if (any(re.suppression, a.text)) lineFinding('suppression-added', f.new, at);
       if (any(re.stub, a.text)) lineFinding('unfinished-work', f.new, at);
@@ -510,23 +568,36 @@ function check(args) {
         if (f.added.some((a) => a.line >= h.open && a.line <= h.close) || f.gaps.some((g) => removedFrom(h, g))) lineFinding('unfinished-work', f.new, shown(f.new) + ':' + h.open);
       }
     }
-    // A removed block-suppression end widens the block, unless a suppression
-    // start went with it or the same end was added back.
-    const ends = f.removed.filter((r) => any(re['suppression-end'], r.text));
-    if (ends.length && !f.removed.some((r) => any(re.suppression, r.text) && !any(re['suppression-end'], r.text))) {
-      const readded = new Map();
-      for (const a of f.added) if (any(re['suppression-end'], a.text)) readded.set(a.text.trim(), (readded.get(a.text.trim()) || 0) + 1);
+    // A removed block-suppression end widens its block, unless the block's
+    // starts went with it or the same end was added back no later. A block
+    // is read from the old file: an end closes every suppression start since
+    // the end before it, so a start removed from another block excuses
+    // nothing.
+    const ends = f.removed.filter((r) => isEnd(r.text));
+    if (ends.length) {
+      const removedLines = new Set(f.removed.map((r) => r.line));
+      const addedLines = new Set(f.added.map((a) => a.line));
+      const startsOf = new Map();
+      let open = [];
+      (oldBlobs.get(f.old) || '').split('\n').forEach((l, i) => {
+        if (isEnd(l)) { startsOf.set(i + 1, open); open = []; } else if (isStart(l)) open.push(i + 1);
+      });
+      const takeEnd = takeBack(f.added.filter((a) => isEnd(a.text)));
       for (const r of ends) {
-        const left = readded.get(r.text.trim()) || 0;
-        if (left > 0) { readded.set(r.text.trim(), left - 1); continue; }
-        lineFinding('suppression-added', f.new, shown(f.old || f.new) + ':' + r.line);
+        const starts = startsOf.get(r.line) || [];
+        if (starts.length && starts.every((s) => removedLines.has(s))) continue;
+        const kept = starts.filter((s) => !removedLines.has(s)).map((s) => newLineOf(f, s));
+        // Back after every kept start, and with only added lines, if any,
+        // between the old place and the new one.
+        const fits = (a) => kept.every((s) => s < a.line) && (a.line <= r.at + 1 || Array.from({ length: a.line - r.at - 1 }, (_, k) => r.at + 1 + k).every((l) => addedLines.has(l)));
+        if (!takeEnd(r, fits)) lineFinding('suppression-added', f.new, shown(f.old || f.new) + ':' + r.line);
       }
     }
     if (isTest(f.new)) {
+      const takeAssertion = takeBack(f.added);
       for (const r of f.removed) {
         if (!any(re.assertion, r.text)) continue;
-        const left = addedText.get(r.text.trim()) || 0;
-        if (left > 0) { addedText.set(r.text.trim(), left - 1); continue; }
+        if (takeAssertion(r)) continue;
         lineFinding('assertion-removed', f.new, shown(f.old || f.new) + ':' + r.line);
       }
     }
@@ -576,12 +647,27 @@ function dataState(file) {
   try { parseData(fs.readFileSync(file, 'utf8'), file); return 'present'; } catch { return 'invalid'; }
 }
 
-function printLoosens(file, state, out) {
+// Whether release a is newer than release b, both MAJOR.MINOR.PATCH; any
+// other form is never newer.
+function newer(a, b) {
+  const parse = (v) => (/^\d+\.\d+\.\d+$/.test(v) ? v.split('.').map(Number) : null);
+  const x = parse(a);
+  const y = parse(b);
+  if (!x || !y) return false;
+  const i = x.findIndex((n, k) => n !== y[k]);
+  return i >= 0 && x[i] > y[i];
+}
+
+// The rule and pattern lists show only what an update drops, not a weaker
+// check behind the same names. So "no" needs both: nothing dropped, and an
+// unedited copy of an older release. The same version with another body,
+// a downgrade or an edited copy is "unknown".
+function printLoosens(file, state, version, out) {
   if (state === 'current' || state === 'missing') { out.push('UPDATE_LOOSENS: no'); return; }
   const lost = loosenedBy(file);
-  if (lost === null) out.push('UPDATE_LOOSENS: unknown');
-  else if (!lost.length) out.push('UPDATE_LOOSENS: no');
-  else out.push('UPDATE_LOOSENS: yes', 'LOOSENED: ' + lost.join('; '));
+  if (lost && lost.length) out.push('UPDATE_LOOSENS: yes', 'LOOSENED: ' + lost.join('; '));
+  else if (lost && state === 'outdated' && newer(ownVersion(), version)) out.push('UPDATE_LOOSENS: no');
+  else out.push('UPDATE_LOOSENS: unknown');
 }
 
 function guardTarget(given) {
@@ -594,7 +680,7 @@ function compare(args) {
   const { state, version } = copyState(file);
   const data = dataPathOf(file);
   const out = ['GUARD: ' + slash(path.relative(process.cwd(), file)), 'GUARD_STATE: ' + state, 'COPY_VERSION: ' + version, 'BUNDLED_VERSION: ' + ownVersion()];
-  printLoosens(file, state, out);
+  printLoosens(file, state, version, out);
   out.push('DATA: ' + slash(path.relative(process.cwd(), data)), 'DATA_STATE: ' + dataState(data));
   console.log(out.join('\n'));
   return 0;
@@ -604,11 +690,11 @@ function install(args) {
   const file = guardTarget(args.install);
   const rel = slash(path.relative(process.cwd(), file));
   const data = dataPathOf(file);
-  const { state } = copyState(file);
+  const { state, version: copyVersion } = copyState(file);
   const out = ['GUARD: ' + rel];
   let result = state === 'missing' ? 'created' : state === 'current' ? 'unchanged' : args.replace ? 'replaced' : state;
   out.push('GUARD_STATE: ' + result);
-  if (state !== 'missing' && state !== 'current') printLoosens(file, state, out);
+  if (state !== 'missing' && state !== 'current') printLoosens(file, state, copyVersion, out);
   if (result === 'outdated' || result === 'edited') {
     out.push('Not replaced: the copy differs from this guard. Run --compare, then --install with --replace to refresh it.');
     console.log(out.join('\n'));

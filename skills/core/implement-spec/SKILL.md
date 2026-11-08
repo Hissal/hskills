@@ -43,7 +43,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 4. Use a fresh **implementer subagent** for each ticket, each in its own worktree on its own branch. Its brief points at the spec, the ticket, the exploration notes and the integration branch, and carries:
    - the project-guidance pointer: load the coding guidance and tooling configuration the project's instructions point to before coding; tooling configuration wins, and a conflict between them is reported;
    - "Ask the project's listed pack guides for running work in parallel worktrees; when none answers, carry on silently."
-   - which checks it runs, by the cost tiers in the project's check commands in project configuration: the `edit loop` checks and the checks its ticket names, while building and again after merging the tip, except a `task end` check whose result other tickets' merges can change, which waits for step 7. With no cost tiers configured, nothing waits. A ticket whose criteria are all such waiting checks gets no implementer: step 7's pass completes it.
+   - which checks it runs, by the cost tiers in the project's check commands in project configuration: the `edit loop` checks and the checks its ticket names, while building and again after merging the tip, except a `task end` check whose result other tickets' merges can change, which waits for step 7. With no cost tiers configured, nothing waits. A ticket whose criteria are all such waiting checks gets no implementer and no merge: its work is step 7's pass on the integration branch.
 
    Each implementer subagent:
    - confirms its worktree is based on the integration branch before starting, and resets onto it if not;
@@ -54,13 +54,13 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 6. If this changes the **frontier** of available tickets, kick off more **implementer subagents** to work on the new tickets. This allows for maximum concurrency.
 
-7. Once all tickets are complete, check the integration branch tip once through `verifying` with the `task end` checks that waited from step 4. Then call the Skill tool with `code-review` on the integration branch. Call the Skill tool with `receiving-review` on its findings: each is judged before anything changes, and judgement calls are batched to the owner or parked on the PR's **Not done** line under its authority rules. Give the fixes it settles on, and that pass's failures, to a single fresh **implementer subagent**, check each fix through `verifying`, then merge with the **merger subagent**. An unfixed finding or a check still failing goes on the **Not done** line; open no ticket for it. Nothing here runs `/second-opinion`.
+7. Once every ticket other than one of only waiting checks is complete, check the integration branch tip once through `verifying` with the `task end` checks that waited from step 4. Then call the Skill tool with `code-review` on the integration branch. Call the Skill tool with `receiving-review` on its findings: each is judged before anything changes, and judgement calls are batched to the owner or parked on the PR's **Not done** line under its authority rules. Give the fixes it settles on, and that pass's failures, to a single fresh **implementer subagent**, check each fix through `verifying`, then merge with the **merger subagent**. An unfixed finding or a check still failing goes on the **Not done** line; open no ticket for it. Nothing here runs `/second-opinion`.
 
 8. Check the integration branch tip through `verifying`: the project's checks, and every acceptance criterion of every ticket against the diff or a run, each with its status word. This comes before marking anything ready or reporting.
 
 9. Close the work. First finish every open item an agent can do: a blocked ticket a fresh implementer can retry, a failing criterion, a criterion check an agent can run, a fixable finding, each through steps 4 to 8. Each item gets one retry; one that fails again needs the owner, with what failed. What stays open is only what needs the owner: a decision, access or authority the agents lack, a check only a human can make, or a twice-failed item.
    - **Draft PR:** update its body through `pr`. Once every criterion is verified, mark it ready for review. Otherwise it stays a draft, with what stays open on `pr`'s **Not done** line.
-   - **No PR:** resolve each ticket whose work is merged and whose every criterion is verified or waits only on a check a human must make, the way the issue tracker closes work; the spec once every ticket is resolved. Leave the rest open.
+   - **No PR:** resolve each ticket whose work is merged, or done in step 7's pass, and whose every criterion is verified or waits only on a check a human must make, the way the issue tracker closes work; the spec once every ticket is resolved. Leave the rest open.
 
    Report the integration branch, the PR if any, and what stayed unvalidated, with the reason.
 

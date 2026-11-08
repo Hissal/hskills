@@ -196,6 +196,20 @@ Primary sources inspected 2026-10-30; source reading, not a live runtime proof:
   with matching `name:` as fired. Live runs on 2026-10-31 (CLI 0.166.0) also
   read the entry point with other files in one `cat`, or in plain `cat`s joined
   by `;` or `&&`; those count too when the output carries the frontmatter.
+  Sol on CLI 0.167.0 (#131) also read the entry point as one step of a
+  compound command such as `pwd && git status --short && git remote -v &&
+  cat AGENTS.md && cat .agents/skills/pr/SKILL.md`. That counts too: every
+  `;` or `&&` step is either a plain read or a command early stop treats as
+  a read (not mutating or long-running, see [Early stop](#early-stop)), one plain read names the
+  entry point, the command completed with exit code zero, and the output
+  has `---` and `name: <readName>`. These keep the command inconclusive: a
+  mutating step such as `rm` or `git checkout`; a step holding a pipe,
+  redirect, `&`, `$`, backtick, parenthesis, quote, backslash or brace; a
+  step starting with a shell keyword (`if`, `for`, …) or a runner (`eval`,
+  `exec`, `source`, `xargs`, `bash`, `sh`, `pwsh`, `iex`, …), since either
+  hides the command from the mutating check; a nonzero exit; and output
+  without the frontmatter. The same rule applies to the PowerShell
+  reads below.
   Mentions in prose or filename searches do not count; other commands naming
   that entry point, and failed commands naming its folder, are inconclusive.
   Other failed commands are ignored. This is observed CLI behavior, not a

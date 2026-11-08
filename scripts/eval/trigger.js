@@ -58,8 +58,9 @@ function slashed(text) { return text.replace(/\\+/g, '/'); }
 // &&), one path the installed entry point, count: cat, optionally wrapped in
 // bash -lc '...', or under PowerShell Get-Content or its aliases gc, type
 // and cat, with no options but -Raw and -LiteralPath or -Path before a
-// path. Prose, filename searches and other commands merely mentioning it do
-// not.
+// path. The other steps of a compound command may instead be read-only
+// commands (readOnlyStep). Prose, filename searches and other commands merely
+// mentioning it do not.
 function plainRead(command, readName) {
   const path = '[\'"]?[^\'"\\s;&|<>$`()]+[\'"]?';
   let script = command;
@@ -68,9 +69,17 @@ function plainRead(command, readName) {
   const powershell = shell ? null : powershellScript(command);
   if (shell) script = shell[1];
   else if (powershell !== null) { script = powershell.trim(); reader = new RegExp(`^(?:get-content|gc|type|cat)(?:\\s+(?:-raw|(?:-literalpath|-path)\\s+(?!-)${path}|(?!-)${path}))+$`, 'i'); }
-  const reads = script.split(/\s*(?:;|&&)\s*/);
-  return reads.every(read => reader.test(read)) &&
-    reads.some(read => read.split(/\s+/).slice(1).some(arg => slashed(arg.replace(/['"]/g, '')).endsWith('/skills/' + readName + '/SKILL.md')));
+  const steps = script.split(/\s*(?:;|&&)\s*/);
+  return steps.some(step => reader.test(step) && step.split(/\s+/).slice(1).some(arg => slashed(arg.replace(/['"]/g, '')).endsWith('/skills/' + readName + '/SKILL.md'))) &&
+    steps.every(step => reader.test(step) || readOnlyStep(step));
+}
+// A step of a compound read other than the plain read: a command early stop
+// treats as a read, with nothing that could hide a write from that check (a
+// pipe, redirect, background job, expansion, substitution, quoting, escape,
+// group, shell keyword or command runner).
+const HIDES = /^(?:if|then|else|elif|fi|for|while|until|do|done|case|esac|function|select|!|\[\[|eval|exec|source|\.|xargs|bash|sh|zsh|pwsh|powershell|cmd|invoke-expression|iex)$/i;
+function readOnlyStep(step) {
+  return !/[|&<>$`()'"\\{}]/.test(step) && !HIDES.test(step.trim().split(/\s+/)[0]) && !mutating(step);
 }
 // Early stop. A session ends as soon as its firing is known:
 // - fired: at the observed skill's load (Claude: its Skill call's successful

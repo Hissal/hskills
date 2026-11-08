@@ -81,10 +81,13 @@ Skills to call: <skill names the agent calls, e.g. tdd, verifying>
 Extension points: <the parent's pack-guide sentences, verbatim; never the answers>
 Validation: <the command that proves the objective>
 Stop when: <a condition anyone can check>
+Waiting: Never end your turn to wait. Before your Return, wait for every job you start (a test run, an eval batch, an Editor run) to end, whether it passes or fails, with foreground calls: run the job in the foreground, or start it in the background and run a foreground loop that exits when the job's process exits, within the shell tool's own time limit, repeated until the job ends or Stop when's limit passes. A Monitor, a background-task notification or `t3_background_wait` is not a wait: each still ends your turn, and your parent is woken.
 Never weaken, skip, delete or narrow a test to make it pass.
 Unattended: at a decision with a reversible default, take the default and list it under Rulings. Stop and return blocked for an unresolved decision, an action outside Authority, or a premise that proves false.
 Return: <the shape in step 7; a researcher writes findings to a file and returns a few lines plus its path>
 ```
+
+Keep the `Waiting:` line in every brief. On every harness tested, each turn the agent ends reaches you as a result or a wake-up, so an agent that ends its turn to wait wakes you for nothing; T3's `t3_background_wait` only delays that wake-up to the job's end. Evidence and tested versions: `research/child-waits-314.md` in the `Hissal/skill-collection` GitHub repo.
 
 An action the invoking workflow already authorised (an autonomous flow's push or merge) goes under Authority and is not asked about again.
 
@@ -113,6 +116,8 @@ Seen to pass: <commands and results>
 Rulings: <each reversible default taken, or none>
 Blocked on / scope needed: <only when not done>
 ```
+
+A turn end outside this shape (an interim "still waiting" note) is not a return. A Claude agent on T3 or a background Claude Code `Agent` with background work still running is resumed when that work ends (Claude Code's notice says the agent stopped with background work still running; on T3 the note itself says so): end your turn at once with no reply and no tool call. Otherwise it is a failed dispatch: continue the agent with a message telling it to wait inside its turn, or dispatch again.
 
 The report is evidence, never the result. Check the real diff and run the checks yourself through `verifying` before calling the work done. No report, a report outside this shape, or a report naming no evidence is not done: a gap is not a pass. Confirm the model and effort that actually ran from the run's own record where it names them, and report them; say so when they differ from what you requested.
 

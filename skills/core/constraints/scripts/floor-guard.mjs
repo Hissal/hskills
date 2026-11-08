@@ -643,6 +643,7 @@ function ratchet(args) {
   const recorded = data.ratchets[args.ratchet];
   if (!/^\s*[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?\s*$/.test(args.measured)) throw new CannotRun('the measurement for ' + args.ratchet + ' is not a plain number');
   const measured = Number(args.measured);
+  if (!Number.isFinite(measured)) throw new CannotRun('the measurement for ' + args.ratchet + ' is not a finite number');
   const worse = recorded.better === 'higher' ? measured < recorded.value : measured > recorded.value;
   const better = recorded.better === 'higher' ? measured > recorded.value : measured < recorded.value;
   const out = ['RATCHET: ' + args.ratchet, 'BETTER: ' + recorded.better, 'RECORDED: ' + recorded.value, 'MEASURED: ' + measured,

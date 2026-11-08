@@ -255,6 +255,14 @@
       "sha": "1085050f3baed1ac724caa4a8166145fb2ac88af",
       "license": "MIT",
       "changes": "collection metadata and gates; user-invoked with a summary description; SKILL.md rewritten in own words as an entry onto a shared delivery procedure (references/DELIVERY.md) holding branch authority, scope, stop conditions, the tend loop, done bar, bounds and the /retro offer; host-neutral PR monitoring with pr-wait as the fallback; review through receiving-review, comments through commenting, fixes proved through verifying; no merge authority; someone else's PR gets new commits and base merges only; testing permission limited to re-proving its own fixes; scripts/pr-wait copied unchanged; procedure ideas and lines adapted from t3dotgg/tstack skills/full-send/SKILL.md at 1085050f3baed1ac724caa4a8166145fb2ac88af, MIT, Copyright (c) 2026 Theo Browne"
+    },
+    {
+      "skill": "skills/packs/in-progress/full-stop",
+      "source": "t3dotgg/tstack",
+      "path": "skills/full-stop",
+      "sha": "1085050f3baed1ac724caa4a8166145fb2ac88af",
+      "license": "MIT",
+      "changes": "collection metadata and gates; user-invoked with a summary description in place of the say-the-phrase trigger; SKILL.md rewritten in own words as an entry onto the shared delivery procedure (references/DELIVERY.md, identical to babysit-pr's) instead of reading full-send; frames a spec or rough goal with no approval stop and records consequential assumptions; builds on an isolated branch, proves through verifying, opens the PR through pr and tends it to the procedure's done bar; judgement calls resolved and recorded; model choice through delegating; hillclimb only when asked, arena only when the owner explicitly asks; merge guard kept from the source; handoff slots from the source; Codex default prompt reworded for a goal; scripts/pr-wait copied unchanged from t3dotgg/tstack skills/babysit-pr at 1085050f3baed1ac724caa4a8166145fb2ac88af, MIT, Copyright (c) 2026 Theo Browne; procedure ideas and lines adapted from t3dotgg/tstack skills/full-send/SKILL.md at 1085050f3baed1ac724caa4a8166145fb2ac88af, MIT, Copyright (c) 2026 Theo Browne"
     }
   ]
 }

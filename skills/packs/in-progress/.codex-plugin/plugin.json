@@ -4,6 +4,7 @@
   "description": "Generated in-progress skill list from collection.json.",
   "skills": [
     "./babysit-pr",
+    "./full-stop",
     "./in-progress-guide",
     "./loop-me"
   ]

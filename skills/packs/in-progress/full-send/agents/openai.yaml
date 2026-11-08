@@ -1,0 +1,6 @@
+interface:
+  display_name: "Full Send"
+  short_description: "Prove, review, and merge a PR once its requirements are met"
+  default_prompt: "Use $full-send to take this goal to a merged PR."
+policy:
+  allow_implicit_invocation: false

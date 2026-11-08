@@ -246,7 +246,7 @@
       "path": "skills/in-progress/loop-me",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; designs workflows and never builds or runs one; grilling and delegating as process calls; agent model, effort and transport left to delegating; implementation choices and code exploration left to the implementer"
+      "changes": "collection metadata and gates; designs workflows and never builds or runs one; grilling and delegating as process calls; agent model, effort and transport left to delegating; implementation choices and code exploration left to the implementer; offers /handoff when the user stops or defers with open questions"
     },
     {
       "skill": "skills/packs/in-progress/babysit-pr",

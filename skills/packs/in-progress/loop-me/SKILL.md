@@ -36,6 +36,8 @@ A workflow spec is done when an implementer agent could build it without asking 
 
 Those questions are the ones only the user can answer: their world, their goal, their decisions. Implementation choices and exploring the code stay with the implementer; leave them out of the spec.
 
+When the user stops or defers the session while a spec still has open questions, leave that spec unfinished, and offer `/handoff` when its decisions and evidence so far would be costly to rebuild. The offer runs nothing: the user decides whether to hand off.
+
 ## The workspace
 
 - `workflows/*.md`: one spec per workflow.

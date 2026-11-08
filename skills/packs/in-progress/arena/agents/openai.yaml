@@ -1,0 +1,5 @@
+interface:
+  display_name: "Arena"
+  short_description: "Build a goal twice and keep the stronger"
+policy:
+  allow_implicit_invocation: false

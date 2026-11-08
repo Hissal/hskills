@@ -49,6 +49,7 @@
       "skills/packs/csharp/csharp-guide"
     ],
     "in-progress": [
+      "skills/packs/in-progress/arena",
       "skills/packs/in-progress/babysit-pr",
       "skills/packs/in-progress/full-stop",
       "skills/packs/in-progress/in-progress-guide",
@@ -69,6 +70,7 @@
   "expensive": [
     "skills/core/implement-spec",
     "skills/core/research",
-    "skills/core/wayfinder"
+    "skills/core/wayfinder",
+    "skills/packs/in-progress/arena"
   ]
 }

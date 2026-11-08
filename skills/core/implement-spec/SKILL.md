@@ -25,9 +25,9 @@ The calls below to `research`, `tdd`, `verifying`, `code-review`, `receiving-rev
 Before dispatching any subagent, consult `delegating`; when `delegating` is not installed, dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort. The brief, the return, the dispatch summary and the rules for reading a report live there. This workflow's roles:
 
 - **Exploration subagent**: optional, one, before any implementer. Role: researcher.
-- **Implementer subagents**: one per frontier ticket, in parallel, each in its own worktree. Difficulty is the ticket's.
-- **Diff-check reviewer subagents**: one per completed implementer run, a fresh one each round. Role: reviewer, starting no agents. Difficulty is the ticket's.
-- **Merger subagent**: one merge at a time, after the ticket's diff-check reviewer returns `merge`.
+- **Implementer subagents**: one per frontier ticket, in parallel, each in its own worktree, and one per fix round in step 5. Difficulty is the ticket's.
+- **Diff-check reviewer subagents**: one per completed implementer run. Role: reviewer, starting no agents. Difficulty is the ticket's.
+- **Merger subagent**: one merge at a time, after the work it merges is checked: step 5's `merge` verdict, or step 7's `verifying` check.
 
 Communication to and from subagents should be sparse. Communicate primarily through **context pointers**: to the spec, tickets, research notes, and previous commits. Don't duplicate information already available via pointers.
 
@@ -35,7 +35,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 ## Steps
 
-1. Read the spec and tickets to build the task graph. Keep only the spec, the task graph and each ticket's acceptance criteria; reach a ticket's body by its pointer when a step needs it, as implementers do.
+1. Read the spec, and from each ticket its blocking relationships and acceptance criteria, to understand the task graph. Keep only the spec, the task graph and each ticket's acceptance criteria in your context; reach a ticket's body by its pointer when a step needs it, as implementers do.
 
 2. (optional) Use an **exploration subagent** to conduct any exploration required by the tickets - relevant codebase files or external documentation. Ensure the exploration subagent can save files - it should save its markdown notes in a directory outside the repo, accessible by all future subagents. Where a ticket needs facts from outside sources, it may call the Skill tool with `research`; its brief names its role, researcher, so `research` does the reading in that subagent instead of starting another. This lets **implementer subagents** focus on implementation rather than exploration.
 
@@ -53,7 +53,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 5. Once an **implementer subagent** completes, its report is a claim. One that returned blocked or needs more scope gets no diff check: its ticket is not merged and goes in the report.
 
-   For every other completed ticket, start a fresh **diff-check reviewer**. You do not read the diff yourself. Its brief points at the spec, the ticket and the ticket's branch, and carries the ticket's checks from step 4. The reviewer reads that branch's diff against the integration branch and checks each acceptance criterion through `verifying`. Its Return is `delegating`'s, with these lines added:
+   For every other completed ticket, start a **diff-check reviewer**. Its brief points at the spec, the ticket and the ticket's branch, carries the ticket's checks from step 4, and names the criteria that wait for step 7 or for a human, which the reviewer marks `unvalidated` with that reason. The reviewer reads the branch's diff from its merge base with the integration branch (`git diff <integration>...<branch>`) and checks each acceptance criterion through `verifying`. Its Return is `delegating`'s, with these lines added:
 
    ```md
    Verdict: merge | fix | needs decision
@@ -62,24 +62,24 @@ Communication to and from subagents should be sparse. Communicate primarily thro
    Decision needed: <only for needs decision: what, and who owns it>
    ```
 
-   Check the return per `delegating`, then route on the verdict:
-   - **merge**, with every criterion verified except checks that wait for step 7: merge it into the integration branch with a **merger subagent**, then update the PR body through `pr`. A `merge` with any other criterion not verified is routed as `fix`.
-   - **fix**: a fixable gap, meaning an unmet criterion, a missing test or a failing check whose evidence says what is missing. A fresh implementer gets the ticket and the verdict and fixes the gap on the ticket's branch; a fresh diff-check reviewer then checks the new diff. Each round is a new delegated task carrying the full context, per `delegating`. The limit is 2 fix rounds: a ticket still not at `merge` after them is not merged and goes in the report with every round's verdicts.
+   You read the reviewer's return, not the diff: its quoted diff lines and run output are the real-diff check `delegating` and `verifying` ask of you. Check the return's shape and evidence per `delegating`; a reviewer that returns blocked sends the ticket to the report with its blocker. Then route on the verdict:
+   - **merge**, with every criterion verified except those that wait for step 7 or for a human: merge it into the integration branch with a **merger subagent**, then update the PR body through `pr`. A `merge` with any other criterion not verified is routed as `fix`.
+   - **fix**: a fixable gap, meaning an unmet criterion, a missing test or a failing check whose evidence says what is missing. A fresh implementer, briefed as in step 4 but continuing the ticket's branch instead of resetting it, gets the ticket and the verdict and fixes the gap; a fresh diff-check reviewer then checks the new diff. Each round is a new delegated task carrying the full context, per `delegating`. The limit is 2 fix rounds: a ticket still not at `merge` after them is not merged and goes in the report with every round's verdicts.
    - **needs decision**: a criterion that is wrong, contradicts the spec, or can't be checked as written. The ticket is not merged and goes in the report with the reason.
 
-   A ticket that is not merged stays open, and the tickets it blocks stay off the frontier. Tickets blocked by a ticket in a fix round stay off the frontier until it merges or goes in the report.
+   A ticket that is not merged, including one still in a fix round, stays open, and the tickets it blocks stay off the frontier.
 
 6. If this changes the **frontier** of available tickets, kick off more **implementer subagents** to work on the new tickets. This allows for maximum concurrency.
 
-7. Once no more tickets will merge in this run (every ticket is complete, or the rest are blocked, twice-failed or left for later), check the integration branch tip once through `verifying` with the `task end` checks that waited from step 4. Then call the Skill tool with `code-review` on the integration branch. Call the Skill tool with `receiving-review` on its findings: each is judged before anything changes, and judgement calls are batched to the owner or parked on the PR's **Not done** line under its authority rules. Give the fixes it settles on, and that pass's failures, to a single fresh **implementer subagent**, check each fix through `verifying`, then merge with the **merger subagent**. An unfixed finding or a check still failing goes on the **Not done** line; open no ticket for it. Nothing here runs `/second-opinion`.
+7. Once no more tickets will merge in this run (every ticket is complete, or the rest are blocked, twice-failed, out of fix rounds, awaiting a decision or left for later), check the integration branch tip once through `verifying` with the `task end` checks that waited from step 4. Then call the Skill tool with `code-review` on the integration branch. Call the Skill tool with `receiving-review` on its findings: each is judged before anything changes, and judgement calls are batched to the owner or parked on the PR's **Not done** line under its authority rules. Give the fixes it settles on, and that pass's failures, to a single fresh **implementer subagent**, check each fix through `verifying`, then merge with the **merger subagent**. An unfixed finding or a check still failing goes on the **Not done** line; open no ticket for it. Nothing here runs `/second-opinion`.
 
 8. Check the integration branch tip through `verifying`: the project's checks, and every acceptance criterion of every ticket against the diff or a run, each with its status word. This comes before marking anything ready or reporting.
 
-9. Close the work. First finish every open item an agent can do: a blocked ticket a fresh implementer can retry, a failing criterion, a criterion check an agent can run, a fixable finding, each through steps 4 to 8. Each item gets one retry, except a ticket that used its 2 fix rounds in step 5; one that fails again, or used its fix rounds, needs the owner, with what failed. What stays open is only what needs the owner: a decision, access or authority the agents lack, a check only a human can make, or a twice-failed item.
+9. Close the work. First finish every open item an agent can do: a blocked ticket a fresh implementer can retry, a failing criterion, a criterion check an agent can run, a fixable finding, each through steps 4 to 8. Each item gets one retry, and a ticket step 5 reported after its fix rounds has had its retries; one that fails its retry, or has had its retries, needs the owner, with what failed. What stays open is only what needs the owner: a decision, access or authority the agents lack, a check only a human can make, or a twice-failed item.
    - **Draft PR:** update its body through `pr`. Once every criterion is verified, mark it ready for review. Otherwise it stays a draft, with what stays open on `pr`'s **Not done** line.
    - **No PR:** resolve each ticket whose work is merged, or done in step 7's pass, and whose every criterion is verified or waits only on a check a human must make, the way the issue tracker closes work; the spec once every ticket is resolved. Leave the rest open.
 
-   Report the integration branch, the PR if any, what stayed unvalidated, with the reason, and each ticket that went through fix rounds, with every round's verdicts.
+   Report the integration branch, the PR if any, what stayed unvalidated, with the reason, and what step 5 put in the report, with its verdicts and reasons.
 
    After the report, offer `/handoff` only when the owner chooses to defer or hand over the remaining tickets or findings and the evidence gathered would be costly to rebuild, giving that reason. Nothing already in the tracker is recorded again. The owner starts it; you never run it. Otherwise end at the report.
 

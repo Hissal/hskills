@@ -205,10 +205,13 @@ Primary sources inspected 2026-10-30; source reading, not a live runtime proof:
   has `---` and `name: <readName>`. These keep the command inconclusive: a
   mutating step such as `rm` or `git checkout`; a step holding a pipe,
   redirect, `&`, `$`, backtick, parenthesis, quote, backslash or brace; a
-  step starting with a shell keyword (`if`, `for`, …) or a runner (`eval`,
-  `exec`, `source`, `xargs`, `bash`, `sh`, `pwsh`, `iex`, …), since either
-  hides the command from the mutating check; a nonzero exit; and output
-  without the frontmatter. The same rule applies to the PowerShell
+  step starting with a shell keyword (`if`, `for`, …), `exit`, a prefix
+  (`sudo`, `env`, `VAR=x`, …), a runner
+  (`eval`, `exec`, `source`, `xargs`, `bash`, `sh`, `pwsh`, `iex`, …) or a
+  script interpreter (`node`, `python`, …), or with an option before a
+  checked subcommand (`git -C . checkout`), since each hides the command
+  from the mutating check; a nonzero exit; and output without the
+  frontmatter. The same rule applies to the PowerShell
   reads below.
   Mentions in prose or filename searches do not count; other commands naming
   that entry point, and failed commands naming its folder, are inconclusive.

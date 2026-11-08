@@ -76,10 +76,13 @@ function plainRead(command, readName) {
 // A step of a compound read other than the plain read: a command early stop
 // treats as a read, with nothing that could hide a write from that check (a
 // pipe, redirect, background job, expansion, substitution, quoting, escape,
-// group, shell keyword or command runner).
-const HIDES = /^(?:if|then|else|elif|fi|for|while|until|do|done|case|esac|function|select|!|\[\[|eval|exec|source|\.|xargs|bash|sh|zsh|pwsh|powershell|cmd|invoke-expression|iex)$/i;
+// group, shell keyword, exit, prefix (sudo, env, VAR=x), command runner or
+// script interpreter, or an option before a checked subcommand).
+const HIDES = /^(?:if|then|else|elif|fi|for|while|until|do|done|case|esac|function|select|!|\[\[|exit|return|sudo|env|time|nohup|command|eval|exec|source|\.|xargs|bash|sh|zsh|pwsh|powershell|cmd|invoke-expression|iex|node|deno|python3?|py|ruby|perl|php)$/i;
 function readOnlyStep(step) {
-  return !/[|&<>$`()'"\\{}]/.test(step) && !HIDES.test(step.trim().split(/\s+/)[0]) && !mutating(step);
+  const words = step.trim().split(/\s+/);
+  const program = words[0].split(/[\\/]/).pop().toLowerCase().replace(/\.(?:exe|cmd|bat|ps1)$/, '');
+  return !/[|&<>$`()'"\\{}]/.test(step) && !HIDES.test(program) && !words[0].includes('=') && !(SUBCOMMANDS[program] && /^-/.test(words[1] || '')) && !mutating(step);
 }
 // Early stop. A session ends as soon as its firing is known:
 // - fired: at the observed skill's load (Claude: its Skill call's successful

@@ -174,6 +174,13 @@ try {
   ["/bin/bash -lc 'eval rm x && cat .agents/skills/fixture/SKILL.md'"],
   ["/bin/bash -lc '{ rm x; } && cat .agents/skills/fixture/SKILL.md'"],
   ["/bin/bash -lc 'if true; then rm x; fi; cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc '/usr/bin/eval rm x && cat .agents/skills/fixture/SKILL.md'"],
+  // An option before the subcommand, a script run, and an exit before the read.
+  ["/bin/bash -lc 'git -C . checkout other && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'python3 tools/setup.py && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'env python3 tools/setup.py && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'CI=1 python3 tools/setup.py && cat .agents/skills/fixture/SKILL.md'"],
+  ["/bin/bash -lc 'cat docs/copy.md; exit 0; cat .agents/skills/fixture/SKILL.md'"],
   ["/bin/bash -lc 'ls .agents/skills/fixture && grep -n name .agents/skills/fixture/SKILL.md'"],
   [compound,undefined,'1'],
   [compound,'# Facts\nNo frontmatter here.'],

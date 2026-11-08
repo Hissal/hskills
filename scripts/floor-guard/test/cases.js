@@ -35,6 +35,9 @@ const test = lines(
 );
 const handled = lines('try {', '  load();', '} catch (e) {', '  report(e);', '}');
 const handledPy = lines('try:', '    load()', 'except ValueError as e:', '    pass', '    report(e)', 'close()');
+const handledCs = lines('try', '{', '    Load();', '}', 'catch (Exception e)', '{', '    Report(e);', '}');
+const commented = lines('try {', '  load();', '} catch (e) {', '  // retried by the caller', '  report(e);', '}');
+const blockCommented = lines('try {', '  load();', '} catch (e) {', '  /* retried', '     by the caller */', '  report(e);', '}');
 const fenced = lines('/* eslint-disable */', 'legacy();', '/* eslint-enable */', 'add();');
 const project = { 'src/app.js': app, 'test/app.test.js': test, 'README.md': '# Fixture\n' };
 const ratchets = { coverage: { value: 62.4, better: 'higher' }, 'bundle-kb': { value: 184, better: 'lower' } };
@@ -93,6 +96,33 @@ module.exports = [
     work: { 'src/load.py': lines('try:', '    load()', 'except ValueError:', '    pass', 'done()') }, exit: 0, violations: [] },
   { name: 'an except that does more than pass is clean', base: project,
     work: { 'src/load.py': handledPy }, exit: 0, violations: [] },
+  { name: 'deleting the body of a catch whose brace opens on the next line leaves unfinished work', base: Object.assign({}, project, { 'src/Load.cs': handledCs }),
+    work: { 'src/Load.cs': handledCs.replace('    Report(e);\n', '') },
+    exit: 1, violations: ['unfinished-work src/Load.cs:5'] },
+  { name: 'deleting a catch body down to a line comment leaves unfinished work', base: Object.assign({}, project, { 'src/load.js': commented }),
+    work: { 'src/load.js': commented.replace('  report(e);\n', '') },
+    exit: 1, violations: ['unfinished-work src/load.js:3'] },
+  { name: 'deleting a catch body down to a block comment leaves unfinished work', base: Object.assign({}, project, { 'src/load.js': blockCommented }),
+    work: { 'src/load.js': blockCommented.replace('  report(e);\n', '') },
+    exit: 1, violations: ['unfinished-work src/load.js:3'] },
+  { name: 'a catch holding only a comment on one line is unfinished work', base: project,
+    work: { 'src/load.js': lines('try {', '  load();', '} catch (e) { /* ignore */ }') },
+    exit: 1, violations: ['unfinished-work src/load.js:3'] },
+  { name: 'a catch that still handles beside its comments is clean', base: project,
+    work: { 'src/load.js': blockCommented, 'src/Load.cs': handledCs }, exit: 0, violations: [] },
+  { name: 'an empty catch with its brace on the next line that the change does not touch is clean', base: Object.assign({}, project, { 'src/Load.cs': handledCs.replace('    Report(e);\n', '') }),
+    work: { 'src/Load.cs': handledCs.replace('    Report(e);\n', '').replace('    Load();', '    Load(true);') },
+    exit: 0, violations: [] },
+  { name: 'emptying a filtered catch leaves unfinished work', base: Object.assign({}, project, { 'src/Load.cs': handledCs.replace('catch (Exception e)', 'catch (Exception e)\n    when (e is IOException)') }),
+    work: { 'src/Load.cs': handledCs.replace('catch (Exception e)', 'catch (Exception e)\n    when (e is IOException)').replace('    Report(e);\n', '') },
+    exit: 1, violations: ['unfinished-work src/Load.cs:5'] },
+  { name: 'deleting a catch body in a file whose name holds a newline leaves unfinished work, its name quoted', base: project,
+    prepare: (dir, t) => {
+      t.commitPath(dir, 'src/line\nbreak.js', handled, 'handled');
+      t.git(dir, ['branch', '-f', 'trunk', 'HEAD']);
+      t.commitPath(dir, 'src/line\nbreak.js', handled.replace('  report(e);\n', ''), 'emptied');
+    },
+    exit: 1, violations: ['unfinished-work "src/line\\nbreak.js":3'] },
   { name: 'a skip marker added to a test is a test made easier', base: project,
     work: { 'test/app.test.js': test.replace("test('adds'", "test.skip('adds'") },
     exit: 1, violations: ['test-skipped test/app.test.js:3'] },

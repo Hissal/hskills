@@ -124,12 +124,10 @@ const DEFAULT_PATTERNS = {
     '\\brequire\\.\\w+\\s*\\(',
   ],
 };
-// An empty handler over several lines, read from the changed file itself so
-// that one emptied by a deletion alone is found: a catch whose opening line
-// ends in a brace, then only blank lines before a closing brace; or an except
-// whose block holds nothing but pass.
-const CATCH_OPEN = /\bcatch\b[^{}]*\{\s*$/;
-const CLOSE = /^\s*\}/;
+// An empty handler, read from the changed file itself so that one emptied by
+// a deletion alone is found: a catch whose braces hold only whitespace and
+// comments, wherever its lines break; or an except whose block holds nothing
+// but pass.
 const EXCEPT_OPEN = /^(\s*)except\b[^:]*:\s*(?:#.*)?$/;
 const PASS = /^\s*pass\s*(?:#.*)?$/;
 const BLANK = /^\s*$/;
@@ -155,6 +153,9 @@ function git(args, options = {}) {
 const lf = (text) => text.replace(/\r\n/g, '\n');
 const sha256 = (text) => crypto.createHash('sha256').update(text).digest('hex');
 const slash = (p) => p.split(path.sep).join('/');
+// A path as printed: quoted when it holds a control character or a quote, so
+// that each finding stays one line.
+const shown = (p) => (/[\x00-\x1f\x7f"]/.test(p) ? JSON.stringify(p) : p);
 const dataPathOf = (guard) => guard.replace(/\.[^./\\]*$/, '') + '.json';
 
 // A guard file's body (without its stamp, LF line endings) and its stamp.
@@ -333,15 +334,26 @@ function parseDiff(diff) {
 }
 
 // The text of each path in a tree, by path; a path that is not a readable
-// blob maps to null.
+// blob maps to null. Blobs are named to cat-file by object id, found through
+// ls-tree -z, so any path works, one holding a newline included.
 function readBlobs(tree, paths) {
   const out = new Map();
   if (!paths.length) return out;
-  const r = spawnSync('git', ['cat-file', '--batch'], { input: paths.map((p) => tree + ':' + p).join('\n') + '\n', maxBuffer: 1 << 30 });
+  const want = new Set(paths);
+  const ids = new Map();
+  for (const entry of git(['ls-tree', '-r', '-z', '--full-tree', tree]).split('\0')) {
+    const tab = entry.indexOf('\t');
+    const [, type, oid] = entry.slice(0, tab).split(' ');
+    if (type === 'blob' && want.has(entry.slice(tab + 1))) ids.set(entry.slice(tab + 1), oid);
+  }
+  for (const p of paths) if (!ids.has(p)) out.set(p, null);
+  const found = paths.filter((p) => ids.has(p));
+  if (!found.length) return out;
+  const r = spawnSync('git', ['cat-file', '--batch'], { input: found.map((p) => ids.get(p)).join('\n') + '\n', maxBuffer: 1 << 30 });
   if (r.error || r.status !== 0) throw new CannotRun('git cat-file failed: ' + (r.error ? r.error.message : String(r.stderr).trim().split('\n')[0]));
   const buf = r.stdout;
   let at = 0;
-  for (const p of paths) {
+  for (const p of found) {
     const end = buf.indexOf(10, at);
     const header = buf.subarray(at, end).toString('utf8').split(' ');
     at = end + 1;
@@ -353,19 +365,61 @@ function readBlobs(tree, paths) {
   return out;
 }
 
-// The empty handlers over several lines in a file's text, as 1-based
-// { open, close } line spans; an except span also carries its indent, since
-// its block has no closing line.
+// The index past whitespace and // or /* */ comments from s[i].
+function skipTrivia(s, i) {
+  for (;;) {
+    while (i < s.length && /\s/.test(s[i])) i++;
+    if (s.startsWith('//', i)) {
+      const end = s.indexOf('\n', i);
+      i = end < 0 ? s.length : end;
+    } else if (s.startsWith('/*', i)) {
+      const end = s.indexOf('*/', i + 2);
+      i = end < 0 ? s.length : end + 2;
+    } else return i;
+  }
+}
+
+// The index past the balanced (...) group that opens at s[i], or -1.
+function skipParens(s, i) {
+  for (let depth = 0; i < s.length; i++) {
+    if (s[i] === '(') depth++;
+    else if (s[i] === ')' && --depth === 0) return i + 1;
+  }
+  return -1;
+}
+
+// The empty handlers in a file's text, as 1-based { open, close } line spans;
+// an except span also carries its indent, since its block has no closing line.
 function emptyHandlers(text) {
-  const src = text.split('\n').map((l) => l.replace(/\r$/, ''));
   const spans = [];
-  src.forEach((l, i) => {
-    if (CATCH_OPEN.test(l)) {
-      let j = i + 1;
-      while (j < src.length && BLANK.test(src[j])) j++;
-      if (j < src.length && CLOSE.test(src[j])) spans.push({ open: i + 1, close: j + 1 });
-      return;
+  const starts = [0];
+  for (let i = text.indexOf('\n'); i >= 0; i = text.indexOf('\n', i + 1)) starts.push(i + 1);
+  const lineAt = (offset) => {
+    let lo = 0;
+    let hi = starts.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (starts[mid] <= offset) lo = mid; else hi = mid - 1;
     }
+    return lo + 1;
+  };
+  // catch, an optional (clause), an optional C# when (filter), then { }.
+  for (const m of text.matchAll(/\bcatch\b/g)) {
+    let i = skipTrivia(text, m.index + m[0].length);
+    if (text[i] === '(') i = skipParens(text, i);
+    if (i < 0) continue;
+    i = skipTrivia(text, i);
+    if (/^when\b/.test(text.slice(i, i + 5))) {
+      i = skipTrivia(text, i + 4);
+      if (text[i] !== '(' || (i = skipParens(text, i)) < 0) continue;
+      i = skipTrivia(text, i);
+    }
+    if (text[i] !== '{') continue;
+    const close = skipTrivia(text, i + 1);
+    if (text[close] === '}') spans.push({ open: lineAt(m.index), close: lineAt(close) });
+  }
+  const src = text.split('\n').map((l) => l.replace(/\r$/, ''));
+  src.forEach((l, i) => {
     const m = l.match(EXCEPT_OPEN);
     if (!m) return;
     let last = -1;
@@ -422,18 +476,16 @@ function check(args) {
 
   const { diff, tree } = readDiff(root, mb);
   const files = parseDiff(diff).filter((f) => ![selfRel, dataRel].includes(f.new || f.old));
-  // A path holding a newline cannot be named to cat-file, so its empty
-  // handlers over several lines go unread; single-line ones are still found.
-  const blobs = readBlobs(tree, files.filter((f) => f.new !== null && !f.new.includes('\n') && (f.added.length || f.gaps.length)).map((f) => f.new));
+  const blobs = readBlobs(tree, files.filter((f) => f.new !== null && (f.added.length || f.gaps.length)).map((f) => f.new));
   const deeper = (l, indent) => !BLANK.test(l) && l.match(/^\s*/)[0].length > indent;
   const removedFrom = (h, g) => g.after >= h.open && (g.after < h.close || (h.indent !== undefined && g.after === h.close && deeper(g.removed.find((l) => !BLANK.test(l)) || '', h.indent)));
   for (const f of files) {
-    if (f.old !== null && isTest(f.old) && (f.new === null || !isTest(f.new))) lineFinding('test-deleted', f.old, f.old);
+    if (f.old !== null && isTest(f.old) && (f.new === null || !isTest(f.new))) lineFinding('test-deleted', f.old, shown(f.old));
     if (f.new === null) continue;
     const addedText = new Map();
     f.added.forEach((a) => {
       addedText.set(a.text.trim(), (addedText.get(a.text.trim()) || 0) + 1);
-      const at = f.new + ':' + a.line;
+      const at = shown(f.new) + ':' + a.line;
       if (any(re.suppression, a.text)) lineFinding('suppression-added', f.new, at);
       if (any(re.stub, a.text)) lineFinding('unfinished-work', f.new, at);
       if (isTest(f.new) && any(re.skip, a.text)) lineFinding('test-skipped', f.new, at);
@@ -444,7 +496,7 @@ function check(args) {
     const text = blobs.get(f.new);
     if (text) {
       for (const h of emptyHandlers(text)) {
-        if (f.added.some((a) => a.line >= h.open && a.line <= h.close) || f.gaps.some((g) => removedFrom(h, g))) lineFinding('unfinished-work', f.new, f.new + ':' + h.open);
+        if (f.added.some((a) => a.line >= h.open && a.line <= h.close) || f.gaps.some((g) => removedFrom(h, g))) lineFinding('unfinished-work', f.new, shown(f.new) + ':' + h.open);
       }
     }
     // A removed block-suppression end widens the block, unless a suppression
@@ -456,7 +508,7 @@ function check(args) {
       for (const r of ends) {
         const left = readded.get(r.text.trim()) || 0;
         if (left > 0) { readded.set(r.text.trim(), left - 1); continue; }
-        lineFinding('suppression-added', f.new, (f.old || f.new) + ':' + r.line);
+        lineFinding('suppression-added', f.new, shown(f.old || f.new) + ':' + r.line);
       }
     }
     if (isTest(f.new)) {
@@ -464,7 +516,7 @@ function check(args) {
         if (!any(re.assertion, r.text)) continue;
         const left = addedText.get(r.text.trim()) || 0;
         if (left > 0) { addedText.set(r.text.trim(), left - 1); continue; }
-        lineFinding('assertion-removed', f.new, (f.old || f.new) + ':' + r.line);
+        lineFinding('assertion-removed', f.new, shown(f.old || f.new) + ':' + r.line);
       }
     }
   }

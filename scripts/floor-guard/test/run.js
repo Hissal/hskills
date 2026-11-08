@@ -45,6 +45,16 @@ const tools = {
   read: (dir, file) => fs.readFileSync(path.join(dir, file), 'utf8'),
   edit: (dir, file, change) => fs.writeFileSync(path.join(dir, file), change(fs.readFileSync(path.join(dir, file), 'utf8'))),
   removeGit: (dir) => fs.rmSync(path.join(dir, '.git'), { recursive: true, force: true }),
+  // Commit `content` at `file` through the index alone, marked skip-worktree,
+  // so a path no file system can hold (a newline on Windows) still works.
+  commitPath(dir, file, content, message) {
+    const blob = path.join(scratch, 'blob-' + variants++);
+    fs.writeFileSync(blob, content);
+    const oid = git(dir, ['hash-object', '-w', blob]);
+    git(dir, ['update-index', '--add', '--cacheinfo', '100644,' + oid + ',' + file]);
+    git(dir, ['update-index', '--skip-worktree', file]);
+    git(dir, ['commit', '-q', '-m', message]);
+  },
   // Install a guard built from a changed bundled guard, stamped as `version`,
   // as an older release of the guard would have installed it.
   installVariant(dir, change, version) {

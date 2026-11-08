@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/to-tickets`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; project configuration for tracker, labels and ticket folder; duplicate search; pass/fail criteria and Proof notes; exclusive surfaces block; pack-guide extension point; /implement or /implement-spec offer and parent-agent return; writing-for-agents process call for tickets
+- Local changes: collection metadata and gates; project configuration for tracker, labels and ticket folder; duplicate search; pass/fail criteria and Proof notes; exclusive surfaces block; shared task end checks in one final ticket; pack-guide extension point; /implement or /implement-spec offer and parent-agent return; writing-for-agents process call for tickets
 
 ## Licence
 

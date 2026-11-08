@@ -110,7 +110,7 @@
       "path": "skills/engineering/implement-spec",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; reports checked through verifying; findings through receiving-review; issue links through pr; agent-doable gaps finished before closing, one retry each; process calls; /handoff offer and parent-agent return"
+      "changes": "collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; reports checked through verifying; findings through receiving-review; issue links through pr; task end checks other tickets' merges change run once after the run's last merge; agent-doable gaps finished before closing, one retry each; process calls; /handoff offer and parent-agent return"
     },
     {
       "skill": "skills/core/pr",
@@ -190,7 +190,7 @@
       "path": "skills/engineering/to-tickets",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; project configuration for tracker, labels and ticket folder; duplicate search; pass/fail criteria and Proof notes; exclusive surfaces block; pack-guide extension point; /implement or /implement-spec offer and parent-agent return; writing-for-agents process call for tickets"
+      "changes": "collection metadata and gates; project configuration for tracker, labels and ticket folder; duplicate search; pass/fail criteria and Proof notes; exclusive surfaces block; shared task end checks in one final ticket; pack-guide extension point; /implement or /implement-spec offer and parent-agent return; writing-for-agents process call for tickets"
     },
     {
       "skill": "skills/core/triage",

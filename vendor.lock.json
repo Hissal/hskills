@@ -271,6 +271,14 @@
       "sha": "1085050f3baed1ac724caa4a8166145fb2ac88af",
       "license": "MIT",
       "changes": "collection metadata and gates; user-invoked with a summary description in place of the say-the-phrase trigger; SKILL.md rewritten in own words as an entry onto a delivery procedure (references/DELIVERY.md, identical to full-stop's) in place of the source's sol-loop and file-pr calls; requires babysit-pr and tends the PR through it, as the source does; frames a spec or rough goal with no approval stop and records consequential assumptions; builds on an isolated branch, proves through verifying, opens the PR through pr and tends it through babysit-pr to its done bar; judgement calls resolved and recorded; model choice through delegating; invocation is the merge authorization, kept separate from readiness; merge gate from the source plus the done bar and a pinned head; a required human review is a dependency reported at handoff, and automated needs-human-review requests are no longer ignored; never bypass approvals, weaken checks, use an administrative bypass or change branch protection; testing permission kept from the source; asking moved to the procedure's stop conditions; handoff slots shared with full-stop plus the merge commit; Codex default prompt reworded for a goal"
+    },
+    {
+      "skill": "skills/packs/in-progress/council",
+      "source": "t3dotgg/tstack",
+      "path": "skills/council",
+      "sha": "1085050f3baed1ac724caa4a8166145fb2ac88af",
+      "license": "MIT",
+      "changes": "collection metadata and gates; user-invoked with a summary description in place of the say-the-word trigger; Review and Loop modes, Review judging any target once and changing nothing; any target can be judged and scored, candidates compared unlabelled; members chosen through delegating as a required three-family diversity group at high effort, user-named members kept exactly, no substitution; brief and incomplete-return rules from second-opinion; findings carry evidence and a hard or judgement-call mark, with a Satisfied line in Loop; Loop findings weighed through receiving-review with out-of-scope findings recorded, not fixed; Loop stops when all are satisfied, at a 3-round default limit, or when no accepted fix remains; fixes proved through verifying; PR description written through pr; the source's pre-review fixes, round counting, score table, no-score, PR-description and scope lines kept"
     }
   ]
 }

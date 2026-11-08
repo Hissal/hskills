@@ -1,0 +1,5 @@
+interface:
+  display_name: "Council"
+  short_description: "Three providers' models comment on and score your work"
+policy:
+  allow_implicit_invocation: false

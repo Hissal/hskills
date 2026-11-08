@@ -336,6 +336,27 @@ class ReviewBots(PrWaitCase):
         self.assertEqual(code, 0)
         self.assertTrue(self.ready_lines(lines), lines)
 
+    def test_a_bot_check_that_fails_without_a_review_needs_the_agent(self) -> None:
+        self.clock()
+        pr: dict[str, Any] = {"history": ["scopebotapp"]}
+        failed = [("ScopeBot review", "fail")]
+        watcher = self.watcher("ready")
+        self.poll(watcher, self.gh_for(pr, extra=failed))
+        code, lines = self.poll(watcher, self.gh_for(pr, extra=failed))
+        self.assertEqual(code, 1, lines)
+        self.assertFalse(self.ready_lines(lines), lines)
+        self.assertTrue([line for line in lines if "scopebotapp" in line and "without reviewing" in line], lines)
+
+    def test_a_bot_check_that_fails_after_reviewing_the_head_still_counts_as_done(self) -> None:
+        self.clock()
+        pr: dict[str, Any] = {"history": ["scopebotapp"], "reviews": [bot_review("scopebotapp")]}
+        failed = [("ScopeBot review", "fail")]
+        watcher = self.watcher("ready")
+        self.poll(watcher, self.gh_for(pr, extra=failed))
+        code, lines = self.poll(watcher, self.gh_for(pr, extra=failed))
+        self.assertEqual(code, 0, lines)
+        self.assertTrue(self.ready_lines(lines), lines)
+
     def test_a_bot_that_skips_the_head_stops_gating_after_the_grace_period(self) -> None:
         now = self.clock()
         pr: dict[str, Any] = {"history": ["reviewbot"]}

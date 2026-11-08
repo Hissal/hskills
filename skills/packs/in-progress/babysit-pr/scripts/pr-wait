@@ -30,7 +30,8 @@ Events
   - all checks finished on the head (one summary line)
   - a new comment, review, thread, or thread reply from someone other than the
     PR author or the gh user
-  - a review bot finished on the head, or its summary changed after that
+  - a review bot finished on the head, or its summary changed after that; a
+    bot whose own check failed without reviewing the head ends ready with exit 1
   - a review bot has not reviewed the head BOT_GRACE_SECONDS after the checks
     went green, so ready stops waiting for it
   - the base branch moved and the new commits touch files in this PR
@@ -523,6 +524,9 @@ class Watcher:
         waited = now() - self.green_since[head] if head in self.green_since else 0.0
         bot_status: dict[str, str] = {}
         waiting: list[str] = []
+        # A bot whose own check failed with no review of the head never
+        # reviewed it: ready cannot count it, and waiting will not rerun it.
+        crashed: list[str] = []
         for bot in bots:
             own_checks = {name: c for name, c in checks.items() if owns_check(bot, name)}
             summaries = [c for c in comments if who(c)[0] == bot]
@@ -534,9 +538,12 @@ class Watcher:
                 done = on_head or any(short in s["body"] for s in summaries)
             key = f"bot:{bot}:{head}"
             was_done = key in self.reported
-            if done:
+            failed = [name for name, c in own_checks.items() if c["bucket"] in FAILED]
+            if done and failed and not on_head and not any(short in s["body"] for s in summaries):
+                bot_status[bot] = f"{bot} failed"
+                crashed.append(f"{bot} check failed on {short} without reviewing it: {', '.join(failed)}")
+            elif done:
                 bot_status[bot] = f"{bot} done"
-                failed = [name for name, c in own_checks.items() if c["bucket"] in FAILED]
                 detail = "; ".join(filter(None, [
                     next((v for v in map(verdict, (s["body"] for s in summaries)) if v), ""),
                     f"failed: {', '.join(failed)}" if failed else "",
@@ -609,6 +616,8 @@ class Watcher:
                 self.reported.add(checks_key)
                 self.finish(0, [f"green on {short}: {summary}{self.behind(base, base_oid, head)}"])
             # ready waits for every review bot the repo uses.
+            if green and crashed and self.until == "ready":
+                self.finish(1, crashed)
             if green and not waiting and history_known:
                 if unresolved:
                     self.finish(1, [f"blocked by {len(unresolved)} unresolved threads on {short}: {' '.join(unresolved)}"])

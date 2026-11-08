@@ -47,4 +47,5 @@ module.exports = [
   require('./copied-file-safety'),
 
   require('./automatic-guide-sync'),
+  require('./delivery-procedure-sync'),
 ];

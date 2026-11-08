@@ -49,14 +49,14 @@
     "csharp": [
       "skills/packs/csharp/csharp-guide"
     ],
-    "in-progress": [
-      "skills/packs/in-progress/arena",
-      "skills/packs/in-progress/babysit-pr",
-      "skills/packs/in-progress/council",
-      "skills/packs/in-progress/full-send",
-      "skills/packs/in-progress/full-stop",
-      "skills/packs/in-progress/in-progress-guide",
-      "skills/packs/in-progress/loop-me"
+    "experimental": [
+      "skills/packs/experimental/arena",
+      "skills/packs/experimental/babysit-pr",
+      "skills/packs/experimental/council",
+      "skills/packs/experimental/full-send",
+      "skills/packs/experimental/full-stop",
+      "skills/packs/experimental/experimental-guide",
+      "skills/packs/experimental/loop-me"
     ],
     "onboarding": [
       "skills/packs/onboarding/onboarding-guide"
@@ -74,7 +74,7 @@
     "skills/core/implement-spec",
     "skills/core/research",
     "skills/core/wayfinder",
-    "skills/packs/in-progress/arena",
-    "skills/packs/in-progress/council"
+    "skills/packs/experimental/arena",
+    "skills/packs/experimental/council"
   ]
 }

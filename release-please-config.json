@@ -45,12 +45,12 @@
         },
         {
           "type": "json",
-          "path": "skills/packs/in-progress/.claude-plugin/plugin.json",
+          "path": "skills/packs/experimental/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "skills/packs/in-progress/.codex-plugin/plugin.json",
+          "path": "skills/packs/experimental/.codex-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {

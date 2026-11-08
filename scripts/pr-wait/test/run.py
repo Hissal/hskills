@@ -25,7 +25,7 @@ from typing import Any, Callable
 sys.dont_write_bytecode = True
 
 ROOT = Path(__file__).resolve().parents[3]
-COPIES = [ROOT / "skills/packs/in-progress/babysit-pr/scripts/pr-wait"]
+COPIES = [ROOT / "skills/packs/experimental/babysit-pr/scripts/pr-wait"]
 REPO = "octo/repo"
 PR = 7
 HEAD = "a" * 40

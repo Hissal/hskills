@@ -74,7 +74,7 @@ The [guide-content decision](https://github.com/Hissal/skill-collection/issues/5
 
 ## Trials flagged as future core
 
-Decided in [Theme: C# pack](https://github.com/Hissal/skill-collection/issues/48#issuecomment-6371179357). These in-progress trials carry extension points now so packs can answer them before promotion:
+Decided in [Theme: C# pack](https://github.com/Hissal/skill-collection/issues/48#issuecomment-6371179357). These experimental trials carry extension points now so packs can answer them before promotion:
 
 - `performance-review`: this stack's performance anti-patterns and what not to flag.
 - `consumer-review`: packing, installing and running a library as a fresh consumer on this stack.

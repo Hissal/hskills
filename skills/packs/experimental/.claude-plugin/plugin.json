@@ -1,14 +1,14 @@
 {
-  "name": "collection-pack-in-progress",
+  "name": "collection-pack-experimental",
   "version": "0.1.0",
-  "description": "Generated in-progress skill list from collection.json.",
+  "description": "Generated experimental skill list from collection.json.",
   "skills": [
     "./arena",
     "./babysit-pr",
     "./council",
+    "./experimental-guide",
     "./full-send",
     "./full-stop",
-    "./in-progress-guide",
     "./loop-me"
   ]
 }

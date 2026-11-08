@@ -6,11 +6,11 @@
     ]
   },
   "hissal.skill-collection/arena": {
-    "path": "skills/packs/in-progress/arena",
+    "path": "skills/packs/experimental/arena",
     "requires": []
   },
   "hissal.skill-collection/babysit-pr": {
-    "path": "skills/packs/in-progress/babysit-pr",
+    "path": "skills/packs/experimental/babysit-pr",
     "requires": []
   },
   "hissal.skill-collection/blast-radius": {
@@ -46,7 +46,7 @@
     "requires": []
   },
   "hissal.skill-collection/council": {
-    "path": "skills/packs/in-progress/council",
+    "path": "skills/packs/experimental/council",
     "requires": []
   },
   "hissal.skill-collection/csharp-guide": {
@@ -69,14 +69,18 @@
     "path": "skills/core/domain-modeling",
     "requires": []
   },
+  "hissal.skill-collection/experimental-guide": {
+    "path": "skills/packs/experimental/experimental-guide",
+    "requires": []
+  },
   "hissal.skill-collection/full-send": {
-    "path": "skills/packs/in-progress/full-send",
+    "path": "skills/packs/experimental/full-send",
     "requires": [
       "hissal.skill-collection/babysit-pr"
     ]
   },
   "hissal.skill-collection/full-stop": {
-    "path": "skills/packs/in-progress/full-stop",
+    "path": "skills/packs/experimental/full-stop",
     "requires": [
       "hissal.skill-collection/babysit-pr"
     ]
@@ -118,12 +122,8 @@
     "path": "skills/core/implement-spec",
     "requires": []
   },
-  "hissal.skill-collection/in-progress-guide": {
-    "path": "skills/packs/in-progress/in-progress-guide",
-    "requires": []
-  },
   "hissal.skill-collection/loop-me": {
-    "path": "skills/packs/in-progress/loop-me",
+    "path": "skills/packs/experimental/loop-me",
     "requires": []
   },
   "hissal.skill-collection/migrating": {

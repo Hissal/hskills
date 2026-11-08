@@ -25,8 +25,8 @@ The calls below to `research`, `tdd`, `verifying`, `code-review`, `receiving-rev
 Before dispatching any subagent, consult `delegating`; when `delegating` is not installed, dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort. The brief, the return, the dispatch summary and the rules for reading a report live there. This workflow's roles:
 
 - **Exploration subagent**: optional, one, before any implementer. Role: researcher.
-- **Implementer subagents**: one per frontier ticket, in parallel, each in its own worktree, and one per fix round in step 5. Difficulty is the ticket's.
-- **Diff-check reviewer subagents**: one per completed implementer run. Role: reviewer, starting no agents. Difficulty is the ticket's.
+- **Implementer subagents**: one per frontier ticket, in parallel, each in its own worktree, and one per fix round in step 5, in that ticket's worktree. Difficulty is the ticket's.
+- **Diff-check reviewer subagents**: one per completed implementer run, in that ticket's worktree. Role: reviewer, starting no agents. Difficulty is the ticket's.
 - **Merger subagent**: one merge at a time, after the work it merges is checked: step 5's `merge` verdict, or step 7's `verifying` check.
 
 Communication to and from subagents should be sparse. Communicate primarily through **context pointers**: to the spec, tickets, research notes, and previous commits. Don't duplicate information already available via pointers.
@@ -53,7 +53,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 5. Once an **implementer subagent** completes, its report is a claim. One that returned blocked or needs more scope gets no diff check: its ticket is not merged and goes in the report.
 
-   For every other completed ticket, start a **diff-check reviewer**. Its brief points at the spec, the ticket and the ticket's branch, carries the ticket's checks from step 4, and names the criteria that wait for step 7 or for a human, which the reviewer marks `unvalidated` with that reason. The reviewer reads the branch's diff from its merge base with the integration branch (`git diff <integration>...<branch>`) and checks each acceptance criterion through `verifying`. Its Return is `delegating`'s, with these lines added:
+   For every other completed ticket, start a **diff-check reviewer**. Its brief points at the spec, the ticket, and the ticket's worktree and branch, where it runs its checks. It carries the ticket's checks from step 4 and names the criteria that wait for step 7 or for a human, which the reviewer marks `unvalidated` with that reason. The reviewer reads the branch's diff from its merge base with the integration branch (`git diff <integration>...<branch>`) and checks each acceptance criterion through `verifying`. Its Return is `delegating`'s, with these lines added:
 
    ```md
    Verdict: merge | fix | needs decision
@@ -64,7 +64,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
    You read the reviewer's return, not the diff: its quoted diff lines and run output are the real-diff check `delegating` and `verifying` ask of you. Check the return's shape and evidence per `delegating`; a reviewer that returns blocked sends the ticket to the report with its blocker. Then route on the verdict:
    - **merge**, with every criterion verified except those that wait for step 7 or for a human: merge it into the integration branch with a **merger subagent**, then update the PR body through `pr`. A `merge` with any other criterion not verified is routed as `fix`.
-   - **fix**: a fixable gap, meaning an unmet criterion, a missing test or a failing check whose evidence says what is missing. A fresh implementer, briefed as in step 4 but continuing the ticket's branch instead of resetting it, gets the ticket and the verdict and fixes the gap; a fresh diff-check reviewer then checks the new diff. Each round is a new delegated task carrying the full context, per `delegating`. The limit is 2 fix rounds: a ticket still not at `merge` after them is not merged and goes in the report with every round's verdicts.
+   - **fix**: a fixable gap, meaning an unmet criterion, a missing test or a failing check whose evidence says what is missing. A fresh implementer, briefed as in step 4 but working in the ticket's worktree and continuing its branch instead of resetting it, gets the ticket and the verdict and fixes the gap; a fresh diff-check reviewer then checks the new diff. Each round is a new delegated task carrying the full context, per `delegating`. The limit is 2 fix rounds: a ticket still not at `merge` after them is not merged and goes in the report with every round's verdicts.
    - **needs decision**: a criterion that is wrong, contradicts the spec, or can't be checked as written. The ticket is not merged and goes in the report with the reason.
 
    A ticket that is not merged, including one still in a fix round, stays open, and the tickets it blocks stay off the frontier.

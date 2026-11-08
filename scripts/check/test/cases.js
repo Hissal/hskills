@@ -350,7 +350,9 @@ module.exports.push(
   { name: 'a differing delivery-procedure copy fails', files: tree(delivery('full-stop', PROCEDURE + '\nNever merge.\n'), delivery('full-send', PROCEDURE), delivery('babysit-pr', PROCEDURE)), expect: ['fail delivery-procedure-sync skills/packs/in-progress/full-stop/' + DELIVERY] },
   { name: 'two differing delivery-procedure copies both fail', files: tree(delivery('full-stop', PROCEDURE + '\nNever merge.\n'), delivery('babysit-pr', PROCEDURE)), expect: ['fail delivery-procedure-sync skills/packs/in-progress/full-stop/' + DELIVERY, 'fail delivery-procedure-sync skills/packs/in-progress/babysit-pr/' + DELIVERY] },
   { name: 'a lone delivery-procedure copy is silent', files: delivery('babysit-pr', PROCEDURE), expect: [] },
-  { name: 'a same-named reference in another skill is not a copy', files: tree(delivery('babysit-pr', PROCEDURE), delivery('loop-me', '# Other\n')), expect: [] }
+  { name: 'a same-named reference in another skill is not a copy', files: tree(delivery('babysit-pr', PROCEDURE), delivery('loop-me', '# Other\n')), expect: [] },
+  { name: 'a delivery skill missing its copy beside a present copy fails', files: tree(delivery('full-stop', PROCEDURE), skill('skills/packs/in-progress/babysit-pr', { fm: { 'disable-model-invocation': ' true' }, body: '# babysit-pr\n' })), expect: ['fail delivery-procedure-sync skills/packs/in-progress/babysit-pr/' + DELIVERY] },
+  { name: 'a lone delivery skill without its copy is silent', files: skill('skills/packs/in-progress/babysit-pr', { fm: { 'disable-model-invocation': ' true' }, body: '# babysit-pr\n' }), expect: [] }
 );
 
 // #114: the manifest's data contract, independent of membership policy (#110).

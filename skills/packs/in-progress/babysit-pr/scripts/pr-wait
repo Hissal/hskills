@@ -24,6 +24,8 @@ Exit codes
   2  bad arguments, unknown PR, or another pr-wait already watches this PR
 
 Events
+  - a source of required checks could not be read (classic branch protection
+    needs admin access), so the gate may miss a required check not yet started
   - a required check failed (name and link)
   - all checks finished on the head (one summary line)
   - a new comment, review, thread, or thread reply from someone other than the
@@ -258,10 +260,11 @@ def lock(repo: str, pr: int) -> Any:
     return handle
 
 
-def required_checks(repo: str, base: str) -> set[str]:
+def required_checks(repo: str, base: str) -> tuple[set[str], list[str]]:
     """Required check names for the base branch, from rulesets and classic branch
-    protection. Knowing them up front means a required check that has not started
-    yet counts as pending, instead of green by omission."""
+    protection, and the sources that could not be read. Knowing them up front
+    means a required check that has not started yet counts as pending, instead of
+    green by omission. Classic protection needs admin access to read."""
     sources = (
         (
             f"repos/{repo}/rules/branches/{base}",
@@ -270,13 +273,14 @@ def required_checks(repo: str, base: str) -> set[str]:
         (f"repos/{repo}/branches/{base}/protection/required_status_checks", ".contexts[]?, .checks[]?.context"),
     )
     names: set[str] = set()
+    unread: list[str] = []
     for path, jq in sources:
         try:
             names.update(gh_lines(["api", path, "--jq", jq]))
         except GhError as error:
             if "HTTP 404" not in str(error):  # 404 means no protection, which is normal
-                log(f"could not read required checks from {path}: {error}")
-    return names
+                unread.append(f"{path}: {error}")
+    return names, unread
 
 
 class Watcher:
@@ -407,8 +411,16 @@ class Watcher:
 
         base = pr["baseRefName"]
         if self.required is None or base != self.required_base:
-            self.required = required_checks(self.repo, base)
+            self.required, unread = required_checks(self.repo, base)
             self.required_base = base
+            for source in unread:
+                # A stdout line, not a log: the agent must know the gate may miss
+                # a required check that has not started yet.
+                using = "the required checks it could read" if self.required else "every visible check"
+                self.say(
+                    f"could not read required checks from {source}; gating on {using}, "
+                    "so a required check that has not started yet may be missed"
+                )
             gate = ", ".join(sorted(self.required)) or "none set, so every CI check gates"
             log(f"watching {self.repo}#{self.pr} until {self.until}; required checks: {gate}")
         checks = self.fetch_checks()

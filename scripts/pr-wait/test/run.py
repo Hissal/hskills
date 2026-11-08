@@ -42,12 +42,17 @@ def load(path: Path) -> ModuleType:
 
 def pr_payload(query: str, base: str = "main", base_oid: str = "b" * 40, threads: list[dict[str, Any]] | None = None,
                thread_total: int | None = None, reviews: list[dict[str, Any]] | None = None,
-               comments: list[dict[str, Any]] | None = None, history: list[str] | None = None) -> str:
+               comments: list[dict[str, Any]] | None = None, history: list[str] | None = None,
+               bot_history: list[str] | None = None) -> str:
     """The GraphQL answer for one poll. totalCount appears only when the query asks for it.
-    A query for the repo's merged PRs gets `history`: the logins that reviewed them."""
+    A query for the repo's merged PRs gets one PR per login: `history` logins reviewed
+    a PR a person wrote, `bot_history` logins one a bot (Dependabot, say) wrote."""
     if "pullRequests(" in query:
-        merged = [{"reviews": {"nodes": [{"author": {"login": login, "__typename": "Bot"}}]}} for login in history or []]
-        return json.dumps({"data": {"repository": {"pullRequests": {"nodes": merged}}}})
+        def merged(login: str, author: str) -> dict[str, Any]:
+            return {"author": {"login": author, "__typename": "Bot" if author == "dependabot" else "User"},
+                    "reviews": {"nodes": [{"author": {"login": login, "__typename": "Bot"}}]}}
+        nodes = [merged(login, "dependabot") for login in bot_history or []] + [merged(login, "dev") for login in history or []]
+        return json.dumps({"data": {"repository": {"pullRequests": {"nodes": nodes}}}})
     thread_nodes = threads or []
     review_threads: dict[str, Any] = {"nodes": thread_nodes}
     if "totalCount" in query:
@@ -351,6 +356,53 @@ class ReviewBots(PrWaitCase):
         code, lines = self.poll(watcher, self.gh_for({"comments": [note]}))
         self.assertEqual(code, 0)
         self.assertTrue(self.ready_lines(lines), lines)
+
+    def test_a_bot_that_only_reviewed_bot_written_prs_does_not_gate_ready(self) -> None:
+        self.clock()
+        watcher = self.watcher("ready")
+        pr: dict[str, Any] = {"bot_history": ["approvebot"]}
+        self.poll(watcher, self.gh_for(pr))
+        code, lines = self.poll(watcher, self.gh_for(pr))
+        self.assertEqual(code, 0)
+        self.assertTrue(self.ready_lines(lines), lines)
+
+    def test_a_failed_history_read_holds_ready_and_is_retried(self) -> None:
+        self.clock()
+        history = {"fails": True}
+        normal = self.gh_for({"history": ["reviewbot"]})
+
+        def gh(args: list[str]) -> Proc:
+            if args[:2] == ["api", "graphql"] and "pullRequests(" in args[3] and history["fails"]:
+                return Proc(stderr="gh: Something forbidden (HTTP 403)", returncode=1)
+            return normal(args)
+
+        watcher = self.watcher("ready")
+        self.poll(watcher, gh)
+        code, lines = self.poll(watcher, gh)
+        self.assertEqual(code, None, lines)
+        history["fails"] = False
+        code, lines = self.poll(watcher, gh)
+        self.assertEqual(code, None, lines)  # reviewbot, found on the retry, has not reviewed the head
+
+    def test_history_that_keeps_failing_stops_holding_ready_and_says_so(self) -> None:
+        self.clock()
+        normal = self.gh_for({})
+
+        def gh(args: list[str]) -> Proc:
+            if args[:2] == ["api", "graphql"] and "pullRequests(" in args[3]:
+                return Proc(stderr="gh: Something forbidden (HTTP 403)", returncode=1)
+            return normal(args)
+
+        watcher = self.watcher("ready")
+        seen: list[str] = []
+        code = None
+        for _ in range(self.module.HISTORY_ATTEMPTS + 1):
+            code, lines = self.poll(watcher, gh)
+            seen += lines
+            if code is not None:
+                break
+        self.assertEqual(code, 0, seen)
+        self.assertTrue([line for line in seen if "could not read which review bots" in line], seen)
 
     def test_ci_and_deploy_bots_never_gate_ready(self) -> None:
         self.clock()

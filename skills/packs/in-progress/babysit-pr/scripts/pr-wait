@@ -38,7 +38,7 @@ Events
   - the PR merged or closed
 
 A review bot is any bot account that reviewed one of the repo's recently merged
-PRs or has reviewed this PR; CI and deploy bots (github-actions, Vercel) never
+PRs written by a person, or has reviewed this PR; CI and deploy bots (github-actions, Vercel) never
 count. A bot is done on the head when the checks named after it
 finish, or, with none, when it reviews the head commit or a summary of its names
 the head. A bot with no running check that skips a head stops gating once the
@@ -70,8 +70,14 @@ from typing import Any, NoReturn
 # How long ready waits, after the checks go green, for a review bot with no
 # running check to review the head. Some bots review only a PR's first push.
 BOT_GRACE_SECONDS = 600
-# Merged PRs whose bot reviewers count as the review bots the repo uses.
+# Merged PRs a person wrote whose bot reviewers count as the review bots the
+# repo uses. Bot-written PRs (Dependabot) are skipped: review bots often skip
+# them, and their own approver bots are no review bots. HISTORY_SCAN merged PRs
+# are read to find them.
 HISTORY_PRS = 10
+HISTORY_SCAN = 50
+# Failed reads of that history hold ready back for this many polls, then stop.
+HISTORY_ATTEMPTS = 3
 # CI and deploy bots report through checks. Their PR comments are status reports.
 STATUS_BOTS = ("github-actions", "vercel", "netlify", "railway", "cloudflare")
 STATE_DIR = Path.home() / ".local" / "state" / "pr-wait"
@@ -117,7 +123,10 @@ HISTORY_QUERY = """
 query($owner: String!, $name: String!, $count: Int!) {
   repository(owner: $owner, name: $name) {
     pullRequests(states: MERGED, last: $count) {
-      nodes { reviews(last: 30) { nodes { author { login __typename } } } }
+      nodes {
+        author { login __typename }
+        reviews(last: 30) { nodes { author { login __typename } } }
+      }
     }
   }
 }
@@ -300,6 +309,7 @@ class Watcher:
         self.prev_snapshot: list[tuple[str, str]] | None = None
         self.pr_files: dict[str, set[str]] = {}
         self.history: set[str] | None = None
+        self.history_failures = 0
         self.green_since: dict[str, float] = {}
 
     def load(self) -> Json | None:
@@ -346,24 +356,25 @@ class Watcher:
         pr["viewer"] = data["viewer"]["login"]
         return pr
 
-    def fetch_history(self) -> set[str]:
-        """Bots that reviewed the repo's recently merged PRs. A failed read counts
-        as none, so only the bots on this PR gate ready."""
+    def fetch_history(self) -> set[str] | None:
+        """Bots that reviewed the repo's recently merged PRs a person wrote, or
+        None when the read failed."""
         try:
             proc = gh([
                 "api", "graphql", "-f", f"query={HISTORY_QUERY}",
-                "-f", f"owner={self.owner}", "-f", f"name={self.name}", "-F", f"count={HISTORY_PRS}",
+                "-f", f"owner={self.owner}", "-f", f"name={self.name}", "-F", f"count={HISTORY_SCAN}",
             ])
             merged = json.loads(proc.stdout)["data"]["repository"]["pullRequests"]["nodes"]
+            by_people = [pr for pr in merged if not who(pr)[1]][-HISTORY_PRS:]
+            return {
+                who(review)[0]
+                for pr in by_people
+                for review in pr["reviews"]["nodes"]
+                if who(review)[1] and not status_bot(who(review)[0])
+            }
         except (GhError, ValueError, KeyError, TypeError) as error:
             log(f"could not read the repo's review bots: {error}")
-            return set()
-        return {
-            who(review)[0]
-            for pr in merged
-            for review in pr["reviews"]["nodes"]
-            if who(review)[1] and not status_bot(who(review)[0])
-        }
+            return None
 
     def fetch_checks(self) -> dict[str, Json]:
         # gh pr checks exits 8 while checks are pending and 1 when one failed.
@@ -436,10 +447,21 @@ class Watcher:
         # Review bots: those that reviewed recent merged PRs, and any bot that
         # reviewed here. A bot that only comments (a changeset or preview bot) is
         # not one.
+        # A failed read holds ready back and is retried on the next poll, up to
+        # HISTORY_ATTEMPTS times.
         if self.history is None:
             self.history = self.fetch_history() if self.until == "ready" else set()
+            if self.history is None:
+                self.history_failures += 1
+                if self.history_failures >= HISTORY_ATTEMPTS:
+                    self.history = set()
+                    self.say(
+                        f"could not read which review bots this repo uses after {HISTORY_ATTEMPTS} tries; "
+                        "ready waits only for bots that review this PR"
+                    )
+        history_known = self.history is not None
         here = [who(r) for r in reviews] + [who(c) for t in threads for c in t["comments"]["nodes"]]
-        bots = sorted(self.history | {login for login, is_bot in here if is_bot and not status_bot(login)})
+        bots = sorted((self.history or set()) | {login for login, is_bot in here if is_bot and not status_bot(login)})
         bot_checks = {name for name in checks if any(owns_check(b, name) for b in bots)}
 
         # Required checks. With no required checks configured, every CI check
@@ -587,7 +609,7 @@ class Watcher:
                 self.reported.add(checks_key)
                 self.finish(0, [f"green on {short}: {summary}{self.behind(base, base_oid, head)}"])
             # ready waits for every review bot the repo uses.
-            if green and not waiting:
+            if green and not waiting and history_known:
                 if unresolved:
                     self.finish(1, [f"blocked by {len(unresolved)} unresolved threads on {short}: {' '.join(unresolved)}"])
                 if thread_total > len(threads):

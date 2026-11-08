@@ -239,6 +239,14 @@
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
       "changes": "collection metadata and gates; trigger-only description; ordering, output-length, form-to-failure and editing rules; description, mode, freedom, script, input and versioned-claim rules in SKILL-MECHANICS.md; STEERING-FILES.md and TESTING.md references"
+    },
+    {
+      "skill": "skills/packs/in-progress/loop-me",
+      "source": "mattpocock/skills",
+      "path": "skills/in-progress/loop-me",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "license": "MIT",
+      "changes": "collection metadata and gates; designs workflows and never builds or runs one; grilling and delegating as process calls; agent model, effort and transport left to delegating; implementation choices and code exploration left to the implementer"
     }
   ]
 }

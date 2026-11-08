@@ -1,0 +1,9 @@
+{
+  "name": "collection-pack-in-progress",
+  "version": "0.1.0",
+  "description": "Generated in-progress skill list from collection.json.",
+  "skills": [
+    "./in-progress-guide",
+    "./loop-me"
+  ]
+}

@@ -90,6 +90,14 @@
     "path": "skills/core/implement-spec",
     "requires": []
   },
+  "hissal.skill-collection/in-progress-guide": {
+    "path": "skills/packs/in-progress/in-progress-guide",
+    "requires": []
+  },
+  "hissal.skill-collection/loop-me": {
+    "path": "skills/packs/in-progress/loop-me",
+    "requires": []
+  },
   "hissal.skill-collection/migrating": {
     "path": "skills/core/migrating",
     "requires": []

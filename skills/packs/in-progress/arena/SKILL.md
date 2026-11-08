@@ -13,7 +13,9 @@ metadata:
 
 Two implementers build the same goal under the same constraints and evaluation criteria, each on its own, and a separate evaluator judges the actual artifacts. The strongest candidate becomes the **base**; useful ideas from the other may be carried onto it. The result is then verified.
 
-Done when the selected or combined result sits on its own branch, verified against every criterion, and your report gives the evaluator's ruling per criterion with its evidence. Arena builds and judges on branches only: pushing, opening a PR and merging stay with the human, or with the delivery flow that asked for this run.
+Done when the selected or combined result sits on its own branch, verified against every criterion, and your report gives the evaluator's ruling per criterion with its evidence. Arena builds and judges on branches only: pushing, opening a PR and merging stay with the human, or with the delivery flow that ran arena.
+
+**Delivery runs need the owner's word.** A delivery flow (full-stop, full-send or any other) runs arena only when the owner explicitly asked for arena in that run; the delivery invocation alone does not authorize it. Without that request, the flow delivers its own way and arena stays out of it.
 
 **Stop and ask** when the goal is missing or too vague to write a checkable criterion for: two builds of an unclear goal compare guesses, not implementations. Ask only for what the repository, the issue tracker and the project configuration cannot tell you.
 
@@ -69,4 +71,4 @@ Not carried: <ideas left behind, and why>
 Verification: <commands run on the result and their outcomes>
 ```
 
-Name the models only in the report, after the evaluation. When you run for a parent agent or a delivery flow, return this report and the result branch; the caller decides what happens to it.
+Name the models only in the report, after the evaluation. When you run for a parent agent, or for a delivery flow whose owner asked for arena, return this report and the result branch; the caller decides what happens to it.

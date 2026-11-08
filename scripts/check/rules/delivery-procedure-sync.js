@@ -1,12 +1,10 @@
 'use strict';
-// The delivery skills (full-stop, full-send, babysit-pr) run one procedure
-// and each bundles its own copy of it (#88 answer 4, #166). Every copy must
-// be byte-identical. When copies disagree, the copies outside the largest
-// group of identical ones fail; with no single largest group, every copy
-// fails. A delivery skill without its copy fails while another delivery skill
-// has one. Silent while fewer than two copies exist otherwise.
+// full-stop and full-send run one delivery procedure and each bundles its own
+// copy of it (#88 answer 4, as revised on #347). The two copies must be
+// byte-identical: when they differ, both fail. One delivery skill without its
+// copy fails while the other has one. Silent while neither has a copy.
 
-const SKILLS = ['full-stop', 'full-send', 'babysit-pr'];
+const SKILLS = ['full-stop', 'full-send'];
 const REFERENCE = 'references/DELIVERY.md';
 
 module.exports = {
@@ -23,19 +21,11 @@ module.exports = {
       message: 'missing; every delivery skill bundles the delivery procedure: copy ' + copies[0] + ' here',
     }));
     if (copies.length < 2) return missing;
-    const groups = new Map();
-    for (const f of copies) {
-      const key = c.bytes(f).toString('base64');
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(f);
-    }
-    if (groups.size === 1) return missing;
-    const sizes = [...groups.values()].map((g) => g.length).sort((a, b) => b - a);
-    const majority = sizes[0] > sizes[1] ? [...groups.values()].find((g) => g.length === sizes[0]) : [];
-    const fix = 'make every delivery skill\'s ' + REFERENCE + ' identical: edit one copy, then copy it over the others';
-    return missing.concat(copies.filter((f) => !majority.includes(f)).map((f) => ({
+    if (c.bytes(copies[0]).equals(c.bytes(copies[1]))) return missing;
+    const fix = 'make every delivery skill\'s ' + REFERENCE + ' identical: edit one copy, then copy it over the other';
+    return copies.map((f) => ({
       file: f,
-      message: majority.length ? 'differs from ' + majority.join(', ') + '; ' + fix : 'the copies (' + copies.join(', ') + ') disagree; ' + fix,
-    })));
+      message: 'the copies (' + copies.join(', ') + ') disagree; ' + fix,
+    }));
   },
 };

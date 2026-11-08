@@ -63,11 +63,15 @@
   },
   "hissal.skill-collection/full-send": {
     "path": "skills/packs/in-progress/full-send",
-    "requires": []
+    "requires": [
+      "hissal.skill-collection/babysit-pr"
+    ]
   },
   "hissal.skill-collection/full-stop": {
     "path": "skills/packs/in-progress/full-stop",
-    "requires": []
+    "requires": [
+      "hissal.skill-collection/babysit-pr"
+    ]
   },
   "hissal.skill-collection/grill-with-docs": {
     "path": "skills/core/grill-with-docs",

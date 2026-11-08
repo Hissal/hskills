@@ -3,8 +3,7 @@
 
     python3 scripts/pr-wait/test/run.py
 
-pr-wait is bundled identically in babysit-pr, full-stop and full-send; every
-case runs against each copy. GitHub is faked by replacing the script's `gh`
+pr-wait ships in babysit-pr. GitHub is faked by replacing the script's `gh`
 function, its one boundary to the outside: each case scripts what `gh` answers
 and observes what pr-wait prints, how it exits, and what it reports next poll.
 """
@@ -26,7 +25,7 @@ from typing import Any, Callable
 sys.dont_write_bytecode = True
 
 ROOT = Path(__file__).resolve().parents[3]
-COPIES = [ROOT / "skills/packs/in-progress" / skill / "scripts/pr-wait" for skill in ("babysit-pr", "full-stop", "full-send")]
+COPIES = [ROOT / "skills/packs/in-progress/babysit-pr/scripts/pr-wait"]
 REPO = "octo/repo"
 PR = 7
 HEAD = "a" * 40
@@ -42,8 +41,13 @@ def load(path: Path) -> ModuleType:
 
 
 def pr_payload(query: str, base: str = "main", base_oid: str = "b" * 40, threads: list[dict[str, Any]] | None = None,
-               thread_total: int | None = None, reviews: list[dict[str, Any]] | None = None) -> str:
-    """The GraphQL answer for one poll. totalCount appears only when the query asks for it."""
+               thread_total: int | None = None, reviews: list[dict[str, Any]] | None = None,
+               comments: list[dict[str, Any]] | None = None, history: list[str] | None = None) -> str:
+    """The GraphQL answer for one poll. totalCount appears only when the query asks for it.
+    A query for the repo's merged PRs gets `history`: the logins that reviewed them."""
+    if "pullRequests(" in query:
+        merged = [{"reviews": {"nodes": [{"author": {"login": login, "__typename": "Bot"}}]}} for login in history or []]
+        return json.dumps({"data": {"repository": {"pullRequests": {"nodes": merged}}}})
     thread_nodes = threads or []
     review_threads: dict[str, Any] = {"nodes": thread_nodes}
     if "totalCount" in query:
@@ -55,7 +59,7 @@ def pr_payload(query: str, base: str = "main", base_oid: str = "b" * 40, threads
             "state": "OPEN", "headRefOid": HEAD, "baseRefName": base, "mergeStateStatus": "CLEAN",
             "author": {"login": "me", "__typename": "User"},
             "baseRef": {"target": {"oid": base_oid}},
-            "comments": {"nodes": []},
+            "comments": {"nodes": comments or []},
             "reviews": {"nodes": reviews or []},
             "reviewThreads": review_threads,
         }},
@@ -211,11 +215,123 @@ class BaseMoves(PrWaitCase):
         self.assertIn(f"#{PR} main moved to {new[:7]} and touches files in this PR: src/app.py", lines)
 
 
+def bot_review(login: str, oid: str = HEAD) -> dict[str, Any]:
+    return {"id": f"r-{login}-{oid[:4]}", "url": "u", "state": "COMMENTED", "body": "", "commit": {"oid": oid},
+            "author": {"login": login, "__typename": "Bot"}}
+
+
+class ReviewBots(PrWaitCase):
+    """ready waits for the review bots the repository uses, whatever they are called."""
+
+    def gh_for(self, pr: dict[str, Any], lint: str = "pass", extra: list[tuple[str, str]] | None = None) -> Callable[[list[str]], Proc]:
+        def gh(args: list[str]) -> Proc:
+            if args[:2] == ["api", "graphql"]:
+                return Proc(pr_payload(args[3], **pr))
+            if args[:2] == ["pr", "checks"]:
+                return checks(("lint", lint), *(extra or []))
+            if args[0] == "api" and ("/rules/branches/" in args[1] or "/protection/" in args[1]):
+                return not_found()
+            if args[0] == "api" and "/compare/" in args[1]:
+                return Proc("0\n")
+            raise AssertionError(f"unexpected gh call {args}")
+        return gh
+
+    def clock(self, start: float = 1000.0) -> dict[str, float]:
+        now = {"t": start}
+        self.module.now = lambda: now["t"]
+        return now
+
+    def ready_lines(self, lines: list[str]) -> list[str]:
+        return [line for line in lines if line.startswith(f"#{PR} ready on {HEAD[:7]}")]
+
+    def test_a_bot_that_reviewed_recent_prs_gates_ready_until_it_reviews_the_head(self) -> None:
+        self.clock()
+        pr: dict[str, Any] = {"history": ["reviewbot"]}
+        watcher = self.watcher("ready")
+        self.assertEqual(self.poll(watcher, self.gh_for(pr)), (None, []))
+        code, lines = self.poll(watcher, self.gh_for(pr))
+        self.assertEqual(code, None, lines)
+        self.assertFalse(self.ready_lines(lines), lines)
+        pr["reviews"] = [bot_review("reviewbot")]
+        code, lines = self.poll(watcher, self.gh_for(pr))
+        self.assertEqual(code, 0)
+        self.assertTrue(self.ready_lines(lines), lines)
+
+    def test_ready_needs_no_bot_when_the_repository_uses_none(self) -> None:
+        self.clock()
+        watcher = self.watcher("ready")
+        self.poll(watcher, self.gh_for({}))
+        code, lines = self.poll(watcher, self.gh_for({}))
+        self.assertEqual(code, 0)
+        self.assertTrue(self.ready_lines(lines), lines)
+
+    def test_a_bot_already_on_this_pr_gates_ready_on_the_new_head(self) -> None:
+        self.clock()
+        pr: dict[str, Any] = {"reviews": [bot_review("otherbot", oid="c" * 40)]}
+        watcher = self.watcher("ready")
+        self.poll(watcher, self.gh_for(pr))
+        code, lines = self.poll(watcher, self.gh_for(pr))
+        self.assertEqual(code, None, lines)
+
+    def test_a_bot_summary_naming_the_head_counts_as_its_review(self) -> None:
+        self.clock()
+        summary = {"id": "c1", "url": "u", "body": f"Reviewed up to {HEAD[:7]}",
+                   "author": {"login": "summarybot", "__typename": "Bot"}}
+        pr: dict[str, Any] = {"history": ["summarybot"], "comments": [summary]}
+        watcher = self.watcher("ready")
+        self.poll(watcher, self.gh_for(pr))
+        code, lines = self.poll(watcher, self.gh_for(pr))
+        self.assertEqual(code, 0)
+        self.assertTrue(self.ready_lines(lines), lines)
+
+    def test_a_bot_with_a_running_check_is_done_when_its_check_finishes(self) -> None:
+        self.clock()
+        pr: dict[str, Any] = {"history": ["scopebotapp"]}
+        watcher = self.watcher("ready")
+        self.poll(watcher, self.gh_for(pr, extra=[("ScopeBot review", "pending")]))
+        code, _ = self.poll(watcher, self.gh_for(pr, extra=[("ScopeBot review", "pending")]))
+        self.assertEqual(code, None)
+        self.poll(watcher, self.gh_for(pr, extra=[("ScopeBot review", "pass")]))
+        code, lines = self.poll(watcher, self.gh_for(pr, extra=[("ScopeBot review", "pass")]))
+        self.assertEqual(code, 0)
+        self.assertTrue(self.ready_lines(lines), lines)
+
+    def test_a_bot_that_skips_the_head_stops_gating_after_the_grace_period(self) -> None:
+        now = self.clock()
+        pr: dict[str, Any] = {"history": ["reviewbot"]}
+        watcher = self.watcher("ready")
+        self.poll(watcher, self.gh_for(pr))
+        self.assertEqual(self.poll(watcher, self.gh_for(pr))[0], None)
+        now["t"] += self.module.BOT_GRACE_SECONDS + 1
+        code, lines = self.poll(watcher, self.gh_for(pr))
+        self.assertEqual(code, 0)
+        self.assertTrue([line for line in lines if "reviewbot" in line and "not reviewed" in line], lines)
+        self.assertTrue(self.ready_lines(lines), lines)
+
+    def test_a_bot_that_only_comments_does_not_gate_ready(self) -> None:
+        self.clock()
+        note = {"id": "c2", "url": "u", "body": "No changeset found", "author": {"login": "changeset-bot", "__typename": "Bot"}}
+        watcher = self.watcher("ready")
+        self.poll(watcher, self.gh_for({"comments": [note]}))
+        code, lines = self.poll(watcher, self.gh_for({"comments": [note]}))
+        self.assertEqual(code, 0)
+        self.assertTrue(self.ready_lines(lines), lines)
+
+    def test_ci_and_deploy_bots_never_gate_ready(self) -> None:
+        self.clock()
+        pr: dict[str, Any] = {"history": ["github-actions", "vercel"]}
+        watcher = self.watcher("ready")
+        self.poll(watcher, self.gh_for(pr))
+        code, lines = self.poll(watcher, self.gh_for(pr))
+        self.assertEqual(code, 0)
+        self.assertTrue(self.ready_lines(lines), lines)
+
+
 def suite() -> unittest.TestSuite:
     tests = unittest.TestSuite()
     for path in COPIES:
         module = load(path)
-        for case in (RequiredChecks, ReviewThreads, BaseMoves):
+        for case in (RequiredChecks, ReviewThreads, BaseMoves, ReviewBots):
             bound = type(f"{case.__name__}[{path.parent.parent.name}]", (case,), {"module": module})
             tests.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(bound))
     return tests

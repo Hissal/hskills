@@ -23,7 +23,14 @@ Done when every route whose situation fits the request is answered as below, or 
 
 For each route whose situation fits:
 
-1. **Installed only.** The trial is installed when its callable name is in your skill listing, with a plugin prefix when a plugin installed it. Leave out a route whose trial is not installed.
+1. **Installed only.** Trials are user-invoked, so a harness may leave an installed trial out of your skill listing. Find the trial's `SKILL.md` by its callable name, in this order:
+   1. **Your skill listing.** The trial is installed when its name is there, with a plugin prefix when a plugin installed it.
+   2. **This harness's documented locations.** Otherwise try these exact paths in order, project scope (from the project root) first; the first that exists is the installed trial:
+      - Claude Code: `.claude/skills/<name>/SKILL.md`, `~/.claude/skills/<name>/SKILL.md`.
+      - Codex: `.agents/skills/<name>/SKILL.md`, `~/.agents/skills/<name>/SKILL.md`.
+      - OpenCode: `.opencode/skills/<name>/SKILL.md`, `.claude/skills/<name>/SKILL.md`, `.agents/skills/<name>/SKILL.md`, `~/.config/opencode/skills/<name>/SKILL.md`, `~/.claude/skills/<name>/SKILL.md`, `~/.agents/skills/<name>/SKILL.md`.
+
+   Each try is a direct read of one exact path, or an existence check on it. Never enumerate an installation folder, whether a skill folder, a plugin folder or a home directory: no listing its contents, no searching it for files. The listing and these paths are the whole lookup. Leave out a route whose trial neither reaches.
 2. **Label it experimental**, every time it is named.
 3. **Say the useful difference**: what the trial does that the established workflow does not, from the route's row.
 4. **Show the established alternative** from the row when it also fits this request, with its invocation. Prefer neither: the situation decides, and when both fit equally, say so and leave the choice to the human.

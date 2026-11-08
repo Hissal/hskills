@@ -51,7 +51,7 @@ The evaluator:
 - selects the base: no candidate that fails a hard criterion when another passes it; among the rest, the stronger on the weighed criteria, with ties broken by the smaller and clearer change;
 - lists ideas from the other candidate worth carrying over, each with the criterion it improves, or none.
 
-When no candidate passes every hard criterion, there is no base: neither may be selected, combined or verified as the result. Report each candidate's hard failures and go back to step 1 with the human. Both failing the same hard criterion, or the two solving different problems, means the contract was underspecified; say so. Never average the two.
+When no candidate passes every hard criterion, there is no base: neither may be selected, combined or verified as the result. Report each candidate's hard failures and go back to step 1 with the human. Call the contract underspecified only when the evidence points there: the two solved different problems, or the failures trace to a gap or an ambiguity in the brief. Two defective builds of a clear contract are reported as defects. Never average the two.
 
 ## 4. Combine, only when it helps
 

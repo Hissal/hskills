@@ -31,12 +31,14 @@ if (args[1] === 'marketplace') {
   const current = fs.existsSync(market) ? read(market) : null;
   if (args[2] === 'add') {
     const name = listing(args[3]).name;
-    // Like the real hosts: Claude re-points a known name, Codex refuses to.
-    if (host === 'codex' && current && current.name === name && current.source !== args[3]) {
+    // Like the real hosts: Claude re-points a known name to the path as given;
+    // Codex records the resolved path and refuses a different directory.
+    const source = host === 'codex' ? fs.realpathSync.native(args[3]) : args[3];
+    if (host === 'codex' && current && current.name === name && current.source !== source) {
       console.error("Error: marketplace '" + name + "' is already added from a different source");
       process.exit(1);
     }
-    fs.writeFileSync(market, JSON.stringify({ name, source: args[3] }));
+    fs.writeFileSync(market, JSON.stringify({ name, source }));
   } else if (args[2] === 'list') {
     const known = current ? [current] : [];
     output = host === 'codex' ? { marketplaces: known.map(m => ({ name: m.name, root: m.source })) } : known.map(m => ({ name: m.name, source: 'directory', path: m.source }));

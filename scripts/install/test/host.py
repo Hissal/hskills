@@ -63,11 +63,13 @@ else:
         current = json.loads(read(market)) if os.path.exists(market) else None
         if arg(2) == 'add':
             name = listing(arg(3))['name']
-            # Like the real hosts: Claude re-points a known name, Codex refuses to.
-            if host == 'codex' and current and current['name'] == name and current['source'] != arg(3):
+            # Like the real hosts: Claude re-points a known name to the path as given;
+            # Codex records the resolved path and refuses a different directory.
+            source = os.path.realpath(arg(3)) if host == 'codex' else arg(3)
+            if host == 'codex' and current and current['name'] == name and current['source'] != source:
                 print("Error: marketplace '" + name + "' is already added from a different source", file=sys.stderr)
                 sys.exit(1)
-            write(market, dump({'name': name, 'source': arg(3)}))
+            write(market, dump({'name': name, 'source': source}))
         elif arg(2) == 'list':
             known = [current] if current else []
             output = ({'marketplaces': [{'name': m['name'], 'root': m['source']} for m in known]} if host == 'codex'

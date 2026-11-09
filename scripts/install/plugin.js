@@ -28,9 +28,15 @@ function replacedParent(file, home) {
   return false;
 }
 
-// The same directory once links resolve; a missing path is never the same.
+// The same directory by identity, not spelling: Codex records the resolved path,
+// which can differ from the checkout's in case or Windows short names. A
+// filesystem without file IDs falls back to resolved links. A missing path is
+// never the same.
 function samePath(a, b) {
-  try { return fs.realpathSync(a) === fs.realpathSync(b); } catch (e) { if (e.code === 'ENOENT') return false; throw e; }
+  try {
+    const [x, y] = [a, b].map(p => fs.statSync(p, { bigint: true }));
+    return x.ino ? x.dev === y.dev && x.ino === y.ino : fs.realpathSync(a) === fs.realpathSync(b);
+  } catch (e) { if (e.code === 'ENOENT') return false; throw e; }
 }
 
 function registration(home, checkout, action = 'install') {

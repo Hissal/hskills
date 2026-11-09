@@ -17,8 +17,9 @@ which the guard then follows; see
 
 ## Reproduction
 
-Run `python3 scripts/install/evidence/live-plugins.py` from the checkout. That
-runner and its `plugin-session.py` were removed with the snapshot design; the
+The runs used `python3 scripts/install/evidence/live-plugins.py` from the
+checkout. That runner and its `plugin-session.py` were removed with the snapshot
+design; the
 [last version](https://github.com/Hissal/hskills/blob/79e2273aff6610d1021977764632611844ef621b/scripts/install/evidence/live-plugins.py)
 runs against an installer from before that change.
 This manual authenticated test prints an artifact directory, uses the installed
@@ -32,7 +33,7 @@ cannot push. Model calls cost normal account usage. The fixture retains logs.
 The helper `plugin-hooks-list.py ARTIFACT_DIR` uses the real Codex app-server
 `initialize` and `hooks/list` read APIs with the temporary registration. It
 reports actual plugin hook origins and trust without needing a model login.
-`plugin-session.py ARTIFACT_DIR` runs two Claude turns in one process, switching
+`plugin-session.py ARTIFACT_DIR` ran two Claude turns in one process, switching
 the disposable source to a branch without the guard between turns.
 
 ## Observations

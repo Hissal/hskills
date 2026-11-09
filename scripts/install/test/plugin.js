@@ -42,7 +42,7 @@ try {
   const guard = path.join(source, 'hooks/command-guard');
   const hostEnv = dir => ({ ...process.env, HOME: dir, USERPROFILE: dir, CLAUDE_CONFIG_DIR: path.join(dir, '.claude'), CODEX_HOME: path.join(dir, '.codex'), XDG_CONFIG_HOME: path.join(dir, '.config') });
   const host = (bin, args, dir) => spawnSync(bin.endsWith('.cjs') ? process.execPath : bin, bin.endsWith('.cjs') ? [bin, ...args] : args, { encoding: 'utf8', env: hostEnv(dir), cwd: dir });
-  const run = () => spawnSync(process.execPath, [cli, 'register-guard', '--home', home, '--source', source], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex } });
+  const run = (from = source) => spawnSync(process.execPath, [cli, 'register-guard', '--home', home, '--source', from], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex } });
   const legacy = spawnSync(process.execPath, [path.resolve(__dirname, '../../../hooks/command-guard/install.js'), '--home', home], { encoding: 'utf8' });
   assert.equal(legacy.status, 1); // Codex trust remains pending
   const settings = path.join(home, '.claude/settings.json');
@@ -108,6 +108,17 @@ try {
   assert.ok(!fs.readFileSync(codexHooks, 'utf8').includes('/command-guard/adapters/'));
   }
   assert.match(again.stdout, /REGISTERED claude/, again.stderr);
+  // Another spelling of this checkout is still this checkout: a link to it and,
+  // where the filesystem ignores case, the same path in other case.
+  const link = path.join(home, 'source-link');
+  fs.symlinkSync(source, link, 'junction');
+  const upper = path.join(home, 'SOURCE');
+  for (const spelling of fs.existsSync(upper) ? [link, upper] : [link]) {
+    const respelled = run(spelling);
+    assert.doesNotMatch(respelled.stdout + respelled.stderr, /CONFLICT|FAIL/, spelling);
+    assert.match(respelled.stdout, /REGISTERED claude/, respelled.stdout + respelled.stderr);
+    assert.match(respelled.stdout, /REGISTERED codex/, respelled.stdout + respelled.stderr);
+  }
   // The registration follows the checkout; a rerun refreshes Codex's copy of it.
   fs.appendFileSync(path.join(guard, 'adapters/claude-code.js'), '\n// updated source\n');
   const updated = run();

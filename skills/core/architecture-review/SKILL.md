@@ -91,7 +91,7 @@ Candidates and the explorer's report follow reviewing's evidence rules: an explo
 
 Turn the explorers' candidates and leads into the report's short list, in this order:
 
-1. **Merge.** Read every candidate and lead side by side, across explorers and modules. Where several describe one duplicated ownership, merge them into one candidate that names every module it reaches and replaces its parts. Each of those modules becomes an adapter at the merged candidate's seam, so the seam is real.
+1. **Merge.** Read every candidate and lead side by side, across explorers and modules. Where several describe one duplicated ownership, merge them into one candidate that names every module it reaches and replaces its parts. Quote each module's copy, and leave out a copy that answers a different question. The modules that hold a copy today are what the Strong rating counts as existing callers or adapters.
 2. **Check.** Open the lines behind each candidate's load-bearing claims yourself. Correct a claim that is off; drop a candidate whose claim fails.
 3. **Rate.** Give each candidate one strength:
    - **Strong**: the friction is quoted at its lines, the seam is real (two adapters or callers exist today), and you can name how its tests improve.

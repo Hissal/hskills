@@ -21,6 +21,8 @@ metadata:
 
 The example illustrates the fields, not a decided dependency edge. The full schema and validation belong to the implementation specification. `agent-skills-sync.*` identifies the metadata contract; `hissal.hskills/` identifies this collection's publisher-qualified skill identities. Other publishers use their own identities under the same keys.
 
+Amended by [#353](https://github.com/Hissal/hskills/pull/353): the namespace was `hissal.skill-collection/` until the repository was renamed to `hskills`, before the first release.
+
 An ID is independent of the callable name, repository path, core/pack address and installation scope. Moving `teach` from core to study must not change its ID. A release-local catalog maps IDs to source paths. Optional pack lookups, suggestions and related reading are not hard requirements; making them requirements would defeat optional installation.
 
 ## Resolution and synchronization

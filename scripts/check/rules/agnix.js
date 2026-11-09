@@ -9,7 +9,7 @@
 // agnix errors and warnings are reported; its info-level advice is not. A
 // missing install, a version other than the pin, or a failed run is one
 // warning on package.json: the trial never fails the check.
-// COLLECTION_CHECK_AGNIX names another agnix script to run (the fixture
+// HSKILLS_CHECK_AGNIX names another agnix script to run (the fixture
 // runner's stub).
 
 const fs = require('fs');
@@ -26,7 +26,7 @@ module.exports = {
   id: 'agnix',
   level: 'warn',
   check(c) {
-    const bin = process.env.COLLECTION_CHECK_AGNIX || path.join(REPO, 'node_modules', 'agnix', 'bin', 'agnix');
+    const bin = process.env.HSKILLS_CHECK_AGNIX || path.join(REPO, 'node_modules', 'agnix', 'bin', 'agnix');
     if (!fs.existsSync(bin)) return trouble('agnix ' + PIN + ' is not installed: run `npm ci`');
 
     const res = spawnSync(process.execPath, [bin, '--config', CONFIG, '--format', 'json', '.'], { cwd: c.root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });

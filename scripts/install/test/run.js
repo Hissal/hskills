@@ -462,7 +462,7 @@ assert.equal(new Set(cases.map(([n]) => n)).size, cases.length, 'case names must
 // One install case in this process, against its own temporary home and source.
 function runCase(name) {
   const [, test] = cases.find(([n]) => n === name);
-  const temp = tempDir('collection-install-');
+  const temp = tempDir('hskills-install-');
   try {
     const repo = path.join(temp, 'repo');
     const home = path.join(temp, 'home');

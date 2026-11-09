@@ -9,7 +9,7 @@ const {tempDir, testRunDir} = require('../../test-util');
 const root = process.env.KEEP_PLUGIN_FIXTURE ? fs.mkdtempSync(path.join(path.dirname(testRunDir()), 'plugins-124-')) : tempDir('plugins-124-');
 const repo = path.resolve(__dirname, '../../..');
 function write(p, data) { fs.mkdirSync(path.dirname(path.join(root,p)), {recursive:true}); fs.writeFileSync(path.join(root,p), data); }
-function run(p) { return spawnSync(process.execPath,[path.join(repo,p),root],{encoding:'utf8',env:{...process.env,COLLECTION_CHECK_AGNIX:path.join(repo,'scripts/check/test/agnix-stub.js')}}); }
+function run(p) { return spawnSync(process.execPath,[path.join(repo,p),root],{encoding:'utf8',env:{...process.env,HSKILLS_CHECK_AGNIX:path.join(repo,'scripts/check/test/agnix-stub.js')}}); }
 function json(p) { return JSON.parse(fs.readFileSync(path.join(root,p),'utf8')); }
 try {
  spawnSync('git',['init','-q',root]);
@@ -69,5 +69,11 @@ try {
  assert.equal(json('.claude-plugin/marketplace.json').plugins.length,1);
  assert.equal(fs.existsSync(path.join(root,'skills/core/.codex-plugin/plugin.json')),false);
  assert.ok(!json('release-please-config.json').packages['.']['extra-files'].some(s=>s.path.startsWith('skills/')));
+ // The generator owns entries by source, not name: a generated entry under an
+ // older name is replaced, and a hand-written entry keeps any name.
+ write('collection.json',JSON.stringify({core:['skills/core/fixture-required'],packs:{demo:['skills/packs/demo/fixture-work'],onboarding:['skills/packs/onboarding/fixture-auto']},expensive:[]}));
+ write('.claude-plugin/marketplace.json',JSON.stringify({name:'fixture-124',owner:{name:'Hissal'},plugins:[{name:'command-guard',source:'./hooks/command-guard'},{name:'collection-pack-demo',source:'./skills/packs/demo'},{name:'hskills-extra',source:'./hooks/extra'}]}));
+ assert.equal(run('scripts/plugins/generate.js').status,0);
+ assert.deepEqual(json('.claude-plugin/marketplace.json').plugins.map(p=>p.name),['command-guard','hskills-extra','hskills-core','hskills-demo','hskills-onboarding']);
  console.log('ok: plugin generator/check fixture');
 } finally { if (!process.env.KEEP_PLUGIN_FIXTURE) fs.rmSync(root,{recursive:true,force:true}); }

@@ -39,7 +39,7 @@ let skipped = 0;
 // An expectation line is "<fail|warn> <rule> <file>".
 const key = (level, rule, file) => level.toLowerCase() + ' ' + rule + ' ' + file;
 
-const scratch = tempDir('collection-check-test-');
+const scratch = tempDir('hskills-check-test-');
 try {
   cases.forEach((c, i) => {
     if (c.agnix === 'real' && !fs.existsSync(REAL_AGNIX)) {
@@ -76,9 +76,9 @@ try {
     }
     const dirty = c.clean ? spawnSync('git', ['status', '--porcelain'], { cwd: dir, encoding: 'utf8' }).stdout.trim() : '';
 
-    const env = Object.assign({}, process.env, { COLLECTION_ALWAYS_ON_PATH: c.alwaysOnPath || '', COLLECTION_CHECK_AGNIX: STUB, AGNIX_STUB: '' });
-    if (c.agnix === 'real') delete env.COLLECTION_CHECK_AGNIX;
-    else if (c.agnix === 'missing') env.COLLECTION_CHECK_AGNIX = path.join(dir, 'no-agnix-here.js');
+    const env = Object.assign({}, process.env, { HSKILLS_ALWAYS_ON_PATH: c.alwaysOnPath || '', HSKILLS_CHECK_AGNIX: STUB, AGNIX_STUB: '' });
+    if (c.agnix === 'real') delete env.HSKILLS_CHECK_AGNIX;
+    else if (c.agnix === 'missing') env.HSKILLS_CHECK_AGNIX = path.join(dir, 'no-agnix-here.js');
     else if (c.agnix) env.AGNIX_STUB = JSON.stringify(c.agnix);
     Object.assign(env, c.env);
 

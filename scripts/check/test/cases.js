@@ -376,6 +376,11 @@ for (const data of [
   expect: ['fail collection-manifest collection.json'],
 });
 module.exports.push({
+  name: 'a pack named core fails: its plugin would share core\'s name',
+  files: tree(skill('skills/packs/core/alpha'), { 'collection.json': JSON.stringify({ core: [], packs: { core: ['skills/packs/core/alpha'] }, expensive: [] }) }),
+  expect: ['fail collection-manifest collection.json'],
+});
+module.exports.push({
   name: 'an empty manifest passes before skills are authored',
   files: { 'collection.json': '{"core":[],"packs":{},"expensive":[]}' },
   expect: [],
@@ -414,7 +419,7 @@ for (const [name, body, expect] of [
 module.exports.push({
   name: 'collection check runs install harness: timeout',
   files: { 'scripts/install/test/run.js': 'setTimeout(() => {}, 5000);' },
-  env: { COLLECTION_INSTALL_CASES_TIMEOUT_MS: '1000' },
+  env: { HSKILLS_INSTALL_CASES_TIMEOUT_MS: '1000' },
   expect: ['fail install-cases scripts/install/test/run.js'],
 });
 module.exports.push({

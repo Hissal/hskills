@@ -7,8 +7,8 @@ function outputs(c) {
  const version = c.text('version.txt').trim();
  if (!/^\d+\.\d+\.\d+(?:-[\w.-]+)?$/.test(version)) throw new Error('invalid version.txt');
  const market = JSON.parse(c.text('.claude-plugin/marketplace.json'));
- // This namespace is owned by the generator; guard and other entries survive.
- market.plugins = market.plugins.filter(p => !p.name.startsWith('hskills-'));
+ // The generator owns entries sourced from skill plugin roots, whatever their name; guard and other entries survive.
+ market.plugins = market.plugins.filter(p => p.source !== './skills/core' && !/^\.\/skills\/packs\/[^/]+$/.test(p.source));
  const out = {};
  const groups = [['core',parsed.data.core,true],...Object.entries(parsed.data.packs).sort(([a],[b])=>a < b ? -1 : a > b ? 1 : 0)];
  for (const [group,paths,isCore] of groups) {

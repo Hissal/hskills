@@ -1,4 +1,4 @@
-# Skill Collection
+# hskills
 
 A personal collection of agent skills and the machinery around them, gathered and adapted from many sources, sized to one owner's work across Unity, C# libraries, web apps and agentic workflows. Every skill in the collection lives in this repo.
 

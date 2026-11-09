@@ -28,16 +28,6 @@ needed references. An empty selection verifies only the command and record,
 not skill availability. Resolve any reported conflicts using
 [Ownership and repair](#ownership-and-repair), then rerun.
 
-### Machines installed before the hskills rename
-
-Installs made while the collection was named `skill-collection` keep their
-records in `~/.skill-collection/` and register the guard as
-`command-guard@skill-collection-guard`. The current installer does not read
-those. Before pulling the rename, run `node scripts/install/install.js uninstall`
-from the old checkout, then install again from the new one. Move
-`~/.config/skill-collection/delegation.json` to `~/.config/hskills/` by hand,
-and delete `~/.cache/skill-collection/` if it is still there.
-
 ## Read permissions
 
 The command prints JSON strings for Claude `permissions.allow`, covering both
@@ -66,7 +56,7 @@ packs remain installed. A missing remembered pack is an error before link change
 Link one named collection skill into the current Git project:
 
 ```sh
-node /path/to/collection/scripts/install/install.js install --skill tdd
+node /path/to/hskills/scripts/install/install.js install --skill tdd
 # Or select the project explicitly:
 node scripts/install/install.js install --skill tdd --project /path/to/project
 ```

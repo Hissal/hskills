@@ -1,12 +1,14 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
 const { spawnSync } = require('child_process');
 
 // The guard is the command-guard plugin in the checkout's own marketplace, so,
 // like linked skills, it follows the checkout it was registered from.
 const MARKETPLACE = 'hskills';
-const PLUGIN = 'command-guard@' + MARKETPLACE;
+const NAME = 'command-guard';
+const PLUGIN = NAME + '@' + MARKETPLACE;
 const installed = list => Array.isArray(list) ? list : list.installed;
 const marketplaces = list => Array.isArray(list) ? list : list.marketplaces || [];
 
@@ -26,6 +28,20 @@ function replacedParent(file, home) {
     }
   }
   return false;
+}
+
+// Every file under a directory by relative path, as base64; a missing one has none.
+function files(dir) {
+  const out = {};
+  (function walk(d) {
+    let entries;
+    try { entries = fs.readdirSync(d, { withFileTypes: true }); } catch (e) { if (e.code === 'ENOENT') return; throw e; }
+    for (const e of entries) {
+      const p = path.join(d, e.name);
+      if (e.isDirectory()) walk(p); else out[path.relative(dir, p)] = fs.readFileSync(p, 'base64');
+    }
+  })(dir);
+  return out;
 }
 
 // The same directory by identity, not spelling: Codex records the resolved path,
@@ -106,13 +122,18 @@ function registration(home, checkout, action = 'install') {
     return JSON.parse(r.stdout);
   }
   // Claude reads the plugin folder in place; Codex reports it as the plugin's
-  // local source and runs the copy it made from it at `plugin add`.
+  // local source and runs the copy it made from it at `plugin add`, so a later
+  // checkout change reaches Codex only when the installer reruns.
   function inspect(host, folder) {
     const settings = path.join(home, '.claude/settings.json');
     if (host === 'claude' && fs.existsSync(settings) && JSON.parse(fs.readFileSync(settings)).disableAllHooks) throw new Error('disabled Claude hooks');
     const entry = installed(call(host, ['plugin', 'list', '--json'])).find(p => (p.id || p.pluginId) === PLUGIN);
     const effective = entry && (entry.readFromFolder || entry.source?.path || entry.installPath);
     if (!entry || !entry.enabled || !effective || !samePath(effective, folder)) throw new Error('missing, disabled or overridden plugin: ' + host);
+    if (host !== 'codex') return;
+    const version = JSON.parse(fs.readFileSync(path.join(folder, '.codex-plugin/plugin.json'))).version;
+    const copy = path.join(home, '.codex/plugins/cache', MARKETPLACE, NAME, version);
+    if (!util.isDeepStrictEqual(files(copy), files(folder))) throw new Error('stale Codex copy of the guard at ' + copy + ': rerun install to refresh it from ' + folder);
   }
   // The previous installer's record of its own settings handlers, if any.
   const legacyFile = path.join(home, '.hskills/guard.json');

@@ -195,7 +195,7 @@ configuration directories exist under that home. For plugin delivery evidence an
 | Harness | Delivery | Registration | Doctor |
 | --- | --- | --- | --- |
 | Claude Code | `command-guard@hskills`, read in place from the checkout | user plugin API | enabled plugin at the checkout's guard; block + allow |
-| Codex | the same plugin; Codex runs the copy it made at install | user plugin API; human trust in `/hooks` | enabled plugin at the checkout's guard; pending trust |
+| Codex | the same plugin; Codex runs the copy it made at install | user plugin API; human trust in `/hooks` | enabled plugin at the checkout's guard; its copy matches the checkout; pending trust |
 | OpenCode | copy at `~/.agents/command-guard` and copied adapter | `.config/opencode/plugins/command-guard.js` | tool block + allow and permission denial |
 
 `HOME/.hskills/guard.json` records copied files and exact hook entries.
@@ -205,7 +205,7 @@ Uninstall removes recorded hook commands even when an unrelated command shares
 their group, and removes only unchanged recorded files. Replaced files survive.
 
 Doctor fails on missing registration, disabled Claude hooks, changed registration,
-or wrong block/allow verdicts. A probe denial is a successful guard verdict;
+a Codex copy that no longer matches the checkout's guard, or wrong block/allow verdicts. A probe denial is a successful guard verdict;
 missing or disabled hooks are absent protection, not a denial. Pending Codex trust fails the doctor; it passes once `hooks/list` reports the hook trusted.
 Host bypasses and project overrides are explicitly **unverified**:
 direct adapter probes cannot establish effective host invocation. An explicit
@@ -247,7 +247,7 @@ Registration adds the checkout as the `hskills` marketplace, the one the
 `hooks/command-guard` as the plugin folder. Like linked skills, the guard follows
 its checkout: Claude reads the folder in place, so an edit or branch switch there
 reaches the next session; Codex runs the copy it made at install, so rerun the
-installer to refresh it. For a guard that holds still while you work, register a
+installer to refresh it. Doctor fails while that copy differs from the checkout. For a guard that holds still while you work, register a
 checkout you do not work in, or work in a worktree. An `hskills` marketplace
 already registered from another path or from GitHub is a conflict; registration
 never re-points it. To move an installer registration to another checkout,

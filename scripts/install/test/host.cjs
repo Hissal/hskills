@@ -48,6 +48,12 @@ if (args[1] === 'marketplace') {
   const entry = listing(source).plugins.find(p => p.name + '@' + name === args[2]);
   if (!entry) { console.error('Error: plugin not found: ' + args[2]); process.exit(1); }
   const folder = path.resolve(source, entry.source);
+  if (host === 'codex') {
+    // Codex runs a copy of the plugin folder, refreshed on every add.
+    const copy = path.join(dir, 'cache', name, entry.name, read(path.join(folder, '.codex-plugin/plugin.json')).version);
+    fs.rmSync(copy, { recursive: true, force: true });
+    fs.cpSync(folder, copy, { recursive: true });
+  }
   fs.writeFileSync(installed, JSON.stringify(host === 'codex'
     ? { pluginId: args[2], enabled: true, source: { source: 'local', path: folder } }
     : { id: args[2], enabled: true, readFromFolder: folder }));

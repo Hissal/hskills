@@ -53,7 +53,7 @@ Resolve and announce the scope through reviewing: the user's explicit request, e
 The resolved scope sets how far candidates reach:
 
 - **Clearly scoped**: an explicit PR, branch or range, a caller's scope, or a bare invocation with pending work. Candidates stay within the change. Read surrounding modules as far as understanding the change needs. Small, easy wins outside the edited files may be suggested, each carefully scoped; whole-module refactors are out.
-- **General**: a general request, a named area, or the hotspot survey. Examine whole modules: responsibilities, interface, internals, callers and dependencies, and cross-module relationships. History picks the modules; inspection covers them whole, never only their changed lines. A candidate rooted in a selected module may reach its callers and dependencies in modules the survey did not select.
+- **General**: a general request, a named area, or the hotspot survey. Examine whole modules: responsibilities, interface, internals, callers and dependencies, and cross-module relationships. History picks the modules; inspection covers them whole, never only their changed lines. Test code that drives a module, such as rigs, fixtures and test scenes, is read whole as part of it, since a copy of production's sequence drifts there unseen; test cases may be read by name. A candidate rooted in a selected module may reach its callers and dependencies in modules the survey did not select.
 
 Discoveries outside the review's scope go to reviewing's out-of-scope observations, never to the candidates.
 
@@ -63,7 +63,7 @@ Done when reviewing's announcement block is out as its own message before step 2
 
 Read the project's domain glossary (`GLOSSARY.md`) and any ADRs in the area you're touching first.
 
-Then spawn a sub-agent with a fresh context window to walk the codebase. Give it the resolved scope and snapshot, the reach rule from step 1, the pack guides' sources of friction and the duplication lens below. When you split the scope across several explorers, give each the review's whole scope and its own share as two separate things: it reads its share whole, and only the review's scope decides what is out of scope. A pattern that continues past its share comes back as a **lead** naming every module it reached, for step 3 to merge.
+Then spawn a sub-agent with a fresh context window to walk the codebase. Give it the resolved scope and snapshot, the reach rule from step 1, the pack guides' sources of friction, the friction questions and the duplication lens below. When you split the scope across several explorers, give each the review's whole scope and its own share as two separate things: it reads its share whole, and only the review's scope decides what is out of scope. A pattern that continues past its share comes back as a **lead** naming every module it reached, for step 3 to turn into a candidate.
 
 Don't follow rigid heuristics; explore organically and note where you experience friction:
 
@@ -71,7 +71,7 @@ Don't follow rigid heuristics; explore organically and note where you experience
 - Where are modules **shallow**, with an interface nearly as complex as the implementation?
 - Where have pure functions been extracted just for testability, but the real bugs hide in how they're called (no **locality**)?
 - Where do tightly-coupled modules leak across their seams?
-- Where do several modules each keep the same state, enforce the same rule or run the same loop (**duplicated ownership**)? Its candidate is one module that owns it, with each current owner as an adapter at its seam, not a shared helper.
+- Where do several modules each keep the same state, enforce the same rule or run the same loop (**duplicated ownership**)? Its candidate is one module that owns it, with each current owner as an adapter at its seam, not a shared helper. The modules that hold a copy today count as that seam's existing callers or adapters, so it is real even when an existing interface for the job has only one adapter.
 - Which parts of the codebase are untested, or hard to test through their current interface?
 
 Apply the **deletion test** to anything you suspect is shallow: would deleting it concentrate complexity, or just move it? A "yes, concentrates" is the signal you want.
@@ -91,9 +91,9 @@ Candidates and the explorer's report follow reviewing's evidence rules: an explo
 
 Turn the explorers' candidates and leads into the report's short list, in this order:
 
-1. **Merge.** Read every candidate and lead side by side, across explorers and modules. Where several describe one duplicated ownership, merge them into one candidate that names every module it reaches and replaces its parts. Quote each module's copy, and leave out a copy that answers a different question. The modules that hold a copy today are what the Strong rating counts as existing callers or adapters.
+1. **Merge.** Read every candidate and lead side by side, across explorers and modules. Every lead becomes a candidate here. Where several describe one duplicated ownership, merge them into one candidate that names every module it reaches and replaces its parts. Quote each module's copy, and leave out a copy that answers a different question.
 2. **Check.** Open the lines behind each candidate's load-bearing claims yourself. Correct a claim that is off; drop a candidate whose claim fails.
-3. **Rate.** Give each candidate one strength:
+3. **Rate.** Rate every candidate yourself, taking an explorer's rating as a suggestion. Give each one strength:
    - **Strong**: the friction is quoted at its lines, the seam is real (two adapters or callers exist today), and you can name how its tests improve.
    - **Worth exploring**: the friction is real, but the deepened module's shape needs a design pass.
    - **Speculative**: the seam has one adapter, or the candidate hinges on a decision the owner has not made.

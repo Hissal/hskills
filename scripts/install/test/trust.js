@@ -8,15 +8,15 @@ const { tempDir } = require('../../test-util');
 const home = tempDir('guard-trust-');
 const encode = text => Buffer.from(text).toString('base64');
 const hash = c => '"sha256:' + c.repeat(64) + '"';
-const plugin = '\n[plugins."command-guard@hskills-guard"]\nenabled = true\n';
+const plugin = '\n[plugins."command-guard@hskills"]\nenabled = true\n';
 // Shape observed in the native Windows writer output (docs/evidence/windows-guard-followup.md).
-const nativeTrust = '\n[hooks.state]\n\n[hooks.state."command-guard@hskills-guard:hooks/codex.json:pre_tool_use:0:0"]\n'
+const nativeTrust = '\n[hooks.state]\n\n[hooks.state."command-guard@hskills:hooks/codex.json:pre_tool_use:0:0"]\n'
   + 'trusted_hash = ' + hash('a') + '\ntrusted_content_hash = ' + hash('b') + '\nenabled = true\n'
   + "\n[hooks.state.'C:\\Users\\human\\AppData\\Local\\Temp\\fixture\\home\\.codex\\hooks.json:pre_tool_use:0:0']\n"
   + 'trusted_hash = ' + hash('c') + '\nenabled = true\n';
 // Unchanged personal multiline values whose text looks like hook tables.
 const multiline = 'developer_instructions = """\nKeep it short. \\"""\n'
-  + '[hooks.state."command-guard@hskills-guard:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = "x"\n'
+  + '[hooks.state."command-guard@hskills:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = "x"\n'
   + 'Ends with quotes.""""\nnotes = \'\'\'\n[plugins."fake"]\n"""\n\'\'\' # comment with \'\'\'\n';
 const config = path.join(home, '.codex/config.toml');
 const file = path.join(home, '.hskills/plugins.json');
@@ -82,7 +82,7 @@ try {
   const human = "\n[hooks.state.'C:\\Users\\human\\.codex\\hooks.json:pre_tool_use:0:0']\nenabled = false\n";
   const preexisting = 'hide_agent_reasoning = true\n' + human + '\n[personal]\nvalue = true\n';
   const writer = 'hide_agent_reasoning = true\n\n[hooks.state]\n' + human
-    + '\n[hooks.state."command-guard@hskills-guard:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = ' + hash('a') + '\ntrusted_content_hash = ' + hash('b') + '\n'
+    + '\n[hooks.state."command-guard@hskills:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = ' + hash('a') + '\ntrusted_content_hash = ' + hash('b') + '\n'
     + '\n[personal]\nvalue = true\n' + plugin;
   assert.equal(uninstall(preexisting, preexisting + plugin, writer), true);
   const kept = fs.readFileSync(config, 'utf8');

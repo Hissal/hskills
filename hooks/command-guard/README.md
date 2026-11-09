@@ -34,13 +34,13 @@ acceptance](../../research/live-hooks-120.md).
 node scripts/install/install.js install
 ```
 
-This copies a snapshot to `~/.agents/command-guard`, fires each adapter once, and registers the hooks only when that check passes:
+This copies the guard to `~/.agents/command-guard`, fires each adapter once, and registers the hooks only when that check passes:
 
-- **Claude Code**: hooks-only plugin registered from a content-addressed snapshot.
-- **Codex**: the same snapshot through its plugin API. Review new or changed hooks in `/hooks`; installation grants no trust.
+- **Claude Code**: the hooks-only `command-guard@hskills` plugin, from this checkout's `hskills` marketplace.
+- **Codex**: the same plugin through its plugin API. Review new or changed hooks in `/hooks`; installation grants no trust.
 - **OpenCode**: `~/.config/opencode/plugins/command-guard.js`, a v2 plugin that rejects the call in `tool.execute.before` and, for human-required commands, also denies the `shell` permission in `permission.evaluate`. A running OpenCode server picks it up on restart.
 
-The installed guard is a copy, so switching branches here cannot break running sessions. Rerun the installer after changing the guard. The first write to each settings file leaves a `.before-command-guard` copy beside it.
+The plugin follows this checkout, like linked skills: Claude reads `hooks/command-guard` in place, so an edit or branch switch here reaches its next session, and Codex runs the copy it made at install, so rerun the installer to refresh it. For a guard that holds still while you work, install from a checkout you do not work in, or work in a worktree. OpenCode runs the `~/.agents/command-guard` copy; rerun the installer after changing the guard. The first write to each settings file leaves a `.before-command-guard` copy beside it.
 
 ## When the guard breaks or blocks something you want
 
@@ -69,7 +69,7 @@ A project may add rules in `.agents/config/command-guard.json`, shaped like `rul
 
 ## Plugin delivery
 
-The hooks-only guard is listed in this repository's marketplace. For snapshot
-preparation, use [the install command](../../docs/user-install.md#register-the-guard-plugin).
+The hooks-only guard is listed in this repository's `hskills` marketplace beside
+the skill plugins. To register it, use [the install command](../../docs/user-install.md#register-the-guard-plugin).
 When implementing registration, migration, or live acceptance, read
 [guard plugin evidence and completion criteria](../../research/guard-plugin-install.md).

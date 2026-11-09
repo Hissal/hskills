@@ -34,12 +34,15 @@ try {
 
 
   const doubles = require('./doubles')(home);
+  const { guardCheckout } = require('./doubles');
   const claude = real ? '/home/agent/.local/bin/claude' : doubles.claude;
   const codex = real ? '/home/agent/.npm-global/bin/codex' : doubles.codex;
   const cli = path.resolve(__dirname, '../install.js');
-  const source = path.join(home, 'source');
-  fs.cpSync(path.resolve(__dirname, '../../../hooks/command-guard'), path.join(source, 'hooks/command-guard'), { recursive: true });
-  const run = () => spawnSync(process.execPath, [cli, 'prepare-plugin', '--home', home, '--source', source], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex } });
+  const source = guardCheckout(path.join(home, 'source'));
+  const guard = path.join(source, 'hooks/command-guard');
+  const hostEnv = dir => ({ ...process.env, HOME: dir, USERPROFILE: dir, CLAUDE_CONFIG_DIR: path.join(dir, '.claude'), CODEX_HOME: path.join(dir, '.codex'), XDG_CONFIG_HOME: path.join(dir, '.config') });
+  const host = (bin, args, dir) => spawnSync(bin.endsWith('.cjs') ? process.execPath : bin, bin.endsWith('.cjs') ? [bin, ...args] : args, { encoding: 'utf8', env: hostEnv(dir), cwd: dir });
+  const run = (from = source) => spawnSync(process.execPath, [cli, 'register-guard', '--home', home, '--source', from], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex } });
   const legacy = spawnSync(process.execPath, [path.resolve(__dirname, '../../../hooks/command-guard/install.js'), '--home', home], { encoding: 'utf8' });
   assert.equal(legacy.status, 1); // Codex trust remains pending
   const settings = path.join(home, '.claude/settings.json');
@@ -49,7 +52,7 @@ try {
   const before = fs.readFileSync(settings, 'utf8');
   const broken = path.join(home, 'broken-claude.cjs');
   fs.writeFileSync(broken, '#!/usr/bin/env node\nconst {spawnSync}=require("child_process"); const args=process.argv.slice(2); if(args[1]==="install")process.exit(9); const bin=' + JSON.stringify(claude) + '; const r=spawnSync(bin.endsWith(".cjs")?process.execPath:bin,bin.endsWith(".cjs")?[bin,...args]:args,{stdio:"inherit"});process.exit(r.status);\n', { mode: 0o755 });
-  const fail = spawnSync(process.execPath, [cli, 'prepare-plugin', '--home', home, '--source', source], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: broken } });
+  const fail = spawnSync(process.execPath, [cli, 'register-guard', '--home', home, '--source', source], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: broken } });
   assert.equal(fail.status, 1);
   assert.equal(fs.readFileSync(settings, 'utf8'), before);
   const result = run();
@@ -61,27 +64,28 @@ try {
   if (!real) assert.match(result.stdout, /legacy fallback: enabled\/untrusted/);
   const record = JSON.parse(fs.readFileSync(path.join(home, '.hskills/plugins.json')));
   assert.equal(record.hosts.length, 2);
-  for (const host of record.hosts) assert.ok(host.snapshot.startsWith(home));
+  for (const h of record.hosts) assert.equal(h.source, guard);
   assert.deepEqual(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse[0].hooks, [{ type: 'command', command: 'echo personal' }]);
   const codexHooks = path.join(home, '.codex/hooks.json');
   const fallback = fs.readFileSync(codexHooks);
   assert.match(fallback.toString(), /command-guard/);
   const claudeHome = path.join(home, 'claude-only');
   fs.mkdirSync(claudeHome);
-  const claudeOnly = spawnSync(process.execPath, [cli, 'prepare-plugin', '--home', claudeHome, '--source', source], {
+  const claudeOnly = spawnSync(process.execPath, [cli, 'register-guard', '--home', claudeHome, '--source', source], {
     encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: claude }
   });
   assert.equal(claudeOnly.status, 0, claudeOnly.stdout + claudeOnly.stderr);
+  // An hskills marketplace another checkout registered stays that checkout's.
   const occupiedHome = path.join(home, 'occupied-home');
-  const occupied = path.join(occupiedHome, '.hskills/plugin-cache', path.basename(record.hosts[0].snapshot));
-  fs.cpSync(record.hosts[0].snapshot, occupied, { recursive: true });
-  fs.unlinkSync(path.join(occupied, '.claude-plugin/marketplace.json'));
-  const existingAdapter = fs.readFileSync(path.join(occupied, 'adapters/codex.js'));
-  const occupiedRun = spawnSync(process.execPath, [cli, 'prepare-plugin', '--home', occupiedHome, '--source', source], { encoding: 'utf8' });
-  assert.match(occupiedRun.stdout + occupiedRun.stderr, /CONFLICT/);
-  assert.equal(fs.existsSync(path.join(occupiedHome, '.hskills/plugins.json')), false);
-  spawnSync(process.execPath, [cli, 'uninstall', '--home', occupiedHome]);
-  assert.deepEqual(fs.readFileSync(path.join(occupied, 'adapters/codex.js')), existingAdapter);
+  fs.mkdirSync(path.join(occupiedHome, '.codex'), { recursive: true });
+  const other = guardCheckout(path.join(home, 'other-checkout'));
+  assert.equal(host(claude, ['plugin', 'marketplace', 'add', other, '--json'], occupiedHome).status, 0);
+  const occupiedRun = spawnSync(process.execPath, [cli, 'register-guard', '--home', occupiedHome, '--source', source], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex } });
+  assert.equal(occupiedRun.status, 1, occupiedRun.stdout + occupiedRun.stderr);
+  assert.match(occupiedRun.stderr, /CONFLICT claude marketplace hskills is registered from .*other-checkout/);
+  const kept = JSON.parse(host(claude, ['plugin', 'marketplace', 'list', '--json'], occupiedHome).stdout).find(m => m.name === 'hskills');
+  assert.equal(fs.realpathSync(kept.path), fs.realpathSync(other));
+  assert.doesNotMatch(host(claude, ['plugin', 'list', '--json'], occupiedHome).stdout, /command-guard@hskills/);
   if (!real) {
     fs.writeFileSync(path.join(home, '.codex/status-unavailable'), 'fixture status failure');
     const unavailable = run();
@@ -104,11 +108,27 @@ try {
   assert.ok(!fs.readFileSync(codexHooks, 'utf8').includes('/command-guard/adapters/'));
   }
   assert.match(again.stdout, /REGISTERED claude/, again.stderr);
-  fs.appendFileSync(path.join(source, 'hooks/command-guard/adapters/claude-code.js'), '\n// updated source\n');
+  // Another spelling of this checkout is still this checkout: a link to it and,
+  // where the filesystem ignores case, the same path in other case.
+  const link = path.join(home, 'source-link');
+  fs.symlinkSync(source, link, 'junction');
+  const upper = path.join(home, 'SOURCE');
+  for (const spelling of fs.existsSync(upper) ? [link, upper] : [link]) {
+    const respelled = run(spelling);
+    assert.doesNotMatch(respelled.stdout + respelled.stderr, /CONFLICT|FAIL/, spelling);
+    assert.match(respelled.stdout, /REGISTERED claude/, respelled.stdout + respelled.stderr);
+    assert.match(respelled.stdout, /REGISTERED codex/, respelled.stdout + respelled.stderr);
+  }
+  // The registration follows the checkout; a rerun refreshes Codex's copy of it.
+  fs.appendFileSync(path.join(guard, 'adapters/claude-code.js'), '\n// updated source\n');
   const updated = run();
   assert.match(updated.stdout, /REGISTERED claude/, updated.stderr);
   assert.match(updated.stdout, /REGISTERED codex/, updated.stdout + updated.stderr);
-  assert.ok(JSON.parse(fs.readFileSync(path.join(home, '.hskills/plugins.json'))).hosts.every(h => h.snapshot !== record.hosts[0].snapshot), updated.stdout + updated.stderr);
+  assert.ok(JSON.parse(fs.readFileSync(path.join(home, '.hskills/plugins.json'))).hosts.every(h => h.source === guard), updated.stdout + updated.stderr);
+  if (real) {
+    const copy = path.join(home, '.codex/plugins/cache/hskills/command-guard', JSON.parse(fs.readFileSync(path.join(guard, '.codex-plugin/plugin.json'))).version, 'adapters/claude-code.js');
+    assert.deepEqual(fs.readFileSync(copy), fs.readFileSync(path.join(guard, 'adapters/claude-code.js')));
+  }
   fs.writeFileSync(path.join(source, 'collection.json'), JSON.stringify({core: [], packs: {}, expensive: []}));
   const normal = spawnSync(process.execPath, [cli, 'install', '--home', home, '--source', source], {encoding: 'utf8', env: {...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex}});
   assert.match(normal.stdout, /REGISTERED codex/, normal.stdout + normal.stderr);
@@ -117,7 +137,7 @@ try {
     const saved = tempDir('trust-baseline-');
     fs.cpSync(home, saved, { recursive: true });
     // Native Windows writer shape: bare parent, basic plugin key, literal backslash key.
-    const trust = '[hooks.state]\n\n[hooks.state."command-guard@hskills-guard:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = "sha256:' + 'a'.repeat(64) + '"\ntrusted_content_hash = "sha256:' + 'b'.repeat(64) + '"\nenabled = true\n'
+    const trust = '[hooks.state]\n\n[hooks.state."command-guard@hskills:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = "sha256:' + 'a'.repeat(64) + '"\ntrusted_content_hash = "sha256:' + 'b'.repeat(64) + '"\nenabled = true\n'
       + "\n[hooks.state.'C:\\Users\\human\\.codex\\hooks.json:pre_tool_use:0:0']\ntrusted_hash = \"sha256:" + 'c'.repeat(64) + '"\nenabled = true\n';
     fs.appendFileSync(config, '\n' + trust);
     const trustedAgain = run();
@@ -146,21 +166,9 @@ try {
   spawnSync(process.execPath, [cli, 'uninstall', '--home', home]);
   assert.deepEqual(fs.readFileSync(config), personal);
   fs.writeFileSync(config, installedConfig);
-  const latest = JSON.parse(fs.readFileSync(path.join(home, '.hskills/plugins.json')));
-  const extra = path.join(latest.hosts[0].snapshot, 'adapters/personal.txt');
-  fs.writeFileSync(extra, 'personal snapshot addition');
-  const extraRun = run();
-  assert.match(extraRun.stdout + extraRun.stderr, /CONFLICT/);
-  const kept = spawnSync(process.execPath, [cli, 'uninstall', '--home', home], { encoding: 'utf8' });
-  assert.equal(kept.status, 1, kept.stdout + kept.stderr);
-  assert.match(kept.stdout, /CONFLICT non-empty directory preserved: .*adapters/);
-  assert.equal(fs.readFileSync(extra, 'utf8'), 'personal snapshot addition');
-  fs.unlinkSync(extra);
-
   const uninstall = spawnSync(process.execPath, [cli, 'uninstall', '--home', home], { encoding: 'utf8' });
   assert.equal(uninstall.status, 0, uninstall.stdout + uninstall.stderr);
-  // Both the updated and the superseded snapshot trees are gone.
-  for (const snapshot of [latest.hosts[0].snapshot, record.hosts[0].snapshot]) assert.equal(fs.existsSync(snapshot), false, snapshot);
+  for (const bin of [claude, codex]) assert.doesNotMatch(host(bin, ['plugin', 'list', '--json'], home).stdout, /command-guard@hskills/);
   assert.ok(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse.every(g => g.hooks.every(h => h.command === 'echo personal')));
 
   console.log('plugin ' + (real ? 'real CLI' : 'CLI boundary') + ' registration, rollback, migration, update and uninstall passed');

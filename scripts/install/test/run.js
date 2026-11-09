@@ -4,6 +4,7 @@ const path = require('path');
 const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
 const { tempDir, testRunDir } = require('../../test-util');
+const { guardCheckout } = require('./doubles');
 const cli = path.resolve(__dirname, '../install.js');
 const cases = [
   ...(process.platform === 'win32' ? [false, true].map(deny => [
@@ -91,30 +92,18 @@ fs.symlinkSync = function(target, dest, type) {
     assert.equal(fs.existsSync(path.join(f.home, '.agents/command-guard')), false);
     assert.equal(fs.existsSync(path.join(f.home, '.claude/settings.json')), false);
   }],
-  ['plugin preparation preserves working registration and snapshots', (f) => {
+  ['a failed guard registration preserves working registration', (f) => {
     f.run(0);
     const settings = path.join(f.home, '.claude/settings.json');
     const before = fs.readFileSync(settings, 'utf8');
     f.env = { ...process.env, COMMAND_GUARD_CLAUDE: '/does-not-exist' };
-    fs.cpSync(path.resolve(__dirname, '../../../hooks/command-guard'), path.join(f.repo, 'hooks/command-guard'), { recursive: true });
-    f.run(1, 'prepare-plugin');
-    assert.match(f.last.stderr, /FAIL prepare-plugin/);
-    assert.equal(fs.readFileSync(settings, 'utf8'), before);
-    const cache = path.join(f.home, '.hskills/plugin-cache');
-    const versions = fs.readdirSync(cache);
-    assert.equal(versions.length, 1);
-    const snapshot = path.join(cache, versions[0]);
-    assert.ok(fs.existsSync(path.join(snapshot, 'adapters/codex.js')));
-    const adapter = path.join(snapshot, 'adapters/claude-code.js');
-    const probe = command => spawnSync(process.execPath, [adapter], {
-      input: JSON.stringify({cwd: f.home, tool_name: 'Bash', tool_input: {command}}),
-      env: {...process.env, COMMAND_GUARD_STATE: path.join(f.home, 'state')}, encoding: 'utf8'
-    });
-    assert.match(probe('git push --force origin main').stdout, /HUMAN-REQUIRED/);
-    assert.equal(probe('git status').stdout, '');
-    f.run(1, 'prepare-plugin');
-    assert.deepEqual(fs.readdirSync(cache), versions);
-    assert.equal(fs.readFileSync(settings, 'utf8'), before);
+    guardCheckout(f.repo);
+    for (let run = 0; run < 2; run++) {
+      f.run(1, 'register-guard');
+      assert.match(f.last.stderr, /FAIL register-guard/);
+      assert.equal(fs.readFileSync(settings, 'utf8'), before);
+      assert.deepEqual(JSON.parse(fs.readFileSync(path.join(f.home, '.hskills/plugins.json'))).hosts, []);
+    }
   }],
   ['combined selections and steering survive guard uninstall', f => {
     const project = path.join(f.home, 'project');

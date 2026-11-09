@@ -29,6 +29,10 @@ def write(file, text, mode='w'):
         f.write(text)
 
 
+def listing(checkout):
+    return json.loads(read(os.path.join(checkout, '.claude-plugin', 'marketplace.json')))
+
+
 if args[:1] == ['app-server']:
     if exists('status-unavailable'):
         sys.exit(1)
@@ -49,26 +53,42 @@ if args[:1] == ['app-server']:
                 user = [{'source': 'user', **({'command': h['command']} if 'command' in h else {}), 'enabled': True,
                          'trustStatus': 'trusted' if exists('legacy-trusted') else 'untrusted'}
                         for g in groups for h in (g.get('hooks') or [])]
-            hooks = [{'source': 'plugin', 'pluginId': 'command-guard@hskills-guard', 'enabled': True,
+            hooks = [{'source': 'plugin', 'pluginId': 'command-guard@hskills', 'enabled': True,
                       'trustStatus': 'trusted' if exists('human-trusted') else 'untrusted'}, *user]
             print(dump({'id': 2, 'result': {'data': [{'hooks': hooks, 'errors': []}]}}), flush=True)
 else:
     output = {}
     command = arg(1)
     if command == 'marketplace':
+        current = json.loads(read(market)) if os.path.exists(market) else None
         if arg(2) == 'add':
-            write(market, dump({} if arg(3) is None else {'source': arg(3)}))
-        elif arg(2) == 'remove':
-            os.unlink(market)
+            name = listing(arg(3))['name']
+            # Like the real hosts: Claude re-points a known name to the path as given;
+            # Codex records the resolved path and refuses a different directory.
+            source = os.path.realpath(arg(3)) if host == 'codex' else arg(3)
+            if host == 'codex' and current and current['name'] == name and current['source'] != source:
+                print("Error: marketplace '" + name + "' is already added from a different source", file=sys.stderr)
+                sys.exit(1)
+            write(market, dump({'name': name, 'source': source}))
+        elif arg(2) == 'list':
+            known = [current] if current else []
+            output = ({'marketplaces': [{'name': m['name'], 'root': m['source']} for m in known]} if host == 'codex'
+                      else [{'name': m['name'], 'source': 'directory', 'path': m['source']} for m in known])
     elif command in ('add', 'install'):
-        source = json.loads(read(market))['source']
-        write(installed, dump({'id': 'command-guard@hskills-guard', 'pluginId': 'command-guard@hskills-guard',
-                               'enabled': True, 'readFromFolder': source, 'source': {'path': source}}))
+        current = json.loads(read(market))
+        name, source = current['name'], current['source']
+        entry = next((p for p in listing(source)['plugins'] if p['name'] + '@' + name == arg(2)), None)
+        if entry is None:
+            print('Error: plugin not found: ' + str(arg(2)), file=sys.stderr)
+            sys.exit(1)
+        folder = os.path.abspath(os.path.join(source, entry['source']))
+        write(installed, dump({'pluginId': arg(2), 'enabled': True, 'source': {'source': 'local', 'path': folder}}
+                              if host == 'codex' else {'id': arg(2), 'enabled': True, 'readFromFolder': folder}))
         config = os.path.join(root, 'config.toml' if host == 'codex' else 'settings.json')
         if not os.path.exists(config):
             write(config, '# installed\n' if host == 'codex' else '{}')
-        if host == 'codex' and '[plugins."command-guard@hskills-guard"]' not in read(config):
-            write(config, '\n[plugins."command-guard@hskills-guard"]\nenabled = true\n', 'a')
+        if host == 'codex' and '[plugins."' + arg(2) + '"]' not in read(config):
+            write(config, '\n[plugins."' + arg(2) + '"]\nenabled = true\n', 'a')
     elif command == 'list':
         listed = [json.loads(read(installed))] if os.path.exists(installed) else []
         output = {'installed': listed} if host == 'codex' else listed

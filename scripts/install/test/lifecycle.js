@@ -7,10 +7,11 @@ const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
 const { tempDir, testRunDir } = require('../../test-util');
 const hostDoubles = require('./doubles');
+const { guardCheckout } = hostDoubles;
 const cli = path.resolve(__dirname, '../install.js');
 const hash = c => '"sha256:' + c.repeat(64) + '"';
 // Native writer output after human /hooks review: bare parent, basic plugin key, literal user key.
-const trust = '\n[hooks.state]\n\n[hooks.state."command-guard@hskills-guard:hooks/codex.json:pre_tool_use:0:0"]\n'
+const trust = '\n[hooks.state]\n\n[hooks.state."command-guard@hskills:hooks/codex.json:pre_tool_use:0:0"]\n'
   + 'trusted_hash = ' + hash('a') + '\ntrusted_content_hash = ' + hash('b') + '\nenabled = true\n'
   + "\n[hooks.state.'C:\\Users\\human\\AppData\\Local\\Temp\\fixture\\home\\.codex\\hooks.json:pre_tool_use:0:0']\n"
   + 'trusted_hash = ' + hash('c') + '\nenabled = true\n';
@@ -23,8 +24,7 @@ function fixture(name) {
   fs.mkdirSync(path.join(home, '.codex'));
   fs.writeFileSync(path.join(home, '.codex/config.toml'), personal);
   const doubles = hostDoubles(home);
-  const source = path.join(home, 'source');
-  fs.cpSync(path.resolve(__dirname, '../../../hooks/command-guard'), path.join(source, 'hooks/command-guard'), { recursive: true });
+  const source = guardCheckout(path.join(home, 'source'));
   // The human already reviewed the plugin hook in /hooks.
   fs.writeFileSync(path.join(home, '.codex/human-trusted'), 'human fixture decision');
   const env = { ...process.env, COMMAND_GUARD_CLAUDE: doubles.claude, COMMAND_GUARD_CODEX: doubles.codex };
@@ -32,35 +32,16 @@ function fixture(name) {
     home, source,
     config: path.join(home, '.codex/config.toml'),
     journal: path.join(home, '.hskills/plugins.json'),
-    cache: path.join(home, '.hskills/plugin-cache'),
-    run(command, extraEnv = {}) {
-      const args = command === 'install' ? ['prepare-plugin', '--home', home, '--source', source] : [command, '--home', home];
+    run(command, extraEnv = {}, checkout = source) {
+      const args = command === 'install' ? ['register-guard', '--home', home, '--source', checkout] : [command, '--home', home];
       const r = spawnSync(process.execPath, [cli, ...args], { encoding: 'utf8', env: { ...env, ...extraEnv } });
       return { status: r.status, output: r.stdout + r.stderr };
     },
-    ok(command) { const r = f.run(command); assert.equal(r.status, 0, command + '\n' + r.output); return r; },
-    snapshot() { return JSON.parse(fs.readFileSync(f.journal)).hosts[0].snapshot; },
+    ok(command, checkout) { const r = f.run(command, {}, checkout); assert.equal(r.status, 0, command + '\n' + r.output); return r; },
   };
   return f;
 }
 const cases = [
-  ['directory removal errors leave a journal that supports retry', f => {
-    f.ok('install');
-    const preload = path.join(f.home, 'busy-directory.cjs');
-    fs.writeFileSync(preload, `const fs = require('fs'); const remove = fs.rmdirSync;
-fs.rmdirSync = function(dir, ...args) {
-  if (String(dir).includes('plugin-cache')) throw Object.assign(new Error('fixture directory busy'), { code: 'EBUSY' });
-  return remove.call(this, dir, ...args);
-};\n`);
-    const result = f.run('uninstall', { NODE_OPTIONS: '--require ' + JSON.stringify(preload) });
-    assert.equal(result.status, 1, result.output);
-    assert.match(result.output, /fixture directory busy/);
-    const record = JSON.parse(fs.readFileSync(f.journal));
-    assert.deepEqual(record.writes, [], 'deleted files must no longer be recorded');
-    assert.ok(record.directories.length, 'failed directory removal remains recorded');
-    f.ok('uninstall');
-    assert.equal(fs.existsSync(f.cache), false);
-  }],
   ['native trust and Codex preferences survive repeated reinstall and uninstall', f => {
     for (let cycle = 0; cycle < 3; cycle++) {
       f.ok('install');
@@ -78,7 +59,7 @@ fs.rmdirSync = function(dir, ...args) {
       assert.ok(kept.includes(trust.trim()), kept);
       assert.ok(kept.includes(preferences.trim()), kept);
       assert.doesNotMatch(kept, /\[plugins\.|\[marketplaces\./);
-      assert.equal(fs.existsSync(f.cache), false, 'installer-created snapshot tree removed');
+      assert.deepEqual(JSON.parse(fs.readFileSync(f.journal)).writes, [], 'every recorded write removed');
     }
   }],
   ['an unknown Codex preference beside trust stays a whole-file conflict', f => {
@@ -93,69 +74,32 @@ fs.rmdirSync = function(dir, ...args) {
       assert.deepEqual(fs.readFileSync(f.journal), journal);
     }
   }],
-  ['same-snapshot reinstall after uninstall, then doctor and uninstall', f => {
+  ['reinstall after uninstall, then doctor and uninstall', f => {
     f.ok('install');
-    const snapshot = f.snapshot();
     f.ok('uninstall');
-    assert.equal(fs.existsSync(snapshot), false);
     f.ok('install');
-    assert.equal(f.snapshot(), snapshot);
     f.ok('doctor');
     f.ok('uninstall');
-    assert.equal(fs.existsSync(f.cache), false);
+    assert.deepEqual(JSON.parse(fs.readFileSync(f.journal)).writes, []);
   }],
-  ['user entries in the snapshot tree are preserved, never deleted', f => {
+  ['another checkout is a conflict until uninstall, then registers in its place', f => {
     f.ok('install');
-    const snapshot = f.snapshot();
-    fs.mkdirSync(path.join(snapshot, 'rules/personal-empty'));
-    fs.writeFileSync(path.join(snapshot, 'adapters/personal.txt'), 'personal');
-    const r = f.run('uninstall');
+    const other = guardCheckout(path.join(f.home, 'other'));
+    const owned = () => { const { hosts, writes } = JSON.parse(fs.readFileSync(f.journal)); return { hosts, writes }; };
+    const before = owned();
+    const r = f.run('install', {}, other);
     assert.equal(r.status, 1, r.output);
-    assert.match(r.output, /CONFLICT non-empty directory preserved: .*rules/);
-    assert.equal(fs.readFileSync(path.join(snapshot, 'adapters/personal.txt'), 'utf8'), 'personal');
-    assert.ok(fs.statSync(path.join(snapshot, 'rules/personal-empty')).isDirectory());
-    assert.deepEqual(fs.readdirSync(path.join(snapshot, 'adapters')), ['personal.txt']);
-    // Reinstall refuses the user's entries rather than adopting them.
-    assert.match(f.run('install').output, /CONFLICT unrecorded plugin snapshot entry/);
-    assert.equal(fs.readFileSync(path.join(snapshot, 'adapters/personal.txt'), 'utf8'), 'personal');
-    // A recorded directory replaced by a symlink is preserved with its target.
-    fs.rmSync(path.join(snapshot, 'rules/personal-empty'), { recursive: true });
-    fs.unlinkSync(path.join(snapshot, 'adapters/personal.txt'));
-    if (process.platform !== 'win32') {
-      const outside = path.join(f.home, 'outside');
-      fs.mkdirSync(outside);
-      fs.writeFileSync(path.join(outside, 'kept.txt'), 'kept');
-      fs.rmdirSync(path.join(snapshot, 'adapters'));
-      fs.symlinkSync(outside, path.join(snapshot, 'adapters'));
-      const replaced = f.run('uninstall');
-      assert.equal(replaced.status, 1, replaced.output);
-      assert.match(replaced.output, /CONFLICT replaced directory preserved: .*adapters/);
-      assert.ok(fs.lstatSync(path.join(snapshot, 'adapters')).isSymbolicLink());
-      assert.equal(fs.readFileSync(path.join(outside, 'kept.txt'), 'utf8'), 'kept');
-      fs.unlinkSync(path.join(snapshot, 'adapters'));
-    }
-    // Once emptied, the recorded tree is the installer's again: same-snapshot reinstall works.
-    f.ok('install');
-    f.ok('doctor');
+    assert.match(r.output, /CONFLICT claude marketplace hskills is registered from .*source/);
+    assert.deepEqual(owned(), before);
     f.ok('uninstall');
-    assert.equal(fs.existsSync(snapshot), false);
-  }],
-  ['a legacy journal derives directory provenance from its recorded snapshot files', f => {
-    f.ok('install');
-    const snapshot = f.snapshot();
-    const legacy = JSON.parse(fs.readFileSync(f.journal));
-    delete legacy.directories;
-    fs.writeFileSync(f.journal, JSON.stringify(legacy, null, 2) + '\n');
-    f.ok('uninstall');
-    assert.equal(fs.existsSync(snapshot), false);
-    f.ok('install');
+    f.ok('install', other);
+    assert.ok(JSON.parse(fs.readFileSync(f.journal)).hosts.every(h => h.source === path.join(other, 'hooks/command-guard')));
     f.ok('doctor');
     f.ok('uninstall');
   }],
   ['ancestor directory links preserve matching external files and the journal', f => {
     f.ok('install');
-    const snapshot = f.snapshot();
-    for (const original of [path.join(snapshot, 'adapters'), path.join(f.home, '.claude/plugins')]) {
+    for (const original of [path.join(f.home, '.claude/plugins'), path.join(f.home, '.codex/plugins')]) {
       const outside = path.join(f.home, 'external-' + path.basename(original));
       fs.renameSync(original, outside);
       fs.symlinkSync(outside, original, process.platform === 'win32' ? 'junction' : 'dir');
@@ -191,19 +135,6 @@ fs.rmdirSync = function(dir, ...args) {
     assert.match(result.output, /CONFLICT plugin ownership record/);
     assert.ok(fs.lstatSync(f.journal).isSymbolicLink());
     assert.equal(fs.existsSync(outside), false);
-  }],
-  ['an unrecorded empty snapshot tree is never adopted', f => {
-    f.ok('install');
-    const snapshot = f.snapshot();
-    f.ok('uninstall');
-    // The tree an earlier uninstall left behind, with no record of who made it.
-    for (const dir of ['.claude-plugin', 'adapters', 'rules']) fs.mkdirSync(path.join(snapshot, dir), { recursive: true });
-    const r = f.run('install');
-    assert.equal(r.status, 1, r.output);
-    assert.match(r.output, /CONFLICT unrecorded plugin snapshot/);
-    assert.deepEqual(fs.readdirSync(snapshot).sort(), ['.claude-plugin', 'adapters', 'rules']);
-    f.run('uninstall');
-    assert.deepEqual(fs.readdirSync(snapshot).sort(), ['.claude-plugin', 'adapters', 'rules']);
   }],
 ];
 // Cases run by name, so a repeated name would run one case twice and skip the other.

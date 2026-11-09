@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/improve-codebase-architecture`
 - Pinned commit: `49dd158d1076134a641b33efb035946536778336`
 - Licence: MIT
-- Local changes: renamed architecture-review keeping the old ID; scope from reviewing; duplication lens; dark report; stops for the owner's pick and offers only a chosen continuation; subordinate mode; Unity line replaced by a pack-guide extension point
+- Local changes: renamed architecture-review keeping the old ID; scope from reviewing; duplication lens; dark report; stops for the owner's pick and offers only a chosen continuation; subordinate mode; Unity line replaced by a pack-guide extension point; split explorers keep the review's scope and return leads; duplicated ownership; a combine step merges, checks, rates and cuts candidates; behaviour-change and risk lines, an Also found list, a coverage section and a chat summary
 
 ## Licence
 

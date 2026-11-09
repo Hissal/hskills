@@ -7,7 +7,9 @@ The architectural review is rendered as a single self-contained HTML file in the
 - [Candidate card](#candidate-card)
 - [Diagram patterns](#diagram-patterns)
 - [Style guidance](#style-guidance)
+- [Also found](#also-found)
 - [Out-of-scope observations](#out-of-scope-observations)
+- [Coverage](#coverage)
 - [Top recommendation section](#top-recommendation-section)
 - [Tone](#tone)
 
@@ -36,7 +38,9 @@ The architectural review is rendered as a single self-contained HTML file in the
     <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
       <header>...</header>
       <section id="candidates" class="space-y-10">...</section>
+      <section id="also-found">...</section>
       <section id="out-of-scope">...</section>
+      <section id="coverage">...</section>
       <section id="top-recommendation">...</section>
     </main>
   </body>
@@ -61,6 +65,8 @@ Each candidate is one `<article>`:
 - **Solution**: one sentence. What changes.
 - **Wins**: bullets, ≤6 words each. e.g. "Tests hit one interface", "Pricing logic stops leaking", "Delete 4 shallow wrappers".
 - **Duplication** (duplication candidates only): a compact table: the callers (`font-mono text-sm`, file and line), lines removed and added excluding tests, the same including tests, and a one-line **Risk** (never "none").
+- **Behaviour change** (if the card has one): one line in the ADR callout's amber box.
+- **Risk** (if the card has one outside Duplication): one line under the wins.
 - **ADR callout** (if applicable): one line in an amber-tinted box (`bg-amber-500/10 border border-amber-400/40 text-amber-200`).
 
 No paragraphs of explanation. If the diagram needs a paragraph to be understood, redraw the diagram.
@@ -110,9 +116,17 @@ Before: a tree of function calls rendered as nested boxes. After: the same tree 
 - Use `text-xs uppercase tracking-wider` for module labels inside diagrams, so they read as schematic, not as UI.
 - The only scripts are the Tailwind CDN and the Mermaid ESM import. The report is otherwise static: no app code, no interactivity beyond Mermaid's own rendering.
 
+## Also found
+
+Present only when the cut left candidates out: one compact list below the cards, in rank order. Each entry is one line: title, strength badge, the main files (`font-mono`) and one sentence on the friction. No diagrams.
+
 ## Out-of-scope observations
 
 Present only when the review recorded some: one compact list in reviewing's entry format, below the candidates and visually quieter than them (`text-sm text-slate-400`). Pre-existing entries keep their tag and are not counted.
+
+## Coverage
+
+Always present, as quiet as the out-of-scope list (`text-sm text-slate-400`): four short labelled lists, **Read**, **Left alone**, **Declined to judge** and **ADRs**, with the contents step 4 of `SKILL.md` names. A list with nothing in it says "none".
 
 ## Top recommendation section
 

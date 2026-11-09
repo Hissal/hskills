@@ -3,7 +3,7 @@ name: unity-guide
 description: Use when designing, changing, reviewing or diagnosing Unity code, assemblies, serialized data or lifecycle behavior; when a workflow requests Unity-specific knowledge; or when choosing a Unity workflow.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/unity-guide"
+  agent-skills-sync.id: "hissal.hskills/unity-guide"
   opencode/autoinvoke: "true"
 ---
 

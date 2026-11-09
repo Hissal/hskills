@@ -24,8 +24,8 @@ function write(dir, files) {
 // watcher removes the run folder as soon as the runner that made it is gone,
 // whether it exited, timed out or was killed. The run folder is also the
 // tree's temp dir, so the code under test leaves nothing outside it either.
-const RUN_ENV = 'SKILL_COLLECTION_TEST_TMP';
-const RUN_PREFIX = 'skill-collection-test-';
+const RUN_ENV = 'HSKILLS_TEST_TMP';
+const RUN_PREFIX = 'hskills-test-';
 // A run folder this old outlived its watcher too (e.g. both were killed).
 const STALE_MS = 24 * 60 * 60 * 1000;
 const WATCHER = "const fs = require('fs'); const [pid, dir] = process.argv.slice(1);"

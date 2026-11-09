@@ -13,9 +13,14 @@ function parse(text) {
     const valid = object(data) && Object.keys(data).sort().join(',') === 'core,expensive,packs' &&
       list(data.core) && object(data.packs) && list(data.expensive) &&
       Object.entries(data.packs).every(([name, paths]) => new RegExp('^' + slug + '$').test(name) && list(paths));
-    return { data: valid ? data : null, errors: valid ? [] : [
+    if (!valid) return { data: null, errors: [
       'expected exactly core and expensive skill-path arrays and a packs object of named skill-path arrays; see docs/skill-format.md',
     ] };
+    // Pack plugins are named hskills-<pack>, so a pack named core would share core's plugin name.
+    if (Object.hasOwn(data.packs, 'core')) return { data: null, errors: [
+      'pack name core is reserved: its plugin would share the core plugin name hskills-core; see docs/skill-format.md',
+    ] };
+    return { data, errors: [] };
   } catch (e) {
     return { data: null, errors: ['invalid JSON: ' + e.message] };
   }

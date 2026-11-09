@@ -1,13 +1,13 @@
 # Windows install acceptance: spec 2
 
 Use this handoff on a native Windows machine to finish the remaining platform
-acceptance for [#116](https://github.com/Hissal/skill-collection/issues/116),
-[#119](https://github.com/Hissal/skill-collection/issues/119),
-[#120](https://github.com/Hissal/skill-collection/issues/120),
-[#121](https://github.com/Hissal/skill-collection/issues/121) and
-[#127](https://github.com/Hissal/skill-collection/issues/127), under
-[spec #78](https://github.com/Hissal/skill-collection/issues/78).
-Implementation is in [PR #180](https://github.com/Hissal/skill-collection/pull/180).
+acceptance for [#116](https://github.com/Hissal/hskills/issues/116),
+[#119](https://github.com/Hissal/hskills/issues/119),
+[#120](https://github.com/Hissal/hskills/issues/120),
+[#121](https://github.com/Hissal/hskills/issues/121) and
+[#127](https://github.com/Hissal/hskills/issues/127), under
+[spec #78](https://github.com/Hissal/hskills/issues/78).
+Implementation is in [PR #180](https://github.com/Hissal/hskills/pull/180).
 This handoff was written against `5501720`; use the latest PR head, or `main`
 after it merges. A WSL run does not establish native Windows behavior.
 

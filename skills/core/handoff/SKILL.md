@@ -5,7 +5,7 @@ argument-hint: "[thread|subagent] [harness] [model] [effort] [what the next sess
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/handoff"
+  agent-skills-sync.id: "hissal.hskills/handoff"
   opencode/autoinvoke: "false"
 ---
 

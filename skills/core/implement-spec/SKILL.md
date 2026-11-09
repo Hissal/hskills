@@ -4,7 +4,7 @@ description: "Implement the result of /to-spec and /to-tickets in code."
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/implement-spec"
+  agent-skills-sync.id: "hissal.hskills/implement-spec"
   opencode/autoinvoke: "false"
 ---
 

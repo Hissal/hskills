@@ -29,7 +29,7 @@ const lines = (n, prefix) => Array.from({ length: n }, (_, i) => (prefix || 'lin
 // leaves the gate out. A `null` fm value drops that frontmatter key.
 function skillMd(name, o) {
   o = o || {};
-  const fm = Object.assign({ name: ' ' + name, description: ' Use when testing the collection check.', metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/' + name + '"' }, o.fm || {});
+  const fm = Object.assign({ name: ' ' + name, description: ' Use when testing the collection check.', metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.hskills/' + name + '"' }, o.fm || {});
   const gate = o.gate !== undefined ? o.gate : '\n  opencode/autoinvoke: "' + !userInvoked(o) + '"';
   if (fm.metadata !== null && gate !== null) fm.metadata += gate;
   const head = Object.entries(fm).filter(([, v]) => v !== null).map(([k, v]) => k + ':' + v).join('\n');
@@ -242,30 +242,30 @@ module.exports.push({
   output: ['TRIPWIRE always-on: not measured (file absent from collection: missing-steering.txt)'],
 });
 // #95: identity metadata, exercised through the collection CLI.
-module.exports.push({ name: 'missing schema fails', files: skill('skills/core/alpha', { fm: { metadata: '\n  agent-skills-sync.id: "hissal.skill-collection/alpha"' } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'] });
+module.exports.push({ name: 'missing schema fails', files: skill('skills/core/alpha', { fm: { metadata: '\n  agent-skills-sync.id: "hissal.hskills/alpha"' } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'] });
 
 // #95: metadata validation neighbours.
 const metadata = (id, requires, schema) => '\n  agent-skills-sync.schema: ' + (schema === undefined ? '"1"' : schema) + '\n  agent-skills-sync.id: "' + id + '"' + (requires === undefined ? '' : '\n  agent-skills-sync.requires: ' + requires);
 for (const [name, value] of [
-  ['numeric schema', metadata('hissal.skill-collection/alpha', undefined, '1')],
-  ['wrong schema', metadata('hissal.skill-collection/alpha', undefined, '"2"')],
+  ['numeric schema', metadata('hissal.hskills/alpha', undefined, '1')],
+  ['wrong schema', metadata('hissal.hskills/alpha', undefined, '"2"')],
   ['missing ID', '\n  agent-skills-sync.schema: "1"'],
   ['external ID', metadata('other/alpha')],
-  ['non JSON requirements', metadata('hissal.skill-collection/alpha', "'broken'")],
-  ['object requirements', metadata('hissal.skill-collection/alpha', "'{}'")],
-  ['non string requirement', metadata('hissal.skill-collection/alpha', "'[1]'")],
-  ['external requirement', metadata('hissal.skill-collection/alpha', "'[\"other/beta\"]'")],
-  ['raw array requirements', metadata('hissal.skill-collection/alpha', '["hissal.skill-collection/beta"]')],
+  ['non JSON requirements', metadata('hissal.hskills/alpha', "'broken'")],
+  ['object requirements', metadata('hissal.hskills/alpha', "'{}'")],
+  ['non string requirement', metadata('hissal.hskills/alpha', "'[1]'")],
+  ['external requirement', metadata('hissal.hskills/alpha', "'[\"other/beta\"]'")],
+  ['raw array requirements', metadata('hissal.hskills/alpha', '["hissal.hskills/beta"]')],
 ]) module.exports.push({ name: name + ' fails', files: skill('skills/core/alpha', { fm: { metadata: value } }), expect: ['fail skill-metadata skills/core/alpha/SKILL.md'] });
 module.exports.push(
-  { name: 'duplicate ID fails', files: tree(skill('skills/core/alpha'), skill('skills/core/beta', { fm: { metadata: metadata('hissal.skill-collection/alpha') } })), expect: ['fail skill-metadata skills/core/beta/SKILL.md'] },
-  { name: 'renamed folder retains identity', files: skill('skills/packs/web/renamed', { fm: { metadata: metadata('hissal.skill-collection/original', "'[]'") } }), expect: [] },
-  { name: 'empty requirement string passes', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "''") } }), expect: [] },
-  { name: 'unresolved requirement fails', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "'[\"hissal.skill-collection/beta\"]'") }, body: 'Load hissal.skill-collection/beta.\n' }), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
-  { name: 'requirements cross scope', files: tree(skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', "'[\"hissal.skill-collection/beta\"]'") }, body: 'Load hissal.skill-collection/beta.\n' }), skill('skills/packs/web/beta')), expect: [] }
+  { name: 'duplicate ID fails', files: tree(skill('skills/core/alpha'), skill('skills/core/beta', { fm: { metadata: metadata('hissal.hskills/alpha') } })), expect: ['fail skill-metadata skills/core/beta/SKILL.md'] },
+  { name: 'renamed folder retains identity', files: skill('skills/packs/web/renamed', { fm: { metadata: metadata('hissal.hskills/original', "'[]'") } }), expect: [] },
+  { name: 'empty requirement string passes', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.hskills/alpha', "''") } }), expect: [] },
+  { name: 'unresolved requirement fails', files: skill('skills/core/alpha', { fm: { metadata: metadata('hissal.hskills/alpha', "'[\"hissal.hskills/beta\"]'") }, body: 'Load hissal.hskills/beta.\n' }), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
+  { name: 'requirements cross scope', files: tree(skill('skills/core/alpha', { fm: { metadata: metadata('hissal.hskills/alpha', "'[\"hissal.hskills/beta\"]'") }, body: 'Load hissal.hskills/beta.\n' }), skill('skills/packs/web/beta')), expect: [] }
 );
 
-const needing = (dir, id, requirements, body) => skill(dir, { fm: { metadata: metadata('hissal.skill-collection/' + id, "'" + JSON.stringify(requirements.map((r) => 'hissal.skill-collection/' + r)) + "'") }, body: (body === undefined ? 'Do the work.\n' : body) + requirements.map((r) => 'Load hissal.skill-collection/' + r + '.\n').join('') });
+const needing = (dir, id, requirements, body) => skill(dir, { fm: { metadata: metadata('hissal.hskills/' + id, "'" + JSON.stringify(requirements.map((r) => 'hissal.hskills/' + r)) + "'") }, body: (body === undefined ? 'Do the work.\n' : body) + requirements.map((r) => 'Load hissal.hskills/' + r + '.\n').join('') });
 module.exports.push(
   { name: 'self cycle fails', files: needing('skills/core/alpha', 'alpha', ['alpha']), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
   { name: 'multi skill cycle fails', files: tree(needing('skills/core/alpha', 'alpha', ['beta']), needing('skills/packs/web/beta', 'beta', ['alpha'])), expect: ['fail skill-requirements skills/packs/web/beta/SKILL.md'] },
@@ -277,7 +277,7 @@ module.exports.push(
 // #98: runtime requirement IDs belong in the body, not only metadata.
 module.exports.push({
   name: 'a requiring body missing one of two IDs fails',
-  files: tree(skill('skills/core/alpha', { fm: { metadata: metadata('hissal.skill-collection/alpha', '\'["hissal.skill-collection/beta","hissal.skill-collection/gamma"]\'') }, body: 'Load hissal.skill-collection/beta.\n' }), skill('skills/core/beta'), skill('skills/core/gamma')),
+  files: tree(skill('skills/core/alpha', { fm: { metadata: metadata('hissal.hskills/alpha', '\'["hissal.hskills/beta","hissal.hskills/gamma"]\'') }, body: 'Load hissal.hskills/beta.\n' }), skill('skills/core/beta'), skill('skills/core/gamma')),
   expect: ['fail requirement-body-id skills/core/alpha/SKILL.md'],
 });
 
@@ -294,7 +294,7 @@ module.exports.push(
   { name: 'fresh empty dependency catalog passes', files: { 'catalog.json': '{}\n', 'docs/catalog.md': '# Catalog\n\n<!-- BEGIN GENERATED DEPENDENCIES -->\n| Skill ID | Callable / source | Hard requirements |\n|---|---|---|\n<!-- END GENERATED DEPENDENCIES -->\n' }, expect: [] }
 );
 // #97: ID stability against the last release tag (v<version>).
-const withId = (dir, id) => skill(dir, { fm: { metadata: metadata('hissal.skill-collection/' + id) } });
+const withId = (dir, id) => skill(dir, { fm: { metadata: metadata('hissal.hskills/' + id) } });
 const released = tree(skill('skills/core/alpha'), skill('skills/core/beta'));
 module.exports.push(
   { name: 'with no release tag the rule is silent', history: [{ files: released }], committed: skill('skills/core/alpha'), files: withId('skills/core/beta', 'gamma'), expect: [] },
@@ -332,7 +332,7 @@ module.exports.push(
   { name: 'an automatic guide Codex file edited outside its gate fails', files: tree(coreGuide(), autoGuide({ openai: 'interface:\n  display_name: "Guide"\npolicy:\n  allow_implicit_invocation: true\n' })), expect: ['fail automatic-guide-sync ' + AUTO + '/agents/openai.yaml'] },
   { name: 'an automatic guide with an extra file fails', files: tree(coreGuide(), autoGuide({ files: { 'SUPPORT.md': '# Support\n', 'scripts/extra.js': 'x\n' } })), expect: ['fail automatic-guide-sync ' + AUTO + '/scripts/extra.js'] },
   { name: 'an automatic guide with a hand-edited description fails', files: tree(coreGuide(), autoGuide({ fm: { description: ' Use at the start of a task to suggest a workflow.' } })), expect: ['fail automatic-guide-sync ' + AUTO + '/SKILL.md'] },
-  { name: 'an automatic guide keeping the core guide ID fails', files: tree(coreGuide(), autoGuide({ fm: { description: AUTO_DESCRIPTION, metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/guide"' } })), expect: ['fail skill-metadata ' + AUTO + '/SKILL.md', 'fail automatic-guide-sync ' + AUTO + '/SKILL.md'] },
+  { name: 'an automatic guide keeping the core guide ID fails', files: tree(coreGuide(), autoGuide({ fm: { description: AUTO_DESCRIPTION, metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.hskills/guide"' } })), expect: ['fail skill-metadata ' + AUTO + '/SKILL.md', 'fail automatic-guide-sync ' + AUTO + '/SKILL.md'] },
   { name: 'a block-scalar core description is replaced whole', files: tree(coreGuide({ fm: { 'disable-model-invocation': ' true', description: ' |\n  Find the next workflow.' } }), autoGuide()), expect: [] },
   { name: 'a core guide the generator cannot read fails on the core guide', files: tree(coreGuide({ fm: { 'disable-model-invocation': ' true', metadata: '\n  agent-skills-sync.schema: "1"' } }), autoGuide()), expect: ['fail skill-metadata skills/core/guide/SKILL.md', 'fail automatic-guide-sync skills/core/guide/SKILL.md'] },
   { name: 'the generator writes the automatic guide from the core guide', files: tree({ 'collection.json': JSON.stringify({ core: ['skills/core/guide'], packs: { onboarding: [AUTO] }, expensive: [] }) }, coreGuide({ files: { 'SUPPORT.md': '# Support\n', 'refs/MORE.md': '# More\n' }, body: '# Guide\n\nRead [support](SUPPORT.md) and [more](refs/MORE.md).\n' })), before: [GENERATOR], expect: [] },
@@ -376,6 +376,11 @@ for (const data of [
   expect: ['fail collection-manifest collection.json'],
 });
 module.exports.push({
+  name: 'a pack named core fails: its plugin would share core\'s name',
+  files: tree(skill('skills/packs/core/alpha'), { 'collection.json': JSON.stringify({ core: [], packs: { core: ['skills/packs/core/alpha'] }, expensive: [] }) }),
+  expect: ['fail collection-manifest collection.json'],
+});
+module.exports.push({
   name: 'an empty manifest passes before skills are authored',
   files: { 'collection.json': '{"core":[],"packs":{},"expensive":[]}' },
   expect: [],
@@ -414,7 +419,7 @@ for (const [name, body, expect] of [
 module.exports.push({
   name: 'collection check runs install harness: timeout',
   files: { 'scripts/install/test/run.js': 'setTimeout(() => {}, 5000);' },
-  env: { COLLECTION_INSTALL_CASES_TIMEOUT_MS: '1000' },
+  env: { HSKILLS_INSTALL_CASES_TIMEOUT_MS: '1000' },
   expect: ['fail install-cases scripts/install/test/run.js'],
 });
 module.exports.push({
@@ -441,13 +446,13 @@ module.exports.push(
   { name: 'a plugin-listed skill without paths passes', files: tree(skill('skills/packs/web/alpha', { fm: { when_to_use: ' "paths: are mentioned here only"' } }), manifest([], { web: ['skills/packs/web/alpha'] })), expect: [] },
 );
 // requiring(dir, id): a skill that requires `id` and names it in its body
-const requiring = (dir, id) => skill(dir, { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/' + dir.split('/').pop() + '"\n  agent-skills-sync.requires: \'["hissal.skill-collection/' + id + '"]\'' }, body: '# x\n\nLoad hissal.skill-collection/' + id + ' first.\n' });
+const requiring = (dir, id) => skill(dir, { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.hskills/' + dir.split('/').pop() + '"\n  agent-skills-sync.requires: \'["hissal.hskills/' + id + '"]\'' }, body: '# x\n\nLoad hissal.hskills/' + id + ' first.\n' });
 module.exports.push(
   { name: 'a pack requirement in its own pack or core passes', files: tree(requiring('skills/packs/web/alpha', 'beta'), requiring('skills/packs/web/beta', 'gamma'), skill('skills/core/gamma'), manifest(['skills/core/gamma'], { web: ['skills/packs/web/alpha', 'skills/packs/web/beta'] })), expect: [] },
   { name: 'a pack requirement in another pack fails', files: tree(requiring('skills/packs/web/alpha', 'beta'), skill('skills/packs/api/beta'), manifest([], { web: ['skills/packs/web/alpha'], api: ['skills/packs/api/beta'] })), expect: ['fail plugin-requirements skills/packs/web/alpha/SKILL.md'] },
   // The pack skill's ID slug differs from its callable name, so the core skill
   // names only the ID and core-names-pack stays out of this case.
-  { name: 'a core requirement in a pack fails', files: tree(requiring('skills/core/alpha', 'web-knowledge'), skill('skills/packs/web/beta', { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.skill-collection/web-knowledge"' } }), manifest(['skills/core/alpha'], { web: ['skills/packs/web/beta'] })), expect: ['fail plugin-requirements skills/core/alpha/SKILL.md'] },
+  { name: 'a core requirement in a pack fails', files: tree(requiring('skills/core/alpha', 'web-knowledge'), skill('skills/packs/web/beta', { fm: { metadata: '\n  agent-skills-sync.schema: "1"\n  agent-skills-sync.id: "hissal.hskills/web-knowledge"' } }), manifest(['skills/core/alpha'], { web: ['skills/packs/web/beta'] })), expect: ['fail plugin-requirements skills/core/alpha/SKILL.md'] },
   { name: 'an unresolved requirement is skill-requirements, not plugin closure', files: tree(requiring('skills/core/alpha', 'missing'), manifest(['skills/core/alpha'])), expect: ['fail skill-requirements skills/core/alpha/SKILL.md'] },
 );
 // published(lists): generated plugin outputs, written out by hand, for
@@ -458,7 +463,7 @@ const published = (lists) => {
   const plugins = [];
   for (const [group, names] of Object.entries(lists)) {
     const root = group === 'core' ? 'skills/core' : 'skills/packs/' + group;
-    const name = group === 'core' ? 'collection-core' : 'collection-pack-' + group;
+    const name = group === 'core' ? 'hskills-core' : 'hskills-' + group;
     const description = 'Generated ' + group + ' skill list from collection.json.';
     for (const host of ['claude', 'codex']) out[root + '/.' + host + '-plugin/plugin.json'] = json({ name, version: '0.1.0', description, skills: names.map((n) => './' + n) });
     plugins.push({ name, source: './' + root, description, policy: { installation: 'AVAILABLE', authentication: 'ON_INSTALL' }, category: 'Productivity' });

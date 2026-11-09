@@ -4,7 +4,7 @@ description: Rename, move, replace or retire something others depend on without 
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/migrating"
+  agent-skills-sync.id: "hissal.hskills/migrating"
   opencode/autoinvoke: "false"
 ---
 

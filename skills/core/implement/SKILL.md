@@ -4,7 +4,7 @@ description: "Implement a piece of work based on a spec or set of tickets, then 
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/implement"
+  agent-skills-sync.id: "hissal.hskills/implement"
   opencode/autoinvoke: "false"
 ---
 

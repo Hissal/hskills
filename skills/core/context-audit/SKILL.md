@@ -4,7 +4,7 @@ description: Audit everything the agent is told across its context layers, measu
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/context-audit"
+  agent-skills-sync.id: "hissal.hskills/context-audit"
   opencode/autoinvoke: "false"
 ---
 

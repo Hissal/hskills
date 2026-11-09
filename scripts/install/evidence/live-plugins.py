@@ -37,7 +37,7 @@ cli = ['node', str(repo / 'scripts/install/install.js')]
 for step in ['install', 'doctor']:
     run(step, cli + [step, '--home', str(home), '--source', str(source)], env=env)
 subprocess.run(['python3', str(Path(__file__).with_name('plugin-hooks-list.py')), str(root)], check=True)
-record = json.loads((home / '.skill-collection/plugins.json').read_text())
+record = json.loads((home / '.hskills/plugins.json').read_text())
 snapshot = record['hosts'][0]['snapshot']
 project = root / 'project'
 (project / '.agents/config').mkdir(parents=True)
@@ -54,7 +54,7 @@ subprocess.run(['git', '-c', 'user.name=Fixture', '-c', 'user.email=fixture@exam
 assert run('claude-plugin-after', claude + [prompt], project) == 0
 # Ignore user configuration (including its adjacent legacy hooks), retaining
 # normal CODEX_HOME authentication. All plugin configuration is invocation-only.
-codex = ['/home/agent/.npm-global/bin/codex', 'exec', '--ignore-user-config', '--ephemeral', '--skip-git-repo-check', '-s', 'read-only', '-c', 'approval_policy="never"', '-c', 'marketplaces.skill-collection-guard.source_type="local"', '-c', 'marketplaces.skill-collection-guard.source=' + json.dumps(snapshot), '-c', 'plugins."command-guard@skill-collection-guard".enabled=true']
+codex = ['/home/agent/.npm-global/bin/codex', 'exec', '--ignore-user-config', '--ephemeral', '--skip-git-repo-check', '-s', 'read-only', '-c', 'approval_policy="never"', '-c', 'marketplaces.hskills-guard.source_type="local"', '-c', 'marketplaces.hskills-guard.source=' + json.dumps(snapshot), '-c', 'plugins."command-guard@hskills-guard".enabled=true']
 subprocess.run(['python3', str(Path(__file__).with_name('plugin-session.py')), str(root)], check=True)
 run('codex-plugin', codex + [prompt], project)
 assert run('uninstall', cli + ['uninstall', '--home', str(home)], env=env) == 0

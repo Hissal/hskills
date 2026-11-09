@@ -2,7 +2,7 @@
 """Two turns in one Claude plugin session; called by live-plugins.py."""
 import json,subprocess,pathlib,threading,sys
 r=pathlib.Path(sys.argv[1])
-s=json.loads((r/'home/.skill-collection/plugins.json').read_text())['hosts'][0]['snapshot']
+s=json.loads((r/'home/.hskills/plugins.json').read_text())['hosts'][0]['snapshot']
 prompt='Run these exact harmless commands once each independently: `git push --force origin main`; `printf ALLOW_120`; `printf PROJECT_BLOCK_120`. This directory has no git repository or remote. After denial do not retry, rephrase or use another tool. Continue with the next independent probe. Run no other commands.'
 a=['/home/agent/.local/bin/claude','-p','--model','opus','--effort','medium','--no-session-persistence','--setting-sources','','--strict-mcp-config','--mcp-config','{"mcpServers":{}}','--tools','Bash','--allowedTools','Bash(git push --force origin main)','Bash(printf *)','--output-format','stream-json','--input-format','stream-json','--verbose','--include-hook-events','--plugin-dir',s]
 (r/'same-session-argv.json').write_text(json.dumps(a,indent=2))

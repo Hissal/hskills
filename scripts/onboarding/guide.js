@@ -10,7 +10,7 @@ const gates = require('../gates/gates');
 const CORE = 'skills/core/guide';
 const NAME = 'onboarding-guide';
 const DIR = 'skills/packs/onboarding/' + NAME;
-const ID = 'hissal.skill-collection/' + NAME;
+const ID = 'hissal.hskills/' + NAME;
 const DESCRIPTION = 'Use before any work starts to choose a workflow, when none has been invoked and the request needs one (an unclear goal, or a design or planning problem rather than a direct edit), or when an invoked workflow is clearly a poor fit. Not for continuing or resuming work already asked for or underway.';
 const COMMAND = 'node scripts/onboarding/generate.js';
 

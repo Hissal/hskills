@@ -4,7 +4,7 @@ description: Exercise a UI with realistic worst-case data and failure conditions
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/break-ui"
+  agent-skills-sync.id: "hissal.hskills/break-ui"
   opencode/autoinvoke: "false"
 ---
 

@@ -9,7 +9,7 @@ This repo is the only authoring home for every skill in the collection, Matt-der
 
 A Matt-derived skill is copied here from the fork and recorded against `mattpocock/skills` at the commit the fork last merged. The fork's Unity changes become the recorded local changes.
 
-Amended by [#244](https://github.com/Hissal/skill-collection/issues/244): a Matt-derived skill is now copied straight from `mattpocock/skills` at a chosen commit, which is also its pin. The fork differs from upstream only by Unity lines the collection removes, so copying from it added work and nothing else. The fork is no longer a source for core skills; its Unity material reaches the Unity pack through ordinary intake. Entries copied under the earlier rule keep their pins.
+Amended by [#244](https://github.com/Hissal/hskills/issues/244): a Matt-derived skill is now copied straight from `mattpocock/skills` at a chosen commit, which is also its pin. The fork differs from upstream only by Unity lines the collection removes, so copying from it added work and nothing else. The fork is no longer a source for core skills; its Unity material reaches the Unity pack through ordinary intake. Entries copied under the earlier rule keep their pins.
 
 ## Considered Options
 

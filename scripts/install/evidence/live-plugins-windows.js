@@ -231,7 +231,7 @@ async function main() {
     });
   }
   if (step === 'uninstall') {
-    const journal = path.join(home, '.skill-collection/plugins.json');
+    const journal = path.join(home, '.hskills/plugins.json');
     const journalBefore = sha(fs.readFileSync(journal));
     const writes = JSON.parse(fs.readFileSync(journal)).writes;
     const configBefore = codexConfig(home);
@@ -259,7 +259,7 @@ async function main() {
       trustLinesPreserved: !!configAfter && lines(configAfter.trust) === lines(configBefore.trust),
       preferenceTables: { before: preferenceTables(configBefore), after: preferenceTables(configAfter) } };
     // Every directory still under the snapshot cache, empty or not, by relative path.
-    const cache = path.join(home, '.skill-collection/plugin-cache');
+    const cache = path.join(home, '.hskills/plugin-cache');
     const snapshotEntriesRemaining = [];
     (function walk(dir) {
       for (const name of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {

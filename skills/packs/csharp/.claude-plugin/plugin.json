@@ -1,5 +1,5 @@
 {
-  "name": "collection-pack-csharp",
+  "name": "hskills-csharp",
   "version": "0.1.0",
   "description": "Generated csharp skill list from collection.json.",
   "skills": [

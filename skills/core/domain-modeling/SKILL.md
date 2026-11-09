@@ -3,7 +3,7 @@ name: domain-modeling
 description: Use when discussing codebase terminology, writing or editing a GLOSSARY.md, or recording or editing an ADR.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/domain-modeling"
+  agent-skills-sync.id: "hissal.hskills/domain-modeling"
   opencode/autoinvoke: "true"
 ---
 

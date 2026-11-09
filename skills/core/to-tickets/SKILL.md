@@ -4,7 +4,7 @@ description: Break a plan, spec, or the current conversation into a set of trace
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/to-tickets"
+  agent-skills-sync.id: "hissal.hskills/to-tickets"
   opencode/autoinvoke: "false"
 ---
 

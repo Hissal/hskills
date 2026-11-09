@@ -2,8 +2,8 @@
 
 const { value } = require('./frontmatter-value');
 // The personal steering source (spec 2, #118); repository-relative.
-// COLLECTION_ALWAYS_ON_PATH overrides it.
-const alwaysOnPath = process.env.COLLECTION_ALWAYS_ON_PATH || 'steering.md';
+// HSKILLS_ALWAYS_ON_PATH overrides it.
+const alwaysOnPath = process.env.HSKILLS_ALWAYS_ON_PATH || 'steering.md';
 
 function report(c) {
   const layers = new Map([['core', 0]]);

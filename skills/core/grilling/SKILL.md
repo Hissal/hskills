@@ -3,7 +3,7 @@ name: grilling
 description: Use when the user asks to grill, stress-test or poke holes in a plan, decision or idea.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/grilling"
+  agent-skills-sync.id: "hissal.hskills/grilling"
   opencode/autoinvoke: "true"
 ---
 

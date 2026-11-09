@@ -4,7 +4,7 @@ status: accepted
 
 # Skill dependencies use Agent Skills Sync metadata
 
-The [core review](https://github.com/Hissal/skill-collection/issues/45) decides that a skill's identity and hard skill requirements are authored in its `SKILL.md` metadata. Use the tooling-owned namespace `agent-skills-sync.*`, so other repositories can adopt the same contract, with publisher-qualified IDs for the skills themselves. Generate the dependency portion of the collection catalog from these declarations rather than maintain a second authored graph.
+The [core review](https://github.com/Hissal/hskills/issues/45) decides that a skill's identity and hard skill requirements are authored in its `SKILL.md` metadata. Use the tooling-owned namespace `agent-skills-sync.*`, so other repositories can adopt the same contract, with publisher-qualified IDs for the skills themselves. Generate the dependency portion of the collection catalog from these declarations rather than maintain a second authored graph.
 
 This is an installation contract to implement, not a capability of current installers. The [research note](../../research/2026-10-16-skill-dependency-metadata.md) distinguishes existing behavior from proposals; this ADR records the owner's adopted subset.
 
@@ -15,11 +15,13 @@ The Agent Skills specification defines metadata as string keys and string values
 ```yaml
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/example-skill"
-  agent-skills-sync.requires: '["hissal.skill-collection/refactoring"]'
+  agent-skills-sync.id: "hissal.hskills/example-skill"
+  agent-skills-sync.requires: '["hissal.hskills/refactoring"]'
 ```
 
-The example illustrates the fields, not a decided dependency edge. The full schema and validation belong to the implementation specification. `agent-skills-sync.*` identifies the metadata contract; `hissal.skill-collection/` identifies this collection's publisher-qualified skill identities. Other publishers use their own identities under the same keys.
+The example illustrates the fields, not a decided dependency edge. The full schema and validation belong to the implementation specification. `agent-skills-sync.*` identifies the metadata contract; `hissal.hskills/` identifies this collection's publisher-qualified skill identities. Other publishers use their own identities under the same keys.
+
+Amended by [#353](https://github.com/Hissal/hskills/pull/353): the namespace was `hissal.skill-collection/` until the repository was renamed to `hskills`, before the first release.
 
 An ID is independent of the callable name, repository path, core/pack address and installation scope. Moving `teach` from core to study must not change its ID. A release-local catalog maps IDs to source paths. Optional pack lookups, suggestions and related reading are not hard requirements; making them requirements would defeat optional installation.
 
@@ -41,7 +43,7 @@ Installation requirements establish availability, not invocation authority. A us
 
 ## When a requirement is missing at runtime
 
-The [closing review](https://github.com/Hissal/skill-collection/issues/51) decides how a skill behaves while no installer enforces this contract. A skill that declares a hard requirement loads it before doing any work. If the required skill, or the reference file it needs from that skill, cannot be loaded, the skill stops without partial work. It names the missing skill by callable name and ID, and says that ordinary installers such as `npx skills` do not install requirements while `agent-skills-sync` resolves them from this metadata. The runtime check is loadable or not; verifying identity and content stays with the installer.
+The [closing review](https://github.com/Hissal/hskills/issues/51) decides how a skill behaves while no installer enforces this contract. A skill that declares a hard requirement loads it before doing any work. If the required skill, or the reference file it needs from that skill, cannot be loaded, the skill stops without partial work. It names the missing skill by callable name and ID, and says that ordinary installers such as `npx skills` do not install requirements while `agent-skills-sync` resolves them from this metadata. The runtime check is loadable or not; verifying identity and content stays with the installer.
 
 The collection's check script validates hard requirements against the resolved set, not as files local to the calling skill folder.
 

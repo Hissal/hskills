@@ -1,5 +1,5 @@
 {
-  "name": "skill-collection",
+  "name": "hskills",
   "owner": {
     "name": "Hissal"
   },
@@ -15,7 +15,7 @@
       "category": "Productivity"
     },
     {
-      "name": "collection-core",
+      "name": "hskills-core",
       "source": "./skills/core",
       "description": "Generated core skill list from collection.json.",
       "policy": {
@@ -25,7 +25,7 @@
       "category": "Productivity"
     },
     {
-      "name": "collection-pack-csharp",
+      "name": "hskills-csharp",
       "source": "./skills/packs/csharp",
       "description": "Generated csharp skill list from collection.json.",
       "policy": {
@@ -35,7 +35,7 @@
       "category": "Productivity"
     },
     {
-      "name": "collection-pack-experimental",
+      "name": "hskills-experimental",
       "source": "./skills/packs/experimental",
       "description": "Generated experimental skill list from collection.json.",
       "policy": {
@@ -45,7 +45,7 @@
       "category": "Productivity"
     },
     {
-      "name": "collection-pack-onboarding",
+      "name": "hskills-onboarding",
       "source": "./skills/packs/onboarding",
       "description": "Generated onboarding skill list from collection.json.",
       "policy": {
@@ -55,7 +55,7 @@
       "category": "Productivity"
     },
     {
-      "name": "collection-pack-unity",
+      "name": "hskills-unity",
       "source": "./skills/packs/unity",
       "description": "Generated unity skill list from collection.json.",
       "policy": {

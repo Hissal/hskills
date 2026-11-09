@@ -4,7 +4,7 @@ description: Move issues and external PRs through a state machine of triage role
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/triage"
+  agent-skills-sync.id: "hissal.hskills/triage"
   opencode/autoinvoke: "false"
 ---
 

@@ -3,7 +3,7 @@ name: risky-changes
 description: Use when a change changes a public API, transforms or drops data, or changes pricing, quotas, a default, or a provider or model parameter.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/risky-changes"
+  agent-skills-sync.id: "hissal.hskills/risky-changes"
   opencode/autoinvoke: "true"
 ---
 

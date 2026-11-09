@@ -29,7 +29,7 @@ function run(arm, home, args, nodeArgs = []) {
   fs.appendFileSync(path.join(root, `${arm}.log`), `$ install.js ${args.join(' ')}${nodeArgs.length ? ' (preload deny-file-links)' : ''}\nexit ${r.status}\n${r.stdout}${r.stderr}\n`);
   return r;
 }
-const record = home => JSON.parse(fs.readFileSync(path.join(home, '.skill-collection/install.json'), 'utf8'));
+const record = home => JSON.parse(fs.readFileSync(path.join(home, '.hskills/install.json'), 'utf8'));
 // Targets come from the record, so added steering targets are covered unchanged.
 const dests = home => record(home).steering.map(e => e.path);
 const claudeTarget = home => path.join(home, '.claude/CLAUDE.md');

@@ -4,8 +4,8 @@ description: Improve one measured result, such as load, build or test time or al
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/hillclimb"
-  agent-skills-sync.requires: '["hissal.skill-collection/verifying"]'
+  agent-skills-sync.id: "hissal.hskills/hillclimb"
+  agent-skills-sync.requires: '["hissal.hskills/verifying"]'
   opencode/autoinvoke: "false"
 ---
 
@@ -15,12 +15,12 @@ Move one number in one direction through experiments. Each attempt tests one hyp
 
 Done when the stop condition holds, or you have pushed past a plateau and the log says why each untried hypothesis is not worth its cost, or a blocker stops the run; and in every case each attempt has its row in the log, each kept win has its own commit, the log is committed at the stop, and the report gives baseline to final with a verdict from the number reference.
 
-Before doing any work, load verifying (hissal.skill-collection/verifying) and its needed
+Before doing any work, load verifying (hissal.hskills/verifying) and its needed
 reference files through the installed skill listing. Begin work only after all
 requirements and needed references have loaded. If any cannot load, stop
 without partial work and print:
 
-Stopped: required skill verifying (hissal.skill-collection/verifying) could not be loaded
+Stopped: required skill verifying (hissal.hskills/verifying) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
 `npx skills` do not install requirements; `agent-skills-sync` resolves them
 from this metadata. Install or repair the requirement, then retry.

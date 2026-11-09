@@ -3,15 +3,15 @@ name: tally
 description: Use when the user asks to tally the vowels in a list of words into tally.txt.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/eval-tally"
-  agent-skills-sync.requires: '["hissal.skill-collection/eval-tally-rules"]'
+  agent-skills-sync.id: "hissal.hskills/eval-tally"
+  agent-skills-sync.requires: '["hissal.hskills/eval-tally-rules"]'
 ---
-Before doing any work, load tally-rules (hissal.skill-collection/eval-tally-rules)
+Before doing any work, load tally-rules (hissal.hskills/eval-tally-rules)
 and its needed reference files through the installed skill listing. Begin work
 only after all requirements and needed references have loaded. If any cannot
 load, stop without partial work and print:
 
-Stopped: required skill tally-rules (hissal.skill-collection/eval-tally-rules)
+Stopped: required skill tally-rules (hissal.hskills/eval-tally-rules)
 could not be loaded completely. Unavailable: <unloadable-material>. Ordinary
 installers such as `npx skills` do not install requirements; `agent-skills-sync`
 resolves them from this metadata. Install or repair the requirement, then retry.

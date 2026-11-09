@@ -3,8 +3,8 @@ name: unity-testing
 description: Use when writing, choosing or reviewing Unity tests, setting up a test assembly, choosing EditMode or PlayMode, sketching test seams for Unity code, or when a Unity test fails in a way plain C# would not.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/unity-testing"
-  agent-skills-sync.requires: '["hissal.skill-collection/unity-guide"]'
+  agent-skills-sync.id: "hissal.hskills/unity-testing"
+  agent-skills-sync.requires: '["hissal.hskills/unity-guide"]'
   opencode/autoinvoke: "true"
 ---
 
@@ -12,12 +12,12 @@ metadata:
 
 Unity's rules on top of core `tdd`, whose loop, test quality and seam agreement hold unchanged. When a workflow asks, you supply knowledge for its job: a review stays a review, and writes and runs no test.
 
-Before doing any work, load unity-guide (hissal.skill-collection/unity-guide) and its needed
+Before doing any work, load unity-guide (hissal.hskills/unity-guide) and its needed
 reference files through the installed skill listing. Begin work only after all
 requirements and needed references have loaded. If any cannot load, stop
 without partial work and print:
 
-Stopped: required skill unity-guide (hissal.skill-collection/unity-guide) could not be loaded
+Stopped: required skill unity-guide (hissal.hskills/unity-guide) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
 `npx skills` do not install requirements; `agent-skills-sync` resolves them
 from this metadata. Install or repair the requirement, then retry.

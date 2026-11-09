@@ -1,4 +1,4 @@
-# skill-collection
+# hskills
 
 My personal collection of agent skills, gathered from different sources.
 

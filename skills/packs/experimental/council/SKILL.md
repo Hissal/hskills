@@ -5,7 +5,7 @@ disable-model-invocation: true
 argument-hint: "What to review or score, and optionally the council members or a round limit"
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/council"
+  agent-skills-sync.id: "hissal.hskills/council"
   opencode/autoinvoke: "false"
 ---
 

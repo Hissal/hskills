@@ -56,7 +56,7 @@ packs remain installed. A missing remembered pack is an error before link change
 Link one named collection skill into the current Git project:
 
 ```sh
-node /path/to/collection/scripts/install/install.js install --skill tdd
+node /path/to/hskills/scripts/install/install.js install --skill tdd
 # Or select the project explicitly:
 node scripts/install/install.js install --skill tdd --project /path/to/project
 ```
@@ -80,7 +80,7 @@ its descendants, and `git check-ignore` must confirm both link paths are ignored
 
 ## Ownership and repair
 
-`~/.skill-collection/install.json` records each link's absolute path, target
+`~/.hskills/install.json` records each link's absolute path, target
 and type. Preserve this record: losing it makes existing links unrecorded
 conflicts. Install reconciles the recorded set with core and remembered personal extras,
 removing links that left the selection and adding new names. A no-change rerun leaves the
@@ -120,7 +120,7 @@ record. Without opt-in, no steering file is touched.
 The [approved native steering policy and global probe](../research/opencode-install-125.md#approved-native-global-steering-2026-10-31)
 supersede the historical Claude fallback assumption.
 The source follows the current user text: the naming convention and the labels-in-reports line. The unidentifiable historical
-tooling-note requirement was [retired in #118](https://github.com/Hissal/skill-collection/issues/118#issuecomment-6543671754).
+tooling-note requirement was [retired in #118](https://github.com/Hissal/hskills/issues/118#issuecomment-6543671754).
 
 An existing unrecorded entry is a conflict, even a link to this source.
 Move it aside yourself once, preserving any text you need, then rerun.
@@ -198,7 +198,7 @@ configuration directories exist under that home. For plugin preparation or migra
 | Codex | same plugin snapshot | user plugin API; human trust in `/hooks` | enabled effective source; pending trust |
 | OpenCode | snapshot and copied adapter | `.config/opencode/plugins/command-guard.js` | tool block + allow and permission denial |
 
-`HOME/.skill-collection/guard.json` records copied files and exact hook entries.
+`HOME/.hskills/guard.json` records copied files and exact hook entries.
 Existing unrecorded snapshot or plugin files are conflicts. Settings retain a
 first-write `.before-command-guard` backup. Keep the ownership record and backups.
 Uninstall removes recorded hook commands even when an unrelated command shares
@@ -238,10 +238,10 @@ Normal installs register the guard with the installed `claude` and `codex` CLIs.
 `prepare-plugin` runs that registration independently of skill links. Both use
 `--source` for the guard as well as skills. CLI binaries can be selected with
 `COMMAND_GUARD_CLAUDE` and `COMMAND_GUARD_CODEX` when absent from PATH.
-Registration uses a dedicated `skill-collection-guard` marketplace rooted in the
+Registration uses a dedicated `hskills-guard` marketplace rooted in the
 prepared snapshot. Enabled listings must report that snapshot as effective source.
 
-`HOME/.skill-collection/plugins.json` journals snapshot files and host configuration
+`HOME/.hskills/plugins.json` journals snapshot files and host configuration
 writes. Failed host registration rolls back its writes and retains legacy hooks.
 Before registration mutates host files, every recorded write must still match its
 last installed bytes, except narrowly verified Codex hook trust-table and runtime
@@ -289,23 +289,23 @@ Use the plugin route for a whole core or named pack; use the folder route above
 for individual selection. Plugin skill lists are generated from `collection.json`
 by `node scripts/plugins/generate.js`. Empty lists publish no plugin. Core never
 includes onboarding; onboarding publishes as a separate one-skill plugin,
-`collection-pack-onboarding`, holding `onboarding-guide`.
+`hskills-onboarding`, holding `onboarding-guide`.
 
 Register this checkout with `claude plugin marketplace add <checkout>` or
-`codex plugin marketplace add <checkout>`. Install `collection-core@skill-collection`
-and `collection-pack-<pack>@skill-collection` together at the same release when
+`codex plugin marketplace add <checkout>`. Install `hskills-core@hskills`
+and `hskills-<pack>@hskills` together at the same release when
 the pack requires core. Plugins do not resolve metadata requirements. Other
 required packs must likewise be installed explicitly; a missing requirement
 causes the skill to stop. Keep the hooks-only guard at its own plugin root.
 
-On Claude, `claude plugin install <plugin>@skill-collection --scope project`
+On Claude, `claude plugin install <plugin>@hskills --scope project`
 records project enablement in `.claude/settings.json`. For a user install kept
 disabled by default, install with `--scope user`, disable it at user scope, then
-enable it with `claude plugin enable <plugin>@skill-collection --scope project`.
+enable it with `claude plugin enable <plugin>@hskills --scope project`.
 Claude enables whole plugins; individual skills cannot be disabled separately.
 
-On Codex, `codex plugin add <plugin>@skill-collection` installs the cache copy.
-Set `[plugins."<plugin>@skill-collection"]` with `enabled = false` in the user
+On Codex, `codex plugin add <plugin>@hskills` installs the cache copy.
+Set `[plugins."<plugin>@hskills"]` with `enabled = false` in the user
 config and `enabled = true` in the project's `.codex/config.toml` to opt in there.
 Codex may skip project config in an untrusted project: review its normal project
 trust prompt yourself, then verify effective plugin selection in a new session.

@@ -4,8 +4,8 @@ description: "Find what a change could break somewhere else before it ships, bey
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/blast-radius"
-  agent-skills-sync.requires: '["hissal.skill-collection/verifying"]'
+  agent-skills-sync.id: "hissal.hskills/blast-radius"
+  agent-skills-sync.requires: '["hissal.hskills/verifying"]'
   opencode/autoinvoke: "false"
 ---
 
@@ -15,12 +15,12 @@ Find what a change breaks somewhere else, before it ships. Use for "blast radius
 
 Listing the callers is not the job. The agent can grep those in a second. The job is the breakage grep won't show you.
 
-Before doing any work, load verifying (hissal.skill-collection/verifying) and its needed
+Before doing any work, load verifying (hissal.hskills/verifying) and its needed
 reference files through the installed skill listing. Begin work only after all
 requirements and needed references have loaded. If any cannot load, stop
 without partial work and print:
 
-Stopped: required skill verifying (hissal.skill-collection/verifying) could not be loaded
+Stopped: required skill verifying (hissal.hskills/verifying) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
 `npx skills` do not install requirements; `agent-skills-sync` resolves them
 from this metadata. Install or repair the requirement, then retry.

@@ -23,7 +23,7 @@ fs.symlinkSync = function(target, dest, type) {
 `);
   nodeArgs.push('--require', preload);
 }
-const id = name => `hissal.skill-collection/eval-scope-${name}`;
+const id = name => `hissal.hskills/eval-scope-${name}`;
 function skill(source, name, marker, requires = []) {
   const dir = path.join(source, 'skills', 'packs', 'fixture', name);
   fs.mkdirSync(dir, { recursive: true });
@@ -86,7 +86,7 @@ for (const scenario of ['duplicate', 'project-to-user', 'user-to-project']) {
   }
   assert.equal(spawnSync('git', ['-C', project, 'status', '--porcelain'], { encoding: 'utf8' }).stdout, '');
   if (junction) {
-    const types = JSON.parse(fs.readFileSync(path.join(home, '.skill-collection/install.json'), 'utf8')).links.map(l => l.type);
+    const types = JSON.parse(fs.readFileSync(path.join(home, '.hskills/install.json'), 'utf8')).links.map(l => l.type);
     assert.ok(types.length && types.every(t => t === 'junction'), types.join());
   }
   console.log(`${scenario}: ${base} (installer exit 0; links resolve; clean baseline)`);

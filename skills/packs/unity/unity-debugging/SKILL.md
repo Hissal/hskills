@@ -3,16 +3,16 @@ name: unity-debugging
 description: Use when reproducing a Unity bug, driving or observing Play mode, reading Editor or Player logs, attaching a debugger, capturing Unity visual evidence, or measuring a Unity performance regression.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/unity-debugging"
-  agent-skills-sync.requires: '["hissal.skill-collection/unity-guide"]'
+  agent-skills-sync.id: "hissal.hskills/unity-debugging"
+  agent-skills-sync.requires: '["hissal.hskills/unity-guide"]'
   opencode/autoinvoke: "true"
 ---
 
 # Unity debugging
 
-Before doing any work, load unity-guide (hissal.skill-collection/unity-guide) and its needed reference files through the installed skill listing. Begin work only after all requirements and needed references have loaded. If any cannot load, stop without partial work and print:
+Before doing any work, load unity-guide (hissal.hskills/unity-guide) and its needed reference files through the installed skill listing. Begin work only after all requirements and needed references have loaded. If any cannot load, stop without partial work and print:
 
-Stopped: required skill unity-guide (hissal.skill-collection/unity-guide) could not be loaded completely. Unavailable: <unloadable-material>. Ordinary installers such as `npx skills` do not install requirements; `agent-skills-sync` resolves them from this metadata. Install or repair the requirement, then retry.
+Stopped: required skill unity-guide (hissal.hskills/unity-guide) could not be loaded completely. Unavailable: <unloadable-material>. Ordinary installers such as `npx skills` do not install requirements; `agent-skills-sync` resolves them from this metadata. Install or repair the requirement, then retry.
 
 Check only whether the required material loads; the installer verifies identity and content. Loading this requirement grants no permission to invoke a user-invoked workflow; wait for the human to invoke that workflow.
 

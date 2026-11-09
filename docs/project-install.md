@@ -4,10 +4,10 @@ A project's committed skills lock is its opt-in to this collection. Use this
 route when selecting project skills, reproducing them on another machine or
 pinning a release. Resolver implementers use the [seven-step contract](#seven-step-resolver-contract).
 For personal live links, use [Personal skill links](user-install.md).
-This implements [#126](https://github.com/Hissal/skill-collection/issues/126)
-under [#78](https://github.com/Hissal/skill-collection/issues/78), following
+This implements [#126](https://github.com/Hissal/hskills/issues/126)
+under [#78](https://github.com/Hissal/hskills/issues/78), following
 [ADR 0004](adr/0004-skill-dependencies-use-agent-skills-sync-metadata.md) and the
-[owner answers](https://github.com/Hissal/skill-collection/issues/78#issuecomment-6510537918).
+[owner answers](https://github.com/Hissal/hskills/issues/78#issuecomment-6510537918).
 
 ## Project route
 
@@ -140,7 +140,7 @@ For spec 3's missing-requirement case, prepare a scratch project through the
 above and `reviewing` deliberately absent. Also ensure no user-scope or plugin
 copy can supply `reviewing` or its needed references. Invoke `code-review` and
 expect it to stop before review work, naming `reviewing` and
-`hissal.skill-collection/reviewing` with the installer explanation. Use the
+`hissal.hskills/reviewing` with the installer explanation. Use the
 [behavioural eval procedure](behavioural-evals.md) to record the run; spec 3 owns
 that case. This is the install arrangement, not a claim that the case has run
 or that those skills already ship at this revision.

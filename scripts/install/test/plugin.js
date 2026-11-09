@@ -59,7 +59,7 @@ try {
   assert.match(result.stdout, /PENDING Codex human trust/);
   assert.match(result.stdout, /UNPROTECTED: no verified trusted legacy fallback/);
   if (!real) assert.match(result.stdout, /legacy fallback: enabled\/untrusted/);
-  const record = JSON.parse(fs.readFileSync(path.join(home, '.skill-collection/plugins.json')));
+  const record = JSON.parse(fs.readFileSync(path.join(home, '.hskills/plugins.json')));
   assert.equal(record.hosts.length, 2);
   for (const host of record.hosts) assert.ok(host.snapshot.startsWith(home));
   assert.deepEqual(JSON.parse(fs.readFileSync(settings)).hooks.PreToolUse[0].hooks, [{ type: 'command', command: 'echo personal' }]);
@@ -73,13 +73,13 @@ try {
   });
   assert.equal(claudeOnly.status, 0, claudeOnly.stdout + claudeOnly.stderr);
   const occupiedHome = path.join(home, 'occupied-home');
-  const occupied = path.join(occupiedHome, '.skill-collection/plugin-cache', path.basename(record.hosts[0].snapshot));
+  const occupied = path.join(occupiedHome, '.hskills/plugin-cache', path.basename(record.hosts[0].snapshot));
   fs.cpSync(record.hosts[0].snapshot, occupied, { recursive: true });
   fs.unlinkSync(path.join(occupied, '.claude-plugin/marketplace.json'));
   const existingAdapter = fs.readFileSync(path.join(occupied, 'adapters/codex.js'));
   const occupiedRun = spawnSync(process.execPath, [cli, 'prepare-plugin', '--home', occupiedHome, '--source', source], { encoding: 'utf8' });
   assert.match(occupiedRun.stdout + occupiedRun.stderr, /CONFLICT/);
-  assert.equal(fs.existsSync(path.join(occupiedHome, '.skill-collection/plugins.json')), false);
+  assert.equal(fs.existsSync(path.join(occupiedHome, '.hskills/plugins.json')), false);
   spawnSync(process.execPath, [cli, 'uninstall', '--home', occupiedHome]);
   assert.deepEqual(fs.readFileSync(path.join(occupied, 'adapters/codex.js')), existingAdapter);
   if (!real) {
@@ -108,7 +108,7 @@ try {
   const updated = run();
   assert.match(updated.stdout, /REGISTERED claude/, updated.stderr);
   assert.match(updated.stdout, /REGISTERED codex/, updated.stdout + updated.stderr);
-  assert.ok(JSON.parse(fs.readFileSync(path.join(home, '.skill-collection/plugins.json'))).hosts.every(h => h.snapshot !== record.hosts[0].snapshot), updated.stdout + updated.stderr);
+  assert.ok(JSON.parse(fs.readFileSync(path.join(home, '.hskills/plugins.json'))).hosts.every(h => h.snapshot !== record.hosts[0].snapshot), updated.stdout + updated.stderr);
   fs.writeFileSync(path.join(source, 'collection.json'), JSON.stringify({core: [], packs: {}, expensive: []}));
   const normal = spawnSync(process.execPath, [cli, 'install', '--home', home, '--source', source], {encoding: 'utf8', env: {...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex}});
   assert.match(normal.stdout, /REGISTERED codex/, normal.stdout + normal.stderr);
@@ -117,7 +117,7 @@ try {
     const saved = tempDir('trust-baseline-');
     fs.cpSync(home, saved, { recursive: true });
     // Native Windows writer shape: bare parent, basic plugin key, literal backslash key.
-    const trust = '[hooks.state]\n\n[hooks.state."command-guard@skill-collection-guard:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = "sha256:' + 'a'.repeat(64) + '"\ntrusted_content_hash = "sha256:' + 'b'.repeat(64) + '"\nenabled = true\n'
+    const trust = '[hooks.state]\n\n[hooks.state."command-guard@hskills-guard:hooks/codex.json:pre_tool_use:0:0"]\ntrusted_hash = "sha256:' + 'a'.repeat(64) + '"\ntrusted_content_hash = "sha256:' + 'b'.repeat(64) + '"\nenabled = true\n'
       + "\n[hooks.state.'C:\\Users\\human\\.codex\\hooks.json:pre_tool_use:0:0']\ntrusted_hash = \"sha256:" + 'c'.repeat(64) + '"\nenabled = true\n';
     fs.appendFileSync(config, '\n' + trust);
     const trustedAgain = run();
@@ -138,15 +138,15 @@ try {
   assert.match(refused.stderr, /^FAIL uninstall: CONFLICT changed registration preserved: /m);
   assert.match(fs.readFileSync(config, 'utf8'), /personal change/);
   const personal = fs.readFileSync(config);
-  const journal = fs.readFileSync(path.join(home, '.skill-collection/plugins.json'));
+  const journal = fs.readFileSync(path.join(home, '.hskills/plugins.json'));
   const reinstall = run();
   assert.match(reinstall.stdout + reinstall.stderr, /CONFLICT/);
   assert.deepEqual(fs.readFileSync(config), personal);
-  assert.deepEqual(fs.readFileSync(path.join(home, '.skill-collection/plugins.json')), journal);
+  assert.deepEqual(fs.readFileSync(path.join(home, '.hskills/plugins.json')), journal);
   spawnSync(process.execPath, [cli, 'uninstall', '--home', home]);
   assert.deepEqual(fs.readFileSync(config), personal);
   fs.writeFileSync(config, installedConfig);
-  const latest = JSON.parse(fs.readFileSync(path.join(home, '.skill-collection/plugins.json')));
+  const latest = JSON.parse(fs.readFileSync(path.join(home, '.hskills/plugins.json')));
   const extra = path.join(latest.hosts[0].snapshot, 'adapters/personal.txt');
   fs.writeFileSync(extra, 'personal snapshot addition');
   const extraRun = run();

@@ -1,6 +1,6 @@
 # Recommendations
 
-One view of everything that would help this project: skills from `Hissal/skill-collection` (the repo these skills come from), separately installed vendor skills and guidance shipped inside dependencies. An empty repo gets the same view, built from the intended stack. Nothing here needs a pack list, an installed guide, restored dependencies or finished configuration.
+One view of everything that would help this project: skills from `Hissal/hskills` (the repo these skills come from), separately installed vendor skills and guidance shipped inside dependencies. An empty repo gets the same view, built from the intended stack. Nothing here needs a pack list, an installed guide, restored dependencies or finished configuration.
 
 The view and the choice are step 2; delivery is step 4. Done when the owner has seen the view, every row has their answer, each pick is delivered or named as waiting for its dependency, and every source you could not reach is named.
 
@@ -21,19 +21,19 @@ Take it from declarations, lock files and code. With no stack to read, use the o
 
 **Installed.** The skill listing this session shows, `skills-lock.json`, `.claude/skills/`, `.agents/skills/`, `enabledPlugins` in `.claude/settings.json`, and `[plugins]` in `.codex/config.toml`. An installed skill is shown as present and needs no pick.
 
-**`Hissal/skill-collection`, at one commit.** Choose the commit once and read everything at it:
+**`Hissal/hskills`, at one commit.** Choose the commit once and read everything at it:
 
-1. A `skills-lock.json` entry with source `Hissal/skill-collection` and a full commit as `ref`: that commit.
-2. Otherwise the newest release tag from `git ls-remote --tags --refs https://github.com/Hissal/skill-collection.git`, resolved to its commit.
-3. With no tag, the commit from `git ls-remote https://github.com/Hissal/skill-collection.git HEAD`. Tell the owner it is unreleased.
+1. A `skills-lock.json` entry with source `Hissal/hskills` and a full commit as `ref`: that commit.
+2. Otherwise the newest release tag from `git ls-remote --tags --refs https://github.com/Hissal/hskills.git`, resolved to its commit.
+3. With no tag, the commit from `git ls-remote https://github.com/Hissal/hskills.git HEAD`. Tell the owner it is unreleased.
 
 Read one of its files at that commit with:
 
 ```sh
-gh api -H "Accept: application/vnd.github.raw" "repos/Hissal/skill-collection/contents/<path>?ref=<commit>"
+gh api -H "Accept: application/vnd.github.raw" "repos/Hissal/hskills/contents/<path>?ref=<commit>"
 ```
 
-Without `gh`, use `curl -fsSL https://raw.githubusercontent.com/Hissal/skill-collection/<commit>/<path>`, which serves only a public repository.
+Without `gh`, use `curl -fsSL https://raw.githubusercontent.com/Hissal/hskills/<commit>/<path>`, which serves only a public repository.
 
 | File | Gives |
 |---|---|
@@ -81,7 +81,7 @@ One table, one row per skill or per dependency's documentation, in order of valu
 | Pick | Kind and source | Adds | Overlap | Idle cost | Always-on, hooks, telemetry | Route |
 |---|---|---|---|---|---|---|
 
-- **Adds:** a short reason tied to this project. A `Hissal/skill-collection` skill's row names what it `requires`, and its cost includes them, since they install with it.
+- **Adds:** a short reason tied to this project. A `Hissal/hskills` skill's row names what it `requires`, and its cost includes them, since they install with it.
 - **Overlap:** the row it duplicates or complements and what you recommend, or `none`. Include installed skills and handwritten instructions.
 - **Idle cost:** estimated tokens every session, `description` plus `when_to_use` characters ÷ 4 for each skill, command or agent. A user-invoked skill (`disable-model-invocation: true`) costs 0. A pointer costs its own line. Add the size on use when it is known. Write `not measured` with the reason when you could not read the source.
 - **Always-on, hooks, telemetry:** each one by name, with its off switch when it has one, or `none found` with what you read. For a dependency, include any instruction block it writes itself. For a vendor skill, include any script or binary its folder ships.
@@ -110,7 +110,7 @@ List each pick's command and pointer in the draft. After approval:
 | Pick | Route |
 |---|---|
 | Documentation | One line in the `### Vendor docs` sub-block. For bundled documents: `When <job>, read <project-relative path>; it follows <dependency>'s installed version.`, with the path to the documents' entry file or folder, resolved from the workspace that uses the dependency. With nothing bundled: `When <job>, read <vendor URL>.` A vendor-managed block that already tells agents how to reach these documents stays as it is. Say so in the row and recommend no pointer; write one only when the owner picks it, and leave the block alone. |
-| `Hissal/skill-collection` skill or pack | `npx skills add Hissal/skill-collection#<commit> --skill <name>... --agent claude-code codex --yes`, naming every requested skill and all it `requires`, followed transitively through `catalog.json` at that commit, because the tool does not resolve requirements. `--skill` takes each skill's `name`, here and in the routes below. A project on another sync tool uses that tool. |
+| `Hissal/hskills` skill or pack | `npx skills add Hissal/hskills#<commit> --skill <name>... --agent claude-code codex --yes`, naming every requested skill and all it `requires`, followed transitively through `catalog.json` at that commit, because the tool does not resolve requirements. `--skill` takes each skill's `name`, here and in the routes below. A project on another sync tool uses that tool. |
 | Vendor skill | `npx skills add <owner>/<repo>#<ref> --skill <name> --agent claude-code codex --yes`, with `<ref>` the commit of the newest release tag, or of the default branch when the source has no version tags. |
 | Skill shipped in a dependency | `npx skills add ./<restored package folder> --skill <name> --agent claude-code codex --yes`. The leading `./` matters: `skills add` reads a bare `node_modules/<package>` as a GitHub repository. Tell the owner this is a copy: it keeps the version it was copied from until refreshed. |
 | Whole vendor set | The vendor's plugin when it publishes one and the owner takes its hooks and always-on parts, since a plugin update brings new skills. Otherwise `--skill '*'`, and tell the owner later additions arrive only when the command runs again at a newer ref. |

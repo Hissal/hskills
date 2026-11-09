@@ -4,7 +4,7 @@ description: Turn the project's quality bar into enforceable checks, through a s
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/constraints"
+  agent-skills-sync.id: "hissal.hskills/constraints"
   opencode/autoinvoke: "false"
 ---
 

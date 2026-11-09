@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // A stand-in for agnix in the fixture runner, so cases do not depend on the
-// real tool being installed. The runner points COLLECTION_CHECK_AGNIX here.
+// real tool being installed. The runner points HSKILLS_CHECK_AGNIX here.
 // AGNIX_STUB (JSON, optional) shapes the reply:
 //   diagnostics: agnix JSON diagnostics, `file` relative to the checked root
 //   version:     the version reported (default: the pin in package.json)

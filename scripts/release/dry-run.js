@@ -14,7 +14,7 @@ async function main() {
   const strategy = await buildStrategy({
     releaseType: config['release-type'],
     github: {
-      repository: { owner: 'Hissal', repo: 'skill-collection' },
+      repository: { owner: 'Hissal', repo: 'hskills' },
       findFilesByGlobAndRef: async (file) => { read(file); return [file]; },
     },
     targetBranch: 'main', path: '.',

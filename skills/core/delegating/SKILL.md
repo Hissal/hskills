@@ -3,7 +3,7 @@ name: delegating
 description: Use before dispatching any subagent or delegated agent, or when choosing the model, harness or effort one runs on.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/delegating"
+  agent-skills-sync.id: "hissal.hskills/delegating"
   opencode/autoinvoke: "true"
 ---
 
@@ -38,7 +38,7 @@ The same rules bind you when you are yourself a dispatched agent. A helper, or a
 
 Resolve selection before transport, so the native tool's model list never quietly narrows the choice.
 
-Explicit instructions win over the personal delegation policy for whatever they name; the policy then decides the rest. Read the policy at `~/.config/skill-collection/delegation.json`:
+Explicit instructions win over the personal delegation policy for whatever they name; the policy then decides the rest. Read the policy at `~/.config/hskills/delegation.json`:
 
 - **No file**: select automatically. That is normal, so suggest nothing.
 - **A file**: check it against the [policy schema](references/policy.schema.json), then select each agent's choice by matching, order or pool, effort and fallback as the [policy guide](references/POLICY.md) says. Its selector examples ([ordered](references/policy-examples/ordered.json), [pool](references/policy-examples/pool.json), [workflow override](references/policy-examples/workflow-override.json)) are illustrations, never assignments. A rule whose choices are exhausted asks before going outside its list unless the policy sets `autoFallback`; unattended, the blocked dispatch is preserved and reported.
@@ -87,7 +87,7 @@ Unattended: at a decision with a reversible default, take the default and list i
 Return: <the shape in step 7; a researcher writes findings to a file and returns a few lines plus its path>
 ```
 
-Keep the `Waiting:` line in every brief. On every harness tested, each turn the agent ends reaches you as a result or a wake-up, so an agent that ends its turn to wait wakes you for nothing; T3's `t3_background_wait` only delays that wake-up to the job's end. Evidence and tested versions: `research/child-waits-314.md` in the `Hissal/skill-collection` GitHub repo.
+Keep the `Waiting:` line in every brief. On every harness tested, each turn the agent ends reaches you as a result or a wake-up, so an agent that ends its turn to wait wakes you for nothing; T3's `t3_background_wait` only delays that wake-up to the job's end. Evidence and tested versions: `research/child-waits-314.md` in the `Hissal/hskills` GitHub repo.
 
 An action the invoking workflow already authorised (an autonomous flow's push or merge) goes under Authority and is not asked about again.
 

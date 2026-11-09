@@ -4,8 +4,8 @@ description: Report on the quality of existing tests, finding weak, cheating and
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/test-review"
-  agent-skills-sync.requires: '["hissal.skill-collection/reviewing"]'
+  agent-skills-sync.id: "hissal.hskills/test-review"
+  agent-skills-sync.requires: '["hissal.hskills/reviewing"]'
   opencode/autoinvoke: "false"
 ---
 
@@ -13,12 +13,12 @@ metadata:
 
 Judge whether the project's existing tests would catch the bugs they exist to catch, and report what you find. You read and report; the owner decides what changes. Your tool use is reading: project files, history, and reports the project already has. Deleting, editing or writing tests, and running tests, coverage, mutation tools or any other check, belong to other workflows; when one would settle a question, name it in the report as the owner's next step.
 
-Before doing any work, load reviewing (hissal.skill-collection/reviewing) and its needed
+Before doing any work, load reviewing (hissal.hskills/reviewing) and its needed
 reference files through the installed skill listing. Begin work only after all
 requirements and needed references have loaded. If any cannot load, stop
 without partial work and print:
 
-Stopped: required skill reviewing (hissal.skill-collection/reviewing) could not be loaded
+Stopped: required skill reviewing (hissal.hskills/reviewing) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
 `npx skills` do not install requirements; `agent-skills-sync` resolves them
 from this metadata. Install or repair the requirement, then retry.

@@ -5,7 +5,7 @@ argument-hint: "[mode:author|edit|detect] [text, file path, or nothing]"
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/unslop"
+  agent-skills-sync.id: "hissal.hskills/unslop"
   opencode/autoinvoke: "false"
 ---
 

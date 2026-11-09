@@ -3,7 +3,7 @@ name: experimental-guide
 description: Use when asked which experimental workflows are installed, or when looking for one to try.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/experimental-guide"
+  agent-skills-sync.id: "hissal.hskills/experimental-guide"
   opencode/autoinvoke: "true"
 ---
 

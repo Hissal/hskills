@@ -1,6 +1,6 @@
 # Command guard
 
-A first working version of the core command guard, built ahead of the blueprint so it can run now. It follows the decisions in [Theme: core guard rule set](https://github.com/Hissal/skill-collection/issues/43) and [How does the guard enforce human-only approval in full access?](https://github.com/Hissal/skill-collection/issues/56). The build that follows the finished map may replace it.
+A first working version of the core command guard, built ahead of the blueprint so it can run now. It follows the decisions in [Theme: core guard rule set](https://github.com/Hissal/hskills/issues/43) and [How does the guard enforce human-only approval in full access?](https://github.com/Hissal/hskills/issues/56). The build that follows the finished map may replace it.
 
 It is local accident prevention. It is not a security boundary: an agent with full access can change files or pick an execution path no hook sees.
 

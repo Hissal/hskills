@@ -10,7 +10,7 @@ A pack skill adds to the core skill for the same job and never replaces it: the 
 
 ## Knowledge lookup and execution
 
-The [core review](https://github.com/Hissal/skill-collection/issues/45#issuecomment-6219205105) qualifies the original layering instruction:
+The [core review](https://github.com/Hissal/hskills/issues/45#issuecomment-6219205105) qualifies the original layering instruction:
 
 - When another skill reaches a pack skill for knowledge about a stated need, it supplies that knowledge within the caller's job. It does not start the core workflow it normally layers on. A reviewer asking about test idioms remains a reviewer; it does not start test authoring.
 - When performing the job itself, the pack skill uses the core process and contributes its domain layer once. Core-first and pack-first entry must not restart an active layer or duplicate execution.
@@ -22,7 +22,7 @@ The decided needs are indexed in [Core extension points](../agents/core-extensio
 
 ## Setup discovery
 
-[The project setup decision](https://github.com/Hissal/skill-collection/issues/71#issuecomment-6419435777) extends setup discovery beyond installed guides: `setup-project` uses the collection catalog alongside the installed skill listing and relevant vendor sources, and can read selected packs' `SETUP.md` material before installation. This supersedes the original installed-only setup restriction. Ordinary extension points continue to use the project's pack list; the setup sequence and recommendations are recorded in that decision.
+[The project setup decision](https://github.com/Hissal/hskills/issues/71#issuecomment-6419435777) extends setup discovery beyond installed guides: `setup-project` uses the collection catalog alongside the installed skill listing and relevant vendor sources, and can read selected packs' `SETUP.md` material before installation. This supersedes the original installed-only setup restriction. Ordinary extension points continue to use the project's pack list; the setup sequence and recommendations are recorded in that decision.
 
 ## Considered Options
 

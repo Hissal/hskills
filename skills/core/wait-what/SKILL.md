@@ -4,7 +4,7 @@ description: Re-explain the last response more clearly and concisely, adding con
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/wait-what"
+  agent-skills-sync.id: "hissal.hskills/wait-what"
   opencode/autoinvoke: "false"
 ---
 

@@ -4,27 +4,27 @@ description: A relentless interview to sharpen a plan or design, which also crea
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/grill-with-docs"
-  agent-skills-sync.requires: '["hissal.skill-collection/grilling","hissal.skill-collection/domain-modeling"]'
+  agent-skills-sync.id: "hissal.hskills/grill-with-docs"
+  agent-skills-sync.requires: '["hissal.hskills/grilling","hissal.hskills/domain-modeling"]'
   opencode/autoinvoke: "false"
 ---
 
-Before doing any work, load grilling (hissal.skill-collection/grilling) and its needed
+Before doing any work, load grilling (hissal.hskills/grilling) and its needed
 reference files through the installed skill listing. Begin work only after all
 requirements and needed references have loaded. If any cannot load, stop
 without partial work and print:
 
-Stopped: required skill grilling (hissal.skill-collection/grilling) could not be loaded
+Stopped: required skill grilling (hissal.hskills/grilling) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
 `npx skills` do not install requirements; `agent-skills-sync` resolves them
 from this metadata. Install or repair the requirement, then retry.
 
-Before doing any work, load domain-modeling (hissal.skill-collection/domain-modeling) and its needed
+Before doing any work, load domain-modeling (hissal.hskills/domain-modeling) and its needed
 reference files through the installed skill listing. Begin work only after all
 requirements and needed references have loaded. If any cannot load, stop
 without partial work and print:
 
-Stopped: required skill domain-modeling (hissal.skill-collection/domain-modeling) could not be loaded
+Stopped: required skill domain-modeling (hissal.hskills/domain-modeling) could not be loaded
 completely. Unavailable: <unloadable-material>. Ordinary installers such as
 `npx skills` do not install requirements; `agent-skills-sync` resolves them
 from this metadata. Install or repair the requirement, then retry.

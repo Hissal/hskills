@@ -3,7 +3,7 @@ name: diagnosing-bugs
 description: Use when the user says "diagnose" or "debug this", or reports something broken, throwing, failing or slow.
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/diagnosing-bugs"
+  agent-skills-sync.id: "hissal.hskills/diagnosing-bugs"
   opencode/autoinvoke: "true"
 ---
 

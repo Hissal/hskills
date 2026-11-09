@@ -4,7 +4,7 @@ description: Explain why code ended up this way, from git history and the issue 
 disable-model-invocation: true
 metadata:
   agent-skills-sync.schema: "1"
-  agent-skills-sync.id: "hissal.skill-collection/why"
+  agent-skills-sync.id: "hissal.hskills/why"
   opencode/autoinvoke: "false"
 ---
 

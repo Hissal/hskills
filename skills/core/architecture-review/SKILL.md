@@ -46,7 +46,7 @@ When a calling workflow runs this review rather than the owner, follow the calle
 
 **Scope before you scan: YAGNI.** Deepening a module pays off by making future changes to it easier, so put extra weight on the parts of the codebase that have recently changed. Decide *where* to look before you look.
 
-Ask the project's listed pack guides for what to leave out of the hotspot scan and this stack's sources of friction.
+Ask the project's listed pack guides for what to leave out of the hotspot scan, this stack's sources of friction, and how to list its declared modules.
 
 Resolve and announce the scope through reviewing: the user's explicit request, else your caller's exact scope, else pending work, else the [hotspot survey](../reviewing/references/HOTSPOTS.md), all per its [scope contract](../reviewing/references/SCOPE.md). When the pending work clearly does not bear on architecture (a few assets changed by churn, say), offer the hotspot survey instead, as reviewing says [there](../reviewing/references/HOTSPOTS.md#when-the-survey-runs).
 
@@ -87,6 +87,20 @@ A shared helper with N callers is a deepening opportunity that passes the deleti
 
 Candidates and the explorer's report follow reviewing's evidence rules: an explorer that did not finish is missing coverage, and zero candidates is a valid result.
 
+#### Declared module graph
+
+While the explorers read, check the declared module graph yourself. A **declared module** is one whose seam the build enforces: an assembly, project, package, crate or workspace member, compiled separately, with its references to other declared modules and any grant that opens its internals to one. The graph spans the project, so no explorer's share holds it. Under a general scope, check all of it, whichever modules the survey selected; under a clearly scoped review, check the edges the change adds, removes or starts using.
+
+List the declared modules and their references from the build's own files, using the pack guides' listing where one answers. Then ask of the graph, against the project's stated rules (ADRs, code standards) and the code:
+
+- **Undeclared modules.** Do modules the code treats as separate share one declared module? Then each one's internals are open to the others, so its interface is everything it does not keep private. Signs: internals used across them, access-key types, and interfaces that exist only to set a dependency's direction. Splitting them is a deepening.
+- **Direction.** Does an edge run against the project's stated layering, such as core logic referencing presentation or infrastructure? Is a cycle worked around with events or interfaces?
+- **Grants.** Are internals opened beyond what the project's rules allow, or, where it has none, beyond the module's own tests?
+- **Fan-out.** Does a declared module reference most of the others? Composition roots, tooling and tests are expected to. Judge by what crosses each edge, a published interface or another module's concrete internals, not by the count.
+- **Over-splitting.** Is one module's code spread over several declared modules, or does a split force a type public that would otherwise stay internal?
+
+Friction goes to step 3 as a candidate like any other. An edge that looks against a rule but holds, such as one an ADR chose, goes to Coverage with its reason. Done when each question has been asked of every declared module in scope, including a build that declares one or none.
+
 ### 3. Combine
 
 Turn the explorers' candidates and leads into the report's short list, in this order:
@@ -124,6 +138,7 @@ After the cards come the **Also found** list, any out-of-scope observations in r
 - what was read whole, what was read only by name, and what was not read;
 - modules found already deep and left alone, each with the seam that makes it deep;
 - what you declined to judge, per reviewing's evidence rules;
+- the declared module graph: what it was listed from, and each edge accepted against a stated rule, with its reason;
 - the ADRs checked, and whether any candidate conflicts with one.
 
 End the report with a **Top recommendation** section: which candidate you'd tackle first and why.

@@ -22,11 +22,11 @@ let command = 'install';
 function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help')) {
-    console.log('Usage: node scripts/install/install.js [install|doctor|uninstall|prepare-plugin] [--owner-steering] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR] [--pack NAME] [--skill NAME [--project DIR]]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.hskills/install.json. Prints Claude Read rules; writes no permissions.');
+    console.log('Usage: node scripts/install/install.js [install|doctor|uninstall|register-guard] [--owner-steering] [--home DIR] [--source DIR] [--claude-root DIR] [--agents-root DIR] [--pack NAME] [--skill NAME [--project DIR]]\nDefaults: local checkout; home ~/.claude/skills and ~/.agents/skills. Record: HOME/.hskills/install.json. Prints Claude Read rules; writes no permissions.');
     return;
   }
   command = args[0] && !args[0].startsWith('--') ? args.shift() : 'install';
-  if (!['install', 'doctor', 'uninstall', 'prepare-plugin'].includes(command)) throw new Error('unknown command: ' + command);
+  if (!['install', 'doctor', 'uninstall', 'register-guard'].includes(command)) throw new Error('unknown command: ' + command);
   const options = {};
   while (args.length) {
     const key = args.shift();
@@ -35,8 +35,8 @@ function main() {
     options[key] = ['--pack', '--skill'].includes(key) ? args.shift() : path.resolve(args.shift());
   }
   const home = options['--home'] || os.homedir();
-  if (command === 'prepare-plugin') {
-    const ok = require('./plugin').registration(home, path.join(options['--source'] || path.resolve(__dirname, '../..'), 'hooks/command-guard'));
+  if (command === 'register-guard') {
+    const ok = require('./plugin').registration(home, options['--source'] || path.resolve(__dirname, '../..'));
     process.exitCode = ok ? 0 : 1;
     return;
   }
@@ -213,7 +213,7 @@ function main() {
   }
   if (command !== 'uninstall') doctor();
   if (command === 'uninstall' && fs.existsSync(path.join(home, '.hskills/plugins.json'))) {
-    if (!require('./plugin').registration(home, path.join(source, 'hooks/command-guard'), command)) { process.exitCode = 1; return; }
+    if (!require('./plugin').registration(home, source, command)) { process.exitCode = 1; return; }
   }
   {
     // A skill conflict still needs guard diagnostics, without installing it.
@@ -223,10 +223,10 @@ function main() {
     if (result.status !== 0) failed = true;
   }
   if (!failed && command === 'install' && fs.existsSync(path.join(source, 'hooks/command-guard/.claude-plugin/plugin.json'))) {
-    if (!require('./plugin').registration(home, path.join(source, 'hooks/command-guard'))) failed = true;
+    if (!require('./plugin').registration(home, source)) failed = true;
   }
   if (command === 'doctor' && fs.existsSync(path.join(home, '.hskills/plugins.json'))) {
-    if (!require('./plugin').registration(home, path.join(source, 'hooks/command-guard'), command)) failed = true;
+    if (!require('./plugin').registration(home, source, command)) failed = true;
   }
   if (failed) process.exitCode = 1;
 }

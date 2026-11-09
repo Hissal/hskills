@@ -9,9 +9,18 @@ Both tickets remain open for the remaining platform and human acceptance.
 This extends [adapter smoke evidence](live-hooks-120.md) and the
 [registration investigation](guard-plugin-install.md).
 
+**Superseded.** These runs verify the installer's frozen snapshot, which kept
+the running guard unchanged across a checkout branch switch. The installer no
+longer works this way: it registers `command-guard@hskills` from the checkout,
+which the guard then follows; see
+[Register the guard plugin](../docs/user-install.md#register-the-guard-plugin).
+
 ## Reproduction
 
-Run `python3 scripts/install/evidence/live-plugins.py` from the checkout.
+Run `python3 scripts/install/evidence/live-plugins.py` from the checkout. That
+runner and its `plugin-session.py` were removed with the snapshot design; the
+[last version](https://github.com/Hissal/hskills/blob/79e2273aff6610d1021977764632611844ef621b/scripts/install/evidence/live-plugins.py)
+runs against an installer from before that change.
 This manual authenticated test prints an artifact directory, uses the installed
 Claude and Codex binaries, and preserves normal authentication. It reads no
 credentials and writes no user settings or trust approvals. It hashes the user's

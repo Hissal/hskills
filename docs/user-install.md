@@ -189,17 +189,17 @@ Installer/doctor success alone establishes no effective harness selection.
 The same entry point delegates to the guard installer with the selected
 `--home`; it never falls back to the real home for guard files or probe state.
 Claude is installed by default; Codex and OpenCode are installed when their
-configuration directories exist under that home. For plugin preparation or migration status, read
+configuration directories exist under that home. For plugin delivery evidence and migration status, read
 [guard plugin delivery](../research/guard-plugin-install.md).
 
 | Harness | Delivery | Registration | Doctor |
 | --- | --- | --- | --- |
-| Claude Code | content-addressed plugin snapshot | user plugin API | enabled effective source; snapshot block + allow |
-| Codex | same plugin snapshot | user plugin API; human trust in `/hooks` | enabled effective source; pending trust |
-| OpenCode | snapshot and copied adapter | `.config/opencode/plugins/command-guard.js` | tool block + allow and permission denial |
+| Claude Code | `command-guard@hskills`, read in place from the checkout | user plugin API | enabled plugin at the checkout's guard; block + allow |
+| Codex | the same plugin; Codex runs the copy it made at install | user plugin API; human trust in `/hooks` | enabled plugin at the checkout's guard; pending trust |
+| OpenCode | copy at `~/.agents/command-guard` and copied adapter | `.config/opencode/plugins/command-guard.js` | tool block + allow and permission denial |
 
 `HOME/.hskills/guard.json` records copied files and exact hook entries.
-Existing unrecorded snapshot or plugin files are conflicts. Settings retain a
+Existing unrecorded copied or plugin files are conflicts. Settings retain a
 first-write `.before-command-guard` backup. Keep the ownership record and backups.
 Uninstall removes recorded hook commands even when an unrelated command shares
 their group, and removes only unchanged recorded files. Replaced files survive.
@@ -226,35 +226,44 @@ command. Agents must report failures, not disable or bypass the guard.
 Automated temporary-home CLI tests cover installation, doctor and uninstall.
 For actual Claude/Codex adapter invocation and installed OpenCode validation on
 Linux, read [live hook evidence](../research/live-hooks-120.md);
-for Claude plugin sessions, checkout independence and the Codex trust barrier,
-read [live plugin evidence](../research/live-plugins-121.md). For native Windows
-Claude/Codex plugin events, checkout independence and the trusted reinstall,
-uninstall and same-snapshot reinstall, read [Windows guard acceptance](evidence/windows-guard-followup.md).
+for Claude plugin sessions and the Codex trust barrier, read
+[live plugin evidence](../research/live-plugins-121.md). For native Windows
+Claude/Codex plugin events and the trusted reinstall and uninstall cycles, read
+[Windows guard acceptance](evidence/windows-guard-followup.md). Both were recorded
+when the installer registered a frozen copy of the guard, so their checkout
+branch-switch results no longer describe it.
 OpenCode host acceptance on Windows remains unrun.
 
 ## Register the guard plugin
 
 Normal installs register the guard with the installed `claude` and `codex` CLIs.
-`prepare-plugin` runs that registration independently of skill links. Both use
+`register-guard` runs that registration independently of skill links. Both use
 `--source` for the guard as well as skills. CLI binaries can be selected with
 `COMMAND_GUARD_CLAUDE` and `COMMAND_GUARD_CODEX` when absent from PATH.
-Registration uses a dedicated `hskills-guard` marketplace rooted in the
-prepared snapshot. Enabled listings must report that snapshot as effective source.
 
-`HOME/.hskills/plugins.json` journals snapshot files and host configuration
-writes. Failed host registration rolls back its writes and retains legacy hooks.
-Before registration mutates host files, every recorded write must still match its
-last installed bytes, except narrowly verified Codex hook trust-table and runtime
-preference changes (below). Conflicts preserve current bytes and the journal. Existing
-snapshots must contain only recorded files; byte-identical unrecorded snapshots
-are conflicts, not adopted installations. The journal also records the snapshot
-directories the installer created; journals written before that derive them from
-recorded snapshot files. Uninstall removes only those directories, deepest first,
-and only when empty; a non-empty or replaced directory is a conflict and stays,
-with its contents. An unrecorded snapshot directory, even an empty one, stays a
-conflict. Parents below the selected home must remain real directories. A symlink
-or junction replacing a snapshot or host-plugin parent is a conflict before
-cleanup; external files and the ownership journal stay untouched.
+Registration adds the checkout as the `hskills` marketplace, the one the
+[skill plugins](#whole-list-skill-plugins) come from, and installs
+`command-guard@hskills` from it. Enabled listings must report the checkout's
+`hooks/command-guard` as the plugin folder. Like linked skills, the guard follows
+its checkout: Claude reads the folder in place, so an edit or branch switch there
+reaches the next session; Codex runs the copy it made at install, so rerun the
+installer to refresh it. For a guard that holds still while you work, register a
+checkout you do not work in, or work in a worktree. An `hskills` marketplace
+already registered from another path or from GitHub is a conflict; registration
+never re-points it. To move an installer registration to another checkout,
+uninstall, then install from the new one.
+
+`HOME/.hskills/plugins.json` journals host configuration writes. Failed host
+registration rolls back its writes and retains legacy hooks. Before registration
+mutates host files, every recorded write must still match its last installed
+bytes, except narrowly verified Codex hook trust-table and runtime preference
+changes (below). Conflicts preserve current bytes and the journal. The journal
+compares whole files, so installing or removing any other plugin afterwards,
+skill plugins from `hskills` included, makes the guard's reinstall and uninstall
+conflicts; install skill plugins before the guard, or uninstall the guard first.
+Parents below the selected home must remain real directories. A symlink or
+junction replacing a host-plugin parent is a conflict before cleanup; external
+files and the ownership journal stay untouched.
 
 Once the replacement is ready, only exact recorded legacy handlers with the
 adapter marker are removed from that host's settings; unrelated handlers survive.
@@ -263,7 +272,7 @@ plugin hooks must report trusted. Pending or unavailable trust retains the legac
 handler. Doctor reports its actual enabled/trust status: retaining an untrusted
 handler leaves Codex UNPROTECTED until human review. The installer never grants
 trust. Claude readiness requires an enabled
-registration at the expected snapshot and successful adapter probes.
+registration at the checkout's guard and successful adapter probes.
 Settings keep their first-write backup. Uninstall restores recorded configuration
 only while its bytes still match, allowing syntactically validated changes to Codex
 `hooks.state` hash tables and to two Codex runtime preference tables: `[tui]` holding
@@ -274,12 +283,12 @@ resets or applies them. A `[tui]` or `[windows]` table with any other field is a
 ordinary personal table, compared exactly. Unknown trust syntax and unrelated
 personal edits are conflicts and remain owned for recovery. Resolve conflicts manually before retrying uninstall.
 
-Doctor checks registration and snapshot block/allow probes. Claude-only
+Doctor checks registration and block/allow probes of the checkout's adapters. Claude-only
 registration can pass these checks. Codex returns pending while its current hook
 trust is unresolved; review Codex `/hooks` yourself. Uninstall preserves validated
 hook-state tables, so Codex may reuse existing approval for matching hook content
 on reinstall. Doctor reads the current host-reported state; the installer grants
-no new approval. Direct snapshot probes
+no new approval. Direct adapter probes
 establish adapter behavior; live host acceptance evidence is recorded separately
 in [the plugin investigation](../research/live-plugins-121.md).
 
@@ -292,7 +301,8 @@ includes onboarding; onboarding publishes as a separate one-skill plugin,
 `hskills-onboarding`, holding `onboarding-guide`.
 
 Register this checkout with `claude plugin marketplace add <checkout>` or
-`codex plugin marketplace add <checkout>`. Install `hskills-core@hskills`
+`codex plugin marketplace add <checkout>`; a guard install has already
+registered it. Install `hskills-core@hskills`
 and `hskills-<pack>@hskills` together at the same release when
 the pack requires core. Plugins do not resolve metadata requirements. Other
 required packs must likewise be installed explicitly; a missing requirement

@@ -129,6 +129,8 @@ function converse(root, name, argv, cwd, childEnv, opening, onLine, timeout = 42
 }
 
 // Disposable source: base has the guard; switching removes it on a new branch.
+// The guard follows its checkout, so the switch shows what each host runs from:
+// Claude reads the plugin folder in place, Codex its copy from the last install.
 function sourceAt(root, guard, branch) {
   const source = path.join(root, 'source');
   const base = JSON.parse(fs.readFileSync(path.join(root, 'state.json'))).base;
@@ -258,18 +260,8 @@ async function main() {
       trustBytesIdentical: !!configAfter && configAfter.trust === configBefore.trust,
       trustLinesPreserved: !!configAfter && lines(configAfter.trust) === lines(configBefore.trust),
       preferenceTables: { before: preferenceTables(configBefore), after: preferenceTables(configAfter) } };
-    // Every directory still under the snapshot cache, empty or not, by relative path.
-    const cache = path.join(home, '.hskills/plugin-cache');
-    const snapshotEntriesRemaining = [];
-    (function walk(dir) {
-      for (const name of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
-        const p = path.join(dir, name);
-        snapshotEntriesRemaining.push(path.relative(cache, p).split(path.sep).join('/'));
-        if (fs.lstatSync(p).isDirectory()) walk(p);
-      }
-    })(cache);
     const journalAfter = fs.existsSync(journal) ? sha(fs.readFileSync(journal)) : null;
-    const summary = { status, remainingOwned: remaining.map(scrub), snapshotEntriesRemaining, unrelated, codexConfig: codex, journal: { beforeSha256: journalBefore, afterSha256: journalAfter }, userConfigUnchanged: JSON.stringify(after) === JSON.stringify(baseline), changed: Object.keys(after).filter(k => after[k] !== baseline[k]) };
+    const summary = { status, remainingOwned: remaining.map(scrub), unrelated, codexConfig: codex, journal: { beforeSha256: journalBefore, afterSha256: journalAfter }, userConfigUnchanged: JSON.stringify(after) === JSON.stringify(baseline), changed: Object.keys(after).filter(k => after[k] !== baseline[k]) };
     fs.writeFileSync(path.join(out, `${name}-summary.json`), JSON.stringify(summary, null, 2));
     console.log(JSON.stringify(summary, null, 2));
     return;

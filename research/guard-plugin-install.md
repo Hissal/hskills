@@ -1,5 +1,10 @@
 # Guard plugin delivery (#121)
 
+**Superseded.** This records the content-addressed snapshot design and its
+separate guard marketplace. The installer no longer works this way: it registers
+`command-guard@hskills` from the checkout, which the guard then follows; see
+[Register the guard plugin](../docs/user-install.md#register-the-guard-plugin).
+
 Read and executed 2026-10-30 on Linux. Partial implementation under spec #78;
 #121 remains open. Skill plugins remain gated on the live #123 result (#124).
 

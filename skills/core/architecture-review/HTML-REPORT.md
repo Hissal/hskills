@@ -126,7 +126,7 @@ Present only when the review recorded some: one compact list in reviewing's entr
 
 ## Coverage
 
-Always present, as quiet as the out-of-scope list (`text-sm text-slate-400`): four short labelled lists, **Read**, **Left alone**, **Declined to judge** and **ADRs**, with the contents step 4 of `SKILL.md` names. A list with nothing in it says "none".
+Always present, as quiet as the out-of-scope list (`text-sm text-slate-400`): five short labelled lists, **Read**, **Left alone**, **Declined to judge**, **Module graph** and **ADRs**, with the contents step 4 of `SKILL.md` names. A list with nothing in it says "none".
 
 ## Top recommendation section
 

@@ -61,7 +61,7 @@ Added by the [contextual suggestions decision](https://github.com/Hissal/hskills
 Decided in [Design and refactoring](https://github.com/Hissal/hskills/issues/40#issuecomment-6177796453), [Continuity and learning](https://github.com/Hissal/hskills/issues/41#issuecomment-6181216467), and [Prototyping](https://github.com/Hissal/hskills/issues/44#issuecomment-6195116678):
 
 - `codebase-design`: this stack's seam and compatibility rules.
-- `architecture-review`: what to leave out of the hotspot scan and this stack's sources of friction. The [guide-content decision](https://github.com/Hissal/hskills/issues/50#issuecomment-6426359993) renames the former `improve-codebase-architecture` and makes its implementation continuation explicitly chosen.
+- `architecture-review`: what to leave out of the hotspot scan, this stack's sources of friction, and how to list its declared modules. The [guide-content decision](https://github.com/Hissal/hskills/issues/50#issuecomment-6426359993) renames the former `improve-codebase-architecture` and makes its implementation continuation explicitly chosen.
 - `refactoring`: this stack's rename and move hazards and how to validate a refactor.
 - `retro`: environment gaps the session hit that are specific to this stack.
 - `prototype`: where a prototype lives, how it runs and is removed, and which medium fits this stack.

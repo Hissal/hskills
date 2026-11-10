@@ -190,7 +190,7 @@
       "path": "skills/engineering/to-tickets",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; project configuration for tracker, labels and ticket folder; duplicate search; pass/fail criteria and Proof notes; exclusive surfaces block; shared task end checks in one final ticket; pack-guide extension point; /implement or /implement-spec offer and parent-agent return; writing-for-agents process call for tickets"
+      "changes": "collection metadata and gates; project configuration for tracker, labels and ticket folder; duplicate search; pass/fail criteria and Proof notes; exclusive surfaces block; shared task end checks in one final ticket; pack-guide extension point; /implement or /implement-spec offer and parent-agent return; writing-for-agents process call for tickets; PR groups proposed in the quiz and recorded on each ticket, with none for tickets with no commits"
     },
     {
       "skill": "skills/core/triage",

@@ -207,8 +207,8 @@ one caller skill from `skills/`. Each caller dispatches one agent:
   own `Authority` part and a `Findings:` … `Review complete.` return shape.
 - **`fix-caller`**: an agent that fixes `src/sum.js` so `node test.js` passes,
   with no brief fields or return shape given.
-- **`count-caller`**: the missing-requirement case: an agent that counts the
-  TODO comments in `src/` (there are 3), with no role and no return shape given.
+- **`count-caller`**: an agent that counts the TODO comments in `src/` (there
+  are 3), with no role and no return shape given.
 
 Run with an isolated `HOME` holding only the harness's credentials, so a
 user-scope `delegating` cannot load in either arm. Grant the permission to run
@@ -227,8 +227,9 @@ user-scope `delegating` cannot load in either arm. Grant the permission to run
     changed.
   - `count-caller`: the brief has a `Role:` line naming a role agent or a
     helper; it asks for `Status:`, `Changed:`, `Seen to fail:` and
-    `Seen to pass:`; the final message gives 3; `git status --porcelain` is
-    empty.
+    `Seen to pass:`, and its return has no field beyond the default's six; no
+    brief line's whole value is `none`; the final message gives 3;
+    `git status --porcelain` is empty.
 - **Pass count**: 4/5 per caller on each frontier model.
 - **Control arm**: install `delegating` as it was before this case, from commit
   `c2fe6ad`, with the same caller. The control's fixed return shape and

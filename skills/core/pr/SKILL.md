@@ -9,6 +9,8 @@ metadata:
 
 Done when the body follows this template, every result in it comes from evidence already gathered, every issue it delivers carries the link its state calls for, and every gap is on the **Not done** line. Writing or updating a body runs nothing.
 
+When the PR is part of a stack (its base is another open PR's head, or its head is another open PR's base), read [the stack reference](references/STACK.md) before writing, pushing or merging: how a lower PR is changed and the stack pushed, which PRs keep their checks after a restack, and how each PR links its tickets. Skip it and the PRs above a change go stale, or a push overwrites someone else's work.
+
 Use this template for writing the PR body, and when updating one:
 
 ```markdown

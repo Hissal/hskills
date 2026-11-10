@@ -24,7 +24,7 @@ Ask `delegating` for one researcher: role researcher, difficulty that of the que
 
 When this skill already runs as a researcher, or as a helper that may start no agent, do the reading yourself: start no researcher, and follow the researcher's job below.
 
-The brief carries the question, the file path from step 1, and the researcher's job below in full, since the researcher has no other access to this skill.
+The brief carries the question, the file path from step 1, and the researcher's job below in full, since the researcher has no other access to this skill. Its Return is step 4's.
 
 ## 3. The researcher's job
 

@@ -17,7 +17,7 @@ Invoked with the argument `setup` (`/delegating setup`), you write the owner's p
 
 ## 1. Take the caller's contract
 
-The calling workflow states, for each agent: its **role**, the task's **difficulty** (simple, normal, difficult), the **agent count**, and how the agents relate (independent, in sequence, or a diversity group with diversity **preferred** or **required**). Resolve those here. When the caller leaves one out, infer it from the task and say so in the dispatch summary.
+A calling workflow may give hints for each agent: its **role**, the task's **difficulty** (simple, normal, difficult), the **agent count**, how the agents relate (independent, in sequence, or a diversity group), and whether diversity is **preferred** or **required**. All are optional. Decide each one it leaves out yourself, from the task, and say so in the dispatch summary. Unstated diversity does not matter: select without it.
 
 Explicit instructions in the current message or invocation override everything below. An explicit model, harness or effort means exactly that choice: it is never silently replaced.
 
@@ -30,9 +30,7 @@ The same rules bind you when you are yourself a dispatched agent. A helper, or a
 
 ## 2. Before firing
 
-- **Parallel work.** Whenever agents would run at the same time, ask the project's listed pack guides for *stack-specific shared resources and isolation constraints*: what two workers cannot share (an editor, a device, a database, a port) and how to isolate them. When no guide answers, carry on silently with your own judgment. There is no fixed concurrency cap: respect the host's limits, any limit the user stated, and any infrastructure limit the project configuration records; run in parallel only what gains from it and cannot collide.
-- **Dirty tree.** When workers run in another checkout (a worktree, a delegated child, a CLI in another folder), run `git status --porcelain`. If it lists anything, warn in one line which uncommitted work the workers will not see.
-- **Cost.** Before a run of more than one agent, state its cost in one line: how many agents, on which models and efforts, and roughly how much each reads.
+Whenever agents would run at the same time, decide what can safely run together. Ask the project's listed pack guides for *stack-specific shared resources and isolation constraints*: what two workers cannot share (an editor, a device, a database, a port) and how to isolate them. When no guide answers, carry on silently with your own judgment. There is no fixed concurrency cap: respect the host's limits, any limit the user stated, and any infrastructure limit the project configuration records; run in parallel only what gains from it and cannot collide.
 
 ## 3. Select model, harness and effort
 
@@ -61,7 +59,7 @@ When no host delegation reaches an allowed choice, run that harness's headless C
 - Read its current `--help` before the first run in a session.
 - Write the brief to a file outside the checkout and pass it whole: the agent sees nothing else.
 - Close stdin unless the brief goes through it, and give every run a time limit.
-- Capture the final output to a file and keep the exit code. A non-zero exit, an empty output or output outside the return shape is a failed dispatch, not a result.
+- Capture the final output to a file and keep the exit code. A non-zero exit, an empty output, or a return that step 7 calls failed is a failed dispatch.
 - Run it where the brief says, no wider than the brief's Authority.
 - A quota or rate-limit failure makes that choice unavailable for now: report it and move on, never retry in a loop.
 
@@ -69,25 +67,35 @@ A choice no transport reaches is unavailable (step 3). Permission and sandbox mo
 
 ## 5. Write the brief
 
-The brief is the agent's whole world: it sees nothing else. Write it for the weakest executor that might run it: exact paths, current-code excerpts where they matter, exact commands. Pass large artifacts (diffs, specs, logs) as file paths, not pasted text. Use this shape:
+The brief is the agent's whole world: it sees nothing else. Write it for the weakest executor that might run it: exact paths, current-code excerpts where they matter, exact commands. Pass large artifacts (diffs, specs, logs) as file paths, not pasted text. When the agent runs in another checkout (a worktree, a delegated child, a CLI in another folder), every path the brief names must exist there, and uncommitted material (new files and uncommitted edits) goes as a file outside the checkout.
+
+Every brief carries this core:
 
 ```md
 Written against: <full commit SHA, plus "uncommitted changes" when the tree is dirty>
 Role: <role agent: may start helpers and run the workflows this role calls for, never an agent for a peer role | helper: start no agent>
 Objective: <the outcome, in one or two sentences>
-Authority: <what this task may do, from the invoking workflow; running on another harness grants nothing more>
-Constraints: <scope, files to leave alone, isolation from step 2>
-Skills to call: <skill names the agent calls, e.g. tdd, verifying>
-Extension points: <the parent's pack-guide sentences, verbatim; never the answers>
-Validation: <the command that proves the objective>
-Stop when: <a condition anyone can check>
-Waiting: Never end your turn to wait. Before your Return, wait for every job you start (a test run, an eval batch, an Editor run) to end, whether it passes or fails, with foreground calls: run the job in the foreground, or start it in the background and run a foreground loop that exits when the job's process exits, within the shell tool's own time limit, repeated until the job ends or Stop when's limit passes. A Monitor, a background-task notification or `t3_background_wait` is not a wait: each still ends your turn, and your parent is woken.
-Never weaken, skip, delete or narrow a test to make it pass.
-Unattended: at a decision with a reversible default, take the default and list it under Rulings. Stop and return blocked for an unresolved decision, an action outside Authority, or a premise that proves false.
-Return: <the shape in step 7; a researcher writes findings to a file and returns a few lines plus its path>
+Authority: <what this agent may do, from the invoking workflow, and where it must stay out: scope, files to leave alone, isolation from step 2. Say plainly whether it may edit and whether it may start jobs (a test run, a build, an eval batch). Running on another harness grants nothing more>
+Stop when: <a condition anyone can check, naming the check, with its command when there is one>
+Unattended: at a decision with a reversible default, take the default and list it as a ruling. Stop and return blocked for an action outside Authority, a premise that proves false, or an unresolved decision.
+Return: <from step 7: the calling skill's shape plus the core lines it lacks, or else the default shape>
 ```
 
-Keep the `Waiting:` line in every brief. On every harness tested, each turn the agent ends reaches you as a result or a wake-up, so an agent that ends its turn to wait wakes you for nothing; T3's `t3_background_wait` only delays that wake-up to the job's end. Evidence and tested versions: `research/child-waits-314.md` in the `Hissal/hskills` GitHub repo.
+Add the defaults that fit, before `Unattended`:
+
+- **When Authority lets the agent start jobs**, a reviewer that runs checks included:
+
+  ```md
+  Waiting: Never end your turn to wait. Before your Return, wait for every job you start (a test run, an eval batch, an Editor run) to end, whether it passes or fails, with foreground calls: run the job in the foreground, or start it in the background and run a foreground loop that exits when the job's process exits, within the shell tool's own time limit, repeated until the job ends or Stop when's limit passes. A Monitor, a background-task notification or `t3_background_wait` is not a wait: each still ends your turn, and your parent is woken.
+  ```
+
+  On every harness tested, each turn the agent ends reaches you as a result or a wake-up, so an agent that ends its turn to wait wakes you for nothing; T3's `t3_background_wait` only delays that wake-up to the job's end. Evidence and tested versions: `research/child-waits-314.md` in the `Hissal/hskills` GitHub repo.
+- **When Authority lets the agent edit**: `Never weaken, skip, delete or narrow a test to make it pass.`
+- **When you have something to put in them**: `Skills to call: <skill names the agent calls, e.g. tdd, verifying>` and `Extension points: <the parent's pack-guide sentences, verbatim; never the answers>`.
+
+Write no field as `none`: a field with nothing to say is left out.
+
+A calling skill may add fields or replace any default; the core stays. A caller's field that means the same as a core field under another name (a `Boundary` saying what the agent may do, a `Return shape`) is that core field. Add a core line only where the caller leaves the field out entirely.
 
 An action the invoking workflow already authorised (an autonomous flow's push or merge) goes under Authority and is not asked about again.
 
@@ -106,19 +114,30 @@ One line per agent when several go together.
 
 ## 7. Check the return
 
-Every agent returns exactly one status:
+Every return carries the core: exactly one state (`done`, `blocked` or `needs more scope`), the evidence behind it, and each ruling taken, only when any were. Fill the brief's `Return` one of two ways:
 
-```md
-Status: done | blocked | needs more scope
-Changed: <paths, or none>
-Seen to fail: <commands and results>
-Seen to pass: <commands and results>
-Rulings: <each reversible default taken, or none>
-Blocked on / scope needed: <only when not done>
-```
+- **The calling skill's text defines a return shape**: use it, and add the core lines it lacks. A line it already carries under its own name stays as it is, and the added lines go before any last line the shape requires:
 
-A turn end outside this shape (an interim "still waiting" note) is not a return. A Claude agent on T3 or a background Claude Code `Agent` with background work still running is resumed when that work ends (Claude Code's notice says the agent stopped with background work still running; on T3 the note itself says so): end your turn at once with no reply and no tool call. Otherwise it is a failed dispatch: continue the agent with a message telling it to wait inside its turn, or dispatch again.
+  ```md
+  Status: done | blocked | needs more scope
+  Evidence: <what shows the state: commands and results, files, quoted lines>
+  Blocked on / scope needed: <only when not done>
+  Rulings: <each reversible default taken, with its reason; only when any were>
+  ```
 
-The report is evidence, never the result. Check the real diff and run the checks yourself through `verifying` before calling the work done. No report, a report outside this shape, or a report naming no evidence is not done: a gap is not a pass. Confirm the model and effort that actually ran from the run's own record where it names them, and report them; say so when they differ from what you requested.
+- **It defines none**: use this default as written. It already carries the core, so add nothing to it and invent no fields for it:
+
+  ```md
+  Status: done | blocked | needs more scope
+  Changed: <paths, or none>
+  Seen to fail: <commands and results>
+  Seen to pass: <commands and results>
+  Rulings: <each reversible default taken, with its reason; only when any were>
+  Blocked on / scope needed: <only when not done>
+  ```
+
+A return is **failed** when it is missing a state or evidence, or is outside the shape its brief asked for. A turn end such as an interim "still waiting" note is not a return. A Claude agent on T3 or a background Claude Code `Agent` with background work still running is resumed when that work ends (Claude Code's notice says the agent stopped with background work still running; on T3 the note itself says so): end your turn at once with no reply and no tool call. Otherwise it is a failed dispatch: continue the agent with a message telling it to wait inside its turn, or dispatch again.
+
+A return is evidence, never the result. Check the real diff and run the checks yourself through `verifying` before calling the work done. A missing return, a failed one, and a `blocked` or `needs more scope` one are not done, whatever else the return carries: a gap is not a pass. Confirm the model and effort that actually ran from the run's own record where it names them, and report them; say so when they differ from what you requested.
 
 Carry every ruling into your final report, and onto the ticket when the work comes from one. Needs more scope goes to whoever owns the scope; you widen nothing on the agent's behalf.

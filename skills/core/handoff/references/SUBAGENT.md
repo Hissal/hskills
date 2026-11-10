@@ -11,14 +11,14 @@ Call the Skill tool with `delegating` and dispatch through it: selection, transp
 - **Objective**: the outcome from Goal and why, narrowed by the free text.
 - **Authority**: only what the user already granted this session for this work. Decisions marked **agent's** or **pending** are not approvals and grant nothing.
 - **Skills to call**: the document's Suggested skills.
-- **Validation** and **Stop when**: checks a reader can run on the tree, taken from State and the free text.
+- **Stop when**: checks a reader can run on the tree, with their commands, taken from State and the free text.
 - The document follows the brief's fields whole, reader block included, or as a path outside the checkout when it is long.
 
 When a work brief was asked for, map the brief's sections instead:
 
 - **Objective**: Outcome and why, narrowed by the free text.
-- **Validation** and **Stop when**: Completion checks.
-- **Constraints**: Constraints.
+- **Authority**: what the user already granted, as above, narrowed by Constraints.
+- **Stop when**: Completion checks.
 - **Written against** and context: Current state and remaining work and Context and evidence, plus the head commit and whether the tree is dirty, read from the checkout.
 - **Pointers**: Pointers.
 - The brief follows the fields whole, reader block included.

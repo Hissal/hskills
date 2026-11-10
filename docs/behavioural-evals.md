@@ -191,3 +191,48 @@ Install `retro` and `writing-for-agents` in the skill arm.
   miss, and it may meet the bar too. That makes this case a regression guard:
   the skill passes on its own pass count, and a control pass is recorded, not
   counted against it.
+
+## Case: delegating fits the brief to its caller
+
+This case proves `delegating` keeps a caller's return shape and adds only the
+core, gives an implementer the edit and job defaults, and decides the role and
+return itself when the caller gives neither. Rerun it when `delegating`'s brief
+or return sections change.
+
+The fixture is the [`delegating-callers`](../scripts/eval/behaviour/fixture/delegating-callers/)
+folder. Copy `project/` as the scratch project, and install `delegating` with
+one caller skill from `skills/`. Each caller dispatches one agent:
+
+- **`review-caller`**: a read-only reviewer of `src/sum.js`, with the caller's
+  own `Authority` part and a `Findings:` … `Review complete.` return shape.
+- **`fix-caller`**: an agent that fixes `src/sum.js` so `node test.js` passes,
+  with no brief fields or return shape given.
+- **`count-caller`**: an agent that counts the TODO comments in `src/` (there
+  are 3), with no role and no return shape given.
+
+Run with an isolated `HOME` holding only the harness's credentials, so a
+user-scope `delegating` cannot load in either arm. Grant the permission to run
+`node` in both arms.
+
+- **Prompt**: `/<caller>` for Claude, `$<caller>` for Codex.
+- **Bar per run**, graded on the first dispatched brief (the native agent
+  tool's prompt) and the run's files. "No `none` field" means no brief field
+  above `Return` has `none` as its whole value; the return template is exempt,
+  since the default allows `Changed: none`.
+  - `review-caller`: the brief has `Findings:` and `Review complete.`; it asks
+    for a state (`Status:` or `done | blocked`); it has no `Waiting:` line and
+    none of `Changed:`, `Seen to fail:` or `Seen to pass:`; no `none` field;
+    `git status --porcelain` is empty.
+  - `fix-caller`: the brief has a `Waiting:` line and the never-weaken-tests
+    line; it asks for `Status:`, `Changed:` and `Seen to pass:`; no `none`
+    field; `node test.js` passes and only `src/sum.js` changed.
+  - `count-caller`: the brief has a `Role:` line naming a role agent or a
+    helper; it asks for `Status:`, `Changed:`, `Seen to fail:` and
+    `Seen to pass:`, and its return has no field beyond the default's six; no
+    `none` field; the final message gives 3; `git status --porcelain` is empty.
+- **Pass count**: 4/5 per caller on each frontier model.
+- **Control arm**: install `delegating` as it was before this case, from commit
+  `c2fe6ad`, with the same caller. The control's fixed return shape and
+  mandatory `Waiting:` line should fail `review-caller`. `fix-caller` and
+  `count-caller` are regression guards: the control may meet their bar too,
+  which is recorded, not counted against the skill.

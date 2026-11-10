@@ -11,8 +11,8 @@ Its brief, in `delegating`'s shape, carries:
 - **Objective**: the one question, the choice it informs, and the options setup is weighing.
 - **Authority**: read sources; write only `docs/agents/setup-research/<slug>.md`, the findings file. Evidence and what it means for each option; the choice stays with the owner.
 - **Skills to call**: `research` when installed, doing the reading itself rather than starting another agent. Otherwise primary sources, each cited beside its claim.
-- **Stop when**: the question is answered or the sources searched are named as coming up empty.
-- **Return**: `research`'s return when it was called: the answer in brief, each line at its confidence tier, and the findings file's path.
+- **Stop when**: the findings file answers the question, or names the sources searched as coming up empty.
+- **Return**: the answer in brief with its confidence, and the findings file's path.
 
 While it runs, take every section that does not need the answer, and name the section you are holding back. Their writes wait for the draft as usual. When it returns, read the findings file, then bring the evidence to the owner at the next pause between sections: the answer in brief, its confidence, the file path. Then put the held question. You may say which option you would pick. The section records what the owner answers.
 

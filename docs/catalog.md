@@ -662,7 +662,7 @@ changing skill identity or requirements with
 |---|---|---|
 | `hissal.hskills/architecture-review` | [`architecture-review`](../skills/core/architecture-review/SKILL.md) | `hissal.hskills/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |
 | `hissal.hskills/arena` | [`arena`](../skills/packs/experimental/arena/SKILL.md) | — |
-| `hissal.hskills/babysit-pr` | [`babysit-pr`](../skills/packs/experimental/babysit-pr/SKILL.md) | — |
+| `hissal.hskills/babysit-pr` | [`babysit-pr`](../skills/packs/experimental/babysit-pr/SKILL.md) | `hissal.hskills/pr` [`pr`](../skills/core/pr/SKILL.md) |
 | `hissal.hskills/blast-radius` | [`blast-radius`](../skills/core/blast-radius/SKILL.md) | `hissal.hskills/verifying` [`verifying`](../skills/core/verifying/SKILL.md) |
 | `hissal.hskills/break-ui` | [`break-ui`](../skills/core/break-ui/SKILL.md) | — |
 | `hissal.hskills/code-review` | [`code-review`](../skills/core/code-review/SKILL.md) | `hissal.hskills/reviewing` [`reviewing`](../skills/core/reviewing/SKILL.md) |

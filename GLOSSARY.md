@@ -79,6 +79,18 @@ _Avoid_: persona, worker
 An agent started for one narrow errand that returns facts and makes no judgment, such as finding every caller of a function. It never starts an agent of its own.
 _Avoid_: search agent, sub-subagent
 
+**Dispatch brief**:
+The standalone instructions an orchestrator gives an agent it starts: everything that agent sees of the task. Distinct from a work brief, which hands work to a later session or person.
+_Avoid_: prompt, task description, work brief
+
+**Return**:
+What a dispatched agent hands back when it ends: one checkable state (done, blocked, or needs more scope), the evidence behind it, and each default it took without asking, in the shape its dispatch brief asked for.
+_Avoid_: report, result, output
+
+**Ruling**:
+A reversible default an agent took without asking, with its reason, listed so its owner can overturn it.
+_Avoid_: assumption, decision
+
 **Personal delegation policy**:
 An optional user-scoped policy for choosing harnesses, model families and reasoning effort when delegating work. It is an agreed exception to the collection's default against preference switches; explicit instructions for the current task take precedence.
 

@@ -119,16 +119,21 @@ try {
     assert.match(respelled.stdout, /REGISTERED claude/, respelled.stdout + respelled.stderr);
     assert.match(respelled.stdout, /REGISTERED codex/, respelled.stdout + respelled.stderr);
   }
-  // The registration follows the checkout; a rerun refreshes Codex's copy of it.
+  // The registration follows the checkout. Codex runs its copy until a rerun
+  // refreshes it, and doctor reports the copy stale until then.
   fs.appendFileSync(path.join(guard, 'adapters/claude-code.js'), '\n// updated source\n');
+  const doctor = () => spawnSync(process.execPath, [cli, 'doctor', '--home', home, '--source', source], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex } });
+  const stale = doctor();
+  assert.equal(stale.status, 1, stale.stdout + stale.stderr);
+  assert.match(stale.stderr, /stale Codex copy of the guard .*rerun install/, stale.stdout + stale.stderr);
   const updated = run();
   assert.match(updated.stdout, /REGISTERED claude/, updated.stderr);
   assert.match(updated.stdout, /REGISTERED codex/, updated.stdout + updated.stderr);
   assert.ok(JSON.parse(fs.readFileSync(path.join(home, '.hskills/plugins.json'))).hosts.every(h => h.source === guard), updated.stdout + updated.stderr);
-  if (real) {
-    const copy = path.join(home, '.codex/plugins/cache/hskills/command-guard', JSON.parse(fs.readFileSync(path.join(guard, '.codex-plugin/plugin.json'))).version, 'adapters/claude-code.js');
-    assert.deepEqual(fs.readFileSync(copy), fs.readFileSync(path.join(guard, 'adapters/claude-code.js')));
-  }
+  const copy = path.join(home, '.codex/plugins/cache/hskills/command-guard', JSON.parse(fs.readFileSync(path.join(guard, '.codex-plugin/plugin.json'))).version, 'adapters/claude-code.js');
+  assert.deepEqual(fs.readFileSync(copy), fs.readFileSync(path.join(guard, 'adapters/claude-code.js')));
+  const refreshed = doctor();
+  assert.doesNotMatch(refreshed.stdout + refreshed.stderr, /stale Codex copy/);
   fs.writeFileSync(path.join(source, 'collection.json'), JSON.stringify({core: [], packs: {}, expensive: []}));
   const normal = spawnSync(process.execPath, [cli, 'install', '--home', home, '--source', source], {encoding: 'utf8', env: {...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex}});
   assert.match(normal.stdout, /REGISTERED codex/, normal.stdout + normal.stderr);

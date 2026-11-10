@@ -5,6 +5,7 @@
 # Keep the two doubles' behaviour identical.
 import json
 import os
+import shutil
 import sys
 
 dump = lambda value: json.dumps(value, separators=(',', ':'), ensure_ascii=False)
@@ -82,6 +83,12 @@ else:
             print('Error: plugin not found: ' + str(arg(2)), file=sys.stderr)
             sys.exit(1)
         folder = os.path.abspath(os.path.join(source, entry['source']))
+        if host == 'codex':
+            # Codex runs a copy of the plugin folder, refreshed on every add.
+            version = json.loads(read(os.path.join(folder, '.codex-plugin', 'plugin.json')))['version']
+            copy = os.path.join(plugins, 'cache', name, entry['name'], version)
+            shutil.rmtree(copy, ignore_errors=True)
+            shutil.copytree(folder, copy)
         write(installed, dump({'pluginId': arg(2), 'enabled': True, 'source': {'source': 'local', 'path': folder}}
                               if host == 'codex' else {'id': arg(2), 'enabled': True, 'readFromFolder': folder}))
         config = os.path.join(root, 'config.toml' if host == 'codex' else 'settings.json')

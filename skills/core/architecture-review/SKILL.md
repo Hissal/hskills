@@ -89,14 +89,14 @@ Candidates and the explorer's report follow reviewing's evidence rules: an explo
 
 #### Declared module graph
 
-While the explorers read, check the declared module graph yourself. A **declared module** is one whose seam the build enforces: an assembly, project, package, crate or workspace member, compiled separately, with its references to other declared modules and any grant that opens its internals to one. The graph spans the project, so no explorer's share holds it. Under a general scope, check all of it, whichever modules the survey selected; under a clearly scoped review, check the edges the change adds, removes or starts using.
+While the explorers read, check the declared module graph yourself. A **declared module** is one whose seam the build enforces: an assembly, project, package, crate or workspace member, compiled separately, with its references to other declared modules and any grant that opens its internals to one. Declared modules holding tests or tooling count too, under the same rules: a module's tests and tooling reference that module, and another only where they cannot work without it. The graph spans the project, so no explorer's share holds it. Under a general scope, check all of it, whichever modules the survey selected; under a clearly scoped review, check the edges the change adds, removes or starts using.
 
 List the declared modules and their references from the build's own files, using the pack guides' listing where one answers. Then ask of the graph, against the project's stated rules (ADRs, code standards) and the code:
 
 - **Undeclared modules.** Do modules the code treats as separate share one declared module? Then each one's internals are open to the others, so its interface is everything it does not keep private. Signs: internals used across them, access-key types, and interfaces that exist only to set a dependency's direction. Splitting them is a deepening.
 - **Direction.** Does an edge run against the project's stated layering, such as core logic referencing presentation or infrastructure? Is a cycle worked around with events or interfaces?
 - **Grants.** Are internals opened beyond what the project's rules allow, or, where it has none, beyond the module's own tests?
-- **Fan-out.** Does a declared module reference most of the others? Composition roots, tooling and tests are expected to. Judge by what crosses each edge, a published interface or another module's concrete internals, not by the count.
+- **Fan-out.** Does a declared module reference most of the others? Only one whose job is to connect modules is expected to, such as a composition root or an integration test assembly the project names. Judge by what crosses each edge, a published interface or another module's concrete internals, not by the count.
 - **Over-splitting.** Is one module's code spread over several declared modules, or does a split force a type public that would otherwise stay internal?
 
 Friction goes to step 3 as a candidate like any other. An edge that looks against a rule but holds, such as one an ADR chose, goes to Coverage with its reason. Done when each question has been asked of every declared module in scope, including a build that declares one or none.

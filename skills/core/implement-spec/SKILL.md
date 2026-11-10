@@ -35,11 +35,11 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 ## Steps
 
-1. Read the spec, and from each ticket its blocking relationships and acceptance criteria, to understand the task graph. Keep only the spec, the task graph and each ticket's acceptance criteria in your context; reach a ticket's body by its pointer when a step needs it, as implementers do.
+1. Read the spec, and from each ticket its blocking relationships, PR group and acceptance criteria, to understand the task graph. Keep only the spec, the task graph, each ticket's PR group and its acceptance criteria in your context; reach a ticket's body by its pointer when a step needs it, as implementers do.
 
 2. (optional) Use an **exploration subagent** to conduct any exploration required by the tickets - relevant codebase files or external documentation. Ensure the exploration subagent can save files - it should save its markdown notes in a directory outside the repo, accessible by all future subagents. Where a ticket needs facts from outside sources, it may call the Skill tool with `research`; its brief names its role, researcher, so `research` does the reading in that subagent instead of starting another. This lets **implementer subagents** focus on implementation rather than exploration.
 
-3. Create the integration branch. If the issue tracker closes work through PRs, or the user asks for one, open a draft PR after the first merge in step 5 (a branch with no commits ahead of the default branch can't open one). Write its body through `pr`, whose issue links set each ticket and the spec to `Closes` or `Refs` by the state of its work on every update.
+3. Create the integration branch. When the tickets carry PR groups (their **PR group** field, a position and name or `none`), open no PR here: the groups are the request for PRs, and step 9 splits the verified branch into a stack of them. Otherwise, if the issue tracker closes work through PRs, or the user asks for one, open a draft PR after the first merge in step 5 (a branch with no commits ahead of the default branch can't open one). Write its body through `pr`, whose issue links set each ticket and the spec to `Closes` or `Refs` by the state of its work on every update.
 
 4. Use a fresh **implementer subagent** for each ticket, each in its own worktree on its own branch. Its brief points at the spec, the ticket, the exploration notes and the integration branch, and carries:
    - the project-guidance pointer: load the coding guidance and tooling configuration the project's instructions point to before coding; tooling configuration wins, and a conflict between them is reported;
@@ -63,7 +63,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
    ```
 
    You read the reviewer's return, not the diff: its quoted diff lines and run output are the real-diff check `delegating` and `verifying` ask of you. Check the return's shape and evidence per `delegating`; a reviewer that returns blocked sends the ticket to the report with its blocker. Then route on the verdict:
-   - **merge**, with every criterion verified except those that wait for step 7 or for a human: merge it into the integration branch with a **merger subagent**, then update the PR body through `pr`. A `merge` with any other criterion not verified is routed as `fix`.
+   - **merge**, with every criterion verified except those that wait for step 7 or for a human: merge it into the integration branch with a **merger subagent**, then update the PR body through `pr` when a PR exists. When the tickets carry PR groups, the merge is always a merge commit (`git merge --no-ff`), never a fast-forward: the split replays each ticket from its merge commit. A `merge` with any other criterion not verified is routed as `fix`.
    - **fix**: a fixable gap, meaning an unmet criterion, a missing test or a failing check whose evidence says what is missing. A fresh implementer, briefed as in step 4 but working in the ticket's worktree and continuing its branch instead of resetting it, gets the ticket and the verdict and fixes the gap; a fresh diff-check reviewer then checks the new diff. Each round is a new delegated task carrying the full context, per `delegating`. The limit is 2 fix rounds: a ticket still not at `merge` after them is not merged and goes in the report with every round's verdicts.
    - **needs decision**: a criterion that is wrong, contradicts the spec, or can't be checked as written. The ticket is not merged and goes in the report with the reason.
 
@@ -76,10 +76,13 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 8. Check the integration branch tip through `verifying`: the project's checks, and every acceptance criterion of every ticket against the diff or a run, each with its status word. This comes before marking anything ready or reporting.
 
 9. Close the work. First finish every open item an agent can do: a blocked ticket a fresh implementer can retry, a failing criterion, a criterion check an agent can run, a fixable finding, each through steps 4 to 8. Each item gets one retry, and a ticket step 5 reported after its fix rounds has had its retries; one that fails its retry, or has had its retries, needs the owner, with what failed. What stays open is only what needs the owner: a decision, access or authority the agents lack, a check only a human can make, or a twice-failed item.
+
+   When the tickets carry PR groups, split the branch into a stack now, after the last step 8 verification has run and before handling any PR; the gaps it reports go on the stack's **Not done** lines rather than holding the split back: read [SPLIT.md](references/SPLIT.md), which holds the replay, its checks, the single-PR fallback and opening the stack. Skip it and the stack holds other groups' changes, or opens unchecked.
    - **Draft PR:** update its body through `pr`. Once every criterion is verified, mark it ready for review. Otherwise it stays a draft, with what stays open on `pr`'s **Not done** line.
+   - **Stack:** each PR the split opened is handled as a Draft PR for its own group's tickets, per [SPLIT.md](references/SPLIT.md).
    - **No PR:** resolve each ticket whose work is merged, or done in step 7's pass, and whose every criterion is verified or waits only on a check a human must make, the way the issue tracker closes work; the spec once every ticket is resolved. Leave the rest open.
 
-   Report the integration branch, the PR if any, what stayed unvalidated, with the reason, and what step 5 put in the report, with its verdicts and reasons.
+   Report the integration branch, the PR if any or the stack's PRs in order, what stayed unvalidated, with the reason, and what step 5 put in the report, with its verdicts and reasons.
 
    After the report, offer `/handoff` only when the owner chooses to defer or hand over the remaining tickets or findings and the evidence gathered would be costly to rebuild, giving that reason. Nothing already in the tracker is recorded again. The owner starts it; you never run it. Otherwise end at the report.
 

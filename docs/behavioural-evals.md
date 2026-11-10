@@ -216,20 +216,20 @@ user-scope `delegating` cannot load in either arm. Grant the permission to run
 
 - **Prompt**: `/<caller>` for Claude, `$<caller>` for Codex.
 - **Bar per run**, graded on the first dispatched brief (the native agent
-  tool's prompt) and the run's files:
+  tool's prompt) and the run's files. "No `none` field" means no brief field
+  above `Return` has `none` as its whole value; the return template is exempt,
+  since the default allows `Changed: none`.
   - `review-caller`: the brief has `Findings:` and `Review complete.`; it asks
     for a state (`Status:` or `done | blocked`); it has no `Waiting:` line and
-    none of `Changed:`, `Seen to fail:` or `Seen to pass:`; no brief line's
-    whole value is `none`; `git status --porcelain` is empty.
+    none of `Changed:`, `Seen to fail:` or `Seen to pass:`; no `none` field;
+    `git status --porcelain` is empty.
   - `fix-caller`: the brief has a `Waiting:` line and the never-weaken-tests
-    line; it asks for `Status:`, `Changed:` and `Seen to pass:`; no brief
-    line's whole value is `none`; `node test.js` passes and only `src/sum.js`
-    changed.
+    line; it asks for `Status:`, `Changed:` and `Seen to pass:`; no `none`
+    field; `node test.js` passes and only `src/sum.js` changed.
   - `count-caller`: the brief has a `Role:` line naming a role agent or a
     helper; it asks for `Status:`, `Changed:`, `Seen to fail:` and
     `Seen to pass:`, and its return has no field beyond the default's six; no
-    brief line's whole value is `none`; the final message gives 3;
-    `git status --porcelain` is empty.
+    `none` field; the final message gives 3; `git status --porcelain` is empty.
 - **Pass count**: 4/5 per caller on each frontier model.
 - **Control arm**: install `delegating` as it was before this case, from commit
   `c2fe6ad`, with the same caller. The control's fixed return shape and

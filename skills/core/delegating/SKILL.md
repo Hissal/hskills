@@ -105,16 +105,19 @@ An action the invoking workflow already authorised (an autonomous flow's push or
 
 ## 6. Dispatch
 
-Keep this summary for each agent you dispatch, and put it in your final report:
+Keep this summary for each agent you dispatch, and put it in your final report. It is one plain line per agent:
 
 ```md
-**Dispatch:** <role> on <harness or provider>, <model>, effort <level> [<approximation or limitation>]
-**Transport:** <the host's tool | CLI: <command>>
-**Selection:** <explicit instruction | policy: <rule, e.g. workflows.code-review[0] or rules[1]> | automatic: <no policy | no matching rule | outside the list: why>>; diversity <met | reused: why | not asked>
-**Ran as:** <confirmed from <the record> | unconfirmed: why>
+<role>: <model> on <harness>, <level> effort, via <transport> (<why this choice>)
 ```
 
-One line per agent when several go together.
+For example: `implementer: Claude Opus 5.5 on Claude Code, high effort, via a T3 thread (policy rules[0])`.
+
+- **Model and effort** are the ones that actually ran, read from the run's own record. Name the model as people say it, not its ID.
+- **Transport** is the host tool in plain words ("a T3 thread", "a Claude Code subagent") or the CLI command. Leave out tool parameters and mode names such as `existing_worktree`.
+- **Why this choice** is the shortest true source: `you asked`, `policy <rule, e.g. rules[1]>`, or `automatic: <no policy | no matching rule>`.
+
+Add a `Note:` sentence under an agent's line only when something differs from what the reader would expect: the model or effort that ran differs from the one requested or from the policy's default, it could not be confirmed, a choice fell back or went outside the policy's list, diversity was asked for and reused or lost, or the caller left out a hint you decided. Say the difference and its cause in one sentence. When nothing differs, the line stands alone: never report what went as expected, such as diversity nobody asked for or a confirmation that matched.
 
 ## 7. Check the return
 

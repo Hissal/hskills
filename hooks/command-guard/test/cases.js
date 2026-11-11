@@ -115,6 +115,10 @@ module.exports = [
   ['human', 'b', 'S=/tmp/scratch; unset S; rm -rf "${S:-/home/dev}"', L],
   ['human', 'b', 'S=$(mktemp -d); rm -rf "${S:-/home/dev}"', L],
   ['human', 'b', 'S=/tmp/scratch; rm -rf "${S%/}"/*', L],
+  ['human', 'b', 'rm -rf "${HOME:?${UNSET_X}}"', L],
+  ['human', 'b', 'S=/tmp/scratch; unset S; rm -rf "${S:-}"/*', L],
+  ['human', 'b', 'S=/tmp/scratch; unset S; rm -rf "$S"/*', L],
+  ['allow', 'b', 'S=/tmp/scratch; unset -f S; rm -rf "$S"/*', L],
 
   // ---- 1. destructive filesystem: Git Bash on Windows ---------------------
   ['human', 'b', 'rm -rf /'],

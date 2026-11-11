@@ -152,6 +152,13 @@ class Lexer {
   assignments(cmd) {
     const ws = cmd.words;
     if (this.shell === 'bash') {
+      // `unset NAME` leaves NAME empty, so a value tracked earlier is stale
+      if (ws.length > 1 && ws[0].text === 'unset' && !ws.some((w) => /^-[a-z]*f/.test(w.text))) {
+        for (const w of ws.slice(1)) {
+          if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(w.text)) this.st.vars.set(w.text, { text: '', dynamic: false, subs: [] });
+        }
+        return;
+      }
       let k = 0;
       if (ws.length > 1 && BASH_DECL.has(ws[0].text)) k = 1;
       let n = k;
@@ -229,8 +236,9 @@ class Lexer {
       // ${NAME:?msg}, ${NAME?msg} and ${NAME:-} expand to NAME's value when it
       // is set and non-empty; otherwise the run-time value is unknown. A
       // non-empty :- fallback stays unknown: NAME's tracked value can be stale
-      // (unset, read, a failed mktemp), and bash would then use the fallback.
-      const p = body.match(/^([A-Za-z_][A-Za-z0-9_]*)(:?\?[^]*|:-)?$/);
+      // (read, a failed mktemp), and bash would then use the fallback. A word
+      // holding $, { or } may hide a nested ${…} that the scan above cut short.
+      const p = body.match(/^([A-Za-z_][A-Za-z0-9_]*)(:?\?[^${}]*|:-)?$/);
       let v = p ? this.lookup(p[1]) : null;
       if (v && p[2] !== undefined && !v.text) v = null;
       if (v) this.addValue(v);

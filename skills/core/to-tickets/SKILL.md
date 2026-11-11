@@ -55,7 +55,7 @@ Write each **acceptance criterion** as pass/fail: an observable behaviour, an ou
 
 - Each ticket belongs to exactly one group, or is `none` (below).
 - A ticket's blockers sit in its own group or an earlier one. `none` tickets are ignored for this ordering: follow a chain of blockers through them, and order only the grouped tickets at its ends. When no grouping keeps this order, regroup, or offer the work as one PR.
-- Work that several groups need (a shared file, type or config) is its own ticket in group 1, and the tickets that build on it are blocked by it.
+- Work that several groups need (a shared file, type or config) is its own ticket, in the group it belongs to by meaning, and the tickets that build on it are blocked by it.
 - An existing issue the breakdown reuses gets a group like any ticket, shown in the quiz with the change it needs: its PR group field added, which happens only as the user approves. An existing issue that lands outside this stack, before it, is named as a prerequisite instead, with no group.
 - A ticket that produces no commits (an eval, research, a decision, a manual check) gets `none` with a short reason, such as `none (eval, no commits)`. It may block, or be blocked by, a ticket in any group.
 

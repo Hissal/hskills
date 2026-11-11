@@ -156,7 +156,9 @@ class Lexer {
       // known empty either (a readonly NAME, a subshell), so it becomes unknown.
       if (ws.length > 1 && ws[0].text === 'unset' && !ws.some((w) => /^-[a-z]*f/.test(w.text))) {
         for (const w of ws.slice(1)) {
-          if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(w.text)) this.st.vars.set(w.text, { text: '$' + w.text, dynamic: true, subs: [] });
+          // `unset 'S[0]'` unsets S's value too
+          const u = w.text.match(/^([A-Za-z_][A-Za-z0-9_]*)(\[.*\])?$/);
+          if (u) this.st.vars.set(u[1], { text: '$' + u[1], dynamic: true, subs: [] });
         }
         return;
       }
@@ -238,8 +240,9 @@ class Lexer {
       // is set and non-empty; otherwise the run-time value is unknown. A
       // non-empty :- fallback stays unknown: NAME's tracked value can be stale
       // (read, a failed mktemp), and bash would then use the fallback. A word
-      // holding $, { or } may hide a nested ${…} that the scan above cut short.
-      const p = body.match(/^([A-Za-z_][A-Za-z0-9_]*)(:?\?[^${}]*|:-)?$/);
+      // holding $, {, }, a backslash, a quote or a backtick may hide a nested,
+      // escaped or quoted brace that the scan above cut short.
+      const p = body.match(/^([A-Za-z_][A-Za-z0-9_]*)(:?\?[^${}\\"'`]*|:-)?$/);
       let v = p ? this.lookup(p[1]) : null;
       if (v && p[2] !== undefined && !v.text) v = null;
       if (v) this.addValue(v);

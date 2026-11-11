@@ -115,6 +115,17 @@ class Stack(unittest.TestCase):
         git(self.o, "push", "-q", "origin", ref)
         return sha
 
+    def push_from_other_creating(self, ref: str) -> None:
+        git(self.o, "fetch", "-q")
+        git(self.o, "switch", "-q", "-c", f"{ref}-new", "origin/s2")
+        commit(self.o, "theirs.txt", "theirs\n", f"theirs creates {ref}")
+        git(self.o, "push", "-q", "origin", f"{ref}-new:{ref}")
+
+    def conflict_on(self, ref: str) -> None:
+        """Commit on s1 a file that <ref>'s own commit also adds, so carrying <ref> conflicts."""
+        git(self.w, "switch", "-q", "s1")
+        commit(self.w, f"{ref}.txt", "s1 wrote this\n", f"s1 touches {ref}.txt")
+
     # cases -------------------------------------------------------------
 
     def test_carry_moves_every_ref_above_and_keeps_the_changed_refs_commits(self):
@@ -137,8 +148,10 @@ class Stack(unittest.TestCase):
     def test_a_ref_held_by_another_worktree_is_reported_and_nothing_is_carried(self):
         git(self.w, "branch", "s2", "origin/s2")
         git(self.w, "worktree", "add", "-q", str(self.tmp / "wt2"), "s2")
+        git(self.w, "branch", "outside", "origin/s1")
         out = self.fails("sync", *STACK)
         self.assertIn("held: s2 ", out)
+        self.assertIn("outside: outside", out)
         self.assertIn("safe: no", out)
         before = self.heads()
         self.fix("s1")
@@ -146,18 +159,46 @@ class Stack(unittest.TestCase):
         self.assertEqual(self.heads()["s2"], before["s2"])
         self.assertEqual(self.heads()["s3"], before["s3"])
 
-    def test_a_ref_the_carry_left_behind_fails_the_push_and_every_ref_goes_back(self):
+    def test_a_ref_the_rebase_left_behind_is_caught_and_every_ref_goes_back(self):
+        # The hook checks s2 out in another worktree once the rebase starts, so --update-refs skips it.
+        hook = self.w / ".git" / "hooks" / "pre-rebase"
+        hook.write_text(f"#!/bin/sh\ngit worktree add -q '{(self.tmp / 'late').as_posix()}' s2 >/dev/null 2>&1\nexit 0\n",
+                        encoding="utf-8")
+        hook.chmod(0o755)
         self.ok("sync", *STACK)
         self.fix("s1")
         before_carry = self.heads()
+        out = self.fails("carry", "s1")
+        self.assertIn("s2 was left behind", out)
+        self.assertEqual(self.heads(), before_carry)
+        remote_before = self.remote_heads()
+        self.fails("push")
+        self.assertEqual(self.remote_heads(), remote_before)
+
+    def test_a_commit_made_after_the_carry_is_kept_when_push_finds_the_stack_behind(self):
+        self.ok("sync", *STACK)
+        self.fix("s1")
         self.ok("carry", "s1")
-        git(self.w, "switch", "-q", "--detach")
-        git(self.w, "branch", "-f", "s2", before_carry["s2"])
+        fix2 = self.fix("s1", "fix\nfix2\n")
+        carried = self.heads()
         remote_before = self.remote_heads()
         out = self.fails("push")
-        self.assertIn("s2", out)
-        self.assertEqual(self.heads(), before_carry)
+        self.assertIn("changed since the last carry", out)
+        self.assertEqual(self.heads(), carried)
+        self.assertEqual(self.heads()["s1"], fix2)
         self.assertEqual(self.remote_heads(), remote_before)
+        self.ok("carry", "s1")
+        self.ok("push")
+        self.assertEqual(self.remote_heads()["s1"], fix2)
+
+    def test_carry_refuses_a_ref_another_worktree_took_after_sync(self):
+        self.ok("sync", *STACK)
+        git(self.w, "worktree", "add", "-q", str(self.tmp / "wt3"), "s3")
+        before = self.heads()
+        self.fix("s1")
+        out = self.fails("carry", "s1")
+        self.assertIn("s3", out)
+        self.assertEqual(self.heads()["s2"], before["s2"])
 
     def test_a_stack_on_a_fork_rebases_onto_the_upstream_trunk_and_pushes_to_the_fork(self):
         upstream = self.tmp / "upstream.git"
@@ -183,15 +224,9 @@ class Stack(unittest.TestCase):
         self.push_from_other_creating("s3")
         theirs = self.remote_heads()["s3"]
         remote_before = self.remote_heads()
-        self.fails("push")
+        out = self.fails("push")
+        self.assertIn(f"pushed-by-others: s3 absent {theirs}", out)
         self.assertEqual(self.remote_heads(), remote_before)
-        self.assertEqual(self.remote_heads()["s3"], theirs)
-
-    def push_from_other_creating(self, ref: str) -> None:
-        git(self.o, "fetch", "-q")
-        git(self.o, "switch", "-q", "-c", f"{ref}-new", "origin/s2")
-        commit(self.o, "theirs.txt", "theirs\n", f"theirs creates {ref}")
-        git(self.o, "push", "-q", "origin", f"{ref}-new:{ref}")
 
     def test_a_ref_absent_from_the_remote_is_created_by_the_push(self):
         git(self.w, "branch", "s3", "origin/s3")
@@ -208,6 +243,7 @@ class Stack(unittest.TestCase):
         self.ok("carry", "s1")
         git(self.w, "fetch", "-q")  # a background fetch must not defeat the lease
         out = self.fails("push")
+        self.assertIn(f"pushed-by-others: s2 ", out)
         self.assertIn("nothing pushed", out)
         self.assertEqual(self.remote_heads(), remote_before)
         self.assertEqual(self.remote_heads()["s2"], theirs)
@@ -263,7 +299,7 @@ class Stack(unittest.TestCase):
         self.assertIn("merge commits", out)
         self.assertNotEqual(self.heads()["s3"], before["s3"])
         self.assert_chain()
-        self.assertTrue((self.w / "side.txt").exists() or "side.txt" in git(self.w, "ls-tree", "--name-only", "s3"))
+        self.assertIn("side.txt", git(self.w, "ls-tree", "--name-only", "s3").split())
 
     def test_a_commit_someone_pushed_to_a_lower_ref_is_synced_then_carried(self):
         git(self.w, "branch", "s1", "origin/s1")
@@ -284,22 +320,59 @@ class Stack(unittest.TestCase):
 
     def test_a_conflict_stops_the_carry_and_continue_finishes_it(self):
         self.ok("sync", *STACK)
-        git(self.w, "switch", "-q", "s1")
-        commit(self.w, "s2.txt", "s1 wrote this\n", "s1 touches s2.txt")
+        self.conflict_on("s2")
         self.fails("carry", "s1")
         (self.w / "s2.txt").write_text("resolved\n", encoding="utf-8")
         git(self.w, "add", "s2.txt")
         self.ok("carry", "--continue")
         self.assert_chain()
 
-    def test_abort_puts_every_ref_back(self):
-        self.ok("sync", *STACK)
-        git(self.w, "switch", "-q", "s1")
-        commit(self.w, "s2.txt", "s1 wrote this\n", "s1 touches s2.txt")
+    def test_abort_puts_back_the_refs_a_branch_by_branch_carry_already_moved(self):
+        old = {"PR_STACK_GIT_VERSION": "2.37"}
+        self.ok("sync", *STACK, env=old)
+        self.conflict_on("s3")
         before = self.heads()
-        self.fails("carry", "s1")
-        self.ok("carry", "--abort")
+        self.fails("carry", "s1", env=old)
+        self.assertNotEqual(self.heads()["s2"], before["s2"])  # s2 carried before s3 conflicted
+        self.ok("carry", "--abort", env=old)
         self.assertEqual(self.heads(), before)
+
+    def test_an_undo_blocked_by_another_worktree_moves_no_ref(self):
+        old = {"PR_STACK_GIT_VERSION": "2.37"}
+        self.ok("sync", *STACK, env=old)
+        self.conflict_on("s3")
+        self.fails("carry", "s1", env=old)
+        carried_s2 = self.heads()
+        git(self.w, "worktree", "add", "-q", str(self.tmp / "wt2"), "s2")
+        out = self.fails("carry", "--abort", env=old)
+        self.assertIn("s2", out)
+        self.assertEqual(self.heads(), carried_s2)
+        git(self.w, "worktree", "remove", "--force", str(self.tmp / "wt2"))
+        self.ok("carry", "--abort", env=old)
+
+    def test_a_tag_named_like_a_ref_does_not_stand_in_for_it(self):
+        self.ok("sync", *STACK)
+        git(self.w, "tag", "s1", "main")
+        fix = self.fix("s1")
+        self.ok("carry", "s1")
+        self.assertEqual(run(self.w, "git", "merge-base", "--is-ancestor", fix, "refs/heads/s2").returncode, 0)
+
+    def test_a_new_stack_is_recorded_absent_and_never_adopts_a_remote_branch(self):
+        # The local group branches share names with branches someone else pushed meanwhile.
+        git(self.w, "switch", "-q", "-c", "s1", "origin/main")
+        for ref in STACK:
+            if ref != "s1":
+                git(self.w, "switch", "-q", "-c", ref)
+            commit(self.w, f"new-{ref}.txt", "new\n", f"new {ref}")
+        mine = self.heads()
+        out = self.ok("sync", "--new", *STACK)
+        self.assertEqual(self.heads(), mine)
+        for ref in STACK:
+            self.assertIn(f"ref: {ref} absent", out)
+        remote_before = self.remote_heads()
+        out = self.fails("push")
+        self.assertIn("pushed-by-others: s1 absent", out)
+        self.assertEqual(self.remote_heads(), remote_before)
 
     def test_bad_input_exits_2(self):
         self.fails("carry", "s1", code=2)

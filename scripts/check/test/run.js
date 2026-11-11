@@ -15,7 +15,7 @@
 // It also runs babysit-pr's pr-wait tests (scripts/pr-wait/test/run.py) as
 // one case, skipped on Windows or without python3, and pr's pr-stack tests
 // (scripts/pr-stack/test/run.py) as one case on every platform, skipped only
-// without Python 3.
+// without Python 3, and failed for that in CI.
 
 const fs = require('fs');
 const path = require('path');
@@ -140,7 +140,11 @@ const python = ['python3', 'python'].find((cmd) => {
   const probe = spawnSync(cmd, ['-c', 'import sys; sys.exit(sys.version_info[0] != 3)'], { encoding: 'utf8' });
   return !probe.error && probe.status === 0;
 });
-if (!python) {
+if (!python && process.env.CI) {
+  // CI is where the Windows run is proved, so a missing Python fails there.
+  failed++;
+  console.log('FAIL pr-stack tests: Python 3 not found');
+} else if (!python) {
   skipped++;
   console.log('skip pr-stack tests: Python 3 not found');
 } else {

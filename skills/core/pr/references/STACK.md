@@ -20,13 +20,9 @@ A PR is part of a stack when the host has linked it into a native stack (on GitH
 
 **Whose stack it is** decides what you may do, PR by PR, by the same rule as a single PR. A PR's ref is rewritten (carried, force-pushed) only when its head lives in `<remote>`'s repository and is neither the trunk nor the default branch, the PR is the owner's own (on GitHub, `gh pr view <n> --json headRepositoryOwner,headRepository,author`), and authority covers force-pushing. A stack can mix authors: from the lowest PR that fails this rule upward, the stack is someone else's, and the carry, restack and force-push stop below it, so the top ref is the highest PR you may rewrite. Without force-push authority, treat the owner's whole stack like someone else's, and ask for it when a fix needs a restack. On someone else's stack, push new commits only, and only to a PR you may change: never rebase, amend, squash or force-push. A new commit on one of their lower PRs leaves the PRs above it without it; report each of those as needing its author's restack.
 
-**The commands.** On the owner's stack, every fetch, carry, check and push goes through [`pr-stack.py`](../scripts/pr-stack.py), never through hand-run git, and on GitHub too: `gh stack` overwrites pushes that land after your fetch, so it is used only for [linking](#linking). It needs Python 3 (`python3`, or `python` on Windows) and git. Run it by its absolute path with `--help` first; never read it. Name the stack's refs bottom to top, up to the top ref:
+**The commands.** On the owner's stack, every fetch, carry, check and push goes through [`pr-stack.py`](../scripts/pr-stack.py), never through hand-run git, and on GitHub too: `gh stack` overwrites pushes that land after your fetch, so it is used only for [linking](#linking). It needs Python 3 (`python3`, or `python` on Windows) and git. Run it by its absolute path with `--help` first; never read it. Its `sync` takes the stack's refs bottom to top, up to the top ref, and `--new` on a new stack's first push.
 
-```
-pr-stack.py sync [--remote <remote>] [--upstream <upstream>] [--trunk <trunk>] <bottom ref> ... <top ref>
-```
-
-Run `sync` before changing anything; it records each ref's remote SHA, and the carry and the push leases use that record, so a push landing after it fails instead of being overwritten. Its `safe: no` names what to settle first:
+Run `sync` before changing anything: the carry and the push leases use what it records, so a push landing after it fails instead of being overwritten. Its `safe: no` names what to settle first:
 
 - `held: <ref> <path>`: another worktree has the ref checked out. When that worktree is yours and `git -C <path> status --porcelain` prints nothing, detach it (`git -C <path> switch --detach`) and sync again. Otherwise another session may be working there: leave it, rewrite nothing, and report the worktree's path and ref.
 - `unpublished: <ref>`: the local branch holds commits the remote lacks. Rewrite nothing: reconcile it or report it, then sync again.
@@ -35,33 +31,19 @@ Run `sync` before changing anything; it records each ref's remote SHA, and the c
 
 ## Changing a lower PR
 
-A fix goes onto the PR it belongs to as a new commit on that PR's own ref. Existing commits are never amended, squashed or reordered, so each push shows reviewers exactly what changed. A fix to the top PR is an ordinary commit and push. A fix to any PR below it also has to reach every ref above, which moves those refs onto the changed one: on the owner's stack only. After `sync`, commit the fix on the changed ref, then:
-
-```
-pr-stack.py carry <changed ref>
-```
-
-The changed ref and every ref below it keep their commits. When several PRs change, go bottom first: commit and carry for each changed PR in turn, then push once. A commit someone else already pushed to a lower PR, leaving the refs above it behind, is carried the same way: `sync` has already put it on the changed ref.
+A fix goes onto the PR it belongs to as a new commit on that PR's own ref. Existing commits are never amended, squashed or reordered, so each push shows reviewers exactly what changed. A fix to the top PR is an ordinary commit and push. A fix to any PR below it also has to reach every ref above, which moves those refs onto the changed one: on the owner's stack only. After `sync`, commit the fix on the changed ref, then run `pr-stack.py carry <changed ref>`. The changed ref and every ref below it keep their commits. When several PRs change, go bottom first: commit and carry for each changed PR in turn, then push once. A commit someone else already pushed to a lower PR, leaving the refs above it behind, is carried the same way: `sync` has already put it on the changed ref.
 
 After a conflict, `carry` stops with the rebase in progress: resolve the files, `git add` them, and run `carry --continue`; or `carry --abort`, which puts every ref back. The checks of every PR whose patch changed then run again (see [Unchanged PRs](#unchanged-prs)).
 
 ## Pushing
 
-```
-pr-stack.py push
-```
-
-It checks that the carry moved every ref it had to, pushes every ref in one atomic push leased at the recorded SHAs, and on a failed check puts the refs back and pushes nothing; carry again. When a lease fails, nothing landed: sync, inspect the other pusher's commits and reconcile with them. Their work is never overwritten.
+Push the stack once with `pr-stack.py push`. When its check fails and it puts the refs back, carry again; when it names a ref that changed since the last carry, carry from the lowest one named. When a lease fails, nothing landed, and `pushed-by-others:` names each ref someone else pushed to: stop, and report those PRs and their new commits to the owner. Their work is never overwritten, and reconciling with it waits for the owner.
 
 On someone else's stack there is no restack and no `pr-stack.py`: push only the PRs you added commits to, without force, each to the repository its head lives in (`git push <remote> <ref>` when that is `<remote>`), and report each PR above them as needing its author's restack.
 
 ## The default branch moved
 
-This covers the stack's trunk, the bottom PR's base, moving. On the owner's stack, under authority that covers force-pushing, move the whole stack onto it after `sync`, then push:
-
-```
-pr-stack.py carry --trunk
-```
+This covers the stack's trunk, the bottom PR's base, moving. On the owner's stack, under authority that covers force-pushing, move the whole stack onto it with `pr-stack.py carry --trunk` after `sync`, then push.
 
 On someone else's stack, change nothing when the trunk moves: report that the stack needs its author's restack.
 

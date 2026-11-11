@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """pr-stack: carry a stack of PR branches and push it without losing anyone's work.
 
-  pr-stack.py sync [--remote R] [--upstream U] [--trunk T] <bottom ref> ... <top ref>
+  pr-stack.py sync [--remote R] [--upstream U] [--trunk T] [--new] <bottom ref> ... <top ref>
   pr-stack.py carry <changed ref>
   pr-stack.py carry --trunk
   pr-stack.py carry --continue | --abort
@@ -17,7 +17,9 @@ sync
   and records each ref's remote SHA, or "absent". Creates each missing local
   branch at its recorded SHA and fast-forwards each local branch that is behind
   it. It rewrites nothing that holds work the remote lacks. <trunk> defaults to
-  <upstream>'s default branch. Prints KEY: value lines:
+  <upstream>'s default branch. With --new (a new stack's first push), every
+  ref is recorded as absent whatever the fetch shows, and no local branch
+  moves. Prints KEY: value lines:
     ref: <ref> <recorded sha|absent>    one per ref, bottom to top
     moved: <ref> <old sha> <new sha>    a local branch it created or fast-forwarded
     held: <ref> <worktree path>         another worktree has the ref checked out
@@ -42,10 +44,13 @@ carry <changed ref> | --trunk
 push
   Checks that each ref is an ancestor of the one above it and that every ref
   above a carried one moved. If a check fails, it puts every ref back where it
-  stood before the last carry and pushes nothing. Otherwise pushes every ref
-  in one atomic push, each leased at the SHA sync recorded (a ref recorded as
-  absent is leased as absent), so a push that landed after the sync fails the
-  lease and nothing lands. Then records the pushed SHAs.
+  stood before the last carry and pushes nothing; when a ref gained commits
+  since that carry, it moves nothing and names the ref instead. Otherwise
+  pushes every ref in one atomic push, each leased at the SHA sync recorded (a
+  ref recorded as absent is leased as absent), so a push that landed after the
+  sync fails the lease and nothing lands. Then records the pushed SHAs. When a
+  lease fails, it prints, for each ref someone else pushed to:
+    pushed-by-others: <ref> <recorded sha|absent> <sha now on the remote|absent>
 
 Exit codes
   0  safe, or done
@@ -53,7 +58,6 @@ Exit codes
      line is "pr-stack: <reason>"
   2  bad arguments, no stack recorded, or a ref that exists nowhere
 
-PR_STACK_GIT_VERSION=<x.y> makes it behave as on that git version (for tests).
 State lives in <git dir>/pr-stack.json, one per worktree.
 """
 from __future__ import annotations
@@ -97,9 +101,19 @@ def is_ancestor(a: str, b: str) -> bool:
 
 
 def git_version() -> tuple[int, int]:
+    # PR_STACK_GIT_VERSION=<x.y> makes it act as on that git version; the tests use it.
     raw = os.environ.get("PR_STACK_GIT_VERSION") or out("version").split()[2]
     parts = (raw.split(".") + ["0"])[:2]
     return int(parts[0]), int("".join(c for c in parts[1] if c.isdigit()) or 0)
+
+
+def head(ref: str) -> str:
+    """A stack ref's full name, so a tag of the same name never stands in for it."""
+    return f"refs/heads/{ref}"
+
+
+def trunk_ref(state: dict) -> str:
+    return f"refs/remotes/{state['upstream']}/{state['trunk']}"
 
 
 def git_dir() -> Path:
@@ -115,6 +129,15 @@ def load() -> dict:
     if not path.exists():
         raise Stop("no stack recorded in this worktree: run sync first", 2)
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_ready() -> dict:
+    state = load()
+    if state.get("pending") or rebase_in_progress():
+        raise Stop("a carry is in progress: run carry --continue or carry --abort")
+    if not state["safe"]:
+        raise Stop("sync found the stack not safe: fix what it reported and sync again")
+    return state
 
 
 def save(state: dict) -> None:
@@ -164,13 +187,14 @@ def clean() -> bool:
     return out("status", "--porcelain", "--untracked-files=no") == ""
 
 
-def stack_base(state: dict, top: str) -> str:
-    return out("merge-base", f"{state['upstream']}/{state['trunk']}", top)
+def stack_range(state: dict) -> str:
+    top = head(state["refs"][-1])
+    return f"{out('merge-base', trunk_ref(state), top)}..{top}"
 
 
 def outside_branches(state: dict) -> list[str]:
     refs = state["refs"]
-    commits = set(out("rev-list", f"{stack_base(state, refs[-1])}..{refs[-1]}").split())
+    commits = set(out("rev-list", stack_range(state)).split())
     found = []
     for line in out("for-each-ref", "--format=%(objectname) %(refname:short)", "refs/heads/").splitlines():
         sha, name = line.split(" ", 1)
@@ -180,15 +204,20 @@ def outside_branches(state: dict) -> list[str]:
 
 
 def merge_count(state: dict) -> int:
-    top = state["refs"][-1]
-    return len(out("rev-list", "--merges", f"{stack_base(state, top)}..{top}").split())
+    return len(out("rev-list", "--merges", stack_range(state)).split())
 
 
 def put_back(refs: list[str], heads: dict) -> None:
-    """Set every ref to its noted head. Frees this worktree first: git branch -f refuses a checked-out ref."""
-    if current_branch() in refs:
+    """Set every ref to its noted head, or move none. git branch -f refuses a checked-out ref, so this
+    worktree is freed first, and a ref another worktree holds stops the undo before any ref moves."""
+    moving = [r for r in refs if rev(head(r)) != heads[r]]
+    held = held_elsewhere(moving)
+    if held:
+        raise Stop("cannot put the refs back, none moved: checked out in another worktree: "
+                   + ", ".join(f"{r} ({p})" for r, p in held) + "; free it, then run the command again")
+    if current_branch() in moving:
         git("switch", "--detach", "-q")
-    for ref in refs:
+    for ref in moving:
         git("branch", "-f", ref, heads[ref])
 
 
@@ -196,6 +225,7 @@ def put_back(refs: list[str], heads: dict) -> None:
 
 def sync(argv: list[str]) -> int:
     opts = {"--remote": "origin", "--upstream": None, "--trunk": None}
+    new_stack = False
     refs: list[str] = []
     it = iter(argv)
     for arg in it:
@@ -204,6 +234,8 @@ def sync(argv: list[str]) -> int:
             if value is None:
                 raise Stop(f"{arg} needs a value", 2)
             opts[arg] = value
+        elif arg == "--new":
+            new_stack = True
         elif arg.startswith("-"):
             raise Stop(f"unknown option {arg}", 2)
         else:
@@ -214,8 +246,7 @@ def sync(argv: list[str]) -> int:
         raise Stop("a ref is named twice", 2)
     if rebase_in_progress():
         raise Stop("a rebase is in progress: finish it, or run carry --continue or carry --abort")
-    old = state_path()
-    if old.exists() and json.loads(old.read_text(encoding="utf-8")).get("pending"):
+    if state_path().exists() and load().get("pending"):
         raise Stop("a carry is in progress: run carry --continue or carry --abort")
     remote = opts["--remote"]
     upstream = opts["--upstream"] or remote
@@ -228,10 +259,16 @@ def sync(argv: list[str]) -> int:
         if res.returncode != 0:
             raise Stop(f"{upstream} has no default branch recorded: pass --trunk", 2)
         trunk = res.stdout.strip()[len(upstream) + 1:]
-    if rev(f"{upstream}/{trunk}") is None:
+    if rev(f"refs/remotes/{upstream}/{trunk}") is None:
         raise Stop(f"{upstream}/{trunk} does not exist", 2)
 
-    recorded = {r: rev(f"refs/remotes/{remote}/{r}") for r in refs}
+    if new_stack:
+        recorded = {r: None for r in refs}
+    else:
+        recorded = {r: rev(f"refs/remotes/{remote}/{r}") for r in refs}
+    for ref in refs:
+        if rev(head(ref)) is None and recorded[ref] is None:
+            raise Stop(f"{ref} exists neither locally nor on {remote}", 2)
     lines = [f"ref: {r} {recorded[r] or 'absent'}" for r in refs]
     problems: list[str] = []
     held = dict(held_elsewhere(refs))
@@ -241,10 +278,8 @@ def sync(argv: list[str]) -> int:
         problems.append(f"{len(held)} ref(s) checked out in another worktree")
 
     for ref in refs:
-        local, remote_sha = rev(f"refs/heads/{ref}"), recorded[ref]
+        local, remote_sha = rev(head(ref)), recorded[ref]
         if local is None:
-            if remote_sha is None:
-                raise Stop(f"{ref} exists neither locally nor on {remote}", 2)
             git("branch", ref, remote_sha)
             lines.append(f"moved: {ref} absent {remote_sha}")
         elif remote_sha is None or local == remote_sha:
@@ -265,10 +300,9 @@ def sync(argv: list[str]) -> int:
 
     state = {"remote": remote, "upstream": upstream, "trunk": trunk, "refs": refs,
              "recorded": recorded, "safe": not problems, "carries": [], "pending": None}
-    if not problems:
-        for name in outside_branches(state):
-            lines.append(f"outside: {name}")
-        lines.append(f"merges: {merge_count(state)}")
+    for name in outside_branches(state):
+        lines.append(f"outside: {name}")
+    lines.append(f"merges: {merge_count(state)}")
     save(state)
     print("\n".join(lines))
     if problems:
@@ -285,24 +319,21 @@ def carry(argv: list[str]) -> int:
         return carry_resume(argv[0])
     if len(argv) != 1:
         raise Stop("carry takes one changed ref, or --trunk, --continue or --abort", 2)
-    state = load()
-    if state.get("pending") or rebase_in_progress():
-        raise Stop("a carry is in progress: run carry --continue or carry --abort")
-    if not state["safe"]:
-        raise Stop("sync found the stack not safe: fix what it reported and sync again")
+    state = load_ready()
     refs = state["refs"]
     if argv[0] == "--trunk":
-        changed, base, above = ":trunk", f"{state['upstream']}/{state['trunk']}", refs
+        changed, base_name, above = None, trunk_ref(state), refs
     elif argv[0] in refs:
-        changed = base = argv[0]
+        changed, base_name = argv[0], head(argv[0])
         above = refs[refs.index(changed) + 1:]
     else:
         raise Stop(f"{argv[0]} is not a ref of the recorded stack", 2)
     if not above:
         print(f"carried: nothing above {argv[0]}")
         return 0
-    if is_ancestor(base, above[0]):
-        print(f"carried: nothing to carry, {above[0]} already sits on {base}")
+    base = rev(base_name)
+    if is_ancestor(base, head(above[0])):
+        print(f"carried: nothing to carry, {above[0]} already sits on {argv[0]}")
         return 0
     held = held_elsewhere(refs)
     if held:
@@ -310,7 +341,7 @@ def carry(argv: list[str]) -> int:
     if not clean():
         raise Stop("this worktree has uncommitted changes: commit or stash them first")
 
-    before = {r: rev(f"refs/heads/{r}") for r in refs}
+    before = {r: rev(head(r)) for r in refs}
     reasons = []
     if git_version() < (2, 38):
         reasons.append("git older than 2.38")
@@ -320,7 +351,7 @@ def carry(argv: list[str]) -> int:
     if merge_count(state):
         reasons.append("merge commits")
     plan = []
-    lower_head = rev(base) if changed == ":trunk" else before[changed]
+    lower_head = base
     for ref in above:
         plan.append([ref, out("merge-base", lower_head, before[ref])])
         lower_head = before[ref]
@@ -347,7 +378,7 @@ def run_carry(state: dict) -> int:
         while pending["next"] < len(plan):
             i = pending["next"]
             ref, old_base = plan[i]
-            onto = pending["base"] if i == 0 else plan[i - 1][0]
+            onto = pending["base"] if i == 0 else rev(head(plan[i - 1][0]))
             pending["next"] = i + 1
             save(state)
             if git("rebase", *flag, "--onto", onto, old_base, ref, check=False).returncode != 0:
@@ -387,22 +418,25 @@ def undo_pending(state: dict) -> None:
     save(state)
 
 
-def check_stack(state: dict, before: dict, lowest: int) -> str | None:
-    """None when the stack holds; otherwise what failed."""
+def lowest_index(state: dict, changed: str | None) -> int:
+    """The changed ref's place in the stack; -1 for the trunk."""
+    return -1 if changed is None else state["refs"].index(changed)
+
+
+def check_stack(state: dict, before: dict | None = None, lowest: int = -1) -> str | None:
+    """None when the stack holds; otherwise what failed. With `before`, every ref above `lowest` must
+    also have moved from its head there."""
     refs = state["refs"]
-    if lowest < 0 and not is_ancestor(f"{state['upstream']}/{state['trunk']}", refs[0]):
+    if before is not None and lowest < 0 and not is_ancestor(trunk_ref(state), head(refs[0])):
         return f"{refs[0]} does not sit on {state['upstream']}/{state['trunk']}"
     for lower, upper in zip(refs, refs[1:]):
-        if not is_ancestor(lower, upper):
+        if not is_ancestor(head(lower), head(upper)):
             return f"{upper} was left behind: {lower} is not its ancestor"
-    for ref in refs[lowest + 1:]:
-        if rev(f"refs/heads/{ref}") == before[ref]:
-            return f"{ref} was left behind: it did not move"
+    if before is not None:
+        for ref in refs[lowest + 1:]:
+            if rev(head(ref)) == before[ref]:
+                return f"{ref} was left behind: it did not move"
     return None
-
-
-def lowest_index(state: dict, changed: str) -> int:
-    return -1 if changed == ":trunk" else state["refs"].index(changed)
 
 
 def finish_carry(state: dict) -> int:
@@ -411,13 +445,13 @@ def finish_carry(state: dict) -> int:
     if failed:
         undo_pending(state)
         raise Stop(failed + "; every ref is back where it stood before the carry")
-    state["carries"].append({"changed": pending["changed"], "before": pending["before"]})
+    after = {r: rev(head(r)) for r in state["refs"]}
+    state["carries"].append({"changed": pending["changed"], "before": pending["before"], "after": after})
     state["pending"] = None
     save(state)
     for ref in state["refs"]:
-        now = rev(f"refs/heads/{ref}")
-        if now != pending["before"][ref]:
-            print(f"carried: {ref} {pending['before'][ref]} {now}")
+        if after[ref] != pending["before"][ref]:
+            print(f"carried: {ref} {pending['before'][ref]} {after[ref]}")
     return 0
 
 
@@ -426,34 +460,43 @@ def finish_carry(state: dict) -> int:
 def push(argv: list[str]) -> int:
     if argv:
         raise Stop("push takes no arguments", 2)
-    state = load()
-    if state.get("pending") or rebase_in_progress():
-        raise Stop("a carry is in progress: run carry --continue or carry --abort")
-    if not state["safe"]:
-        raise Stop("sync found the stack not safe: fix what it reported and sync again")
+    state = load_ready()
     refs, carries = state["refs"], state["carries"]
     if carries:
         lowest = min(lowest_index(state, c["changed"]) for c in carries)
         failed = check_stack(state, carries[0]["before"], lowest)
     else:
-        failed = check_stack(state, {r: None for r in refs}, len(refs))
+        failed = check_stack(state)
+    if failed and carries:
+        last = carries[-1]
+        since = [r for r in refs if rev(head(r)) != last["after"][r]]
+        if since:
+            raise Stop(f"{failed}; nothing pushed and no ref moved: {', '.join(since)} changed since the last "
+                       "carry, so carry from the lowest of them, then push")
+        put_back(refs, last["before"])
+        state["carries"] = carries[:-1]
+        save(state)
+        raise Stop(failed + "; nothing pushed, every ref is back where it stood before the last carry")
     if failed:
-        if carries:
-            put_back(refs, carries[-1]["before"])
-            state["carries"] = carries[:-1]
-            save(state)
-            raise Stop(failed + "; nothing pushed, every ref is back where it stood before the last carry")
         raise Stop(failed + "; nothing pushed")
-    leases = [f"--force-with-lease=refs/heads/{r}:{state['recorded'][r] or ''}" for r in refs]
-    specs = [f"refs/heads/{r}:refs/heads/{r}" for r in refs]
-    res = git("push", "--atomic", "--porcelain", state["remote"], *leases, *specs, check=False)
+    remote = state["remote"]
+    leases = [f"--force-with-lease={head(r)}:{state['recorded'][r] or ''}" for r in refs]
+    specs = [f"{head(r)}:{head(r)}" for r in refs]
+    res = git("push", "--atomic", "--porcelain", remote, *leases, *specs, check=False)
     if res.returncode != 0:
-        rejected = [line for line in res.stdout.splitlines() if line.startswith("!")]
-        why = rejected[0].split("\t")[-1] if rejected else (res.stderr.strip().splitlines() or ["push failed"])[-1]
-        raise Stop(f"push rejected, nothing pushed ({why}): {state['remote']} changed since sync; "
-                   "sync, inspect the other commits and reconcile")
+        others = []
+        if git("fetch", "-q", remote, check=False).returncode == 0:
+            for ref in refs:
+                now = rev(f"refs/remotes/{remote}/{ref}")
+                if now != state["recorded"][ref]:
+                    others.append(f"pushed-by-others: {ref} {state['recorded'][ref] or 'absent'} {now or 'absent'}")
+        print("\n".join(others))
+        detail = (res.stderr.strip().splitlines() or ["push failed"])[-1]
+        if others:
+            raise Stop(f"nothing pushed: someone else pushed to {len(others)} ref(s) since sync")
+        raise Stop(f"nothing pushed: {detail}")
     for ref in refs:
-        state["recorded"][ref] = rev(f"refs/heads/{ref}")
+        state["recorded"][ref] = rev(head(ref))
         print(f"pushed: {ref} {state['recorded'][ref]}")
     state["carries"] = []
     save(state)

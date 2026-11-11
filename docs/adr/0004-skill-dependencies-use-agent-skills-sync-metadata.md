@@ -39,7 +39,7 @@ A user-scope or plugin copy satisfies a pinned requirement only when its identit
 
 Report differing or unverifiable personal copies as unresolved conflicts rather than silently substituting them or overwriting them. Installing a project copy is not proof that a higher-precedence personal copy stopped being used. Verify effective harness selection during the build.
 
-Installation requirements establish availability, not invocation authority. A user-invoked workflow stays user-invoked even when installed as a dependency; [ADR 0003](0003-core-reaches-packs-through-the-pack-list.md) governs execution.
+Installation requirements establish availability, not invocation authority. A user-invoked workflow stays user-invoked even when installed as a dependency; [ADR 0003](0003-core-reaches-packs-through-the-pack-list.md) governs execution. A host that loads a skill from a `$name` mention (T3 Code, [#389](https://github.com/Hissal/hskills/issues/389)) widens nothing: a workflow mentions a user-invoked skill to an agent only when the human's request, or the workflow they started, names that skill for that agent.
 
 ## When a requirement is missing at runtime
 

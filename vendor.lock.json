@@ -86,7 +86,7 @@
       "path": "skills/productivity/handoff",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; done line; safe-boundary and no-commit rules; describe state, not actions; fixed template with run/read/assumed tags, user's/agent's/pending decision marks and a closing reader block; one copyable resume line; writing-for-agents pointer; work-brief form filed to the tracker, in a disclosed reference; argument grammar reference; thread and subagent destinations launched through delegating, with fallback to the resume line, taking either form, a brief's sections mapped onto the subagent brief; a Claude Code thread launched with a prompt naming the document's file; temporary files readable only by the user; lines from mattpocock/skills skills/in-progress/claude-handoff at 4ec00d966d964d8dd8a67d4f4570e998791152db, MIT, Copyright (c) 2026 Matt Pocock"
+      "changes": "collection metadata and gates; done line; safe-boundary and no-commit rules; describe state, not actions; fixed template with run/read/assumed tags, user's/agent's/pending decision marks and a closing reader block; one copyable resume line; writing-for-agents pointer; work-brief form filed to the tracker, in a disclosed reference; argument grammar reference; thread and subagent destinations launched through delegating, with fallback to the resume line, taking either form, a brief's sections mapped onto the subagent brief; a Claude Code thread launched with a prompt naming the document's file; a user-invoked skill the user asked for loaded by a mention or its path; temporary files readable only by the user; lines from mattpocock/skills skills/in-progress/claude-handoff at 4ec00d966d964d8dd8a67d4f4570e998791152db, MIT, Copyright (c) 2026 Matt Pocock"
     },
     {
       "skill": "skills/core/how",
@@ -238,7 +238,7 @@
       "path": "skills/productivity/writing-for-agents",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; trigger-only description; ordering, output-length, form-to-failure and editing rules; description, mode, freedom, script, input and versioned-claim rules in SKILL-MECHANICS.md; STEERING-FILES.md and TESTING.md references"
+      "changes": "collection metadata and gates; trigger-only description; ordering, output-length, form-to-failure and editing rules; description, mode, freedom, script, input and versioned-claim rules in SKILL-MECHANICS.md; skill mentions and the authority they need; STEERING-FILES.md and TESTING.md references"
     },
     {
       "skill": "skills/packs/experimental/loop-me",

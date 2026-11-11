@@ -92,8 +92,11 @@ module.exports = {
 
     const parts = [];
     let totalRow = null;
+    const named = new Set();
     for (const row of table.rows) {
       const name = plain(row.cells[0]);
+      if (named.has(name)) { fail(row.n, 'the Totals table has two "' + name + '" rows; keep one'); continue; }
+      named.add(name);
       if (name === TOTAL) { totalRow = row; continue; }
       parts.push({ name, row, stated: read(row) });
     }
@@ -142,8 +145,11 @@ module.exports = {
         if (Number(m[1]) !== whole.skills) fail(n, '"the ' + m[1] + ' collection skills" disagrees with the skill tables, which hold ' + whole.skills + '; update the figure');
       }
       if (core && /^Core reconstruction is /.test(text)) {
-        const ends = [...text.matchAll(/= (\d+) \((\d+) model \+ (\d+) user\)/g)];
-        const last = ends[ends.length - 1];
+        // The bold reconstruction's closing figures follow its last "= "; an
+        // earlier fragment never stands in for them.
+        const bold = /^Core reconstruction is \*\*(.+?)\*\*/.exec(text);
+        const tail = bold ? bold[1].slice(bold[1].lastIndexOf('= ') + 2) : '';
+        const last = /^(\d+) \((\d+) model \+ (\d+) user\)$/.exec(tail);
         if (last) {
           seen.reconstruction = true;
           const stated = { skills: Number(last[1]), model: Number(last[2]), user: Number(last[3]) };
@@ -160,7 +166,7 @@ module.exports = {
     });
     const wording = {
       collection: '"the N collection skills"',
-      reconstruction: 'a "Core reconstruction is" sentence ending "= N (N model + N user)"',
+      reconstruction: 'a "Core reconstruction is **…**" sentence whose bold part ends "= N (N model + N user)"',
       packs: '"N decided packs, containing N skills (N model-invoked, N user-invoked)"',
     };
     for (const k of Object.keys(seen)) {

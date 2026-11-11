@@ -102,6 +102,17 @@ module.exports = [
   ['allow', 'b', 'rm "$UNSET_FILE"', L],
   ['allow', 'b', 'cd "$SOMEWHERE" && rm -rf /tmp/scratch', L],
 
+  // ${NAME:?}, ${NAME?} and ${NAME:-} resolve like ${NAME} when NAME is known
+  ['allow', 'b', 'S=/tmp/scratch; rm -rf "${S:?}"/*', L],
+  ['allow', 'b', 'S=/tmp/scratch; rm -rf "${S:?no scratch}/old"', L],
+  ['allow', 'b', 'S=/tmp/scratch; rm -rf "${S?}"/old', L],
+  ['allow', 'b', 'S=/tmp/scratch; rm -rf "${S:-}"/*', L],
+  ['human', 'b', 'rm -rf "${HOME:?}"', L],
+  ['human', 'b', 'rm -rf "${UNSET_X:?}"/*', L],
+  ['human', 'b', 'rm -rf "${UNSET_X:-/tmp/x}"', L],
+  ['human', 'b', 'S=; rm -rf "${S:-/tmp/x}"', L],
+  ['human', 'b', 'S=/tmp/scratch; rm -rf "${S%/}"/*', L],
+
   // ---- 1. destructive filesystem: Git Bash on Windows ---------------------
   ['human', 'b', 'rm -rf /'],
   ['human', 'b', 'rm -rf /c'],

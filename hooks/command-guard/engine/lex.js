@@ -226,9 +226,11 @@ class Lexer {
       const end = s.indexOf('}', this.i + 2);
       const body = s.slice(this.i + 2, end < 0 ? s.length : end);
       this.i = end < 0 ? s.length : end + 1;
-      // ${NAME:?msg}, ${NAME?msg} and ${NAME:-word} expand to NAME's value when
-      // it is set and non-empty; otherwise the run-time value is unknown.
-      const p = body.match(/^([A-Za-z_][A-Za-z0-9_]*)(:?\?[^]*|:-[^]*)?$/);
+      // ${NAME:?msg}, ${NAME?msg} and ${NAME:-} expand to NAME's value when it
+      // is set and non-empty; otherwise the run-time value is unknown. A
+      // non-empty :- fallback stays unknown: NAME's tracked value can be stale
+      // (unset, read, a failed mktemp), and bash would then use the fallback.
+      const p = body.match(/^([A-Za-z_][A-Za-z0-9_]*)(:?\?[^]*|:-)?$/);
       let v = p ? this.lookup(p[1]) : null;
       if (v && p[2] !== undefined && !v.text) v = null;
       if (v) this.addValue(v);

@@ -111,6 +111,9 @@ module.exports = [
   ['human', 'b', 'rm -rf "${UNSET_X:?}"/*', L],
   ['human', 'b', 'rm -rf "${UNSET_X:-/tmp/x}"', L],
   ['human', 'b', 'S=; rm -rf "${S:-/tmp/x}"', L],
+  // a non-empty fallback stays dynamic: the tracked value may be stale
+  ['human', 'b', 'S=/tmp/scratch; unset S; rm -rf "${S:-/home/dev}"', L],
+  ['human', 'b', 'S=$(mktemp -d); rm -rf "${S:-/home/dev}"', L],
   ['human', 'b', 'S=/tmp/scratch; rm -rf "${S%/}"/*', L],
 
   // ---- 1. destructive filesystem: Git Bash on Windows ---------------------

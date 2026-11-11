@@ -101,7 +101,9 @@ A PR's patch-id is:
 git diff <base> <head> | git patch-id --verbatim
 ```
 
-`--verbatim` keeps whitespace, so an indentation change that alters behaviour changes the patch-id. Take it for every PR of the stack before and after a restack. A PR whose patch-id is unchanged keeps the results in its body's Evidence section that judge its own change alone, such as acceptance criteria checked against its diff: that change did not move. The checks its Evidence ran on its head (the project's checks, when it names none) still run again on its new head, because the code beneath it changed, and a changed value below can break an unchanged PR above. Run each head's checks in its own detached worktree (`git worktree add --detach <path> <ref>`), so this worktree stays free for the next fix. A PR whose patch-id changed has lost both: its Evidence names the tree they ran on, and its checks and criteria are checked again before any result is claimed for the new head. Until they pass, the gap goes on its **Not done** line.
+`--verbatim` keeps whitespace, so an indentation change that alters behaviour changes the patch-id. Take it for every PR of the stack before and after a restack. A PR whose patch-id is unchanged keeps the results in its body's Evidence section that judge its own change alone, such as acceptance criteria checked against its diff: that change did not move. Its check results stay with its old head, because the code beneath it changed, and a changed value below can break an unchanged PR above. A PR whose patch-id changed has lost both: its Evidence names the tree they ran on, and its criteria are checked again on its new head.
+
+Before the push, run the checks once, on the top ref, whose tree holds every PR's change: the checks the stack's Evidence ran (the project's checks, when it names none). After the push, each PR's own CI re-checks its head. A PR that gets no CI run of its own, such as a draft its CI skips or a PR in a project without CI, has its checks run on its head instead. A PR claims no check result for its new head until its checks pass there; until then the gap goes on its **Not done** line.
 
 ## Linking
 

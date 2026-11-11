@@ -61,7 +61,8 @@ When no host delegation reaches an allowed choice, run that harness's headless C
 - Close stdin unless the brief goes through it, and give every run a time limit.
 - Capture the final output to a file and keep the exit code. A non-zero exit, an empty output, or a return that step 7 calls failed is a failed dispatch.
 - Run it where the brief says, no wider than the brief's Authority.
-- A quota or rate-limit failure makes that choice unavailable until the reset it reports: report it and move on, never retry in a loop. Cancel every task already dispatched to it in this group, the failed ones included: a host such as T3 resumes a failed task when the limit resets, and it then runs against a stale tree. When the fallback loses diversity the policy prefers or requires, say so in the dispatch summary.
+
+A quota or rate-limit failure makes that choice unavailable until the reset it reports: report it and move on, never retry in a loop. Cancel every task already dispatched to it in this group, the failed ones included: a host such as T3 resumes a failed task when the limit resets, and it then runs against a stale tree. When the fallback loses diversity the policy prefers or requires, say so in the dispatch summary.
 
 A choice no transport reaches is unavailable (step 3). Permission and sandbox modes are never assumed equal across harnesses because their labels match; a child runs at or below the authority the brief grants. Each fresh review round is a new delegated task carrying the complete context (brief, prior findings, responses, open objections), never a continuation of the last reviewer's conversation.
 

@@ -152,10 +152,11 @@ class Lexer {
   assignments(cmd) {
     const ws = cmd.words;
     if (this.shell === 'bash') {
-      // `unset NAME` leaves NAME empty, so a value tracked earlier is stale
+      // After `unset NAME` a value tracked earlier may be stale, yet NAME is not
+      // known empty either (a readonly NAME, a subshell), so it becomes unknown.
       if (ws.length > 1 && ws[0].text === 'unset' && !ws.some((w) => /^-[a-z]*f/.test(w.text))) {
         for (const w of ws.slice(1)) {
-          if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(w.text)) this.st.vars.set(w.text, { text: '', dynamic: false, subs: [] });
+          if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(w.text)) this.st.vars.set(w.text, { text: '$' + w.text, dynamic: true, subs: [] });
         }
         return;
       }

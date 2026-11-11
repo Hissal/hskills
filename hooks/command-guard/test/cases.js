@@ -119,6 +119,8 @@ module.exports = [
   ['human', 'b', 'S=/tmp/scratch; unset S; rm -rf "${S:-}"/*', L],
   ['human', 'b', 'S=/tmp/scratch; unset S; rm -rf "$S"/*', L],
   ['allow', 'b', 'S=/tmp/scratch; unset -f S; rm -rf "$S"/*', L],
+  ['human', 'b', 'readonly S=/; unset S; rm -rf "${S}home"', L],
+  ['human', 'b', 'S=/; (unset S); rm -rf "${S}home"', L],
 
   // ---- 1. destructive filesystem: Git Bash on Windows ---------------------
   ['human', 'b', 'rm -rf /'],

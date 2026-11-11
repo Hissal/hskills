@@ -106,7 +106,7 @@ git diff <base> <head> | git patch-id --verbatim
 
 ## Linking
 
-Each PR body is written by the main skill's rules and links only the issues its own change delivers, by the [Issue links](../SKILL.md#issue-links) rule. The workflow that built the stack may set more, such as which PR links a parent issue; follow it.
+Each PR body is written by the main skill's rules and links only the issues its own change delivers, by the [Issue links](../SKILL.md#issue-links) rule. The workflow that built the stack may have linked more on one PR, such as a parent issue or work that produced no commits: keep each issue a body already links, and decide afresh only whether it is `Closes` or `Refs`.
 
 Every PR merges into the trunk when the stack merges. When the trunk is the default branch, each PR's keywords take effect. When it is another branch, such as a release branch, a host may not apply them (GitHub does not): report that its issues need closing by hand, or close once that branch reaches the default branch. Where the tracker does not close work through PRs, issues are resolved the tracker's way.
 

@@ -55,6 +55,17 @@ The maintainer invokes `/triage` and describes what they want in natural languag
 - "Move #42 to ready-for-agent"
 - "What's ready for agents to pick up?"
 
+## Asking the maintainer
+
+Put every decision triage asks of the maintainer (step 2's category and state recommendation, and any scope or design decision) in `grilling`'s round format: numbered questions, one decision each, a recommended answer for each, worded so "yes" accepts it. Load `grilling` at the first such decision, in step 2. It is a process call: when it is not installed, say so once and ask directly.
+
+A confirmation of an action already decided, such as applying labels, posting a brief or closing an issue, stays one plain line outside the round format.
+
+Inside triage, `grilling` supplies only the rounds and how they work; where the two overlap, triage's rules win:
+
+- Step 5's outcome is where understanding counts as shared; `grilling`'s own confirm-and-exit step does not apply.
+- Offer only triage's [suggestions](#suggestions), not `grilling`'s.
+
 ## Show what needs attention
 
 Query the issue tracker and present three buckets, oldest first:
@@ -73,9 +84,9 @@ Ask the project's listed pack guides for classifying stack involvement, reproduc
 
 1. **Gather context.** Read the full issue or PR (body, comments, labels, author, dates; for a PR, the diff too). Parse any prior triage notes so you don't re-ask resolved questions. Explore the codebase using the project's domain glossary, respecting ADRs in the area. Run two checks against the codebase: (a) **redundancy**: search for an existing implementation of the requested behavior by domain concept (not just the request's wording), and report where you looked. If found, it's an already-implemented `wontfix` (step 5). (b) **prior rejection**: read `.out-of-scope/*.md` and surface any that resembles this request.
 
-2. **Recommend.** Tell the maintainer your category and state recommendation with reasoning, plus a brief codebase summary relevant to the request (including whether it's already implemented and which parts of the stack it involves). Wait for direction.
+2. **Recommend.** Tell the maintainer your category and state recommendation with reasoning, plus a brief codebase summary relevant to the request (including whether it's already implemented and which parts of the stack it involves). Call the Skill tool for "grilling" and put the recommendation, with any scope or design decision, to the maintainer as rounds ([Asking the maintainer](#asking-the-maintainer)). Wait for their answers.
 
-3. **Verify the claim.** Before any grilling, check that the claim holds up. For a bug, reproduce it from the reporter's steps, with the tools and environment the stack needs. For a PR, confirm the diff does what it claims: check it out, run the relevant tests or commands. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). A confirmed verification makes a much stronger agent brief.
+3. **Verify the claim.** Before step 4's grilling, check that the claim holds up. For a bug, reproduce it from the reporter's steps, with the tools and environment the stack needs. For a PR, confirm the diff does what it claims: check it out, run the relevant tests or commands. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). A confirmed verification makes a much stronger agent brief.
 
 4. **Grill (if needed).** If the request needs fleshing out, call the Skill tool twice, for "grilling" and "domain-modeling", and grill it into shape a round of questions at a time, sharpening domain terms and updating `GLOSSARY.md`/ADRs inline as decisions land. These are process calls: when one is not installed, say so once and grill the maintainer directly.
 

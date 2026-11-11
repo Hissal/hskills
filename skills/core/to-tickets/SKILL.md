@@ -51,13 +51,13 @@ Write each **acceptance criterion** as pass/fail: an observable behaviour, an ou
 
 **Shared `task end` checks get one final ticket.** A criterion for a `task end` check (cost tiers are in the project's check commands) whose result other tickets' merges can change goes in one final ticket, blocked by every ticket it covers, instead of in each ticket.
 
-**PR groups split a breakdown with more than one semantic part.** When the work has several meaningful parts, such as one per skill of a new pack, propose **PR groups**: each group is one semantic part, delivered as one PR of a stack, numbered from 1 at the bottom of the stack. `/implement-spec` delivers grouped tickets as that stack. A breakdown with one semantic part gets no groups and no ticket carries the field. The rules:
+**PR groups split a breakdown with more than one semantic part.** When the work has several meaningful parts, such as one per command of a new CLI, propose **PR groups**: each group is one semantic part, delivered as one PR of a stack, numbered from 1 at the bottom of the stack. `/implement-spec` delivers grouped tickets as that stack. A breakdown with one semantic part gets no groups and no ticket carries the field. The rules:
 
 - Each ticket belongs to exactly one group, or is `none` (below).
-- A ticket's blockers sit in its own group or an earlier one, followed through `none` tickets: a grouped ticket blocked through a chain of `none` tickets by another grouped ticket needs that one in its own group or an earlier one too. When no grouping keeps this order, regroup, or offer the work as one PR.
+- A ticket's blockers sit in its own group or an earlier one. `none` tickets are ignored for this ordering: follow a chain of blockers through them, and order only the grouped tickets at its ends. When no grouping keeps this order, regroup, or offer the work as one PR.
 - Work that several groups need (a shared file, type or config) is its own ticket in group 1, and the tickets that build on it are blocked by it.
 - An existing issue the breakdown reuses gets a group like any ticket, shown in the quiz with the change it needs: its PR group field added, which happens only as the user approves. An existing issue that lands outside this stack, before it, is named as a prerequisite instead, with no group.
-- A ticket that produces no commits (an eval, research, a decision, a manual check) gets `none` with a short reason, such as `none (eval, no commits)`. `none` tickets are outside the ordering rule in both directions: they may block, or be blocked by, a ticket in any group, and only the grouped tickets at the two ends of a chain through them are ordered.
+- A ticket that produces no commits (an eval, research, a decision, a manual check) gets `none` with a short reason, such as `none (eval, no commits)`. It may block, or be blocked by, a ticket in any group.
 
 Add a **Proof** note to a ticket that test-first work cannot prove (a visual result, a manual or device run, a measurement, a step only a human can perform): how to prove it is done. When nothing can prove it, write "none" with the reason. A ticket that tests prove carries no Proof note.
 

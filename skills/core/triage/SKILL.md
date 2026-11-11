@@ -81,7 +81,7 @@ Ask the project's listed pack guides for classifying stack involvement, reproduc
 
 5. **Apply the outcome:**
    - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)). When `writing-for-agents` is installed, follow it for the prose. Name the tools and environment an agent needs to reproduce and complete the work.
-   - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing, or participation this stack needs from a human).
+   - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing, or participation this stack needs from a human). A choice an agent can settle by trying each option against criteria the maintainer states stays `ready-for-agent`: ask for the criteria, then put them and the trial in the brief.
    - `needs-info`: post triage notes (template below).
    - For `wontfix`, close the issue, with the comment depending on *why*:
      - **Already implemented**: the change already exists in the codebase. Point to where it lives; do **not** write to `.out-of-scope/` (that KB is for *rejected* requests, not built ones).

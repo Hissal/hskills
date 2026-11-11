@@ -377,6 +377,7 @@ module.exports.push(
   { name: 'a reworded prose restatement fails', files: catalogMd({ packs: '**1 decided packs**, comprising **9 skills** (0 model-invoked, 9 user-invoked)' }), expect: ['fail catalog-totals ' + CATALOG] },
   { name: 'a repeated Totals row fails', files: catalogMd({ webRow: '| web | 0 | 1 | 1 |\n| web | 0 | 1 | 1 |', total: '| **Collection total** | **1** | **3** | **4** |' }), expect: ['fail catalog-totals ' + CATALOG, 'fail catalog-totals ' + CATALOG] },
   { name: 'a core reconstruction reworded after an earlier fragment fails', files: catalogMd({ reconstruction: '= 2 (1 model + 1 user) + delta (user) = 3 (1 model, 2 user)' }), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a core reconstruction with no closing "= " fails', files: (() => { const f = catalogMd(); f[CATALOG] = f[CATALOG].replace(/Core reconstruction is \*\*[^*]*\*\*/, 'Core reconstruction is **12 (1 model + 1 user)**'); return f; })(), expect: ['fail catalog-totals ' + CATALOG] },
   { name: 'a wrong packs sentence fails', files: catalogMd({ packs: '**1 decided packs**, containing **2 skills** (1 model-invoked, 1 user-invoked)' }), expect: ['fail catalog-totals ' + CATALOG] }
 );
 

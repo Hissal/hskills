@@ -148,7 +148,8 @@ module.exports = {
         // The bold reconstruction's closing figures follow its last "= "; an
         // earlier fragment never stands in for them.
         const bold = /^Core reconstruction is \*\*(.+?)\*\*/.exec(text);
-        const tail = bold ? bold[1].slice(bold[1].lastIndexOf('= ') + 2) : '';
+        const at = bold ? bold[1].lastIndexOf('= ') : -1;
+        const tail = at < 0 ? '' : bold[1].slice(at + 2);
         const last = /^(\d+) \((\d+) model \+ (\d+) user\)$/.exec(tail);
         if (last) {
           seen.reconstruction = true;

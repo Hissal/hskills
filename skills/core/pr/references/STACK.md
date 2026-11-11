@@ -48,6 +48,8 @@ A fix goes onto the PR it belongs to as a new commit on that PR's own ref. Exist
 
 When several PRs change, go bottom first: commit and carry for each changed PR in turn, then push once.
 
+A commit someone else already pushed to a lower PR, leaving the refs above it behind, is carried the same way from step 2: [Stored form](#stored-form) has already put it on the changed ref. That ref then stands at its recorded SHA, so the moved-refs check under [Pushing](#pushing) applies only to the refs above it; carrying branch by branch, each ref's old lower head is its merge-base with the ref below it (`git merge-base <lower ref> <ref>`), taken before the carry.
+
 **Branch by branch.** Carry this way, and say so in the report, when `--update-refs` cannot do it: with git older than 2.38, which lacks it; with outside branches (step 4 of [Stored form](#stored-form)); or when the stack holds merge commits (`git log --merges <stack base>..<top ref>` prints any), where the rebase drops the merges, reorders the commits around them and can leave a ref behind or put another PR's commits under it. Going up from the changed ref, move each ref above onto the new ref below it:
 
 ```

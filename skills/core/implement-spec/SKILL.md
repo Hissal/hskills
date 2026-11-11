@@ -12,7 +12,7 @@ You have been provided a spec. This spec should have tickets associated with it,
 
 Read the issue tracker from the project's configuration: the tracker file linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`. If the project names no tracker, tell the user to run `/setup-project`, and stop.
 
-The goal is the entire spec implemented on a single **integration branch**, with every ticket and the spec closed or left open by the state of its work, and every gap that needs the owner reported.
+The goal is the entire spec implemented on a single **integration branch**, delivered as one PR or, when the tickets carry PR groups, as a stack of PRs split from it, with every ticket and the spec closed or left open by the state of its work, and every gap that needs the owner reported.
 
 The tickets are not a list of steps. They are a **task graph** with blocking relationships between them. This means there is always a **frontier** of tickets which are ready to be grabbed.
 
@@ -77,7 +77,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 9. Close the work. First finish every open item an agent can do: a blocked ticket a fresh implementer can retry, a failing criterion, a criterion check an agent can run, a fixable finding, each through steps 4 to 8. Each item gets one retry, and a ticket step 5 reported after its fix rounds has had its retries; one that fails its retry, or has had its retries, needs the owner, with what failed. What stays open is only what needs the owner: a decision, access or authority the agents lack, a check only a human can make, or a twice-failed item.
 
-   When the tickets carry PR groups, split the branch into a stack now, after the last step 8 verification has run and before handling any PR; the gaps it reports go on the stack's **Not done** lines rather than holding the split back: read [SPLIT.md](references/SPLIT.md), which holds the replay, its checks, the single-PR fallback and opening the stack. Skip it and the stack holds other groups' changes, or opens unchecked.
+   When the tickets carry PR groups, split the branch into a stack now, before handling any PR: read [SPLIT.md](references/SPLIT.md), which holds when it runs, the replay, its checks, the single-PR fallback, opening the stack and linking its tickets. Skip it and the stack holds other groups' changes, or opens unchecked.
    - **Draft PR:** update its body through `pr`. Once every criterion is verified, mark it ready for review. Otherwise it stays a draft, with what stays open on `pr`'s **Not done** line.
    - **Stack:** each PR the split opened is handled as a Draft PR for its own group's tickets, per [SPLIT.md](references/SPLIT.md).
    - **No PR:** resolve each ticket whose work is merged, or done in step 7's pass, and whose every criterion is verified or waits only on a check a human must make, the way the issue tracker closes work; the spec once every ticket is resolved. Leave the rest open.

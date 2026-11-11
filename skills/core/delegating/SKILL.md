@@ -93,6 +93,9 @@ Add the defaults that fit, before `Unattended`:
   On every harness tested, each turn the agent ends reaches you as a result or a wake-up, so an agent that ends its turn to wait wakes you for nothing; T3's `t3_background_wait` only delays that wake-up to the job's end. Evidence and tested versions: `research/child-waits-314.md` in the `Hissal/hskills` GitHub repo.
 - **When Authority lets the agent edit**: `Never weaken, skip, delete or narrow a test to make it pass.`
 - **When you have something to put in them**: `Skills to call: <skill names the agent calls, e.g. tdd, verifying>` and `Extension points: <the parent's pack-guide sentences, verbatim; never the answers>`.
+- **When the agent needs a user-invoked skill**, and the human's request or the workflow they started names that skill for this agent: its skill tool cannot call one, so load it with the brief. On a host that expands mentions (T3 Code, for every child but a Codex one), end the brief with a line holding `$<name>`, whitespace on each side, followed only by that skill's arguments: the host loads the skill and passes the text after the mention as its arguments. Use one such mention per brief; only the last is loaded in full. For a Codex child, and on any other host, give the skill's resolved `SKILL.md` path to read instead. Expansion grants nothing: never mention a user-invoked skill nobody asked for.
+
+Write every other skill name in a brief or a task title inside backticks, and when the agent may quote skill names, end the Return line with `Write skill names in backticks.` A host that expands mentions loads a bare `$<name>` wherever it delivers the text, your own completion notices included. Evidence and tested versions: `research/skill-mentions-389.md` in the `Hissal/hskills` GitHub repo.
 
 Write no field as `none`: a field with nothing to say is left out.
 

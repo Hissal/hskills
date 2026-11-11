@@ -10,7 +10,7 @@ Call the Skill tool with `delegating` and dispatch through it: selection, transp
 - **Role**: a role agent for the work the free text and Goal name (implementer, researcher), or a helper for a narrow errand.
 - **Objective**: the outcome from Goal and why, narrowed by the free text.
 - **Authority**: only what the user already granted this session for this work. Decisions marked **agent's** or **pending** are not approvals and grant nothing.
-- **Skills to call**: the document's Suggested skills.
+- **Skills to call**: the document's Suggested skills. A user-invoked one the user asked the subagent to run goes in the brief as `delegating` step 5 says for user-invoked skills; any other user-invoked one stays a suggestion in the document, named in backticks, and the dispatch summary says it was not loaded.
 - **Stop when**: checks a reader can run on the tree, with their commands, taken from State and the free text.
 - The document follows the brief's fields whole, reader block included, or as a path outside the checkout when it is long.
 

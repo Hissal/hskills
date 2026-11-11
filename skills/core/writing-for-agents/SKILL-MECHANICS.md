@@ -7,11 +7,13 @@ The skill-specific branch of [`writing-for-agents`](SKILL.md): what changes when
 Two choices, trading the two loads:
 
 - A **model-invoked** skill keeps a `description`, so the agent can fire it autonomously, and other skills can reach it. You can still type its name: model-invocation always _includes_ user reach; a description only ever adds agent discovery, never removes the human's. The description is the skill's top-level context pointer, forced to stay loaded at all times: permanent context load in exchange for discoverability. A model-invoked skill whose content is all reference is also one home for shared reference: another skill can invoke it, so reference needed by several skills lives in one place. Mechanics: omit `disable-model-invocation`, and write a model-facing description carrying the trigger branches (the pointer-writing rules in `SKILL.md` apply in full).
-- A **user-invoked** skill strips the description from the agent's reach: only the human typing its name can invoke it, and no other skill can. Zero context load, but it spends cognitive load: you are the index that must remember it exists. Mechanics: set `disable-model-invocation: true`; the `description` becomes human-facing: a one-line summary, trigger lists stripped.
+- A **user-invoked** skill strips the description from the agent's reach: the agent's skill tool cannot call it, so only the human typing its name invokes it, unless the human hands it to an agent through a mention (below). Zero context load, but it spends cognitive load: you are the index that must remember it exists. Mechanics: set `disable-model-invocation: true`; the `description` becomes human-facing: a one-line summary, trigger lists stripped.
 
 Pick model-invocation only when the agent must reach the skill on its own, or another skill must. If it only ever fires by hand, make it user-invoked and pay no context load.
 
 Shared reference that two user-invoked skills both need can live in neither: with no descriptions, neither can fire the other. Push it to a plain file outside the skill system: external reference any skill can point at.
+
+**Mentions.** Some hosts load a skill named in text they deliver. T3 Code turns a bare `$<name>`, with whitespace on each side, into an invocation for every agent but a Codex one, user-invoked skills included: that is how a brief hands an agent a user-invoked skill (`delegating` step 5 has the form). The expansion is a mechanism, not authority: a skill may mention a user-invoked skill only when the human's request, or the workflow they started, names that skill for that agent. Write every other skill name inside backticks, which T3 leaves as text; a bare mention in a task title or a report loads its skill wherever the text arrives. Evidence: `research/skill-mentions-389.md` in the `Hissal/hskills` GitHub repo.
 
 ## Descriptions
 
@@ -35,4 +37,4 @@ The invocation cut of splitting (the sequence cut lives in `SKILL.md`): split of
 
 ## Router skills
 
-When user-invoked skills multiply past what you can remember, that piled-up cognitive load is cured by a **router skill**: one user-invoked skill that names the others and when to reach for each, so the human has one skill to remember instead of many. It can only hint, never fire them: user-invoked skills have no description, so nothing but the human can reach them.
+When user-invoked skills multiply past what you can remember, that piled-up cognitive load is cured by a **router skill**: one user-invoked skill that names the others and when to reach for each, so the human has one skill to remember instead of many. It only hints, never fires them: user-invoked skills have no description, so the agent cannot reach them, and the router mentions none on the human's behalf (see Mentions above).

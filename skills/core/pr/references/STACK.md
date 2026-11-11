@@ -91,7 +91,7 @@ With outside branches, restack branch by branch instead, by step 4 of [Stored fo
 
 With git older than 2.38, or a stack holding merge commits, restack branch by branch as in [Changing a lower PR](#changing-a-lower-pr), starting with `git rebase --onto <upstream>/<trunk> <stack base> <bottom ref>`.
 
-On someone else's stack, only the bottom PR merges the trunk in, as a new commit. Report each PR above it as needing its author's restack.
+On someone else's stack, change nothing when the trunk moves: report that the stack needs its author's restack.
 
 ## Unchanged PRs
 

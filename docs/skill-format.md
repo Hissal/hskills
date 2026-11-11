@@ -247,6 +247,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `vendor-licence` | fail | a lock entry's source has no licence file |
 | `vendor-notice` | fail | a copied skill has no `NOTICE.md` or a stale one, or a `NOTICE.md` in a skill with no lock entry is a generated copy notice or links a source not pinned to a full commit SHA (or none) |
 | `dependency-catalog` | fail | the catalog's marked dependency section differs from fresh metadata output; names the regenerate command |
+| `catalog-totals` | fail | a part's row in the `## Totals` table of `docs/catalog.md` differs from the model-invoked, user-invoked and row counts of that part's skill table, a part's skill table has no row, the Collection total is not the sum of the part rows, or a prose restatement ("the N collection skills", the core reconstruction's closing figures, "N decided packs, containing N skills (N model-invoked, N user-invoked)") disagrees with the tables or is reworded out of its pattern, a Totals count is not a whole number, or a part heading appears twice; silent without a Totals section |
 | `release-config` | fail | invalid single-version release settings or a plugin manifest missing its JSON version stamp entry |
 | `pack-membership` | fail | a skill in neither core nor a pack, or in more than one |
 | `plugin-paths` | fail | a skill listed in a plugin declares `paths:` |

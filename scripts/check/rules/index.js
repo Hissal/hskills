@@ -29,6 +29,7 @@ module.exports = [
   require('./vendor-notice'),
   require('./dependency-catalog'),
   require('./release-catalog'),
+  require('./catalog-totals'),
   require('./release-config'),
   require('./release-version'),
   require('./steering-paths'),

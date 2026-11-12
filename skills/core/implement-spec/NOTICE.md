@@ -8,7 +8,7 @@ This skill is copied from [mattpocock/skills](https://github.com/mattpocock/skil
 - Path: `skills/engineering/implement-spec`
 - Pinned commit: `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`
 - Licence: MIT
-- Local changes: collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; orchestrator keeps only criteria, not ticket bodies; diffs checked by a fresh reviewer per ticket through verifying, routed merge, fix (2 rounds) or needs decision; findings through receiving-review; issue links through pr; task end checks other tickets' merges change run once after the run's last merge; agent-doable gaps finished before closing, one retry each; process calls; /handoff offer and parent-agent return
+- Local changes: collection metadata and gates; project configuration replaces the setup pointer; dispatch through delegating; orchestrator keeps only criteria, not ticket bodies; diffs checked by a fresh reviewer per ticket through verifying, routed merge, fix (2 rounds) or needs decision; findings through receiving-review; issue links through pr; task end checks other tickets' merges change run once after the run's last merge; agent-doable gaps finished before closing, one retry each; process calls; /handoff offer and parent-agent return; stacked delivery: with PR groups, no integration-branch PR, and the verified branch split into one PR per group, checked by tree and per boundary, opened through pr's stack reference, single-PR fallback
 
 ## Licence
 

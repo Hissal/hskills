@@ -355,6 +355,32 @@ module.exports.push(
   { name: 'a lone delivery skill without its copy is silent', files: skill('skills/packs/experimental/full-send', { fm: { 'disable-model-invocation': ' true' }, body: '# full-send\n' }), expect: [] }
 );
 
+// #335: docs/catalog.md's hand-kept totals agree with its own skill tables.
+const CATALOG = 'docs/catalog.md';
+// The generated dependency section, empty, so the dependency-catalog rules pass.
+const GENERATED = '\n<!-- BEGIN GENERATED DEPENDENCIES -->\n| Skill ID | Callable / source | Hard requirements |\n|---|---|---|\n<!-- END GENERATED DEPENDENCIES -->\n';
+const catalogMd = (o) => {
+  o = Object.assign({ coreRow: '| core | 1 | 1 | 2 |', webRow: '| web | 0 | 1 | 1 |', total: '| **Collection total** | **1** | **2** | **3** |', collection: 3, reconstruction: '= 2 (1 model + 1 user)', packs: '**1 decided packs**, containing **1 skills** (0 model-invoked, 1 user-invoked)' }, o);
+  const head = '| Skill | Address | Source |\n|---|---|---|\n';
+  return { [CATALOG]: '# Catalog\n\n## core\n\n' + head + '| `alpha` | core model-invoked | New |\n| `beta` | core user-invoked | New |\n\n## web\n\n' + head + '| `gamma` | web pack user-invoked | New |\n\n## Vendor\n\n' + head + '| Vite | external conditional web offer | Vendor |\n\nIt must not be added to the ' + o.collection + ' collection skills.\n\n## Totals\n\n| Part | Model-invoked | User-invoked | Skills |\n|---|---:|---:|---:|\n' + [o.coreRow, o.webRow, o.total].filter(Boolean).join('\n') + '\n\nCore reconstruction is **1 (1 model + 0 user) + beta (user) ' + o.reconstruction + '**.\n\nThere are ' + o.packs + ' beyond core.\n' + GENERATED, 'catalog.json': '{}\n' };
+};
+module.exports.push(
+  { name: 'catalog totals that agree with the skill tables pass', files: catalogMd(), expect: [] },
+  { name: 'a catalog without a Totals section is silent', files: { [CATALOG]: '# Catalog\n\n## core\n\n| Skill | Address |\n|---|---|\n| `alpha` | core model-invoked |\n' + GENERATED, 'catalog.json': '{}\n' }, expect: [] },
+  { name: 'a part row that disagrees with its table fails', files: catalogMd({ coreRow: '| core | 0 | 2 | 2 |', total: '| **Collection total** | **0** | **3** | **3** |' }), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a part table with no Totals row fails', files: catalogMd({ webRow: null, total: '| **Collection total** | **1** | **1** | **2** |' }), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a Collection total that is not the sum of the part rows fails', files: catalogMd({ total: '| **Collection total** | **1** | **2** | **4** |' }), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a wrong collection-skills figure fails', files: catalogMd({ collection: 4 }), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a wrong core reconstruction ending fails', files: catalogMd({ reconstruction: '= 3 (1 model + 2 user)' }), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a blank Totals count fails', files: catalogMd({ webRow: '| web | | 1 | 1 |' }), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a part heading used twice fails', files: (() => { const f = catalogMd(); f[CATALOG] = f[CATALOG].replace('## Vendor', '## web\n\n| Skill | Address |\n|---|---|\n| `gamma` | web pack user-invoked |\n\n## Vendor'); return f; })(), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a reworded prose restatement fails', files: catalogMd({ packs: '**1 decided packs**, comprising **9 skills** (0 model-invoked, 9 user-invoked)' }), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a repeated Totals row fails', files: catalogMd({ webRow: '| web | 0 | 1 | 1 |\n| web | 0 | 1 | 1 |', total: '| **Collection total** | **1** | **3** | **4** |' }), expect: ['fail catalog-totals ' + CATALOG, 'fail catalog-totals ' + CATALOG] },
+  { name: 'a core reconstruction reworded after an earlier fragment fails', files: catalogMd({ reconstruction: '= 2 (1 model + 1 user) + delta (user) = 3 (1 model, 2 user)' }), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a core reconstruction with no closing "= " fails', files: (() => { const f = catalogMd(); f[CATALOG] = f[CATALOG].replace(/Core reconstruction is \*\*[^*]*\*\*/, 'Core reconstruction is **12 (1 model + 1 user)**'); return f; })(), expect: ['fail catalog-totals ' + CATALOG] },
+  { name: 'a wrong packs sentence fails', files: catalogMd({ packs: '**1 decided packs**, containing **2 skills** (1 model-invoked, 1 user-invoked)' }), expect: ['fail catalog-totals ' + CATALOG] }
+);
+
 // #114: the manifest's data contract, independent of membership policy (#110).
 module.exports.push({
   name: 'a manifest with invalid JSON fails',

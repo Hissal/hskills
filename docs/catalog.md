@@ -196,7 +196,7 @@ These are **conditional offers**, not automatically selected project installs, c
 | roslyn-language-server / fallback csharp-lsp | external tool trial, not a skill | Microsoft Roslyn; fallback csharp-ls route | Pinned personal lspServers trial; Claude-only plugin capability | Trial authorized, final recommendation not decided; #64 remains open | [#48 resolution](https://github.com/Hissal/hskills/issues/48#issuecomment-6371179357) |
 | typescript-lsp | external per-project tool trial, not a skill | Named in web setup decision | Pinned, same trial terms as Roslyn | Optional TypeScript language-server trial | [#49 resolution](https://github.com/Hissal/hskills/issues/49#issuecomment-6397980226) |
 
-The vendor table has **19 offer rows**, including grouped skill families, an open-ended category and two tool trials. It has no defensible exact external-skill total; it must not be added to the 78 collection skills. Vercel web-design-guidelines is copied/pinned material **inside web-guide**, not a separate adopted installed skill. Host-provided authoring/document/API capabilities and placeholder generator research are not added to this offer table as invented collection picks.
+The vendor table has **19 offer rows**, including grouped skill families, an open-ended category and two tool trials. It has no defensible exact external-skill total; it must not be added to the 79 collection skills. Vercel web-design-guidelines is copied/pinned material **inside web-guide**, not a separate adopted installed skill. Host-provided authoring/document/API capabilities and placeholder generator research are not added to this offer table as invented collection picks.
 
 ## Supersession list
 
@@ -628,14 +628,14 @@ Other #51 decisions: no agents pack in the first build (setup offers Anthropic's
 | gamedev | 1 | 5 | 6 |
 | csharp | 1 | 0 | 1 |
 | web | 1 | 4 | 5 |
-| experimental | 1 | 10 | 11 |
+| experimental | 2 | 10 | 12 |
 | study | 1 | 1 | 2 |
 | onboarding | 1 | 0 | 1 |
-| **Collection total** | **29** | **49** | **78** |
+| **Collection total** | **30** | **49** | **79** |
 
 Core reconstruction is **42 (14 model + 28 user) in #45 + risky-changes (model) + dependency-audit (user) + break-ui (user) in #49 + reviewing (model) in amended #74 = 46 (16 model + 30 user) + commenting (model) in #88 = 47 (17 model + 30 user), less session-report (user), dropped by the owner as installable from Anthropic's own marketplace = 46 (17 model + 29 user)**. architecture-review is one renamed identity, not another addition; teach was already removed from the #45 core census.
 
-There are **7 decided packs**, containing **32 skills** (12 model-invoked, 20 user-invoked) beyond core. Experimental has ten user-invoked trials plus its guide; study adds teach plus study-guide; onboarding has the generated automatic guide alone.
+There are **7 decided packs**, containing **33 skills** (13 model-invoked, 20 user-invoked) beyond core. Experimental has ten user-invoked trials, the model-invoked babysit-pr trial and its guide; study adds teach plus study-guide; onboarding has the generated automatic guide alone.
 
 Support inventory: **2 independent personal core always-on pieces** (steering source and command guard); the always-on table has six descriptive rows including their components and project configuration. Freeze enforcement is a component of the guard; freeze/unfreeze entry skills are already counted in core. No default always-on domain-pack piece is adopted. The separate support table has **10 non-skill machinery rows**. The vendor table has **19 conditional offer rows**, not 19 known external skill identities. These figures are intentionally not added together as one installed-item total.
 

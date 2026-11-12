@@ -10,8 +10,11 @@ once it has: the skill is invoked explicitly, so firing is never under test here
 
 ## When to run
 
-In a build split into tickets, run behavioural evals once, after every ticket
-merges, with the trigger evals. Per ticket, run only the cheap checks. See
+In a build split into tickets, run behavioural evals once, with the trigger
+evals, after every ticket merges into the integration branch: on that branch,
+before any PR opens or the branch is split into a stack. When review changes a
+skill under eval on a stack of PRs, rerun its evals on the top of the stack.
+Per ticket, run only the cheap checks. See
 [Evals in multi-ticket builds](trigger-evals.md#evals-in-multi-ticket-builds).
 
 ## Procedure

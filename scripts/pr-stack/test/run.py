@@ -23,9 +23,16 @@ SCRIPT = ROOT / "skills/core/pr/scripts/pr-stack.py"
 STACK = ["s1", "s2", "s3"]
 
 
+# A run from a git hook would aim these at the outer repository.
+GIT_LOCATION = ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+                "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR", "GIT_PREFIX")
+
+
 def run(cwd: Path, *args: str, env: dict | None = None) -> subprocess.CompletedProcess:
-    return subprocess.run(list(args), cwd=cwd, capture_output=True, text=True,
-                          env=dict(os.environ, **(env or {})))
+    base = {k: v for k, v in os.environ.items() if k not in GIT_LOCATION}
+    # No global or system config: a hooksPath or commit signing there would change what the cases see.
+    base.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
+    return subprocess.run(list(args), cwd=cwd, capture_output=True, text=True, env=dict(base, **(env or {})))
 
 
 def git(cwd: Path, *args: str) -> str:
@@ -171,6 +178,8 @@ class Stack(unittest.TestCase):
         out = self.fails("carry", "s1")
         self.assertIn("s2 was left behind", out)
         self.assertEqual(self.heads(), before_carry)
+        self.assertEqual(git(self.w, "symbolic-ref", "--short", "HEAD"), "s3")
+        self.assertEqual(git(self.w, "rev-parse", "HEAD"), before_carry["s3"])
         remote_before = self.remote_heads()
         self.fails("push")
         self.assertEqual(self.remote_heads(), remote_before)
@@ -334,6 +343,19 @@ class Stack(unittest.TestCase):
         before = self.heads()
         out = self.fails("carry", "s1")
         self.assertIn("merge commit", out)
+        self.assertEqual(self.heads(), before)
+
+    def test_git_older_than_2_38_refuses_a_stack_with_any_merge_commit(self):
+        git(self.w, "switch", "-q", "-c", "side", "origin/s2")
+        commit(self.w, "side.txt", "side\n", "side")
+        git(self.w, "switch", "-q", "-c", "s3", "origin/s3")
+        git(self.w, "merge", "-q", "--no-ff", "-m", "merge side", "side")
+        git(self.w, "push", "-q", "origin", "s3")
+        self.ok("sync", *STACK)
+        self.fix("s1")
+        before = self.heads()
+        out = self.fails("carry", "s1", env={"PR_STACK_GIT_VERSION": "2.37.0"})
+        self.assertIn("older than 2.38", out)
         self.assertEqual(self.heads(), before)
 
     def test_local_work_the_remote_lacks_makes_sync_unsafe(self):

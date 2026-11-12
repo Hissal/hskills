@@ -27,7 +27,7 @@ Run `sync` before changing anything: the carry and the push leases use what it r
 - `held: <ref> <path>`: another worktree has the ref checked out. When that worktree is yours and `git -C <path> status --porcelain` prints nothing, detach it (`git -C <path> switch --detach`) and sync again. Otherwise another session may be working there: leave it, rewrite nothing, and report the worktree's path and ref.
 - `unpublished: <ref>`: the local branch holds commits the remote lacks. Rewrite nothing: reconcile it or report it, then sync again.
 
-`outside:` and `merges:` lines need nothing from you: the carry goes branch by branch for them, and a stack with merge commits comes out linear. Say so in the report. A merge commit holding changes of its own, such as a conflict resolution, stops the carry: rewrite nothing and report it to the owner.
+`outside:` and `merges:` lines need nothing from you: the carry goes branch by branch for them, and a stack with merge commits comes out linear. Say so in the report. A merge commit holding changes of its own, such as a conflict resolution, stops the carry, as any merge commit does on git older than 2.38: rewrite nothing and report it to the owner.
 
 ## Changing a lower PR
 

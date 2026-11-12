@@ -36,7 +36,8 @@ carry <changed ref> | --trunk
   --update-refs`, or goes branch by branch with `rebase --onto` when there are
   outside branches or merge commits, or git is older than 2.38; merge commits
   come out linear, so it refuses, moving nothing, when a merge commit holds
-  changes beyond its parents' clean merge. Then checks
+  changes beyond its parents' clean merge, or on git older than 2.38 when the
+  stack holds any merge commit. Then checks
   that every ref moved and each is an ancestor of the one above; if not, it
   puts every ref back where it stood before the carry. On a conflict it stops
   with the rebase in progress: resolve the files, `git add` them, then run
@@ -213,7 +214,7 @@ def merges_with_own_changes(state: dict) -> str | None:
     """The first merge commit in the stack whose tree is not its parents' clean merge, or None."""
     for line in out("rev-list", "--merges", "--parents", stack_range(state)).splitlines():
         sha, *parents = line.split()
-        if len(parents) != 2 or git_version() < (2, 38):
+        if len(parents) != 2:
             return sha
         res = git("merge-tree", "--write-tree", *parents, check=False)
         if res.returncode != 0 or res.stdout.split()[0] != out("rev-parse", f"{sha}^{{tree}}"):
@@ -229,10 +230,13 @@ def put_back(refs: list[str], heads: dict) -> None:
     if held:
         raise Stop("cannot put the refs back, none moved: checked out in another worktree: "
                    + ", ".join(f"{r} ({p})" for r, p in held) + "; free it, then run the command again")
-    if current_branch() in moving:
+    reattach = current_branch() if current_branch() in moving else None
+    if reattach:
         git("switch", "--detach", "-q")
     for ref in moving:
         git("branch", "-f", ref, heads[ref])
+    if reattach:
+        git("switch", "-q", reattach)
 
 
 # --- sync ------------------------------------------------------------------
@@ -364,6 +368,9 @@ def carry(argv: list[str]) -> int:
     if outside:
         reasons.append("outside branches " + ", ".join(outside))
     if merge_count(state):
+        if git_version() < (2, 38):
+            raise Stop("the stack holds merge commits, and git older than 2.38 cannot check them for changes "
+                       "of their own: nothing moved")
         own = merges_with_own_changes(state)
         if own:
             raise Stop(f"merge commit {own} holds changes its parents' plain merge lacks (a conflict resolution "

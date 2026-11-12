@@ -95,7 +95,7 @@ Issue every reviewer call together, in the foreground, each sub-agent starting w
 - the security-finding procedure, when it is installed (see _Security findings_);
 - the axis brief below, with its not-to-report list.
 
-Each reviewer's model, harness and effort come from `delegating` and the personal delegation policy where they are set up. The three roles may run on different models; each axis still gets exactly one reviewer.
+Before the first reviewer call, load `delegating` with the Skill tool, describing each reviewer's role: it reads the personal delegation policy, which may put reviewers on another harness than yours. Each reviewer's model, harness and effort come from it. When it is not installed, say so once and dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort. The three roles may run on different models; each axis still gets exactly one reviewer.
 
 **Standards brief**:
 

@@ -11,7 +11,9 @@
   },
   "hissal.hskills/babysit-pr": {
     "path": "skills/packs/experimental/babysit-pr",
-    "requires": []
+    "requires": [
+      "hissal.hskills/pr"
+    ]
   },
   "hissal.hskills/blast-radius": {
     "path": "skills/core/blast-radius",

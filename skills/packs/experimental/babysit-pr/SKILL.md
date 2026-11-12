@@ -5,6 +5,7 @@ argument-hint: "A PR number or URL"
 metadata:
   agent-skills-sync.schema: "1"
   agent-skills-sync.id: "hissal.hskills/babysit-pr"
+  agent-skills-sync.requires: '["hissal.hskills/pr"]'
   opencode/autoinvoke: "true"
 ---
 
@@ -23,7 +24,7 @@ This skill adds none. You act under the authority the run already has: the owner
 
 ## Start
 
-1. **The PR.** Take it from the invocation or the caller. With none given, use the open PR for the current branch; with none there either, ask for it.
+1. **The PR.** Take it from the invocation or the caller. With none given, use the open PR for the current branch; with none there either, ask for it. When it is part of a stack, tend the whole stack by [Stack](#stack).
 2. **Whose branch it is.** Fetch the PR's author and compare it with the account you act as (`gh api user --jq .login`).
    - **The owner's PR**: bring the base in by rebasing and force-pushing with `--force-with-lease` only when the run's authority covers force-pushing this branch (a delivery workflow's own branch does); otherwise merge the base in. A failed lease means someone else pushed: fetch, inspect their commits and reconcile with them; their work is never overwritten.
    - **Someone else's PR**: push new commits only, and merge the base in. Never rebase, amend, squash or force-push: their history stays as they wrote it.
@@ -31,9 +32,18 @@ This skill adds none. You act under the authority the run already has: the owner
    - **Every other branch is out**, the default branch above all: no push, no force-push, no deletion.
 3. **Check out the head branch**, then handle the checks and comments already on the latest head, and [wait](#waiting).
 
+## Stack
+
+A PR is part of a stack by `pr`'s definition. Given any PR of a stack, tend the whole stack as one unit. Before the first change, load `pr` (`hissal.hskills/pr`), which covers stacks; when it cannot load, change nothing in the stack and stop, saying so. It holds every mechanic used here (finding the stack, whose stack it is, fixing a lower PR, the restack and the one push, which PRs keep their checks, linking). Everything else in this skill applies to each PR of the stack, with these changes:
+
+- **Settle, then act.** Watch every PR of the stack by [Waiting](#waiting). A PR has settled when, on its latest head, every check has finished, passed or failed, and every review bot the repository uses has finished; a PR with no checks has none to wait for. A review bot that skips a head counts as finished once its own check on that head has finished, or once it says it skipped; a failing check does not hold that back. A watcher's exit is news, not settling: `pr-wait` exits on the first failed check, even while a bot still reviews that head, so then watch that PR on with `--until any-change`, which wakes you at each new event, until its bots have finished. Act only once every PR has settled, with two exceptions acted on at once: a conflict, which can keep a PR's checks and review bots from running at all, and a failure that holds back another PR of the stack (a check above waiting on it). Then take the review findings and CI failures of the whole stack together through `receiving-review`, fix what verifies, and push the batch once through `pr`'s stack rules, so each fix restacks and re-triggers review once rather than once per finding.
+- **The default branch moved.** Bring it in through `pr`'s stack rules.
+- **A PR of the stack merges** (through the owner's auto-merge or a person): report it as merged, and tend the rest of the stack on. The run ends at a merge only when no PR of the stack is left open.
+- **Done** means the [done bar](#done-bar) holds on every PR of the stack. The [end](#end) reports each PR, and unwatching means unwatching every one.
+
 ## Scope
 
-- **In:** the commits the PR needs, replies on the PR that explain a fix or a disagreement, and updates to the PR's linked ticket that record its state.
+- **In:** the commits the PR needs, replies on the PR that explain a fix or a disagreement, and updates to the PR's linked ticket that record its state. When a fix or an owner's ruling departs from what the linked ticket or its spec says, amend that text in the same batch, with a comment giving the reason, or ask first when the run's authority does not cover editing it.
 - **Out:** messages anywhere else, deployment, production changes, any destructive change to data outside the repository, and closing a PR, even one made obsolete.
 
 ## Waiting
@@ -45,7 +55,7 @@ This skill adds none. You act under the authority the run already has: the owner
   - `any-change`: exit on the first event.
 
   It exits 0 when the mode is met or the PR merged, 1 when it needs you (a required check failed, a conflict, unresolved threads, a BEHIND branch, the PR closed, GitHub unreachable), 2 on bad input or when another `pr-wait` already watches the PR. Run it under the harness's streaming monitor where there is one (each line then wakes you), else as one long foreground command. Start it again after each push, after handling an exit 1, and after a resume; it remembers what it reported. When it says another process watches the PR, start no second one.
-- **One watcher per PR**, never both. Never write a polling or `sleep` loop of your own.
+- **One watcher per PR**, never both. A [stack](#stack) gets one per PR, each its own monitor or background job; with only a foreground shell, start them together and wait until every PR has [settled](#stack). Never write a polling or `sleep` loop of your own.
 - **Unwatch before you hand off**: at the done bar, at a stop, before any question.
 - **Quiet waits.** An event that needs no action gets no message: no "still waiting" posts or replies.
 - **Rate limits.** Every watcher on the account shares GitHub's limits. When reads fail on the GraphQL limit (`gh api rate_limit`), read the PR and its check runs through the REST API, and wait for the reset before watching again.

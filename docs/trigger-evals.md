@@ -94,10 +94,15 @@ guidance and specs, not in general skills.
 
 - **Per ticket**: run only the cheap checks with fixed results: the
   collection check, the tests, script `--help` and fixture runs.
-- **Once, after every ticket merges**: trigger evals,
-  [behavioural evals](behavioural-evals.md), the missing-requirement case,
-  and every lower-tier or second-harness model, Sol included. Collisions
-  between sibling skills can only be measured then.
+- **Once, after every ticket merges into the integration branch**, on
+  that branch and before any PR opens or the branch is split into a stack:
+  trigger evals, [behavioural evals](behavioural-evals.md), the
+  missing-requirement case, and every lower-tier or second-harness model,
+  Sol included. Collisions between sibling skills can only be measured
+  once every skill exists, which the integration branch already holds.
+- **Reruns on a stack**: once the spec is delivered as a stack of PRs, a
+  review change to a skill under eval reruns its evals on the top of the
+  stack.
 - **Failures** go to fix rounds. A rerun covers the failing skill and its
   siblings, as the collision rule above requires.
 - **Exception**: run one early smoke eval on the first skill of a new pack,

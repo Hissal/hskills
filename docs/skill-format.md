@@ -143,7 +143,7 @@ It writes only those two values, leaving every other line of `SKILL.md` and `age
 
 ## Portability
 
-A skill's folder works wherever it is installed. It never assumes a sibling folder, a repository checkout or one installation scope (user, project or plugin). Knowledge a skill requires from another skill resolves through that skill's installed identity, not through a path.
+A skill's folder works wherever it is installed. It never assumes a sibling folder, a repository checkout or one installation scope (user, project or plugin). Knowledge a skill requires from another skill resolves through that skill's installed identity, not through a path. The requiring skill loads that skill and keeps no copy of its rules: every skill that writes to a stacked PR goes through `pr`'s stack reference.
 
 Its text also reads right for anyone who installs it. The Standards reviewer judges each of these in shipped skill text (`skills/**`), even when a spec asks for the opposite:
 

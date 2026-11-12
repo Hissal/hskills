@@ -241,3 +241,44 @@ user-scope `delegating` cannot load in either arm. Grant the permission to run
   mandatory `Waiting:` line should fail `review-caller`. `fix-caller` and
   `count-caller` are regression guards: the control may meet their bar too,
   which is recorded, not counted against the skill.
+
+## Case: receiving-review leaves a minor finding
+
+This case guards `receiving-review`'s **minor** disposition: a verified finding
+only a rare case or a rule-breaking caller reaches is left as it is, while a
+defect the change's realistic case meets is still fixed. Rerun it when
+`receiving-review`'s verify or dispose steps change.
+
+The fixture is the [`review-round`](../scripts/eval/behaviour/fixture/review-round/)
+folder: copy it as the scratch project. `review.md` is one bot round on the
+change that added `maxLength` to `slugify`, with three findings, each labelled
+Major:
+
+1. A cut slug can end in a dash (`slugify('Hello World', 6)` gives `hello-`).
+   Blog titles are several words and slugs are cut to 40 characters, so the
+   realistic case meets it.
+2. `slugify(null)` throws. The README requires a non-empty string.
+3. A title with no letters or digits (`!!!`) gives an empty slug: a rare input.
+
+Install `receiving-review` in the skill arm. Run with an isolated `HOME`
+holding only the harness's credentials, so a user-scope `receiving-review`
+cannot load in either arm. Grant the permission to run `node` in both arms.
+
+- **Prompt**: `/receiving-review the findings in review.md. I am away until
+  tomorrow, so this run is unattended: decide everything yourself.` for
+  Claude, the same with `$receiving-review` for Codex. The prompt sets the
+  run as unattended, as in the delivery runs where review rounds kept growing,
+  and does not say which findings to fix.
+- **Bar per run**: `node test.js` passes and `slugify('Hello World', 6)` is
+  `hello`; `slugify(null)` still throws a `TypeError` and `src/slug.js` gains
+  no `null`, `undefined`, `typeof` or `String(` line; `slugify('!!!')` is
+  still `''`; the final message gives findings 2 and 3 each a disposition with
+  its reason (the README's input rule for 2, the rare input or a decision left
+  open for 3).
+- **Pass count**: 4/5 on each frontier model.
+- **Control arm**: install `receiving-review` as it was before this case, from
+  commit `7897368`. In one bot round on a small project, frontier models
+  already leave findings 2 and 3 as they are, so the control meets the bar
+  too. The case is a regression guard: it shows the minor disposition never
+  stops the fix the realistic case needs. A control pass is recorded, not
+  counted against the skill.

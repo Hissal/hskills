@@ -93,14 +93,14 @@ On the PR's latest head, all of:
 - every automated review the repository expects has finished on that head. Read a bot's state from its check run on the head where it has one, never from its summary comment, whose banner can stay stale. A bot that runs a check and has none on this head has not started, until it says it skipped the head or 10 minutes have passed since the head's checks went green;
 - every actionable piece of feedback is fixed or has a reasoned disposition on the PR, and every review thread is resolved.
 
-Before reporting ready, read the head's checks and the PR's unresolved review threads from GitHub once more, never from a watcher's last event or a bot's summary. When the only thing left is threads waiting on a reviewer's answer, the bar does not hold and waiting is not the fix: unwatch and hand back with the PR **waiting on review**, naming each thread. A watcher exit for those threads alone is that hand-back, not a reason to start it again.
+Before reporting ready, read the head's checks and the PR's unresolved review threads from GitHub once more, never from a watcher's last event or a bot's summary. A thread waiting on a reviewer's answer also keeps the bar from holding: keep tending, and act on the answer when it comes. While such threads are all that is left, watch with `pr-wait --until any-change` (or the host's watch), since `ready` exits at once on any unresolved thread.
 
-A required human review is a dependency to report, not something to wait out. Comments that may come later are not a reason to keep waiting.
+A required human review is a dependency to report, not something to wait out. Comments that may come later, other than an answer a thread waits on, are not a reason to keep waiting.
 
 ## End
 
 Unwatch the PR first.
 
-- **Called by a workflow**: return to its next step with what it needs for its own report: how each fix was proved, each decision with its reason, the follow-ups you recorded, and any human approval or reviewer's answer still required. The caller reports.
-- **Invoked on its own**: report, opening with the PR link and the word **ready** (or **waiting on review**, naming its open threads), then the same items, and say which human approval, if any, the merge still waits on.
+- **Called by a workflow**: return to its next step with what it needs for its own report: how each fix was proved, each decision with its reason, the follow-ups you recorded, and any human approval still required. The caller reports.
+- **Invoked on its own**: report, opening with the PR link and the word **ready**, then the same items, and say which human approval, if any, the merge still waits on.
 - **Merged during the run** (through the owner's auto-merge, a merge queue or a person): report **merged** instead of ready, with the mechanism that merged it and the merge commit. A merged PR is never reported ready.

@@ -152,6 +152,16 @@ class Lexer {
   assignments(cmd) {
     const ws = cmd.words;
     if (this.shell === 'bash') {
+      // After `unset NAME` a value tracked earlier may be stale, yet NAME is not
+      // known empty either (a readonly NAME, a subshell), so it becomes unknown.
+      if (ws.length > 1 && ws[0].text === 'unset' && !ws.some((w) => /^-[a-z]*f/.test(w.text))) {
+        for (const w of ws.slice(1)) {
+          // `unset 'S[0]'` unsets S's value too
+          const u = w.text.match(/^([A-Za-z_][A-Za-z0-9_]*)(\[.*\])?$/);
+          if (u) this.st.vars.set(u[1], { text: '$' + u[1], dynamic: true, subs: [] });
+        }
+        return;
+      }
       let k = 0;
       if (ws.length > 1 && BASH_DECL.has(ws[0].text)) k = 1;
       let n = k;
@@ -226,7 +236,15 @@ class Lexer {
       const end = s.indexOf('}', this.i + 2);
       const body = s.slice(this.i + 2, end < 0 ? s.length : end);
       this.i = end < 0 ? s.length : end + 1;
-      const v = /^[A-Za-z_][A-Za-z0-9_]*$/.test(body) ? this.lookup(body) : null;
+      // ${NAME:?msg}, ${NAME?msg} and ${NAME:-} expand to NAME's value when it
+      // is set and non-empty; otherwise the run-time value is unknown. A
+      // non-empty :- fallback stays unknown: NAME's tracked value can be stale
+      // (read, a failed mktemp), and bash would then use the fallback. A word
+      // holding $, {, }, a backslash, a quote or a backtick may hide a nested,
+      // escaped or quoted brace that the scan above cut short.
+      const p = body.match(/^([A-Za-z_][A-Za-z0-9_]*)(:?\?[^${}\\"'`]*|:-)?$/);
+      let v = p ? this.lookup(p[1]) : null;
+      if (v && p[2] !== undefined && !v.text) v = null;
       if (v) this.addValue(v);
       else { this.add('${' + body + '}', inQuotes); this.w().dynamic = true; }
       return;

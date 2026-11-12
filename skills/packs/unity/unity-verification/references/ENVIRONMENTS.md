@@ -33,7 +33,7 @@ A restrictive sandbox can hide a running Editor from `unity status`, per the CLI
 
 ## Resident headless
 
-Allowed only when the project says so. Open it on a project no Editor holds, once the code compiles: `unity open <project> --batchmode --until-ready` (CLI 1.0.0-beta.17). Batch mode quits on compile errors, so an Editor opened mid-edit is gone before it serves anything. Once ready it serves the same commands as a connected Editor. Stop it with `unity close <project>`, the project positional as `unity close --help` shows (it takes no `--project-path`), and confirm with `unity status`.
+Allowed only when the project says so. Open it on a project no Editor holds, once the code compiles: `unity open <project> --batchmode --until-ready` (CLI 1.0.0-beta.17). Batch mode quits on compile errors, so an Editor opened mid-edit is gone before it serves anything. Once ready it serves the same commands as a connected Editor. A wait that fails without saying the Editor exited (a timeout, a dialog) leaves it running, so stop it then too. Stop it with `unity close <project>`, the project positional as `unity close --help` shows (it takes no `--project-path`), adding `--force` when the project has no Pipeline, and confirm with `unity status`.
 
 ## No Unity here
 

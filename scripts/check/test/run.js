@@ -13,7 +13,9 @@
 //                                  is skipped, and said so, when it is absent
 //
 // It also runs babysit-pr's pr-wait tests (scripts/pr-wait/test/run.py) as
-// one case, skipped on Windows or without python3.
+// one case, skipped on Windows or without python3, and pr's pr-stack tests
+// (scripts/pr-stack/test/run.py) as one case on every platform, skipped only
+// without Python 3, and failed for that in CI.
 
 const fs = require('fs');
 const path = require('path');
@@ -127,6 +129,31 @@ if (process.platform === 'win32') {
   } else {
     failed++;
     console.log('FAIL pr-wait tests (python3 ' + path.relative(REPO, PR_WAIT_TESTS) + ')');
+    console.log('     ' + (res.stderr || res.stdout).trim().split('\n').slice(-20).join('\n     '));
+  }
+}
+
+// pr's bundled pr-stack runs on every platform, Windows included, so its tests
+// do too. Windows runners may name Python 3 `python` rather than `python3`.
+const PR_STACK_TESTS = path.join(REPO, 'scripts', 'pr-stack', 'test', 'run.py');
+const python = ['python3', 'python'].find((cmd) => {
+  const probe = spawnSync(cmd, ['-c', 'import sys; sys.exit(sys.version_info[0] != 3)'], { encoding: 'utf8' });
+  return !probe.error && probe.status === 0;
+});
+if (!python && process.env.CI) {
+  // CI is where the Windows run is proved, so a missing Python fails there.
+  failed++;
+  console.log('FAIL pr-stack tests: Python 3 not found');
+} else if (!python) {
+  skipped++;
+  console.log('skip pr-stack tests: Python 3 not found');
+} else {
+  const res = spawnSync(python, [PR_STACK_TESTS], { encoding: 'utf8' });
+  if (res.status === 0) {
+    passed++;
+  } else {
+    failed++;
+    console.log('FAIL pr-stack tests (' + python + ' ' + path.relative(REPO, PR_STACK_TESTS) + ')');
     console.log('     ' + (res.stderr || res.stdout).trim().split('\n').slice(-20).join('\n     '));
   }
 }

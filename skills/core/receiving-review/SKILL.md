@@ -40,7 +40,7 @@ When the finding claims a security weakness, assess it with [assessing a securit
 
 Absence of disproof is not confirmation. A claim you can neither confirm nor refute after looking stays unclear.
 
-Judge severity yourself; the reviewer's label is one more claim. Decide first whether a verified finding is **minor**: only a rare case reaches it (an unusual input, setup or platform), or only a caller who first breaks a stated rule. A minor finding needs no fix and no owner decision, however cheap or open the fix. A rare case that would lose data, open a security hole or break what the documented contract promises is never minor.
+Judge severity yourself; the reviewer's label is one more claim. Decide first whether a verified finding is **minor**: only a rare case reaches it (an unusual input, setup or platform), or only a caller who first breaks a stated rule. A minor finding needs no fix and no owner decision, however cheap or open the fix. A rare case that would lose data, take a service down, open a security hole or break what the documented contract promises is never minor.
 
 Classify every other verified finding as **mechanical** (one evident fix a careful maintainer would apply without discussion, changing nothing beyond the defect) or a **judgement call** (reasonable people would choose differently: design, a trade-off, a public contract, behaviour beyond the defect).
 
@@ -55,7 +55,7 @@ Classify every other verified finding as **mechanical** (one evident fix a caref
 | Unclear | Ask once, before implementing anything. |
 | Unrelated to this change | Record it and leave it out. |
 
-A regression this change caused is related wherever it shows, outside the original diff included: fix it.
+A regression this change caused is related wherever it shows, outside the original diff included: fix it, unless it is minor.
 
 Suggest, without running:
 

@@ -1,8 +1,9 @@
 # Trigger evals
 
 Hand-run only; never part of CI or the collection check. Real runs spend tokens
-and need authenticated harnesses. Tests use injectable fake executables and spend
-no model tokens.
+and need authenticated harnesses. An agent with those harnesses runs them like
+any other ticket; a person is needed only to sign a harness in. Tests use
+injectable fake executables and spend no model tokens.
 
 Run `node scripts/eval/trigger.js --help` first. Copy
 [sample queries](../scripts/eval/example.json), replace the Sol and Go IDs with

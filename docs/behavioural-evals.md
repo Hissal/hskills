@@ -1,9 +1,11 @@
 # Behavioural evals
 
-A by-hand procedure for testing whether a selected skill changes what an agent
-does. Hand-run only, like the [trigger eval](trigger-evals.md): runs spend tokens
-and need authenticated harnesses. No skill has to pass a behavioural eval; pick
-one when its behaviour matters enough to measure.
+A procedure for testing whether a selected skill changes what an agent does.
+Hand-run only, like the [trigger eval](trigger-evals.md): it stays out of CI
+because runs spend tokens and need authenticated harnesses. An agent with those
+harnesses runs it like any other ticket; a person is needed only to sign a
+harness in. No skill has to pass a behavioural eval; pick one when its
+behaviour matters enough to measure.
 
 The trigger eval asks whether a skill fires. This procedure asks what happens
 once it has: the skill is invoked explicitly, so firing is never under test here.

@@ -44,4 +44,4 @@ The comment starts here.
 ## 4. Post and confirm
 
 - The post's response carries the new comment's or review's URL; report it to the user. With no URL, the post failed or is unknown: look for the comment before posting again, so it never appears twice.
-- Resolve a review thread only after its reply has posted and returned its URL.
+- Resolve a review thread once a reply settles it (a fix, a dismissal, a deferral) and that reply has posted and returned its URL. A thread waiting on someone's answer stays open.

@@ -312,6 +312,30 @@ class Stack(unittest.TestCase):
         self.ok("push")
         self.assertEqual(self.remote_heads()["s1"], theirs)
 
+    def test_sync_fast_forwards_the_checked_out_ref_and_stays_on_it(self):
+        git(self.w, "switch", "-q", "-c", "s1", "origin/s1")
+        theirs = self.push_from_other("s1")
+        self.ok("sync", *STACK)
+        self.assertEqual(git(self.w, "symbolic-ref", "--short", "HEAD"), "s1")
+        self.assertEqual(git(self.w, "rev-parse", "HEAD"), theirs)
+
+    def test_a_merge_commit_with_changes_of_its_own_stops_the_carry(self):
+        git(self.w, "switch", "-q", "-c", "side", "origin/s2")
+        commit(self.w, "side.txt", "side\n", "side")
+        git(self.w, "switch", "-q", "-c", "s3", "origin/s3")
+        git(self.w, "merge", "-q", "--no-ff", "--no-commit", "side")
+        (self.w / "merge-only.txt").write_text("only in the merge\n", encoding="utf-8")
+        git(self.w, "add", "merge-only.txt")
+        git(self.w, "commit", "-q", "-m", "merge side with an amendment")
+        git(self.w, "branch", "-D", "side")
+        git(self.w, "push", "-q", "origin", "s3")
+        self.ok("sync", *STACK)
+        self.fix("s1")
+        before = self.heads()
+        out = self.fails("carry", "s1")
+        self.assertIn("merge commit", out)
+        self.assertEqual(self.heads(), before)
+
     def test_local_work_the_remote_lacks_makes_sync_unsafe(self):
         self.fix("s1")
         out = self.fails("sync", *STACK)

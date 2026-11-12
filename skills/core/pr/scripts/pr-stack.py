@@ -34,7 +34,9 @@ carry <changed ref> | --trunk
   (with --trunk, moves the whole stack onto <upstream>/<trunk>). The changed
   ref and every ref below it keep their commits. Uses `git rebase
   --update-refs`, or goes branch by branch with `rebase --onto` when there are
-  outside branches or merge commits, or git is older than 2.38. Then checks
+  outside branches or merge commits, or git is older than 2.38; merge commits
+  come out linear, so it refuses, moving nothing, when a merge commit holds
+  changes beyond its parents' clean merge. Then checks
   that every ref moved and each is an ancestor of the one above; if not, it
   puts every ref back where it stood before the carry. On a conflict it stops
   with the rebase in progress: resolve the files, `git add` them, then run
@@ -207,6 +209,18 @@ def merge_count(state: dict) -> int:
     return len(out("rev-list", "--merges", stack_range(state)).split())
 
 
+def merges_with_own_changes(state: dict) -> str | None:
+    """The first merge commit in the stack whose tree is not its parents' clean merge, or None."""
+    for line in out("rev-list", "--merges", "--parents", stack_range(state)).splitlines():
+        sha, *parents = line.split()
+        if len(parents) != 2 or git_version() < (2, 38):
+            return sha
+        res = git("merge-tree", "--write-tree", *parents, check=False)
+        if res.returncode != 0 or res.stdout.split()[0] != out("rev-parse", f"{sha}^{{tree}}"):
+            return sha
+    return None
+
+
 def put_back(refs: list[str], heads: dict) -> None:
     """Set every ref to its noted head, or move none. git branch -f refuses a checked-out ref, so this
     worktree is freed first, and a ref another worktree holds stops the undo before any ref moves."""
@@ -294,8 +308,9 @@ def sync(argv: list[str]) -> int:
                 if not clean():
                     problems.append(f"{ref} is behind {remote} and checked out here with changes")
                     continue
-                git("switch", "--detach", "-q")
-            git("branch", "-f", ref, remote_sha)
+                git("merge", "--ff-only", "-q", remote_sha)
+            else:
+                git("branch", "-f", ref, remote_sha)
             lines.append(f"moved: {ref} {local} {remote_sha}")
 
     state = {"remote": remote, "upstream": upstream, "trunk": trunk, "refs": refs,
@@ -349,6 +364,10 @@ def carry(argv: list[str]) -> int:
     if outside:
         reasons.append("outside branches " + ", ".join(outside))
     if merge_count(state):
+        own = merges_with_own_changes(state)
+        if own:
+            raise Stop(f"merge commit {own} holds changes its parents' plain merge lacks (a conflict resolution "
+                       "or an amendment), which a linear carry would drop: nothing moved")
         reasons.append("merge commits")
     plan = []
     lower_head = base
@@ -423,29 +442,29 @@ def lowest_index(state: dict, changed: str | None) -> int:
     return -1 if changed is None else state["refs"].index(changed)
 
 
-def check_stack(state: dict, before: dict | None = None, lowest: int = -1) -> str | None:
-    """None when the stack holds; otherwise what failed. With `before`, every ref above `lowest` must
-    also have moved from its head there."""
+def check_stack(state: dict, tips: dict, before: dict | None = None, lowest: int = -1) -> str | None:
+    """None when the refs at `tips` hold as a stack; otherwise what failed. With `before`, every ref
+    above `lowest` must also have moved from its head there."""
     refs = state["refs"]
-    if before is not None and lowest < 0 and not is_ancestor(trunk_ref(state), head(refs[0])):
+    if before is not None and lowest < 0 and not is_ancestor(trunk_ref(state), tips[refs[0]]):
         return f"{refs[0]} does not sit on {state['upstream']}/{state['trunk']}"
     for lower, upper in zip(refs, refs[1:]):
-        if not is_ancestor(head(lower), head(upper)):
+        if not is_ancestor(tips[lower], tips[upper]):
             return f"{upper} was left behind: {lower} is not its ancestor"
     if before is not None:
         for ref in refs[lowest + 1:]:
-            if rev(head(ref)) == before[ref]:
+            if tips[ref] == before[ref]:
                 return f"{ref} was left behind: it did not move"
     return None
 
 
 def finish_carry(state: dict) -> int:
     pending = state["pending"]
-    failed = check_stack(state, pending["before"], lowest_index(state, pending["changed"]))
+    after = {r: rev(head(r)) for r in state["refs"]}
+    failed = check_stack(state, after, pending["before"], lowest_index(state, pending["changed"]))
     if failed:
         undo_pending(state)
         raise Stop(failed + "; every ref is back where it stood before the carry")
-    after = {r: rev(head(r)) for r in state["refs"]}
     state["carries"].append({"changed": pending["changed"], "before": pending["before"], "after": after})
     state["pending"] = None
     save(state)
@@ -462,14 +481,15 @@ def push(argv: list[str]) -> int:
         raise Stop("push takes no arguments", 2)
     state = load_ready()
     refs, carries = state["refs"], state["carries"]
+    tips = {r: rev(head(r)) for r in refs}
     if carries:
         lowest = min(lowest_index(state, c["changed"]) for c in carries)
-        failed = check_stack(state, carries[0]["before"], lowest)
+        failed = check_stack(state, tips, carries[0]["before"], lowest)
     else:
-        failed = check_stack(state)
+        failed = check_stack(state, tips)
     if failed and carries:
         last = carries[-1]
-        since = [r for r in refs if rev(head(r)) != last["after"][r]]
+        since = [r for r in refs if tips[r] != last["after"][r]]
         if since:
             raise Stop(f"{failed}; nothing pushed and no ref moved: {', '.join(since)} changed since the last "
                        "carry, so carry from the lowest of them, then push")
@@ -481,7 +501,7 @@ def push(argv: list[str]) -> int:
         raise Stop(failed + "; nothing pushed")
     remote = state["remote"]
     leases = [f"--force-with-lease={head(r)}:{state['recorded'][r] or ''}" for r in refs]
-    specs = [f"{head(r)}:{head(r)}" for r in refs]
+    specs = [f"{tips[r]}:{head(r)}" for r in refs]
     res = git("push", "--atomic", "--porcelain", remote, *leases, *specs, check=False)
     if res.returncode != 0:
         others = []
@@ -496,7 +516,7 @@ def push(argv: list[str]) -> int:
             raise Stop(f"nothing pushed: someone else pushed to {len(others)} ref(s) since sync")
         raise Stop(f"nothing pushed: {detail}")
     for ref in refs:
-        state["recorded"][ref] = rev(head(ref))
+        state["recorded"][ref] = tips[ref]
         print(f"pushed: {ref} {state['recorded'][ref]}")
     state["carries"] = []
     save(state)

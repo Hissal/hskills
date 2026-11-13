@@ -448,6 +448,29 @@ module.exports.push({
   env: { HSKILLS_INSTALL_CASES_TIMEOUT_MS: '1000' },
   expect: ['fail install-cases scripts/install/test/run.js'],
 });
+// #387: a unit the harness kills at its limit reports the stages it reached,
+// each with its time, in the check's own output. The fixture harness runs a
+// stalled unit through the real pool, with longer limits while a loaded
+// machine has not yet let it mark its stages.
+const POOL = require('path').join(__dirname, '..', '..', 'install', 'test', 'pool.js');
+module.exports.push({
+  name: 'collection check shows a timed-out install unit\'s stages',
+  files: { 'scripts/install/test/run.js': `const { runAll, report } = require(${JSON.stringify(POOL)});
+const body = 'const { stage } = require(' + ${JSON.stringify(JSON.stringify(POOL))} + '); stage("setup"); stage("register"); setTimeout(() => {}, 60000);';
+(async () => {
+  for (const timeout of [1500, 6000, 20000]) {
+    const unit = { name: 'stalled unit', timeout, args: ['-e', body] };
+    const [result] = await runAll([unit], 1);
+    if (result.stages.length < 2 && timeout < 20000) continue;
+    process.stdout.write(result.stdout + report(unit, result));
+    process.exitCode = 1;
+    return;
+  }
+})();
+` },
+  expect: ['fail install-cases scripts/install/test/run.js'],
+  output: ['FAIL stalled unit: timed out after ', 's, stages: setup ', 's, register '],
+});
 module.exports.push({
   name: 'an installer without its case harness fails the collection check',
   files: { 'scripts/install/install.js': '// fixture installer' },

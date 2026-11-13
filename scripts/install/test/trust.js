@@ -5,6 +5,8 @@ const path = require('path');
 const assert = require('assert/strict');
 const { registration } = require('../plugin');
 const { tempDir } = require('../../test-util');
+const { stage } = require('./pool');
+stage('load');
 const home = tempDir('guard-trust-');
 const encode = text => Buffer.from(text).toString('base64');
 const hash = c => '"sha256:' + c.repeat(64) + '"';
@@ -20,7 +22,9 @@ const multiline = 'developer_instructions = """\nKeep it short. \\"""\n'
   + 'Ends with quotes.""""\nnotes = \'\'\'\n[plugins."fake"]\n"""\n\'\'\' # comment with \'\'\'\n';
 const config = path.join(home, '.codex/config.toml');
 const file = path.join(home, '.hskills/plugins.json');
+let uninstalls = 0;
 function uninstall(before, after, current) {
+  stage('uninstall ' + ++uninstalls);
   const journal = JSON.stringify({ hosts: [], writes: [{ path: config, before: before === null ? null : encode(before), after: encode(after) }] });
   fs.writeFileSync(file, journal);
   fs.writeFileSync(config, current);

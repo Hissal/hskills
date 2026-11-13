@@ -72,14 +72,19 @@ for (const [expect, sh, command, o] of cases) {
   check(got === EXPECT[expect], '[' + SHELL[sh] + '/' + ((o && o.os) || 'win') + '] expected ' + EXPECT[expect] + ', got ' + got + ': ' + JSON.stringify(command), detail);
 }
 
-// The lexers must never throw or hang on hostile input.
+// The lexers must never throw or hang on hostile input. A hang is timed in
+// this process's CPU time, not wall-clock time, so a loaded machine that
+// leaves the test waiting for a core does not fail it; a lexer stuck in a
+// loop still spends the CPU and does.
+const cpuMs = () => { const u = process.cpuUsage(); return (u.user + u.system) / 1000; };
 const hostile = ['', ' ', '"', "'", '`', '$(', '$((', '${', '<<EOF', '((((((((', '))))', '{{{{', '}}}}', '@"', "@'\n", '| | |', '&&&&', '\\', '^', '%', '>'.repeat(50), '$('.repeat(40), 'a'.repeat(200000), '"$(echo "$(echo "$(echo hi)")")"'];
 for (const h of hostile) {
   for (const shell of ['bash', 'powershell', 'cmd', 'auto']) {
     try {
-      const t = Date.now();
+      const t = cpuMs();
       classify(h, Object.assign(machine({}), { shell }));
-      check(Date.now() - t < 2000, 'slow on hostile input ' + JSON.stringify(h.slice(0, 20)) + ' in ' + shell);
+      const spent = cpuMs() - t;
+      check(spent < 2000, 'slow on hostile input ' + JSON.stringify(h.slice(0, 20)) + ' in ' + shell + ': ' + Math.round(spent) + 'ms of CPU');
     } catch (e) {
       check(false, 'threw on hostile input ' + JSON.stringify(h.slice(0, 20)) + ' in ' + shell, e.stack);
     }

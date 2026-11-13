@@ -23,6 +23,9 @@ function runner(tmp, body, options = {}) {
 // Runs a runner that blocks after printing, killed at a timeout. A runner
 // that starts slowly on a loaded machine is killed before it prints, so an
 // empty stdout earns a fresh temp dir and a longer timeout, up to the last.
+// Only the attempt that printed is checked for leftovers: one killed before it
+// printed may have died between making its run folder and starting the
+// watcher, a window test-util leaves to its day-old sweep.
 const KILL_AFTER = [1500, 6000, 20000];
 function killedRunner(tmp, body, options = {}) {
   let r;

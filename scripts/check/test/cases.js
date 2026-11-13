@@ -458,10 +458,11 @@ module.exports.push({
   files: { 'scripts/install/test/run.js': `const { runAll, report } = require(${JSON.stringify(POOL)});
 const body = 'const { stage } = require(' + ${JSON.stringify(JSON.stringify(POOL))} + '); stage("setup"); stage("register"); setTimeout(() => {}, 60000);';
 (async () => {
-  for (const timeout of [1500, 6000, 20000]) {
+  const timeouts = [1500, 6000, 20000];
+  for (const [i, timeout] of timeouts.entries()) {
     const unit = { name: 'stalled unit', timeout, args: ['-e', body] };
     const [result] = await runAll([unit], 1);
-    if (result.stages.length < 2 && timeout < 20000) continue;
+    if (result.stages.length < 2 && i + 1 < timeouts.length) continue;
     process.stdout.write(result.stdout + report(unit, result));
     process.exitCode = 1;
     return;

@@ -1,0 +1,33 @@
+diff --git a/src/slug.js b/src/slug.js
+--- a/src/slug.js
++++ b/src/slug.js
+@@ -1,12 +1,10 @@
+ 'use strict';
++const { trimDashes } = require('./text');
+ 
+ function slugify(title, maxLength) {
+-  let slug = title
+-    .toLowerCase()
+-    .replace(/[^a-z0-9]+/g, '-')
+-    .replace(/^-+|-+$/g, '');
++  let slug = trimDashes(title.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+   if (maxLength !== undefined) {
+-    slug = slug.slice(0, maxLength).replace(/-+$/, '');
++    slug = trimDashes(slug.slice(0, maxLength));
+   }
+   return slug;
+ }
+diff --git a/src/text.js b/src/text.js
+--- a/src/text.js
++++ b/src/text.js
+@@ -1,8 +1,8 @@
+ 'use strict';
+ 
+-// Removes dashes from the end.
++// Removes dashes from both ends.
+ function trimDashes(text) {
+-  return text.replace(/-+$/, '');
++  return text.replace(/^-+|-+$/g, '');
+ }
+ 
+ module.exports = { trimDashes };

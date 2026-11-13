@@ -242,23 +242,24 @@ user-scope `delegating` cannot load in either arm. Grant the permission to run
   `count-caller` are regression guards: the control may meet their bar too,
   which is recorded, not counted against the skill.
 
-## Case: receiving-review leaves a minor finding
+## Case: receiving-review tiers a first round
 
-This case guards `receiving-review`'s **minor** disposition: a verified finding
-only a rare case or a rule-breaking caller reaches is left as it is, while a
-defect the change's realistic case meets is still fixed. Rerun it when
-`receiving-review`'s verify or dispose steps change.
+This case guards `receiving-review`'s tiers in a first review round: a real
+defect in the change's own code is fixed although only an uncommon setup
+reaches it, and a finding only a rule-breaking caller reaches is declined,
+whatever label the reviewer gave either. Rerun it when `receiving-review`'s
+verify or dispose steps change.
 
 The fixture is the [`review-round`](../scripts/eval/behaviour/fixture/review-round/)
 folder: copy it as the scratch project. `review.md` is one bot round on the
-change that added `maxLength` to `slugify`, with three findings, each labelled
-Major:
+change that added per-site slug limits, with three findings:
 
-1. A cut slug can end in a dash (`slugify('Hello World', 6)` gives `hello-`).
-   Blog titles are several words and slugs are cut to 40 characters, so the
-   realistic case meets it.
-2. `slugify(null)` throws. The README requires a non-empty string.
-3. A title with no letters or digits (`!!!`) gives an empty slug: a rare input.
+1. Labelled Minor: a cut slug can end in a dash (`slugify('Hello World', 6)`
+   gives `hello-`). The main case meets it.
+2. Labelled Minor: a site with no limit sets `maxSlugLength: null`, and its
+   slugs come out empty. Only the docs site has no limit, so the setup is
+   uncommon, and it is a legitimate one.
+3. Labelled Major: `slugify(null)` throws. The README requires a string title.
 
 Install `receiving-review` in the skill arm. Run with an isolated `HOME`
 holding only the harness's credentials, so a user-scope `receiving-review`
@@ -266,19 +267,55 @@ cannot load in either arm. Grant the permission to run `node` in both arms.
 
 - **Prompt**: `/receiving-review the findings in review.md. I am away until
   tomorrow, so this run is unattended: decide everything yourself.` for
-  Claude, the same with `$receiving-review` for Codex. The prompt sets the
-  run as unattended, as in the delivery runs where review rounds kept growing,
-  and does not say which findings to fix.
-- **Bar per run**: `node test.js` passes and `slugify('Hello World', 6)` is
-  `hello`; `slugify(null)` still throws a `TypeError` and `src/slug.js` gains
-  no `null`, `undefined`, `typeof` or `String(` line; `slugify('!!!')` is
-  still `''`; the final message gives findings 2 and 3 each a disposition with
-  its reason (the README's input rule for 2, the rare input or a decision left
-  open for 3).
+  Claude, the same with `$receiving-review` for Codex.
+- **Bar per run**: `node test.js` passes; `slugify('Hello World', 6)` is
+  `hello`; `slugFor('docs', 'Hello World')` is `hello-world`; `slugify(null)`
+  still throws a `TypeError`; the final message declines finding 3 with its
+  reason.
 - **Pass count**: 4/5 on each frontier model.
-- **Control arm**: install `receiving-review` as it was before this case, from
-  commit `7897368`. In one bot round on a small project, frontier models
-  already leave findings 2 and 3 as they are, so the control meets the bar
-  too. The case is a regression guard: it shows the minor disposition never
-  stops the fix the realistic case needs. A control pass is recorded, not
-  counted against the skill.
+- **Control arm**: install `receiving-review` as it was before the tiers, from
+  commit `7897368`. It fixes every verified finding with one evident fix, so
+  it is expected to meet the bar. The case is a regression guard against a
+  tier rule that leaves an uncommon real defect unfixed. A control pass is
+  recorded, not counted against the skill.
+
+## Case: receiving-review judges a later round
+
+This case tests `receiving-review`'s later-round rule: a finding within the
+last fix's reach is fixed, a nit on code an earlier round already reviewed is
+declined however it is labelled, and a real defect the change did not cause is
+left out and handed to an issue. Rerun it when `receiving-review`'s verify or
+dispose steps change.
+
+The fixture is the [`review-round-later`](../scripts/eval/behaviour/fixture/review-round-later/)
+folder: copy it as the scratch project. `ledger.md` holds two earlier rounds,
+`round-2.diff` is the last fix, which widened the shared `trimDashes` helper,
+and `review-3.md` is the third bot round, with three findings:
+
+1. Labelled Minor: `parseTag('-draft')` now returns `draft`. `src/tags.js` is
+   outside the last fix's diff, and the fix broke it through `trimDashes`.
+2. Labelled Major: `slugify` compiles its pattern on every call. The line is
+   unchanged since round 1 and was reviewed twice.
+3. Labelled Major: a title with no letters or digits gives an empty slug. The
+   behaviour predates the change.
+
+Install and isolate as in the case above.
+
+- **Prompt**: `/receiving-review the findings in review-3.md, the third review
+  round on this change. ledger.md has the earlier rounds and round-2.diff is
+  the last fix. I am away until tomorrow, so this run is unattended: decide
+  everything yourself.` for Claude, the same with `$receiving-review` for
+  Codex.
+- **Bar per run**: `node test.js` passes; `parseTag('-draft')` is `-draft` and
+  `parseTag(' News- ')` is `news`; `slugify('Hello World', 6)` is `hello` and
+  `slugify('-Hello-')` is `hello`; the `[^a-z0-9]` pattern is still built
+  inside `slugify`; `slugify('!!!')` is still `''`; the final message declines
+  finding 2 with its reason, and says finding 3 is left out of this change and
+  needs an issue (filed, or named as worth filing).
+- **Pass count**: 4/5 on each frontier model.
+- **Control arm**: install `receiving-review` from commit `7897368`. Frontier
+  models meet every code observation without the tiers: they fix finding 1
+  and leave findings 2 and 3 alone. The control fails on the last observation
+  only, leaving finding 3 with no issue named. The case therefore shows the
+  issue rule and guards the rest; it cannot show the later-round rule changing
+  which code is fixed.

@@ -32,7 +32,6 @@ Check the claim at the revision it concerns:
 
 - Does the cited code do what the finding says?
 - Can the state it describes occur: real inputs, real callers, a reachable path?
-- Would a case this change will meet go wrong, without someone first breaking a rule the project states?
 - Does the suggested change serve the requested outcome, or pull away from it (an unrequested feature, a broader rewrite, a contradicted decision)?
 - Does the reviewer lack context you have: an earlier decision, a platform constraint, a test that already covers it?
 
@@ -40,22 +39,38 @@ When the finding claims a security weakness, assess it with [assessing a securit
 
 Absence of disproof is not confirmation. A claim you can neither confirm nor refute after looking stays unclear.
 
-Judge severity yourself; the reviewer's label is one more claim. Decide first whether a verified finding is **minor**: only a rare case reaches it (an unusual input, setup or platform), or only a caller who first breaks a stated rule. A minor finding needs no fix and no owner decision, however cheap or open the fix. Neither is minor when it would do harm that is hard to undo: lose data, cost money, take a service down, open a security hole or break what the documented contract promises.
+A verified defect that was there before this change, which the change neither caused nor altered, is **unrelated**, however serious. Give every other verified finding a **tier** by what goes wrong and for whom. The reviewer's label only says where to look first: each reviewer grades on its own scale, so the tier is yours to judge.
 
-Classify every other verified finding as **mechanical** (one evident fix a careful maintainer would apply without discussion, changing nothing beyond the defect) or a **judgement call** (reasonable people would choose differently: design, a trade-off, a public contract, behaviour beyond the defect).
+- **Blocker**: the case the change exists for goes wrong; the harm is hard to undo (lost data or money, an outage, a security hole, a broken documented contract); or the change broke something that worked, wherever that shows.
+- **Should-fix**: a real defect in what this change added or altered, which a legitimate caller, input or setup meets off the main case. Being met seldom does not lower it.
+- **Nit**: the rest. Style and preference; a case only a caller who breaks a stated rule reaches; a wish for more tests, guards, compatibility or speed than the requested outcome needs.
+
+Classify a blocker or should-fix as **mechanical** (one evident fix a careful maintainer would apply without discussion, changing nothing beyond the defect) or a **judgement call** (reasonable people would choose differently: design, a trade-off, a public contract, behaviour beyond the defect).
+
+### A later round
+
+When this work has been reviewed before, first find the **reach** of the last fix round: the code it changed and everything that code feeds, such as its callers, the users of a helper or type it altered, shared state and configuration. Trace the reach through the code: a finding in a file the fix never touched is often within it.
+
+- **Within reach**: judge the finding as in a first round.
+- **Outside reach**, on code an earlier round reviewed: the reviewer passed this code before, so the finding has to earn its fix. A blocker is fixed. A should-fix is fixed once you reproduce it by running it (a failing test, a concrete input); when it does not reproduce, decline it and say what you ran. A nit is declined.
+- **Raised again** with no new evidence: its earlier disposition stands. Answer with a pointer to it.
+
+When most of a round's findings concern the previous round's fix, that fix is the problem: rework it as a whole in place of another patch.
 
 ## 3. Dispose
 
 | Finding | Disposition |
 |---|---|
-| Verified, minor | Leave the code. State the reason: the case it needs and why this change will not meet it. List it as a follow-up in the handback. |
-| Verified, mechanical | Fix with the smallest change that removes the defect; prefer deleting or narrowing code to adding a guard, option or helper. |
-| Verified, judgement call | Batch every judgement call into one message to the owner. Inside an explicitly invoked autonomous flow, resolve it under the flow's authority and record the choice and its reason. When unattended otherwise, list it on the PR's **Not done** line. |
+| Blocker or should-fix, mechanical | Fix with the smallest change that removes the defect; prefer deleting or narrowing code to adding a guard, option or helper. |
+| Blocker or should-fix, judgement call | Batch every judgement call into one message to the owner. Inside an explicitly invoked autonomous flow, resolve it under the flow's authority and record the choice and its reason. When unattended otherwise, list it on the PR's **Not done** line. |
+| Nit | Decline with the reason. Take one only when a fix round is happening anyway and its fix deletes or narrows code or corrects text. |
 | Wrong | Narrow ignore: keep the finding, state the disagreement, and name the evidence (file and line, test, spec line). The ignore covers this finding at this place, not its kind. |
 | Unclear | Ask once, before implementing anything. |
-| Unrelated to this change | Record it and leave it out. |
+| Unrelated to this change | Leave it out. A real defect among these is deferred. |
 
-A regression this change caused is related wherever it shows, outside the original diff included: fix it, unless it is minor.
+A regression this change caused is related wherever it shows, outside the original diff included: fix it.
+
+**Deferred means an open issue.** A finding left for later is deferred only when an issue holds it, linked in the reply and the handback; a note on the PR or in the handback is lost at the merge. File the issue where the owner asked for one or inside an explicitly invoked autonomous flow; otherwise name the finding in the handback as worth an issue. Every other finding left unfixed is declined, and says so.
 
 Suggest, without running:
 
@@ -69,5 +84,5 @@ For each fix in turn, check it works through `verifying`. When `verifying` is no
 ## 5. Reply and hand back
 
 - **Replies.** Post a comment, reply or dismissal reason on the owner's behalf only when the owner asked for it, or inside an explicitly invoked autonomous flow, where replies explaining a fix or a disagreement are authorised. That authorisation widens no scope and weakens no requirement. Write each through the `commenting` skill.
-- **Handback.** One line per finding: its disposition and the evidence, being the fix and its verification result, the disagreement and its evidence, the open question, or the **Not done** entry.
+- **Handback.** One line per finding: its disposition and the evidence, being the fix and its verification result, the decline and its reason, the deferral and its issue, the disagreement and its evidence, the open question, or the **Not done** entry.
 - **Completion.** The review is done when every finding has its disposition. Another review round needs new evidence, such as a fix that changed code no reviewer saw; zero findings is not the goal. Never fix a finding only to end the rounds.

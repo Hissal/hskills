@@ -1,6 +1,6 @@
 # slugkit
 
-Turns post titles into URL slugs for the blog.
+Turns post titles into URL slugs for our sites.
 
 ## API
 
@@ -10,5 +10,8 @@ Turns post titles into URL slugs for the blog.
 - `maxLength` is optional. When given, the slug is at most that many
   characters long.
 
-Post titles are usually several words, and the blog cuts slugs to 40
-characters.
+`slugFor(site, rawTitle)` checks a title from the post form and returns its
+slug under that site's limit. Each site sets its limit in `src/sites.js`; a
+site with no limit sets `maxSlugLength: null`.
+
+Post titles are usually several words.

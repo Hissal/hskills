@@ -90,7 +90,7 @@ Each smell reads *what it is* → *how to fix*; match it against the diff:
 Issue every reviewer call together, in the foreground, each sub-agent starting with a fresh context window, and aggregate the reports they return. Dispatch them however small the patch: separate contexts are what keep the axes independent. The reviewers have no other access to this skill or to `reviewing`, so each brief carries in full:
 
 - the announced scope, and the paths of the patch and commit-list files from step 2;
-- the **run record**, when this session or the calling workflow ran checks on the change: each command with its result and the commit it ran on, and every risk the author or an implementer named, quoted as given, so each reviewer judges what that evidence covers and tests each named risk against the code;
+- the **run record**, when this session or the calling workflow ran checks on the change: each command with its result and the state it ran on (the commit, plus any uncommitted changes as the step 1 snapshot records them), and every risk the author or an implementer named, quoted as given, so each reviewer judges what that evidence covers and tests each named risk against the code;
 - the evidence rules and the out-of-scope observations format from `reviewing`, pasted in full;
 - the reporting rules: findings only, never restate the diff; mark each finding **hard** or **judgement call**; no confidence scores or ratings;
 - the security-finding procedure, when it is installed (see _Security findings_);
@@ -111,7 +111,7 @@ Each reviewer's model, harness and effort come from `delegating` and the persona
 - "Report: (a) requirements missing or only partly met; (b) behaviour the spec did not ask for (scope creep); (c) requirements that look implemented but where the implementation looks wrong; (d) **changed**: the goal is met by a different approach than the spec describes; (e) **unverifiable**: neither the change nor the run record shows whether the requirement is met, such as anything that must be run and observed. When a run record is supplied, name the requirement it leaves unexercised and why, such as a test that calls a handler directly where the requirement names a player's input. Quote the spec line for each finding."
 - "Code that handles a deliverable is not the deliverable: plumbing for a feature does not meet a requirement for the feature."
 - "A decision the spec records as settled ('chosen over') is challenged only on evidence that it cannot work, never on preference."
-- "Ask the project's listed pack guides for what a diff cannot prove for this stack, and report those requirements as unverifiable unless the run record exercises them; let the lookup start nothing else."
+- "Ask the project's listed pack guides for what a diff cannot prove for this stack, and report those requirements as unverifiable unless the run record shows whether they are met; let the lookup start nothing else."
 - Not to report: style or standards (the Standards axis); open questions the spec itself leaves open, as missing work.
 
 **Failure brief**:

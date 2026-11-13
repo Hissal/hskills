@@ -90,7 +90,7 @@ Each smell reads *what it is* → *how to fix*; match it against the diff:
 Issue every reviewer call together, in the foreground, each sub-agent starting with a fresh context window, and aggregate the reports they return. Dispatch them however small the patch: separate contexts are what keep the axes independent. The reviewers have no other access to this skill or to `reviewing`, so each brief carries in full:
 
 - the announced scope, and the paths of the patch and commit-list files from step 2;
-- the **run record**, when this session or the calling workflow ran checks on the change: each command with its result and the state it ran on (the commit, plus any uncommitted changes as the step 1 snapshot records them), and every risk the author or an implementer named, quoted as given, so each reviewer judges what that evidence covers and tests each named risk against the code;
+- the **run record**, when check results or named risks for the change are available, from this session, the calling workflow or the user: each command with its result and the state it ran on (the commit, plus any uncommitted changes as the step 1 snapshot records them), and every risk the author or an implementer named, quoted as given, so each reviewer judges what that evidence covers and tests each named risk against the code;
 - the evidence rules and the out-of-scope observations format from `reviewing`, pasted in full;
 - the reporting rules: findings only, never restate the diff; mark each finding **hard** or **judgement call**; no confidence scores or ratings;
 - the security-finding procedure, when it is installed (see _Security findings_);

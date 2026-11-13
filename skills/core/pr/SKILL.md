@@ -7,7 +7,7 @@ metadata:
   opencode/autoinvoke: "true"
 ---
 
-Done when the body follows this template, every result in it comes from evidence already gathered, every issue it delivers carries the link its state calls for, every gap is on the **Not done** line, and nothing in it comes from a source more private than the PR. Writing or updating a body runs nothing.
+Done when the body follows this template, every result in it comes from evidence already gathered, every issue it delivers carries the link its state calls for, every gap is on the **Not done** line, and every detail from a source more private than the PR is restated as [Private details](#private-details) sets. Writing or updating a body runs nothing.
 
 When the PR is part of a stack (the host has linked it into a native stack, its base is another open PR's head, or its head is another open PR's base), read [the stack reference](references/STACK.md) before writing, pushing or merging: how a lower PR is changed and the stack pushed, which PRs keep their checks after a restack, and how each PR links its tickets. Skip it and the PRs above a change go stale, or a push overwrites someone else's work.
 

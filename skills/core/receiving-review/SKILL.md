@@ -52,7 +52,7 @@ Classify a blocker or should-fix as **mechanical** (one evident fix a careful ma
 When this work has been reviewed before, first find the **reach** of the last fix round: the code it changed and everything that code feeds, such as its callers, the users of a helper or type it altered, shared state and configuration. Trace the reach through the code: a finding in a file the fix never touched is often within it.
 
 - **Within reach**: judge the finding as in a first round.
-- **Outside reach**, on code an earlier round reviewed: the reviewer passed this code before, so the finding has to earn its fix. A blocker is fixed. A should-fix is fixed once you reproduce it by running it (a failing test, a concrete input); when it does not reproduce, decline it and say what you ran.
+- **Outside reach**, on code an earlier round reviewed: the reviewer passed this code before, so the change stops growing here. A blocker is judged as in a first round. A should-fix is fixed when it is mechanical; when it is a judgement call it is deferred to an issue, and no flow's authority widens the change for it. A nit is declined.
 - **Raised again** with no new evidence: its earlier disposition stands. Answer with a pointer to it.
 
 When most of a round's findings concern the previous round's fix, that fix is the problem: rework it as a whole in place of another patch.
@@ -62,7 +62,7 @@ When most of a round's findings concern the previous round's fix, that fix is th
 | Finding | Disposition |
 |---|---|
 | Blocker or should-fix, mechanical | Fix with the smallest change that removes the defect; prefer deleting or narrowing code to adding a guard, option or helper. |
-| Blocker or should-fix, judgement call | Batch every judgement call into one message to the owner. Inside an explicitly invoked autonomous flow, resolve it under the flow's authority and record the choice and its reason. When unattended otherwise, list it on the PR's **Not done** line. |
+| Blocker or should-fix, judgement call | Batch every judgement call into one message to the owner. Inside an explicitly invoked autonomous flow, resolve it under the flow's authority, taking the narrower fix where both serve the outcome, and record the choice and its reason. When unattended otherwise, list it on the PR's **Not done** line. |
 | Nit | Fix it along with a push that is coming anyway, when its fix is as small as the nit. Decline it with the reason when no push is coming, or when it asks for more code than that (a test, guard, option or compatibility path beyond the requested outcome): a nit never earns a push of its own. |
 | Wrong | Narrow ignore: keep the finding, state the disagreement, and name the evidence (file and line, test, spec line). The ignore covers this finding at this place, not its kind. |
 | Unclear | Ask once, before implementing anything. |

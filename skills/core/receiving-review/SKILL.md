@@ -42,7 +42,7 @@ Absence of disproof is not confirmation. A claim you can neither confirm nor ref
 A verified defect that was there before this change, which the change neither caused nor altered, is **unrelated**, however serious. Give every other verified finding a **tier** by what goes wrong and for whom. The reviewer's label only says where to look first: each reviewer grades on its own scale, so the tier is yours to judge.
 
 - **Blocker**: the case the change exists for goes wrong; the harm is hard to undo (lost data or money, an outage, a security hole, a broken documented contract); or the change broke something that worked, wherever that shows.
-- **Should-fix**: a real defect in what this change added or altered, which a legitimate caller, input or setup meets off the main case. Being met seldom does not lower it.
+- **Should-fix**: a real defect in what this change added or altered, which a legitimate caller, input or setup meets off the main case. An uncommon case with a real consequence belongs here.
 - **Nit**: the rest. Style and preference; a case only a caller who breaks a stated rule reaches; a wish for more tests, guards, compatibility or speed than the requested outcome needs.
 
 Classify a blocker or should-fix as **mechanical** (one evident fix a careful maintainer would apply without discussion, changing nothing beyond the defect) or a **judgement call** (reasonable people would choose differently: design, a trade-off, a public contract, behaviour beyond the defect).
@@ -52,7 +52,7 @@ Classify a blocker or should-fix as **mechanical** (one evident fix a careful ma
 When this work has been reviewed before, first find the **reach** of the last fix round: the code it changed and everything that code feeds, such as its callers, the users of a helper or type it altered, shared state and configuration. Trace the reach through the code: a finding in a file the fix never touched is often within it.
 
 - **Within reach**: judge the finding as in a first round.
-- **Outside reach**, on code an earlier round reviewed: the reviewer passed this code before, so the finding has to earn its fix. A blocker is fixed. A should-fix is fixed once you reproduce it by running it (a failing test, a concrete input); when it does not reproduce, decline it and say what you ran. A nit is declined.
+- **Outside reach**, on code an earlier round reviewed: the reviewer passed this code before, so the finding has to earn its fix. A blocker is fixed. A should-fix is fixed once you reproduce it by running it (a failing test, a concrete input); when it does not reproduce, decline it and say what you ran.
 - **Raised again** with no new evidence: its earlier disposition stands. Answer with a pointer to it.
 
 When most of a round's findings concern the previous round's fix, that fix is the problem: rework it as a whole in place of another patch.
@@ -63,7 +63,7 @@ When most of a round's findings concern the previous round's fix, that fix is th
 |---|---|
 | Blocker or should-fix, mechanical | Fix with the smallest change that removes the defect; prefer deleting or narrowing code to adding a guard, option or helper. |
 | Blocker or should-fix, judgement call | Batch every judgement call into one message to the owner. Inside an explicitly invoked autonomous flow, resolve it under the flow's authority and record the choice and its reason. When unattended otherwise, list it on the PR's **Not done** line. |
-| Nit | Decline with the reason. Take one only when a fix round is happening anyway and its fix deletes or narrows code or corrects text. |
+| Nit | Fix it along with a push that is coming anyway, when its fix is as small as the nit. Decline it with the reason when no push is coming, or when it asks for more code than that (a test, guard, option or compatibility path beyond the requested outcome): a nit never earns a push of its own. |
 | Wrong | Narrow ignore: keep the finding, state the disagreement, and name the evidence (file and line, test, spec line). The ignore covers this finding at this place, not its kind. |
 | Unclear | Ask once, before implementing anything. |
 | Unrelated to this change | Leave it out. A real defect among these is deferred. |

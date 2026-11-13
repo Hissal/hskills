@@ -1,22 +1,20 @@
 diff --git a/src/slug.js b/src/slug.js
 --- a/src/slug.js
 +++ b/src/slug.js
-@@ -1,12 +1,10 @@
+@@ -1,11 +1,9 @@
  'use strict';
+ const { cut } = require('./cut');
 +const { trimDashes } = require('./text');
  
  function slugify(title, maxLength) {
--  let slug = title
+-  const slug = title
 -    .toLowerCase()
 -    .replace(/[^a-z0-9]+/g, '-')
 -    .replace(/^-+|-+$/g, '');
-+  let slug = trimDashes(title.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-   if (maxLength !== undefined) {
--    slug = slug.slice(0, maxLength).replace(/-+$/, '');
-+    slug = trimDashes(slug.slice(0, maxLength));
-   }
-   return slug;
++  const slug = trimDashes(title.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+   return maxLength === undefined ? slug : cut(slug, maxLength);
  }
+ 
 diff --git a/src/text.js b/src/text.js
 --- a/src/text.js
 +++ b/src/text.js

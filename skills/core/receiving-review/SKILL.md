@@ -49,13 +49,13 @@ Classify a blocker or should-fix as **mechanical** (one evident fix a careful ma
 
 ### A later round
 
-When this work has been reviewed before, first find the **reach** of the last fix round: the code it changed and everything that code feeds, such as its callers, the users of a helper or type it altered, shared state and configuration. Trace the reach through the code: a finding in a file the fix never touched is often within it.
+When this reviewer has reviewed this work before, also place each of its findings against the last fix round:
 
-- **Within reach**: judge the finding as in a first round.
-- **Outside reach**, on code an earlier round reviewed: the reviewer passed this code before, so the change stops growing here. A blocker is judged as in a first round. A should-fix is fixed when some fix stays inside the defect, whether mechanical or a judgement call between such fixes. When every fix would widen the change (new behaviour, an option, a wider contract, code beyond the defect), it is deferred to an issue, and no flow's authority widens the change for it. A nit is declined.
-- **Raised again** with no new evidence: its earlier disposition stands. Answer with a pointer to it.
+- **Within reach**: the last fix round changed the behaviour the finding describes, directly or through what the changed code feeds: its callers, the users of a helper or type it altered, shared state, configuration. Trace this through the code: a finding in a file the fix never touched is often within reach.
+- **Outside reach**: the behaviour is as it was when this reviewer last reviewed it.
+- **Raised again**: the reviewer repeats a finding that already has a disposition, and brings no new evidence.
 
-When most of a round's findings concern the previous round's fix, that fix is the problem: rework it as a whole in place of another patch.
+A reviewer's first review of the work is a first round for its findings, however many rounds other reviewers have had.
 
 ## 3. Dispose
 
@@ -63,14 +63,29 @@ When most of a round's findings concern the previous round's fix, that fix is th
 |---|---|
 | Blocker or should-fix, mechanical | Fix with the smallest change that removes the defect; prefer deleting or narrowing code to adding a guard, option or helper. |
 | Blocker or should-fix, judgement call | Batch every judgement call into one message to the owner. Inside an explicitly invoked autonomous flow, resolve it under the flow's authority, taking the narrower fix where both serve the outcome, and record the choice and its reason. When unattended otherwise, list it on the PR's **Not done** line. |
-| Nit | Fix it along with a push that is coming anyway, when its fix is as small as the nit. Decline it with the reason when no push is coming, or when it asks for more code than that (a test, guard, option or compatibility path beyond the requested outcome): a nit never earns a push of its own. |
+| Nit | Fix it together with the round's other fixes, when its fix changes only the lines the nit names. Decline it with the reason when the round fixes nothing else, or when it asks for more code than that (a test, guard, option or compatibility path beyond the requested outcome): a nit never earns a round of its own. |
 | Wrong | Narrow ignore: keep the finding, state the disagreement, and name the evidence (file and line, test, spec line). The ignore covers this finding at this place, not its kind. |
 | Unclear | Ask once, before implementing anything. |
-| Unrelated to this change | Leave it out. A real defect among these is deferred. |
+| Unrelated to this change | Leave it out of this change. Defer one that would be a blocker or should-fix had this change made it; decline the rest as unrelated. |
 
 A regression this change caused is related wherever it shows, outside the original diff included: fix it.
 
-**Deferred means an open issue.** A finding left for later is deferred only when an issue holds it, linked in the reply and the handback; a note on the PR or in the handback is lost at the merge. File the issue where the owner asked for one or inside an explicitly invoked autonomous flow; otherwise name the finding in the handback as worth an issue. Every other finding left unfixed is declined, and says so.
+**In a later round**, a finding within reach and a blocker anywhere keep the rows above. These rows replace them for the rest: the reviewer passed that code before, so the change stops growing there.
+
+| Finding | Disposition |
+|---|---|
+| Should-fix outside reach | Fix it when some fix stays inside the defect, whether mechanical or a judgement call between such fixes. Defer it when every fix would widen the change (new behaviour, an option, a wider contract, code beyond the defect); no flow's authority widens the change for it. |
+| Nit outside reach | Decline it with the reason. |
+| Raised again | Its earlier disposition stands. Answer with a pointer to it. |
+
+When most of a round's findings are within reach, the last fix is the problem: replace it with one reworked fix, since another patch on it brings another round.
+
+**Deferred means an open issue.** A finding is deferred only once an issue holds it, linked in the reply and the handback; a note on the PR or in the handback is lost at the merge. Search the tracker first, and link an open issue that already covers the finding.
+
+- **File it yourself** where the owner asked for the issue, where the calling skill puts it in scope, or inside an explicitly invoked autonomous flow. Label it `agent-authored`, creating that label when the tracker lacks it, plus the tracker's needs-triage label, so a person evaluates it before anyone builds it. Open the body with `commenting`'s note and the context suffix `during review of #<PR>`, then give the reviewer's claim, your evidence that it is real, and why this change left it.
+- **Otherwise ask the owner** for the issue in the message that carries the judgement calls. Until it exists the finding is *proposed for an issue*, in the reply and the handback alike, and never called deferred.
+
+Every other finding left unfixed is declined, and says so.
 
 Suggest, without running:
 
@@ -84,5 +99,5 @@ For each fix in turn, check it works through `verifying`. When `verifying` is no
 ## 5. Reply and hand back
 
 - **Replies.** Post a comment, reply or dismissal reason on the owner's behalf only when the owner asked for it, or inside an explicitly invoked autonomous flow, where replies explaining a fix or a disagreement are authorised. That authorisation widens no scope and weakens no requirement. Write each through the `commenting` skill.
-- **Handback.** One line per finding: its disposition and the evidence, being the fix and its verification result, the decline and its reason, the deferral and its issue, the disagreement and its evidence, the open question, or the **Not done** entry.
+- **Handback.** One line per finding: its disposition and the evidence, being the fix and its verification result, the decline and its reason, the deferral and its issue or the proposal for one, the disagreement and its evidence, the open question, or the **Not done** entry.
 - **Completion.** The review is done when every finding has its disposition. Another review round needs new evidence, such as a fix that changed code no reviewer saw; zero findings is not the goal. Never fix a finding only to end the rounds.

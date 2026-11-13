@@ -281,22 +281,31 @@ cannot load in either arm. Grant the permission to run `node` in both arms.
 
 ## Case: receiving-review judges a later round
 
-This case tests `receiving-review`'s later-round rule: a finding within the
-last fix's reach is fixed, a nit on code an earlier round already reviewed is
-declined however it is labelled, and a real defect the change did not cause is
-left out and handed to an issue. Rerun it when `receiving-review`'s verify or
-dispose steps change.
+This case tests `receiving-review`'s later-round rule. A finding within the
+last fix's reach is fixed. Outside it, on code the reviewer passed before, a
+nit is declined however it is labelled, a should-fix with a fix inside the
+defect is fixed, and a should-fix whose every fix widens the change is handed
+to an issue. A real defect the change did not cause is left out and handed to
+an issue. Rerun it when `receiving-review`'s verify or dispose steps change.
 
 The fixture is the [`review-round-later`](../scripts/eval/behaviour/fixture/review-round-later/)
-folder: copy it as the scratch project. `ledger.md` holds two earlier rounds,
-`round-2.diff` is the last fix, which widened the shared `trimDashes` helper,
-and `review-3.md` is the third bot round, with three findings:
+folder: copy it as the scratch project. `ledger.md` holds two earlier rounds
+by one reviewer, `round-2.diff` is the last fix, which widened the shared
+`trimDashes` helper, and `review-3.md` is that reviewer's third round, with
+five findings:
 
 1. Labelled Minor: `parseTag('-draft')` now returns `draft`. `src/tags.js` is
    outside the last fix's diff, and the fix broke it through `trimDashes`.
-2. Labelled Major: `slugify` compiles its pattern on every call. The line is
-   unchanged since round 1 and was reviewed twice.
-3. Labelled Major: a title with no letters or digits gives an empty slug. The
+2. Labelled Major: the limit error leaves out the rejected value. A nit, on
+   `src/limits.js`, which is unchanged since round 1.
+3. Labelled Minor: `parseMaxLength(null)` throws, though the README gives
+   `null` as the way to set no limit. A should-fix on the same reviewed code,
+   with a one-line fix inside the defect.
+4. Labelled Major: two titles that share their first 40 characters get one
+   slug, and the blog refuses the second post. A should-fix on `src/cut.js`,
+   unchanged since round 1, and every fix adds behaviour: the review suggests
+   a new `unique` argument.
+5. Labelled Major: a title with no letters or digits gives an empty slug. The
    behaviour predates the change.
 
 Install and isolate as in the case above.
@@ -306,16 +315,20 @@ Install and isolate as in the case above.
   the last fix. I am away until tomorrow, so this run is unattended: decide
   everything yourself.` for Claude, the same with `$receiving-review` for
   Codex.
-- **Bar per run**: `node test.js` passes; `parseTag('-draft')` is `-draft` and
-  `parseTag(' News- ')` is `news`; `slugify('Hello World', 6)` is `hello` and
-  `slugify('-Hello-')` is `hello`; the `[^a-z0-9]` pattern is still built
-  inside `slugify`; `slugify('!!!')` is still `''`; the final message declines
-  finding 2 with its reason, and says finding 3 is left out of this change and
-  needs an issue (filed, or named as worth filing).
+- **Bar per run**, with `A` and `B` the two titles of finding 4:
+  - `node test.js` passes;
+  - finding 1: `parseTag('-draft')` is `-draft`, `parseTag(' News- ')` is
+    `news`, and `slugify('-Hello-')` is `hello`;
+  - finding 2: `parseMaxLength('long')` still throws `Bad maxSlugLength.`, and
+    the final message declines the finding with its reason;
+  - finding 3: `parseMaxLength(null)` is `undefined`;
+  - finding 4: `slugify(A, 40)` still equals `slugify(B, 40)`, `slugify` still
+    takes two arguments, and the final message says the finding needs an
+    issue (filed, or proposed for one);
+  - finding 5: `slugify('!!!')` is still `''`, and the final message says the
+    finding is left out of this change and needs an issue.
 - **Pass count**: 4/5 on each frontier model.
-- **Control arm**: install `receiving-review` from commit `7897368`. Frontier
-  models meet every code observation without the tiers: they fix finding 1
-  and leave findings 2 and 3 alone. The control fails on the last observation
-  only, leaving finding 3 with no issue named. The case therefore shows the
-  issue rule and guards the rest; it cannot show the later-round rule changing
-  which code is fixed.
+- **Control arm**: install `receiving-review` from commit `7897368`. It has no
+  later-round rule, so it is expected to fix finding 2 or build finding 4's
+  fix, and to name no issue. A control pass on any observation is recorded,
+  not counted against the skill.

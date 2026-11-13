@@ -1,12 +1,10 @@
 'use strict';
+const { cut } = require('./cut');
 const { trimDashes } = require('./text');
 
 function slugify(title, maxLength) {
-  let slug = trimDashes(title.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-  if (maxLength !== undefined) {
-    slug = trimDashes(slug.slice(0, maxLength));
-  }
-  return slug;
+  const slug = trimDashes(title.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+  return maxLength === undefined ? slug : cut(slug, maxLength);
 }
 
 module.exports = { slugify };

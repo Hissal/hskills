@@ -23,6 +23,7 @@
     "./how",
     "./implement",
     "./implement-spec",
+    "./issue",
     "./migrating",
     "./pr",
     "./prototype",

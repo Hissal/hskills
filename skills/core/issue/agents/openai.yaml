@@ -1,0 +1,5 @@
+interface:
+  display_name: "Issue"
+  short_description: "File an issue in the triage state it is ready for"
+policy:
+  allow_implicit_invocation: true

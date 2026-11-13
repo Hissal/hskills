@@ -124,6 +124,10 @@
     "path": "skills/core/implement-spec",
     "requires": []
   },
+  "hissal.hskills/issue": {
+    "path": "skills/core/issue",
+    "requires": []
+  },
   "hissal.hskills/loop-me": {
     "path": "skills/packs/experimental/loop-me",
     "requires": []

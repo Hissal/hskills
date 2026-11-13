@@ -63,7 +63,7 @@ A reviewer's first review of the work is a first round for its findings, however
 |---|---|
 | Blocker or should-fix, mechanical | Fix with the smallest change that removes the defect; prefer deleting or narrowing code to adding a guard, option or helper. |
 | Blocker or should-fix, judgement call | Batch every judgement call into one message to the owner. Inside an explicitly invoked autonomous flow, resolve it under the flow's authority, taking the narrower fix where both serve the outcome, and record the choice and its reason. When unattended otherwise, list it on the PR's **Not done** line. |
-| Nit | Fix it together with the round's other fixes, when its fix changes only the lines the nit names. Decline it with the reason when the round fixes nothing else, or when it asks for more code than that (a test, guard, option or compatibility path beyond the requested outcome): a nit never earns a round of its own. |
+| Nit | Fix it together with the round's other fixes, when its fix changes only the lines the nit names. Decline it when the round fixes nothing else, or when it asks for more code than that (a test, guard, option or compatibility path beyond the requested outcome): a nit never earns a round of its own. |
 | Wrong | Narrow ignore: keep the finding, state the disagreement, and name the evidence (file and line, test, spec line). The ignore covers this finding at this place, not its kind. |
 | Unclear | Ask once, before implementing anything. |
 | Unrelated to this change | Leave it out of this change. Defer one that would be a blocker or should-fix had this change made it; decline the rest as unrelated. |
@@ -75,14 +75,14 @@ A regression this change caused is related wherever it shows, outside the origin
 | Finding | Disposition |
 |---|---|
 | Should-fix outside reach | Fix it when some fix stays inside the defect, whether mechanical or a judgement call between such fixes. Defer it when every fix would widen the change (new behaviour, an option, a wider contract, code beyond the defect); no flow's authority widens the change for it. |
-| Nit outside reach | Decline it with the reason. |
+| Nit outside reach | Decline it. |
 | Raised again | Its earlier disposition stands. Answer with a pointer to it. |
 
 When most of a round's findings are within reach, the last fix is the problem: replace it with one reworked fix, since another patch on it brings another round.
 
 **Deferred means an open issue.** A finding is deferred only once an issue holds it, linked in the reply and the handback; a note on the PR or in the handback is lost at the merge. Search the tracker first, and link an open issue that already covers the finding.
 
-- **File it yourself** where the owner asked for the issue, where the calling skill puts it in scope, or inside an explicitly invoked autonomous flow. Label it `agent-authored`, creating that label when the tracker lacks it, plus the tracker's needs-triage label, so a person evaluates it before anyone builds it. Open the body with `commenting`'s note and the context suffix `during review of #<PR>`, then give the reviewer's claim, your evidence that it is real, and why this change left it.
+- **File it yourself**, through `issue`, where the owner asked for the issue, where the calling skill puts it in scope, or inside an explicitly invoked autonomous flow. Tell `issue` that no person has seen it, so it is marked as filed by an agent, and give it the reviewer's claim, your evidence that the defect is real, and the PR it came from.
 - **Otherwise ask the owner** for the issue in the message that carries the judgement calls. Until it exists the finding is *proposed for an issue*, in the reply and the handback alike, and never called deferred.
 
 Every other finding left unfixed is declined, and says so.

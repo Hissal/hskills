@@ -52,7 +52,7 @@ Classify a blocker or should-fix as **mechanical** (one evident fix a careful ma
 When this work has been reviewed before, first find the **reach** of the last fix round: the code it changed and everything that code feeds, such as its callers, the users of a helper or type it altered, shared state and configuration. Trace the reach through the code: a finding in a file the fix never touched is often within it.
 
 - **Within reach**: judge the finding as in a first round.
-- **Outside reach**, on code an earlier round reviewed: the reviewer passed this code before, so the change stops growing here. A blocker is judged as in a first round. A should-fix is fixed when it is mechanical; when it is a judgement call it is deferred to an issue, and no flow's authority widens the change for it. A nit is declined.
+- **Outside reach**, on code an earlier round reviewed: the reviewer passed this code before, so the change stops growing here. A blocker is judged as in a first round. A should-fix is fixed when some fix stays inside the defect, whether mechanical or a judgement call between such fixes. When every fix would widen the change (new behaviour, an option, a wider contract, code beyond the defect), it is deferred to an issue, and no flow's authority widens the change for it. A nit is declined.
 - **Raised again** with no new evidence: its earlier disposition stands. Answer with a pointer to it.
 
 When most of a round's findings concern the previous round's fix, that fix is the problem: rework it as a whole in place of another patch.

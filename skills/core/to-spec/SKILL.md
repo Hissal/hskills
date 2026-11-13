@@ -51,7 +51,7 @@ The review runs unless the user has said to skip it.
 
 **Target.** The spec the user named, if any; otherwise the draft from step 3 and its supporting context: the glossary, the ADRs and the issues it relies on, and the code areas it names. Fill in a missing detail yourself when only one reading fits; otherwise ask the user one focused question. Announce the target and its version (the draft, or the named spec's revision) and any material evidence gaps before dispatching. Never fall back to the current branch or to code hotspots.
 
-**Dispatch** one reader with a fresh context. Consult `delegating` when it is installed, describing a spec reviewer at the spec's difficulty. When it is not installed, dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort.
+**Dispatch** one reader with a fresh context. When `delegating` is installed, load it with the Skill tool (on a harness without one, read the `SKILL.md` at the path your skill listing gives) before dispatching, describing a spec reviewer at the spec's difficulty. When it is not installed, dispatch with the host's own subagent tool, honouring anything the user stated about model, harness or effort.
 
 The reader gets no conversation context: only a brief whose task is the five parts below. Through `delegating`, they fill its brief, which keeps its stamp, role, authority, stop and status return. With the host's own tool, send them with a role line (spec reviewer, read only). The task:
 

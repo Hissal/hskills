@@ -198,7 +198,7 @@
       "path": "skills/engineering/triage",
       "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "license": "MIT",
-      "changes": "collection metadata and gates; AI disclaimer replaced by commenting with a context suffix; project configuration for tracker and labels; pack-guide extension point; maintainer issues triaged alike; process calls; /to-questionnaire and /handoff suggestions and parent-agent return; contents lists in both references; writing-for-agents process call for agent briefs; trial-settled choices kept with the agent; maintainer decisions asked in grilling rounds from step 2"
+      "changes": "collection metadata and gates; AI disclaimer replaced by commenting with a context suffix; project configuration for tracker and labels; pack-guide extension point; maintainer issues triaged alike; process calls; /to-questionnaire and /handoff suggestions and parent-agent return; contents lists in both references; writing-for-agents process call for agent briefs; trial-settled choices kept with the agent; maintainer decisions asked in grilling rounds from step 2; settled issues enter at ready-for-agent or ready-for-human, needs-triage only when something is left to evaluate"
     },
     {
       "skill": "skills/core/unslop",

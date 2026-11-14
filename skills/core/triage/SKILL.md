@@ -44,7 +44,7 @@ Every triaged issue should carry exactly one category role and one state role. I
 
 These are canonical role names, and each one's label in the tracker is that same name by default. The project's triage-labels file (the one its `## Agent skills` block links) records a label only where the project's differs; use its label for a role it lists and the canonical name for every other role.
 
-State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time; flag transitions that look unusual and ask before proceeding.
+State transitions: an issue filed with every decision settled enters at `ready-for-agent` or `ready-for-human`. `needs-triage` applies only when something is left to evaluate; from there an issue moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time; flag transitions that look unusual and ask before proceeding.
 
 ## Invocation
 

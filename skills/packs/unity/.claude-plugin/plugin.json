@@ -1,6 +1,6 @@
 {
   "name": "hskills-unity",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generated unity skill list from collection.json.",
   "skills": [
     "./unity-debugging",

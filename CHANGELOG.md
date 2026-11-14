@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.1.1](https://github.com/Hissal/hskills/compare/v0.1.0...v0.1.1) (2026-11-14)
+
+
+### Features
+
+* **architecture-review:** check the declared module graph every run ([#363](https://github.com/Hissal/hskills/issues/363)) ([87fea34](https://github.com/Hissal/hskills/commit/87fea3402d1c3f4f22561447377262344ddbbfce))
+* **babysit-pr:** bound review rounds with a per-reviewer budget and a round record ([d7957a9](https://github.com/Hissal/hskills/commit/d7957a913cf827ad8f2c1cc5f6aa2e0ee34467de))
+* **babysit-pr:** tend a PR stack as one unit ([#379](https://github.com/Hissal/hskills/issues/379)) ([7e5bfe7](https://github.com/Hissal/hskills/commit/7e5bfe7cc8f1ce73c63c2502ea9109735848f171))
+* **check:** fail when the catalog's totals disagree with its tables ([#394](https://github.com/Hissal/hskills/issues/394)) ([7db0b1b](https://github.com/Hissal/hskills/commit/7db0b1ba60a1bbd7b713ab976c6252f2f41d4180))
+* **full-send:** stop on the fix-round budget and file deferred issues ([d7957a9](https://github.com/Hissal/hskills/commit/d7957a913cf827ad8f2c1cc5f6aa2e0ee34467de))
+* **full-stop:** stop on the fix-round budget and file deferred issues ([d7957a9](https://github.com/Hissal/hskills/commit/d7957a913cf827ad8f2c1cc5f6aa2e0ee34467de))
+* **implement-spec:** split the verified branch into a PR stack ([#378](https://github.com/Hissal/hskills/issues/378)) ([efac6d5](https://github.com/Hissal/hskills/commit/efac6d501fc3101e95898ede069967d23e400017))
+* **issue:** add a skill that files issues in the right triage state ([#410](https://github.com/Hissal/hskills/issues/410)) ([ad5ab40](https://github.com/Hissal/hskills/commit/ad5ab4003f6b8ba08a45f6f5b54dd600d82deaef))
+* **pr:** carry and push a PR stack through a tested pr-stack script ([#392](https://github.com/Hissal/hskills/issues/392)) ([5cd293f](https://github.com/Hissal/hskills/commit/5cd293fb2d03ffc00cda033a4ddfed22feb618bd))
+* **pr:** keep a PR stack consistent on every change and push ([#376](https://github.com/Hissal/hskills/issues/376)) ([46c1541](https://github.com/Hissal/hskills/commit/46c1541ca7bfd34102a3b94ca210c6529afcd4be))
+* **setup-project:** add the agent-autofiled label to the triage mapping ([#413](https://github.com/Hissal/hskills/issues/413)) ([26edbef](https://github.com/Hissal/hskills/commit/26edbef0c7835bc07b1bd20b0cca9548f3419522))
+* **to-tickets:** propose PR groups and record each ticket's group ([#377](https://github.com/Hissal/hskills/issues/377)) ([262c49c](https://github.com/Hissal/hskills/commit/262c49c27c09000c0bd842523c610a451a64cf9f))
+* **triage:** let settled issues enter at ready-for-agent ([#414](https://github.com/Hissal/hskills/issues/414)) ([7814d8f](https://github.com/Hissal/hskills/commit/7814d8f1a40b5471740d89d9d8ae36f4567eeb9d))
+* **unity-pack:** list declared modules and flag one shared assembly ([#364](https://github.com/Hissal/hskills/issues/364)) ([c2fe6ad](https://github.com/Hissal/hskills/commit/c2fe6ad98c4ce497cb774a3f8c2bfa70c512a760))
+
+
+### Bug Fixes
+
+* **babysit-pr:** read live checks and threads before calling a PR ready ([#401](https://github.com/Hissal/hskills/issues/401)) ([bd312e0](https://github.com/Hissal/hskills/commit/bd312e019b8bfc387a5eaed052426adcb45b6a2e))
+* check PR bodies, comments and issues for private details ([#408](https://github.com/Hissal/hskills/issues/408)) ([c8184fd](https://github.com/Hissal/hskills/commit/c8184fd5a5aa0bf90742c25a366b2f25af330b22))
+* **code-review:** carry the author's run record and named risks into briefs ([#406](https://github.com/Hissal/hskills/issues/406)) ([5c7001d](https://github.com/Hissal/hskills/commit/5c7001db1fb2f1687d944d5825412772a6648a02))
+* **code-review:** load delegating before dispatching reviewers ([#405](https://github.com/Hissal/hskills/issues/405)) ([ad158b7](https://github.com/Hissal/hskills/commit/ad158b7ed55082f6ec5154e4fb48ebae94bcb2b2))
+* **command-guard:** fail doctor while Codex runs a stale guard copy ([#362](https://github.com/Hissal/hskills/issues/362)) ([33472ae](https://github.com/Hissal/hskills/commit/33472ae9e24092c799ce76a28afef1e2472fc22f))
+* **command-guard:** resolve ${NAME:?} like ${NAME} for rm targets ([#395](https://github.com/Hissal/hskills/issues/395)) ([b118aca](https://github.com/Hissal/hskills/commit/b118aca4e44597bd580d7a714b471e49a5dcb28e))
+* **commenting:** name the most specific model in the note ([c1f56ec](https://github.com/Hissal/hskills/commit/c1f56ecf2d0dab4b9ad7c04401eb8d9859be6083))
+* **delegating:** cancel tasks that fail on a usage limit ([#380](https://github.com/Hissal/hskills/issues/380)) ([094beff](https://github.com/Hissal/hskills/commit/094beffec88cf7b6078c3d9692b4cd41fd41f71a))
+* **delegating:** write the dispatch summary as one plain line ([#396](https://github.com/Hissal/hskills/issues/396)) ([bf6b3f1](https://github.com/Hissal/hskills/commit/bf6b3f141403b22c47e4e373a772bd1be5468a07))
+* **pr:** name the most specific model in the footer ([c1f56ec](https://github.com/Hissal/hskills/commit/c1f56ecf2d0dab4b9ad7c04401eb8d9859be6083))
+* **receiving-review:** tier findings and judge later rounds by reach ([d7957a9](https://github.com/Hissal/hskills/commit/d7957a913cf827ad8f2c1cc5f6aa2e0ee34467de))
+* **setup-project:** resolve a bare number to a GitHub Stack too ([#422](https://github.com/Hissal/hskills/issues/422)) ([13f1460](https://github.com/Hissal/hskills/commit/13f1460ca7dc7a842859c59e2d87bf72eb629fa5))
+* **triage:** clear the agent-autofiled mark when applying an outcome ([#421](https://github.com/Hissal/hskills/issues/421)) ([f801dac](https://github.com/Hissal/hskills/commit/f801dac5a3bf257210044245d94563accb0ddb90))
+* **triage:** keep choices a trial can settle with the agent ([#388](https://github.com/Hissal/hskills/issues/388)) ([4882c73](https://github.com/Hissal/hskills/commit/4882c7394d61070e42d5f350d018f3080f17b330))
+* **triage:** put triage decisions to the maintainer in grilling rounds ([#393](https://github.com/Hissal/hskills/issues/393)) ([e5ab383](https://github.com/Hissal/hskills/commit/e5ab383419a8bf64e750d88a231e0ae09b74fc4e))
+* **unity-pack:** open a resident headless editor with unity open ([#404](https://github.com/Hissal/hskills/issues/404)) ([ae12edf](https://github.com/Hissal/hskills/commit/ae12edf565605e581b345b82d0fe8a319b7714b7))
+
 ## 0.1.0 (2026-11-09)
 
 

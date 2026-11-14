@@ -210,5 +210,5 @@ Before the first post and on every update, read the title and the whole body for
 
 The body ends with `🤖 <model> in <harness>`, its only attribution.
 
-- `<model>`: the full public name the harness reports for the model writing the body, copied as reported (for example "Claude Opus 5.5", not "Claude"). Never guess it or shorten it to a family name. When the harness reports no model name, the footer is `🤖 <harness>`.
-- `<harness>`: the harness you are running in (for example "Claude Code").
+- `<model>`: the most specific name you can find for the model writing the body (for example "Claude Opus 5.5", not "Claude"): a host's runtime note naming `gpt-6.1-sol` beats a harness prompt naming only `GPT-6`. When your context names only a model family, read the configured model from the harness's settings. Never guess it. With no model name anywhere, the footer is `🤖 <harness>`.
+- `<harness>`: the harness you are running in (for example "Claude Code" or "Codex"), never the host app around it, such as T3 Code, even when the model's name came from that host's note.

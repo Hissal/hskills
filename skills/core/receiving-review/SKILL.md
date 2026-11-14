@@ -80,13 +80,7 @@ A regression this change caused is related wherever it shows, outside the origin
 
 When most of a round's findings are within reach, the last fix is the problem: replace it with one reworked fix, since another patch on it brings another round.
 
-**Deferred means an open issue.** A finding is deferred only once an issue holds it, linked in the reply and the handback; a note on the PR or in the handback is lost at the merge. Open the issue through `issue`, giving it the reviewer's claim, your evidence that the defect is real, and its origin, `during review of #<PR>`. `issue` settles whether you file or ask the owner first, and marks an issue no person has seen.
-
-- **It files, or finds an open issue that already covers the finding**: link that issue. The finding is deferred.
-- **It leaves the issue proposed**, waiting on the owner: the finding is *proposed for an issue*, in the reply and the handback alike, and never called deferred.
-- **It finds the subject closed or rejected**: decline the finding and link the match.
-
-When `issue` is not installed, file with the tracker's own command where the owner asked for the issue, the calling skill puts it in scope, or the run is an explicitly invoked autonomous flow; otherwise ask the owner.
+**Deferred means an open issue.** A finding is deferred only once an issue holds it, linked in the reply and the handback; a note on the PR or in the handback is lost at the merge. Open the issue through `issue`; when it is not installed, file nothing and propose the issue to the owner. Until it exists the finding is *proposed for an issue*, in the reply and the handback alike, and never called deferred.
 
 Every other finding left unfixed is declined, and says so.
 

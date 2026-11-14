@@ -5,12 +5,14 @@ const path = require('path');
 const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
 const { tempDir } = require('../../test-util');
+const { stage } = require('./pool');
 const home = tempDir('guard-plugin-test-');
 try {
   fs.mkdirSync(path.join(home, '.codex'));
   const personalConfig = 'hide_agent_reasoning = true\ndeveloper_instructions = """\n[hooks.state."fake"]\nenabled = true\n"""\n';
   fs.writeFileSync(path.join(home, '.codex/config.toml'), personalConfig);
   const real = process.argv.includes('--real');
+  stage('probe commands');
   const commands = spawnSync(process.execPath, [path.resolve(__dirname, '../evidence/live-plugins-windows.js'), 'probe-commands'], { encoding: 'utf8' });
   assert.equal(commands.status, 0, commands.stderr);
   const probes = JSON.parse(commands.stdout);
@@ -33,6 +35,7 @@ try {
   }
 
 
+  stage('host doubles');
   const doubles = require('./doubles')(home);
   const { guardCheckout } = require('./doubles');
   const claude = real ? '/home/agent/.local/bin/claude' : doubles.claude;
@@ -43,6 +46,7 @@ try {
   const hostEnv = dir => ({ ...process.env, HOME: dir, USERPROFILE: dir, CLAUDE_CONFIG_DIR: path.join(dir, '.claude'), CODEX_HOME: path.join(dir, '.codex'), XDG_CONFIG_HOME: path.join(dir, '.config') });
   const host = (bin, args, dir) => spawnSync(bin.endsWith('.cjs') ? process.execPath : bin, bin.endsWith('.cjs') ? [bin, ...args] : args, { encoding: 'utf8', env: hostEnv(dir), cwd: dir });
   const run = (from = source) => spawnSync(process.execPath, [cli, 'register-guard', '--home', home, '--source', from], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex } });
+  stage('legacy install');
   const legacy = spawnSync(process.execPath, [path.resolve(__dirname, '../../../hooks/command-guard/install.js'), '--home', home], { encoding: 'utf8' });
   assert.equal(legacy.status, 1); // Codex trust remains pending
   const settings = path.join(home, '.claude/settings.json');
@@ -52,9 +56,11 @@ try {
   const before = fs.readFileSync(settings, 'utf8');
   const broken = path.join(home, 'broken-claude.cjs');
   fs.writeFileSync(broken, '#!/usr/bin/env node\nconst {spawnSync}=require("child_process"); const args=process.argv.slice(2); if(args[1]==="install")process.exit(9); const bin=' + JSON.stringify(claude) + '; const r=spawnSync(bin.endsWith(".cjs")?process.execPath:bin,bin.endsWith(".cjs")?[bin,...args]:args,{stdio:"inherit"});process.exit(r.status);\n', { mode: 0o755 });
+  stage('failed registration rolls back');
   const fail = spawnSync(process.execPath, [cli, 'register-guard', '--home', home, '--source', source], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: broken } });
   assert.equal(fail.status, 1);
   assert.equal(fs.readFileSync(settings, 'utf8'), before);
+  stage('first registration');
   const result = run();
   assert.equal(result.status, 1); // pending trust, rather than unsupported
   assert.doesNotMatch(result.stdout, /UNSUPPORTED/);
@@ -69,6 +75,7 @@ try {
   const codexHooks = path.join(home, '.codex/hooks.json');
   const fallback = fs.readFileSync(codexHooks);
   assert.match(fallback.toString(), /command-guard/);
+  stage('Claude-only registration');
   const claudeHome = path.join(home, 'claude-only');
   fs.mkdirSync(claudeHome);
   const claudeOnly = spawnSync(process.execPath, [cli, 'register-guard', '--home', claudeHome, '--source', source], {
@@ -76,6 +83,7 @@ try {
   });
   assert.equal(claudeOnly.status, 0, claudeOnly.stdout + claudeOnly.stderr);
   // An hskills marketplace another checkout registered stays that checkout's.
+  stage('occupied marketplace');
   const occupiedHome = path.join(home, 'occupied-home');
   fs.mkdirSync(path.join(occupiedHome, '.codex'), { recursive: true });
   const other = guardCheckout(path.join(home, 'other-checkout'));
@@ -87,6 +95,7 @@ try {
   assert.equal(fs.realpathSync(kept.path), fs.realpathSync(other));
   assert.doesNotMatch(host(claude, ['plugin', 'list', '--json'], occupiedHome).stdout, /command-guard@hskills/);
   if (!real) {
+    stage('legacy fallback states');
     fs.writeFileSync(path.join(home, '.codex/status-unavailable'), 'fixture status failure');
     const unavailable = run();
     assert.equal(unavailable.status, 1);
@@ -99,6 +108,7 @@ try {
     assert.match(protectedPending.stdout, /PROTECTED by trusted legacy fallback/);
     fs.unlinkSync(path.join(home, '.codex/legacy-trusted'));
   }
+  stage('rerun and trust');
   const again = run();
   assert.deepEqual(fs.readFileSync(codexHooks), fallback);
   if (!real) {
@@ -110,6 +120,7 @@ try {
   assert.match(again.stdout, /REGISTERED claude/, again.stderr);
   // Another spelling of this checkout is still this checkout: a link to it and,
   // where the filesystem ignores case, the same path in other case.
+  stage('respelled checkout');
   const link = path.join(home, 'source-link');
   fs.symlinkSync(source, link, 'junction');
   const upper = path.join(home, 'SOURCE');
@@ -121,6 +132,7 @@ try {
   }
   // The registration follows the checkout. Codex runs its copy until a rerun
   // refreshes it, and doctor reports the copy stale until then.
+  stage('source update and doctor');
   fs.appendFileSync(path.join(guard, 'adapters/claude-code.js'), '\n// updated source\n');
   const doctor = () => spawnSync(process.execPath, [cli, 'doctor', '--home', home, '--source', source], { encoding: 'utf8', env: { ...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex } });
   const stale = doctor();
@@ -134,11 +146,13 @@ try {
   assert.deepEqual(fs.readFileSync(copy), fs.readFileSync(path.join(guard, 'adapters/claude-code.js')));
   const refreshed = doctor();
   assert.doesNotMatch(refreshed.stdout + refreshed.stderr, /stale Codex copy/);
+  stage('normal install');
   fs.writeFileSync(path.join(source, 'collection.json'), JSON.stringify({core: [], packs: {}, expensive: []}));
   const normal = spawnSync(process.execPath, [cli, 'install', '--home', home, '--source', source], {encoding: 'utf8', env: {...process.env, COMMAND_GUARD_CLAUDE: claude, COMMAND_GUARD_CODEX: codex}});
   assert.match(normal.stdout, /REGISTERED codex/, normal.stdout + normal.stderr);
   const config = path.join(home, '.codex/config.toml');
   if (!real) {
+    stage('native trust uninstall');
     const saved = tempDir('trust-baseline-');
     fs.cpSync(home, saved, { recursive: true });
     // Native Windows writer shape: bare parent, basic plugin key, literal backslash key.
@@ -156,6 +170,7 @@ try {
     fs.cpSync(saved, home, { recursive: true });
     fs.rmSync(saved, { recursive: true, force: true });
   }
+  stage('changed registration and uninstall');
   const installedConfig = fs.readFileSync(config);
   fs.appendFileSync(config, '\n# personal change\n');
   const refused = spawnSync(process.execPath, [cli, 'uninstall', '--home', home], { encoding: 'utf8' });

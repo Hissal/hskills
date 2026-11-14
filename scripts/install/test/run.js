@@ -476,19 +476,23 @@ const at = process.argv.indexOf('--case');
 if (at !== -1) process.exitCode = runCase(process.argv[at + 1]);
 else {
   // Every sub-harness, lifecycle case and install case is an independent process;
-  // they share one pool, longest first. Plugin and trust keep their 180s and 60s
-  // limits; each lifecycle case gets the lifecycle suite's 180s; install cases have none.
+  // they share one pool, longest first. The limits only stop a hung unit, so
+  // they sit about five times past a quiet run (#387: plugin.js alone took
+  // 64s, the whole lifecycle suite 44s, trust.js under 1s on 4 cores): 300s for
+  // plugin and for each lifecycle case, 60s for trust; install cases have none.
   // Made before any unit starts, so every unit's folders land in this run's
   // folder and go with it even when a timeout kills one mid-run.
   testRunDir();
   const lifecycle = require('./lifecycle');
-  const plugin = { name: 'plugin registration lifecycle (plugin.js)', timeout: 180000, args: [path.join(__dirname, 'plugin.js')] };
+  const plugin = { name: 'plugin registration lifecycle (plugin.js)', timeout: 300000, args: [path.join(__dirname, 'plugin.js')] };
   const trust = { name: 'trust delta regression (trust.js)', timeout: 60000, args: [path.join(__dirname, 'trust.js')] };
-  const lifecycleUnits = lifecycle.units(180000);
+  const lifecycleUnits = lifecycle.units(300000);
   const caseUnits = cases.map(([name]) => ({ name, args: [__filename, '--case', name] }));
   const units = [plugin, ...lifecycleUnits, trust, ...caseUnits];
-  const { runAll, report } = require('./pool');
-  runAll(units).then(results => {
+  const { runAll, report, jobCount } = require('./pool');
+  let jobs;
+  try { jobs = jobCount(); } catch (e) { console.log('FAIL ' + e.message); process.exit(1); }
+  runAll(units, jobs).then(results => {
     const result = unit => results[units.indexOf(unit)];
     const print = (unit, line = '') => { const r = result(unit); process.stdout.write(r.stdout + line); process.stderr.write(r.stderr); };
     const failed = unit => result(unit).status !== 0 || result(unit).timedOut;

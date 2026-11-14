@@ -20,6 +20,23 @@ function runner(tmp, body, options = {}) {
   const script = 'const { tempDir } = require(' + JSON.stringify(UTIL) + ');\n' + body;
   return spawnSync(process.execPath, ['-e', script], { encoding: 'utf8', env, timeout: options.timeout, killSignal: options.killSignal });
 }
+// Runs a runner that blocks after printing, killed at a timeout. A runner
+// that starts slowly on a loaded machine is killed before it prints, so an
+// empty stdout earns a fresh temp dir and a longer timeout, up to the last.
+// Only the attempt that printed is checked for leftovers: one killed before it
+// printed may have died between making its run folder and starting the
+// watcher, a window test-util leaves to its day-old sweep.
+const KILL_AFTER = [1500, 6000, 20000];
+function killedRunner(tmp, body, options = {}) {
+  let r;
+  for (const [i, timeout] of KILL_AFTER.entries()) {
+    const dir = i ? fs.mkdtempSync(tmp + '-retry-') : tmp;
+    r = runner(dir, body, { ...options, timeout });
+    r.tmp = dir;
+    if (r.stdout.trim()) break;
+  }
+  return r;
+}
 // The runner's temp dir may take a moment to empty after a kill.
 function leftovers(tmp) {
   for (let waited = 0; waited < 10000; waited += 100) {
@@ -40,22 +57,23 @@ const cases = [
     assert.deepEqual(leftovers(tmp), []);
   }],
   ['a runner killed at its timeout leaves no folder', (tmp) => {
-    const r = runner(tmp, made + block, { timeout: 1500 });
+    const r = killedRunner(tmp, made + block);
     assert.equal(r.signal, 'SIGTERM');
-    assert.ok(r.stdout.trim().startsWith(tmp), r.stdout);
-    assert.deepEqual(leftovers(tmp), []);
+    assert.ok(r.stdout.trim().startsWith(r.tmp), r.stdout);
+    assert.deepEqual(leftovers(r.tmp), []);
   }],
   ['a runner killed outright leaves no folder', (tmp) => {
-    const r = runner(tmp, made + block, { timeout: 1500, killSignal: 'SIGKILL' });
+    const r = killedRunner(tmp, made + block, { killSignal: 'SIGKILL' });
     assert.equal(r.signal, 'SIGKILL');
-    assert.deepEqual(leftovers(tmp), []);
+    assert.ok(r.stdout.trim().startsWith(r.tmp), r.stdout);
+    assert.deepEqual(leftovers(r.tmp), []);
   }],
   ['a folder the code under test makes in the temp dir goes with the run', (tmp) => {
     const probe = "tempDir('x-'); console.log(require('fs').mkdtempSync(require('path').join(require('os').tmpdir(), 'guard-probe-')));";
-    const r = runner(tmp, probe + block, { timeout: 1500 });
+    const r = killedRunner(tmp, probe + block);
     assert.equal(r.signal, 'SIGTERM');
-    assert.ok(r.stdout.trim().startsWith(tmp), r.stdout);
-    assert.deepEqual(leftovers(tmp), []);
+    assert.ok(r.stdout.trim().startsWith(r.tmp), r.stdout);
+    assert.deepEqual(leftovers(r.tmp), []);
   }],
   ['a nested runner puts its folders in its parent run folder and leaves it there', (tmp) => {
     const run = path.join(tmp, 'parent-run');

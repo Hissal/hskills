@@ -239,7 +239,7 @@ It exits 1 on any `FAIL`; warnings never fail the run. Rules:
 | `requirement-reference` | fail | a Markdown link names a missing file in a required skill's folder |
 | `guide-needs-target` | fail | a guide needs-table target is not its own file, a skill in the same pack (core for core guides), or explicitly project-selected vendor guidance |
 | `guide-routes-paths` | fail | a pack guide shipping `ROUTES.md` declares `paths:` |
-| `install-cases` | fail | the temporary-filesystem user installer cases fail, crash, or run past 900s (`HSKILLS_INSTALL_CASES_TIMEOUT_MS` overrides the limit) |
+| `install-cases` | fail | the temporary-filesystem user installer cases fail, crash, or run past 900s (`HSKILLS_INSTALL_CASES_TIMEOUT_MS` overrides the limit); the harness runs its units on half the machine's cores (`HSKILLS_INSTALL_CASES_JOBS`, a positive whole number, sets how many run at once), and a unit that fails or times out lists the stages it reached, each with its time |
 | `guard-cases` | fail | a [command guard case](../hooks/command-guard/test/run.js) fails, or the harness exits non-zero; a passing harness prints only its `guard:` summary line |
 | `requirement-body-id` | fail | a required ID is absent from the requiring skill's body |
 | `vendor-lock` | fail | `vendor.lock.json` is not valid against [Copied skills](#copied-skills), or an entry names no skill folder; the other `vendor-*` rules wait until the lock is valid |

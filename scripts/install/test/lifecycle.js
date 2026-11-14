@@ -6,6 +6,7 @@ const path = require('path');
 const assert = require('assert/strict');
 const { spawnSync } = require('child_process');
 const { tempDir, testRunDir } = require('../../test-util');
+const { stage } = require('./pool');
 const hostDoubles = require('./doubles');
 const { guardCheckout } = hostDoubles;
 const cli = path.resolve(__dirname, '../install.js');
@@ -27,12 +28,14 @@ function fixture(name) {
   const source = guardCheckout(path.join(home, 'source'));
   // The human already reviewed the plugin hook in /hooks.
   fs.writeFileSync(path.join(home, '.codex/human-trusted'), 'human fixture decision');
+  let runs = 0;
   const env = { ...process.env, COMMAND_GUARD_CLAUDE: doubles.claude, COMMAND_GUARD_CODEX: doubles.codex };
   const f = {
     home, source,
     config: path.join(home, '.codex/config.toml'),
     journal: path.join(home, '.hskills/plugins.json'),
     run(command, extraEnv = {}, checkout = source) {
+      stage('run ' + ++runs + ': ' + command);
       const args = command === 'install' ? ['register-guard', '--home', home, '--source', checkout] : [command, '--home', home];
       const r = spawnSync(process.execPath, [cli, ...args], { encoding: 'utf8', env: { ...env, ...extraEnv } });
       return { status: r.status, output: r.stdout + r.stderr };
@@ -142,6 +145,7 @@ assert.equal(new Set(cases.map(([n]) => n)).size, cases.length, 'case names must
 // One case in this process, against its own temporary home.
 function runCase(name) {
   const [, test] = cases.find(([n]) => n === name);
+  stage('fixture');
   const f = fixture(name.replace(/\W+/g, '-').slice(0, 24));
   try { test(f); console.log('ok ' + name); return 0; }
   catch (e) { console.log('FAIL ' + name + ': ' + e.message); return 1; }
@@ -160,8 +164,10 @@ if (require.main === module) {
     // run's folder, which goes with this process even when a case is killed.
     testRunDir();
     const all = units();
-    const { runAll, report } = require('./pool');
-    runAll(all).then(results => {
+    const { runAll, report, jobCount } = require('./pool');
+    let jobs;
+    try { jobs = jobCount(); } catch (e) { console.log('FAIL ' + e.message); process.exit(1); }
+    runAll(all, jobs).then(results => {
       let failures = 0;
       results.forEach((result, i) => {
         process.stdout.write(result.stdout + report(all[i], result)); process.stderr.write(result.stderr);

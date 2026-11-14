@@ -26,6 +26,7 @@ require('./temp-cases');
 require('./catalog');
 require('../../plugins/test/run');
 require('../../floor-guard/test/run');
+require('../../install/test/pool-cases');
 
 const CHECK = path.join(__dirname, '..', 'check.js');
 const REPO = path.join(__dirname, '..', '..', '..');

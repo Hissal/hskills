@@ -4,7 +4,7 @@ Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all o
 
 ## Conventions
 
-- **Resolve a bare number**: GitHub numbers issues, PRs and GitHub Stacks from one shared sequence, so a bare `#<n>` may be any of the three. Try `gh pr view <n>`, then `gh issue view <n>`, then `gh api repos/<owner>/<repo>/stacks/<n>`; a Stack's `pull_requests` lists its PRs from bottom to top. Report `#<n>` as missing only when all three answer not found (`Could not resolve` from the two views, HTTP 404 from the Stacks endpoint); report any other error (auth, rate limit, outage) as that error.
+- **Resolve a bare number**: GitHub numbers issues, PRs and GitHub Stacks from one shared sequence, so a bare `#<n>` may be any of the three. Try `gh pr view <n>`, then `gh issue view <n>`, then `gh api repos/<owner>/<repo>/stacks/<n>`; a Stack's `pull_requests` lists its PRs from bottom to top. Report `#<n>` as missing only when all three answer not found (`Could not resolve to a PullRequest`, then `Could not resolve to an issue or pull request`, then HTTP 404 from the Stacks endpoint); report any other error (auth, rate limit, outage) as that error.
 - **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
 - **Read an issue**: `gh issue view <number> --comments`, filtering comments by `jq` and also fetching labels.
 - **List issues**: `gh issue list --state open --limit 1000 --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters. A result of exactly the limit may be cut off: raise `--limit` and rerun before treating it as complete.

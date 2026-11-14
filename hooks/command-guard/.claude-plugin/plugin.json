@@ -1,6 +1,6 @@
 {
   "name": "command-guard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local accident prevention for covered shell commands; hooks only.",
   "hooks": "./hooks/claude.json"
 }

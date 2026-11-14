@@ -1,26 +1,28 @@
 'use strict';
 // Install harness pool cases: node scripts/install/test/pool-cases.js
-// The job cap, its HSKILLS_INSTALL_CASES_JOBS override, and the stages a
-// failed or timed-out unit reports (#387). node scripts/check/test/run.js
+// The job count, its HSKILLS_INSTALL_CASES_JOBS override, a unit's limit
+// restarting at each stage, and the stages a failed or timed-out unit
+// reports (#387). node scripts/check/test/run.js
 // runs this file too; a failed case makes that run fail.
 const assert = require('assert/strict');
 const path = require('path');
 const { spawnSync } = require('child_process');
-const { jobCount, JOBS_ENV } = require('./pool');
+const { jobCount, report, JOBS_ENV } = require('./pool');
 
 const POOL = path.join(__dirname, 'pool.js');
-// Runs one unit through the pool in a child and returns its result and
-// report line. A unit that marks its stages and then blocks is given longer
-// timeouts until its marks arrive, since a loaded machine can start it slowly.
-function pooled(body, timeouts = [null]) {
+// Runs one unit through the pool in a child and returns its result, report
+// line and timeout. The unit reads its timeout from process.argv[1]. A loaded
+// machine can start a unit slowly, so while `again` (an expression over
+// `result`) holds, the unit is run once more with the next, longer timeout.
+function pooled(body, timeouts = [null], again = 'result.stages.length < 2') {
   const driver = `const { runAll, report, stage } = require(${JSON.stringify(POOL)});
 (async () => {
   const timeouts = ${JSON.stringify(timeouts)};
   for (const [i, timeout] of timeouts.entries()) {
-    const unit = { name: 'probe unit', timeout, args: ['-e', ${JSON.stringify('const { stage } = require(' + JSON.stringify(POOL) + ');\n' + body)}] };
+    const unit = { name: 'probe unit', timeout, args: ['-e', ${JSON.stringify('const { stage } = require(' + JSON.stringify(POOL) + ');\n' + body)}, String(timeout)] };
     const [result] = await runAll([unit], 1);
-    if (result.stages.length < 2 && i + 1 < timeouts.length) continue;
-    console.log(JSON.stringify({ result, line: report(unit, result) }));
+    if (${again} && i + 1 < timeouts.length) continue;
+    console.log(JSON.stringify({ result, line: report(unit, result), timeout }));
     return;
   }
 })();`;
@@ -30,11 +32,11 @@ function pooled(body, timeouts = [null]) {
 }
 
 const cases = [
-  ['the pool takes half the cores by default, and at least one', () => {
-    assert.equal(jobCount({}, 4), 2);
-    assert.equal(jobCount({}, 3), 2);
+  ['the pool takes every core by default, and at least one', () => {
+    assert.equal(jobCount({}, 4), 4);
     assert.equal(jobCount({}, 1), 1);
-    assert.equal(jobCount({ [JOBS_ENV]: '' }, 8), 4);
+    assert.equal(jobCount({}, 0), 1);
+    assert.equal(jobCount({ [JOBS_ENV]: '' }, 8), 8);
   }],
   [JOBS_ENV + ' sets the job count', () => {
     assert.equal(jobCount({ [JOBS_ENV]: '1' }, 8), 1);
@@ -64,7 +66,20 @@ const cases = [
   ['a timed-out unit lists its stages, the last running until the kill', () => {
     const { result, line } = pooled("stage('setup'); stage('stuck'); setTimeout(() => {}, 60000);", [1500, 6000, 20000]);
     assert.equal(result.timedOut, true);
-    assert.match(line, /^FAIL probe unit: timed out after \d+(\.\d+)?s; ran \d+\.\ds, stages: setup \d+\.\ds, stuck \d+\.\ds\n$/);
+    assert.match(line, /^FAIL probe unit: timed out after \d+(\.\d+)?s in one stage; ran \d+\.\ds, stages: setup \d+\.\ds, stuck \d+\.\ds\n$/);
+  }],
+  ['a unit that keeps starting stages runs past its limit', () => {
+    // Six stages a third of the limit apart: twice the limit in all.
+    const body = "let n = 0; const t = setInterval(() => { stage('step ' + ++n); if (n === 6) clearInterval(t); }, process.argv[1] / 3);";
+    const { result, line, timeout } = pooled(body, [900, 6000, 20000], 'result.timedOut');
+    assert.equal(result.timedOut, false, line);
+    assert.equal(result.status, 0);
+    assert.equal(result.stages.length, 6);
+    assert.ok(result.ms > timeout, result.ms + 'ms against a limit of ' + timeout + 'ms');
+  }],
+  ['a timed-out unit that marked no stage reports its limit alone', () => {
+    const result = { status: null, stdout: '', stderr: '', timedOut: true, error: null, ms: 2000, stages: [] };
+    assert.equal(report({ name: 'probe unit', timeout: 2000 }, result), 'FAIL probe unit: timed out after 2s\n');
   }],
 ];
 

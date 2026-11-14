@@ -70,7 +70,7 @@ A reviewer's first review of the work is a first round for its findings, however
 
 A regression this change caused is related wherever it shows, outside the original diff included: fix it.
 
-**In a later round**, a finding within reach and a blocker anywhere keep the rows above. These rows replace them for the rest: the reviewer passed that code before, so the change stops growing there.
+**In a later round**, these rows take over for a should-fix or nit outside reach and for a finding raised again: the reviewer passed that code before, so the change stops growing there. Every other finding keeps its row above, an unrelated one included.
 
 | Finding | Disposition |
 |---|---|

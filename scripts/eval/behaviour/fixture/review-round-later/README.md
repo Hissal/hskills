@@ -18,5 +18,4 @@ limit.
 `-draft`, is an exclusion tag: the blog hides posts that carry it.
 
 Post titles are usually several words, and the blog cuts slugs to 40
-characters. The blog refuses a post whose slug is already taken and asks the
-author for another title.
+characters. The blog refuses a post whose slug is already taken.

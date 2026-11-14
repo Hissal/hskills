@@ -59,7 +59,7 @@ Create any of these labels the tracker lacks, under the mapping's string, before
   The body starts here.
   ```
 
-Then read the whole body, quoted logs and code included, for secrets and private details: tokens, keys, personal paths, email addresses, internal hostnames. Remove each one; ask the user when removing it changes what the issue says.
+Then read the title and the whole body, quoted logs and code included, for secrets and private details: tokens, keys, personal paths, email addresses, internal hostnames, and anything from a source more private than the tracker: a private repo's name, its PR or issue numbers, SHAs, timestamps, thread titles or quotes. Remove each secret, and restate private evidence in general terms ("seen 4 times across two projects"); ask the user when that changes what the issue says. The tracker keeps a body's edit history, so a detail removed after filing stays readable.
 
 ## 4. File and confirm
 

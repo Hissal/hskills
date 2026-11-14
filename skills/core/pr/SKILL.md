@@ -7,7 +7,7 @@ metadata:
   opencode/autoinvoke: "true"
 ---
 
-Done when the body follows this template, every result in it comes from evidence already gathered, every issue it delivers carries the link its state calls for, and every gap is on the **Not done** line. Writing or updating a body runs nothing.
+Done when the body follows this template, every result in it comes from evidence already gathered, every issue it delivers carries the link its state calls for, every gap is on the **Not done** line, and every detail from a source more private than the PR is restated as [Private details](#private-details) sets. Writing or updating a body runs nothing.
 
 When the PR is part of a stack (the host has linked it into a native stack, its base is another open PR's head, or its head is another open PR's base), read [the stack reference](references/STACK.md) before writing, pushing or merging: how a lower PR is changed and the stack pushed, which PRs keep their checks after a restack, and how each PR links its tickets. Skip it and the PRs above a change go stale, or a push overwrites someone else's work.
 
@@ -201,6 +201,10 @@ Link every issue the PR delivers by the state of its work, decided afresh from e
 - **`Refs #N`**: something on the issue is faulty or unfinished: a criterion that failed, is not built, or has a check an agent could run that has not passed; work not on the branch; an unfixed defect in the issue's work; a decision only the owner can make.
 
 A spec or parent issue closes only when every issue under it closes. A PR that never merges, such as a prototype, delivers nothing and only refs its issue. Before a merge, set every link by this rule and report each `Refs` and each human check still open.
+
+### Private details
+
+Before the first post and on every update, read the title and the whole body for anything from a source more private than the PR's repository: a private repo's name, its PR or issue numbers, SHAs, timestamps, thread titles or quotes, as well as secrets, personal paths and email addresses. Restate that evidence in general terms ("seen 4 times across two projects"), and ask the user when that would change what the body says. GitHub keeps a body's edit history, so a detail removed after posting stays readable.
 
 ### Footer
 

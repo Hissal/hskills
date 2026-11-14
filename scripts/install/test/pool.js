@@ -6,23 +6,32 @@ const os = require('os');
 const { spawn } = require('child_process');
 
 const JOBS_ENV = 'HSKILLS_INSTALL_CASES_JOBS';
-// Half the cores by default, so several check runs sharing a machine leave
-// each other room; HSKILLS_INSTALL_CASES_JOBS (a positive whole number) sets it.
+// Every core by default; HSKILLS_INSTALL_CASES_JOBS (a positive whole number)
+// sets it. Runs sharing a machine slow each other down, which the units' limits
+// allow for: a limit is on one stage, not on the unit's whole run.
 function jobCount(env = process.env, cores = typeof os.availableParallelism === 'function' ? os.availableParallelism() : os.cpus().length) {
   const raw = env[JOBS_ENV];
-  if (raw === undefined || raw === '') return Math.max(1, Math.ceil(cores / 2));
+  if (raw === undefined || raw === '') return Math.max(1, cores);
   const n = Number(raw);
   if (!/^\d+$/.test(raw.trim()) || !Number.isSafeInteger(n) || n < 1) throw new Error(JOBS_ENV + ' must be a positive whole number, not ' + JSON.stringify(raw));
   return n;
 }
 
-// A unit marks the start of each of its stages with stage(name), so a unit
-// that fails or times out reports how far it got. The mark is written
-// synchronously, so it survives the kill.
+// A unit marks the start of each of its stages with stage(name). Each mark
+// restarts the unit's limit, so a unit on a loaded machine is killed only when
+// one stage stalls, however long the whole unit takes, and a unit that fails
+// or times out reports how far it got. The mark is written synchronously, so
+// it survives the kill.
 const MARK = 'STAGE ';
+// The stage limit of the units whose stages each run the installer a few
+// times. The longest such stage took 13s in a quiet run on 4 cores and 85s
+// with four runs sharing them (#387).
+const STAGE_LIMIT = 300000;
 const stage = name => fs.writeSync(1, MARK + name + '\n');
 
-// unit: { args, timeout? }. Resolves to one result per unit, in unit order:
+// unit: { args, timeout? }, where timeout is the longest the unit may go
+// without starting a new stage: its whole run when it marks none. Resolves to
+// one result per unit, in unit order:
 // { status, stdout, stderr, timedOut, error, ms, stages }, where stdout holds no
 // stage marks and stages is [{ name, ms }], each stage's time until the next
 // one started or the unit ended.
@@ -44,7 +53,7 @@ function runAll(units, jobs = jobCount()) {
         const lines = (pending + d).split('\n');
         pending = lines.pop();
         for (const l of lines) {
-          if (l.startsWith(MARK)) marks.push({ name: l.slice(MARK.length), at: Date.now() - began });
+          if (l.startsWith(MARK)) { marks.push({ name: l.slice(MARK.length), at: Date.now() - began }); if (timer && !result.timedOut) timer.refresh(); }
           else result.stdout += l + '\n';
         }
       });
@@ -71,14 +80,14 @@ const seconds = ms => (ms / 1000).toFixed(1) + 's';
 // A case process that failed without printing its own FAIL line still reports one.
 // It starts on a fresh line even when a killed process left a partial one. A
 // failed unit lists the stages it reached, each with its time; the last
-// listed is where a timed-out unit was killed.
+// listed is the one a timed-out unit stalled in.
 function report(unit, result, label = unit.name) {
   const failed = result.timedOut || result.status !== 0;
   const stages = failed && result.stages.length ? '; ran ' + seconds(result.ms) + ', stages: ' + result.stages.map(s => s.name + ' ' + seconds(s.ms)).join(', ') : '';
   const line = text => (result.stdout && !result.stdout.endsWith('\n') ? '\n' : '') + 'FAIL ' + label + ': ' + text + stages + '\n';
-  if (result.timedOut) return line('timed out after ' + unit.timeout / 1000 + 's');
+  if (result.timedOut) return line('timed out after ' + unit.timeout / 1000 + 's' + (result.stages.length ? ' in one stage' : ''));
   if (result.status !== 0 && !/^FAIL /m.test(result.stdout)) return line('exited ' + result.status + (result.error ? ' (' + result.error.message + ')' : ''));
   if (stages) return line('failed');
   return '';
 }
-module.exports = { runAll, report, stage, jobCount, JOBS_ENV };
+module.exports = { runAll, report, stage, jobCount, JOBS_ENV, STAGE_LIMIT };

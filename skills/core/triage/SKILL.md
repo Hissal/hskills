@@ -40,6 +40,17 @@ Five **state** roles:
 
 For a PR, the same states read against the attached code: `ready-for-agent` means a brief is attached and an agent should take the next step on the diff; `ready-for-human` means it's ready for a human to merge.
 
+One **marker** role:
+
+- `agent-autofiled`: an agent filed the issue with no person confirming it. The `issue` skill adds it together with a note at the top of the body:
+
+  ```md
+  > [!NOTE]
+  > 🤖 **<model> on behalf of @<user>**, <origin>
+  ```
+
+  The `, <origin>` suffix is optional. An outcome means a person has now seen the issue, so whenever you apply an outcome to an issue carrying this label, clear the mark: remove the label, and when the body opens with that note block, edit the body to delete the block and the blank line after it, leaving the rest of the body as written. A body that does not open with the block keeps its text.
+
 Every triaged issue should carry exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 
 These are canonical role names, and each one's label in the tracker is that same name by default. The project's triage-labels file (the one its `## Agent skills` block links) records a label only where the project's differs; use its label for a role it lists and the canonical name for every other role.
@@ -90,7 +101,7 @@ Ask the project's listed pack guides for classifying stack involvement, reproduc
 
 4. **Grill (if needed).** If the request needs fleshing out, call the Skill tool twice, for "grilling" and "domain-modeling", and grill it into shape a round of questions at a time, sharpening domain terms and updating `GLOSSARY.md`/ADRs inline as decisions land. These are process calls: when one is not installed, say so once and grill the maintainer directly.
 
-5. **Apply the outcome:**
+5. **Apply the outcome**, clearing the [`agent-autofiled` mark](#roles) when the issue carries its label:
    - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)). When `writing-for-agents` is installed, follow it for the prose. Name the tools and environment an agent needs to reproduce and complete the work.
    - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing, or participation this stack needs from a human). A choice an agent can settle by trying each option against criteria the maintainer states stays `ready-for-agent`: ask for the criteria, then put them and the trial in the brief.
    - `needs-info`: post triage notes (template below).
@@ -102,7 +113,7 @@ Ask the project's listed pack guides for classifying stack involvement, reproduc
 
 ## Quick state override
 
-If the maintainer says "move #42 to ready-for-agent", trust them and apply the role directly. Confirm what you're about to do (role changes, comment, close), then act. Skip grilling. If moving to `ready-for-agent` without a grilling session, ask whether they want to write an agent brief.
+If the maintainer says "move #42 to ready-for-agent", trust them and apply the role directly, clearing the [`agent-autofiled` mark](#roles) when the issue carries its label. Confirm what you're about to do (role changes, comment, close), then act. Skip grilling. If moving to `ready-for-agent` without a grilling session, ask whether they want to write an agent brief.
 
 ## Needs-info template
 

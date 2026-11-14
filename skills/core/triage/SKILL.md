@@ -14,7 +14,9 @@ Move issues on the project issue tracker through a small state machine of triage
 
 The tracker is the one named in the project's configuration: the issue-tracker file the `## Agent skills` block of its `AGENTS.md` or `CLAUDE.md` links. When no tracker is configured, stop and tell the user to run `/setup-project`.
 
-If this repo treats external pull requests as a request surface (see the issue-tracker config), triage covers them too: **a PR is an issue with attached code**, using the same roles, same states, and same machine, with a few deltas marked "for a PR" below. Resolve a bare `#42` to an issue or PR per the tracker config.
+If this repo treats external pull requests as a request surface (see the issue-tracker config), triage covers them too: **a PR is an issue with attached code**, using the same roles, same states, and same machine, with a few deltas marked "for a PR" below.
+
+Resolve a bare `#42` by the tracker config's rule, whether or not PRs are in scope. On GitHub it may name an issue, a PR or a GitHub Stack; a Stack resolves to the PRs it holds, so list them.
 
 Post every comment during triage through the `commenting` skill, passing `during triage` as its context suffix, so each opens with the note `> 🤖 **<model> on behalf of @<user>**, during triage`. When `commenting` is not installed, open each comment with that note yourself, `> [!NOTE]` on the line above it.
 

@@ -204,7 +204,7 @@ A spec or parent issue closes only when every issue under it closes. A PR that n
 
 ### Private details
 
-Before the first post and on every update, read the whole body for anything from a source more private than the PR's repository: a private repo's name, its PR or issue numbers, SHAs, timestamps, thread titles or quotes, as well as secrets, personal paths and email addresses. Restate that evidence in general terms ("seen 4 times across two projects"), and ask the user when that would change what the body says. GitHub keeps a body's edit history, so a detail removed after posting stays readable.
+Before the first post and on every update, read the title and the whole body for anything from a source more private than the PR's repository: a private repo's name, its PR or issue numbers, SHAs, timestamps, thread titles or quotes, as well as secrets, personal paths and email addresses. Restate that evidence in general terms ("seen 4 times across two projects"), and ask the user when that would change what the body says. GitHub keeps a body's edit history, so a detail removed after posting stays readable.
 
 ### Footer
 

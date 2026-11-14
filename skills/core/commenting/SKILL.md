@@ -38,7 +38,7 @@ The comment starts here.
 
 ## 3. Check before posting
 
-- **Secrets and private details.** Read the whole comment, quoted text, logs, code blocks, links and attachments included, for tokens, keys, passwords, connection strings, personal paths, email addresses, internal hostnames, and anything from a private source going somewhere more public. Remove each one; ask the user when removing it would change what the comment says.
+- **Secrets and private details.** Read the whole comment, quoted text, logs, code blocks, links and attachments included, for tokens, keys, passwords, connection strings, personal paths, email addresses, internal hostnames, and anything from a source more private than where the comment goes: a private repo's name, its PR or issue numbers, SHAs, timestamps, thread titles or quotes. Remove each secret, and restate private evidence in general terms ("seen 4 times across two projects"); ask the user when that would change what the comment says. GitHub keeps a comment's edit history, so a detail removed after posting stays readable.
 - **Preview.** Write the comment to a file and render it, for example `gh api markdown -f mode=gfm -F text=@<file>`. Confirm the note, quotes, code fences and blank lines render as written. Post from the same file (`--body-file`, or `-F body=@<file>` with `gh api`), so the shell changes nothing.
 
 ## 4. Post and confirm

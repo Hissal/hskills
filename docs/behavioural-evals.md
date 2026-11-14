@@ -241,3 +241,94 @@ user-scope `delegating` cannot load in either arm. Grant the permission to run
   mandatory `Waiting:` line should fail `review-caller`. `fix-caller` and
   `count-caller` are regression guards: the control may meet their bar too,
   which is recorded, not counted against the skill.
+
+## Case: receiving-review tiers a first round
+
+This case guards `receiving-review`'s tiers in a first review round: a real
+defect in the change's own code is fixed although only an uncommon setup
+reaches it, and a finding only a rule-breaking caller reaches is declined,
+whatever label the reviewer gave either. Rerun it when `receiving-review`'s
+verify or dispose steps change.
+
+The fixture is the [`review-round`](../scripts/eval/behaviour/fixture/review-round/)
+folder: copy it as the scratch project. `review.md` is one bot round on the
+change that added per-site slug limits, with three findings:
+
+1. Labelled Minor: a cut slug can end in a dash (`slugify('Hello World', 6)`
+   gives `hello-`). The main case meets it.
+2. Labelled Minor: a site with no limit sets `maxSlugLength: null`, and its
+   slugs come out empty. Only the docs site has no limit, so the setup is
+   uncommon, and it is a legitimate one.
+3. Labelled Major: `slugify(null)` throws. The README requires a string title.
+
+Install `receiving-review` in the skill arm. Run with an isolated `HOME`
+holding only the harness's credentials, so a user-scope `receiving-review`
+cannot load in either arm. Grant the permission to run `node` in both arms.
+
+- **Prompt**: `/receiving-review the findings in review.md. I am away until
+  tomorrow, so this run is unattended: decide everything yourself.` for
+  Claude, the same with `$receiving-review` for Codex.
+- **Bar per run**: `node test.js` passes; `slugify('Hello World', 6)` is
+  `hello`; `slugFor('docs', 'Hello World')` is `hello-world`; `slugify(null)`
+  still throws a `TypeError`; the final message declines finding 3 with its
+  reason.
+- **Pass count**: 4/5 on each frontier model.
+- **Control arm**: install `receiving-review` as it was before the tiers, from
+  commit `7897368`. It fixes every verified finding with one evident fix, so
+  it is expected to meet the bar. The case is a regression guard against a
+  tier rule that leaves an uncommon real defect unfixed. A control pass is
+  recorded, not counted against the skill.
+
+## Case: receiving-review judges a later round
+
+This case tests `receiving-review`'s later-round rule. A finding within the
+last fix's reach is fixed. Outside it, on code the reviewer passed before, a
+nit is declined however it is labelled, a should-fix with a fix inside the
+defect is fixed, and a should-fix whose every fix widens the change is handed
+to an issue. A real defect the change did not cause is left out and handed to
+an issue. Rerun it when `receiving-review`'s verify or dispose steps change.
+
+The fixture is the [`review-round-later`](../scripts/eval/behaviour/fixture/review-round-later/)
+folder: copy it as the scratch project. `ledger.md` holds two earlier rounds
+by one reviewer, `round-2.diff` is the last fix, which widened the shared
+`trimDashes` helper, and `review-3.md` is that reviewer's third round, with
+five findings:
+
+1. Labelled Minor: `parseTag('-draft')` now returns `draft`. `src/tags.js` is
+   outside the last fix's diff, and the fix broke it through `trimDashes`.
+2. Labelled Major: the limit error leaves out the rejected value. A nit, on
+   `src/limits.js`, which is unchanged since round 1.
+3. Labelled Minor: `parseMaxLength(null)` throws, though the README gives
+   `null` as the way to set no limit. A should-fix on the same reviewed code,
+   with a one-line fix inside the defect.
+4. Labelled Major: two titles that share their first 40 characters get one
+   slug, and the blog refuses the second post. A should-fix on `src/cut.js`,
+   unchanged since round 1, and every fix adds behaviour: the review suggests
+   a new `unique` argument.
+5. Labelled Major: a title with no letters or digits gives an empty slug. The
+   behaviour predates the change.
+
+Install and isolate as in the case above.
+
+- **Prompt**: `/receiving-review the findings in review-3.md, the third review
+  round on this change. ledger.md has the earlier rounds and round-2.diff is
+  the last fix. I am away until tomorrow, so this run is unattended: decide
+  everything yourself.` for Claude, the same with `$receiving-review` for
+  Codex.
+- **Bar per run**, with `A` and `B` the two titles of finding 4:
+  - `node test.js` passes;
+  - finding 1: `parseTag('-draft')` is `-draft`, `parseTag(' News- ')` is
+    `news`, and `slugify('-Hello-')` is `hello`;
+  - finding 2: `parseMaxLength('long')` still throws `Bad maxSlugLength.`, and
+    the final message declines the finding with its reason;
+  - finding 3: `parseMaxLength(null)` is `undefined`;
+  - finding 4: `slugify(A, 40)` still equals `slugify(B, 40)`, `slugify` still
+    takes two arguments, and the final message says the finding needs an
+    issue (filed, or proposed for one);
+  - finding 5: `slugify('!!!')` is still `''`, and the final message says the
+    finding is left out of this change and needs an issue.
+- **Pass count**: 4/5 on each frontier model.
+- **Control arm**: install `receiving-review` from commit `7897368`. It has no
+  later-round rule, so it is expected to fix finding 2 or build finding 4's
+  fix, and to name no issue. A control pass on any observation is recorded,
+  not counted against the skill.

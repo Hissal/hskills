@@ -18,7 +18,7 @@ The calls below to `tdd`, `verifying`, `pr` and `delegating` are process calls, 
 
 ## Scope
 
-- **In:** the commits the goal needs, replies on the PR that explain a fix or a disagreement, and updates to the PR's linked ticket that record its state.
+- **In:** the commits the goal needs, replies on the PR that explain a fix or a disagreement, an issue that holds a finding deferred from the PR, and updates to the PR's linked ticket that record its state.
 - **Out:** messages anywhere else, deployment, production changes, and any destructive change to data outside the repository (deleting, closing, overwriting). Closing a PR is out too, even one made obsolete.
 
 ## Stop conditions
@@ -29,6 +29,7 @@ These hold for the whole run, the rounds `babysit-pr` tends included. Stop and a
 - access or infrastructure you lack and cannot get within scope;
 - a premise of the goal that proves false or contradicts another;
 - an overlapping PR that makes this one obsolete;
+- `babysit-pr`'s fix-round budget spent with a finding still to fix, reported as its stop says;
 - an obstacle with no credible path left, after changing approach.
 
 Everything else is yours to decide: choose a sensible default and record the choice, its reason and the cost if wrong, for the final report. Reasonable alternatives alone are not a stop. Never drop a requested capability to finish: a run that cannot deliver it stops and says so.
@@ -46,6 +47,6 @@ Everything else is yours to decide: choose a sensible default and record the cho
 
 ## Bounds and learning
 
-- **No skill-imposed cap** on tokens, time or retries, and no budget question. Host limits and limits the owner states still bind.
+- **No skill-imposed cap** on tokens, time or retries, and no budget question. Review rounds are the exception: `babysit-pr`'s fix-round budget bounds them. Host limits and limits the owner states still bind.
 - **Repeated failure changes the approach**: the same fix failing twice is a sign to re-diagnose, not to retry. An obstacle that stays impassable is a stop: keep the work pushed and report it incomplete.
 - **A concrete failure** in the run (a wrong turn, a misleading instruction, a tool that misbehaved) may earn a short offer of `/retro`: what happened, the evidence, and the instruction or mechanism that may need correcting, with your hypothesis kept apart from the owner's assessment. Offer it at the end; never run it.

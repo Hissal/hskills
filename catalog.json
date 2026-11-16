@@ -10,7 +10,7 @@
     "requires": []
   },
   "hissal.hskills/babysit-pr": {
-    "path": "skills/packs/experimental/babysit-pr",
+    "path": "skills/core/babysit-pr",
     "requires": [
       "hissal.hskills/pr"
     ]
@@ -76,13 +76,13 @@
     "requires": []
   },
   "hissal.hskills/full-send": {
-    "path": "skills/packs/experimental/full-send",
+    "path": "skills/core/full-send",
     "requires": [
       "hissal.hskills/babysit-pr"
     ]
   },
   "hissal.hskills/full-stop": {
-    "path": "skills/packs/experimental/full-stop",
+    "path": "skills/core/full-stop",
     "requires": [
       "hissal.hskills/babysit-pr"
     ]

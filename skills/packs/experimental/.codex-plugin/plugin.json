@@ -4,11 +4,8 @@
   "description": "Generated experimental skill list from collection.json.",
   "skills": [
     "./arena",
-    "./babysit-pr",
     "./council",
     "./experimental-guide",
-    "./full-send",
-    "./full-stop",
     "./loop-me"
   ]
 }

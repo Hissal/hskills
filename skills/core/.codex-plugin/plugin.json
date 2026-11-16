@@ -4,6 +4,7 @@
   "description": "Generated core skill list from collection.json.",
   "skills": [
     "./architecture-review",
+    "./babysit-pr",
     "./blast-radius",
     "./break-ui",
     "./code-review",
@@ -15,6 +16,8 @@
     "./dependency-audit",
     "./diagnosing-bugs",
     "./domain-modeling",
+    "./full-send",
+    "./full-stop",
     "./grill-with-docs",
     "./grilling",
     "./guide",

@@ -54,6 +54,8 @@ Equipping a project (choosing its skills, tools or project facts) always goes to
 | A plan needs independently verifiable implementation tickets and their dependencies | `/to-tickets` |
 | A bounded change or individual ticket is ready to build | `/implement` |
 | A whole spec's ticket graph should be worked through and integrated | `/implement-spec` |
+| A spec or rough goal should go to a PR ready for you to merge, unattended, without merging it | `/full-stop` |
+| A spec or rough goal should go all the way to a merged PR, unattended, under the project's own merge requirements | `/full-send` |
 | A project needs its skills, tools and project facts selected or configured | `/setup-project` |
 | Existing issues need investigation, classification and a clear disposition | `/triage` |
 
@@ -75,6 +77,7 @@ The larger route, for an effort that starts unclear: `/wayfinder` or `/grill-wit
 | Domain terms or a recorded decision need settling | `/domain-modeling` |
 | A skill, steering file or other document an agent reads is being written | `/writing-for-agents` |
 | A pull request needs its description | `/pr` |
+| An open pull request needs tending through its checks, conflicts and review rounds until it is ready to merge | `/babysit-pr` |
 | A change to a public API, data transform, pricing, default or provider parameter needs measuring against real data | `/risky-changes` |
 
 ## 5. Read the recommended skill

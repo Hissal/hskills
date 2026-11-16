@@ -344,15 +344,15 @@ module.exports.push(
 // procedure; the two copies must be identical. babysit-pr owns the tend loop
 // and bundles no copy.
 const DELIVERY = 'references/DELIVERY.md';
-const delivery = (name, text) => skill('skills/packs/experimental/' + name, { fm: { 'disable-model-invocation': ' true' }, body: '# ' + name + '\n\nRead the [delivery procedure](' + DELIVERY + ').\n', files: { [DELIVERY]: text } });
+const delivery = (name, text) => skill('skills/core/' + name, { fm: { 'disable-model-invocation': ' true' }, body: '# ' + name + '\n\nRead the [delivery procedure](' + DELIVERY + ').\n', files: { [DELIVERY]: text } });
 const PROCEDURE = '# Delivery procedure\n\nFrame, build, prove and open the PR.\n';
 module.exports.push(
   { name: 'identical delivery-procedure copies pass', files: tree(delivery('full-stop', PROCEDURE), delivery('full-send', PROCEDURE)), expect: [] },
-  { name: 'differing delivery-procedure copies both fail', files: tree(delivery('full-stop', PROCEDURE + '\nNever merge.\n'), delivery('full-send', PROCEDURE)), expect: ['fail delivery-procedure-sync skills/packs/experimental/full-stop/' + DELIVERY, 'fail delivery-procedure-sync skills/packs/experimental/full-send/' + DELIVERY] },
+  { name: 'differing delivery-procedure copies both fail', files: tree(delivery('full-stop', PROCEDURE + '\nNever merge.\n'), delivery('full-send', PROCEDURE)), expect: ['fail delivery-procedure-sync skills/core/full-stop/' + DELIVERY, 'fail delivery-procedure-sync skills/core/full-send/' + DELIVERY] },
   { name: 'a lone delivery-procedure copy is silent', files: delivery('full-send', PROCEDURE), expect: [] },
   { name: 'a same-named reference in another skill is not a copy', files: tree(delivery('full-stop', PROCEDURE), delivery('full-send', PROCEDURE), delivery('babysit-pr', '# Other\n')), expect: [] },
-  { name: 'a delivery skill missing its copy beside a present copy fails', files: tree(delivery('full-stop', PROCEDURE), skill('skills/packs/experimental/full-send', { fm: { 'disable-model-invocation': ' true' }, body: '# full-send\n' })), expect: ['fail delivery-procedure-sync skills/packs/experimental/full-send/' + DELIVERY] },
-  { name: 'a lone delivery skill without its copy is silent', files: skill('skills/packs/experimental/full-send', { fm: { 'disable-model-invocation': ' true' }, body: '# full-send\n' }), expect: [] }
+  { name: 'a delivery skill missing its copy beside a present copy fails', files: tree(delivery('full-stop', PROCEDURE), skill('skills/core/full-send', { fm: { 'disable-model-invocation': ' true' }, body: '# full-send\n' })), expect: ['fail delivery-procedure-sync skills/core/full-send/' + DELIVERY] },
+  { name: 'a lone delivery skill without its copy is silent', files: skill('skills/core/full-send', { fm: { 'disable-model-invocation': ' true' }, body: '# full-send\n' }), expect: [] }
 );
 
 // #335: docs/catalog.md's hand-kept totals agree with its own skill tables.

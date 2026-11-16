@@ -1,6 +1,7 @@
 {
   "core": [
     "skills/core/architecture-review",
+    "skills/core/babysit-pr",
     "skills/core/blast-radius",
     "skills/core/break-ui",
     "skills/core/code-review",
@@ -12,6 +13,8 @@
     "skills/core/dependency-audit",
     "skills/core/diagnosing-bugs",
     "skills/core/domain-modeling",
+    "skills/core/full-send",
+    "skills/core/full-stop",
     "skills/core/grill-with-docs",
     "skills/core/grilling",
     "skills/core/guide",
@@ -19,8 +22,8 @@
     "skills/core/hillclimb",
     "skills/core/how",
     "skills/core/implement",
-    "skills/core/issue",
     "skills/core/implement-spec",
+    "skills/core/issue",
     "skills/core/migrating",
     "skills/core/pr",
     "skills/core/prototype",
@@ -52,10 +55,7 @@
     ],
     "experimental": [
       "skills/packs/experimental/arena",
-      "skills/packs/experimental/babysit-pr",
       "skills/packs/experimental/council",
-      "skills/packs/experimental/full-send",
-      "skills/packs/experimental/full-stop",
       "skills/packs/experimental/experimental-guide",
       "skills/packs/experimental/loop-me"
     ],

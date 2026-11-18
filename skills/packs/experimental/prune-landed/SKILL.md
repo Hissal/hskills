@@ -27,7 +27,7 @@ These hold for every step:
 ## 1. Gather the facts
 
 - **Target.** Fetch the remote (`origin` unless the user names another), then run `git remote set-head <remote> --auto`, so `<remote>/HEAD` names its current default branch. That branch is the target.
-- **Pull requests.** On GitHub, list the PRs of the remote's own repository (its `host/owner/repo`, from `git remote get-url <remote>`; without the host, `gh` reads its default host) to a file: `gh pr list --repo <host/owner/repo> --state all --limit <n> --json number,state,headRefName,headRefOid,baseRefName`. Start with a limit of 10000 and raise it until the list comes back shorter than the limit, so no open PR is missing. When the remote is a fork (`gh repo view <host/owner/repo> --json isFork,parent`), add to the file every open PR of its parent whose head is in the fork: list the parent's open PRs the same way with `headRepositoryOwner` added, and keep those whose `headRepositoryOwner.login` is the fork's owner. Leave out the parent's merged PRs: they landed on the parent, not on the fork's default branch. Then fetch each merged PR's head by name, with no destination, so no ref is created: `git fetch <remote> refs/pull/<n>/head ...`, a few hundred per command. On another forge, write the same JSON from its API. When the remote has no pull requests at all, the plan runs with `--no-prs`.
+- **Pull requests.** On GitHub, list the PRs of the remote's own repository (its `host/owner/repo`, from `git remote get-url <remote>`; without the host, `gh` reads its default host) to a file: `gh pr list --repo <host/owner/repo> --state all --limit <n> --json number,state,headRefName,headRefOid,baseRefName`. Start with a limit of 10000 and raise it until the list comes back shorter than the limit, so no open PR is missing. When the remote is a fork (`gh repo view <host/owner/repo> --json isFork,parent`), add to the file every open PR of its parent whose head is in the fork: list the parent's open PRs the same way with `headRepositoryOwner` added, and keep those whose `headRepositoryOwner.login` is the fork's owner. Leave out the parent's merged PRs: they landed on the parent, not on the fork's default branch. Then fetch each merged PR's head by name, with no destination, so no ref is created: `git fetch <remote> refs/pull/<n>/head ...`, a few hundred per command. On another forge, write the same JSON from its API. Run the plan with `--no-prs` only when the whole list, the parent's open PRs included, is empty.
 
 ## 2. Plan
 
@@ -51,7 +51,7 @@ Write a restore list to `prune-<date-time>.txt` in the repository's common git d
 - a worktree: `git worktree add <path> <branch or sha>`
 - a stash: `git stash store -m "<message>" <sha>`
 
-These work until `git gc` prunes the commits nothing else reaches, two weeks by default (`gc.pruneExpire`). Say so with the path.
+These work only while the commits still exist: once nothing reaches them, any later `git gc` may prune them, with no guaranteed period after the deletion. Say so with the path.
 
 ## 6. Delete, one confirmed step at a time
 

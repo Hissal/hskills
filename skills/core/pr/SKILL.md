@@ -200,6 +200,8 @@ Link every issue the PR delivers by the state of its work, decided afresh from e
 - **`Closes #N`** (or the tracker's closing keyword): the issue's work is on the branch, and every criterion is verified or waits only on a check a human must make: a listening or visual check, a device run, a run needing access the agent lacks, human review or approval. That check goes on **Not done**; the link still closes.
 - **`Refs #N`**: something on the issue is faulty or unfinished: a criterion that failed, is not built, or has a check an agent could run that has not passed; work not on the branch; an unfixed defect in the issue's work; a decision only the owner can make.
 
+Give each closing issue its own keyword (`Closes #12, closes #13`); GitHub can skip issues that share one. After each post or edit of a PR into the default branch, read its `closingIssuesReferences` and fix the body until that list holds exactly the issues it closes.
+
 A spec or parent issue closes only when every issue under it closes. A PR that never merges, such as a prototype, delivers nothing and only refs its issue. Before a merge, set every link by this rule and report each `Refs` and each human check still open.
 
 ### Private details

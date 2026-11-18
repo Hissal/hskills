@@ -2,10 +2,9 @@
 
 const { value } = require('./frontmatter-value');
 // The personal steering source (spec 2, #118); repository-relative.
-// HSKILLS_ALWAYS_ON_PATH overrides it.
-const alwaysOnPath = process.env.HSKILLS_ALWAYS_ON_PATH || 'steering.md';
-
+// HSKILLS_ALWAYS_ON_PATH overrides it, read on every report.
 function report(c) {
+  const alwaysOnPath = process.env.HSKILLS_ALWAYS_ON_PATH || 'steering.md';
   const layers = new Map([['core', 0]]);
   for (const skill of c.skills) {
     const match = skill.dir.match(/^skills\/(core)\/[^/]+$|^skills\/packs\/([^/]+)\/[^/]+$/);

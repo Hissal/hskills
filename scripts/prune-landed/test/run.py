@@ -101,8 +101,8 @@ class Plan(unittest.TestCase):
         git(self.w, "push", "-q", "origin", "main")
         return sha
 
-    def pr(self, number: int, state: str, name: str, oid: str) -> None:
-        self.prs.append({"number": number, "state": state, "headRefName": name, "headRefOid": oid})
+    def pr(self, number: int, state: str, name: str, oid: str, base: str = "main") -> None:
+        self.prs.append({"number": number, "state": state, "headRefName": name, "headRefOid": oid, "baseRefName": base})
 
     def worktree(self, name: str) -> Path:
         path = self.tmp / f"wt-{name}"
@@ -212,6 +212,21 @@ class Plan(unittest.TestCase):
         self.pr(7, "OPEN", "elsewhere", tip)
         self.assertEqual(self.record(self.plan(), "branch", "copy")[:2], ["keep", "open-pr:#7"])
 
+    def test_a_pr_merged_into_another_base_does_not_land_its_branch(self):
+        tip = self.branch("topic", "t.txt", "t\n")
+        self.pr(8, "MERGED", "topic", tip, base="integration")
+        self.assertEqual(self.record(self.plan(), "branch", "topic")[:2], ["unresolved", "merged-pr:#8"])
+
+    def test_the_base_of_an_open_pr_is_kept(self):
+        self.branch("stack-base", "sb.txt", "sb\n")
+        self.land_merge("stack-base")
+        self.pr(9, "OPEN", "stack-top", "0" * 40, base="stack-base")
+        self.assertEqual(self.record(self.plan(), "branch", "stack-base")[:2], ["keep", "open-pr-base:#9"])
+
+    def test_a_tag_named_like_the_default_branch_leaves_the_guard_working(self):
+        git(self.w, "tag", "main")
+        self.assertEqual(self.record(self.plan(), "branch", "main")[:2], ["keep", "default-branch"])
+
     # worktrees ---------------------------------------------------------
 
     def test_a_recent_worktree_is_skipped_and_its_branch_kept(self):
@@ -265,6 +280,49 @@ class Plan(unittest.TestCase):
     def test_the_main_worktree_is_kept(self):
         self.assertEqual(self.wt_record(self.plan(), self.w)[:2], ["keep", "main"])
 
+    def test_a_missing_worktree_on_unlanded_work_is_not_landed(self):
+        tip = self.branch("lost", "lost.txt", "lost\n")
+        path = self.tmp / "wt-lost"
+        git(self.w, "worktree", "add", "-q", "--detach", str(path), tip)
+        shutil.rmtree(path, onerror=force_remove)
+        lines = self.plan()
+        found = [line.split() for line in lines if line.startswith("worktree: ") and line.endswith("wt-lost")]
+        self.assertEqual(len(found), 1, "\n".join(lines))
+        self.assertEqual(found[0][1:3], ["unresolved", "missing"])
+
+    def test_hidden_edits_in_skip_worktree_and_assume_unchanged_files_keep_a_worktree(self):
+        self.branch("hidden", "cfg.txt", "cfg\n")
+        self.land_merge("hidden")
+        wt = self.worktree("hidden")
+        write(wt, "cfg.txt", "local secret\n")
+        git(wt, "update-index", "--skip-worktree", "cfg.txt")
+        write(wt, "base.txt", "local edit\n")
+        git(wt, "update-index", "--assume-unchanged", "base.txt")
+        self.age(wt)
+        self.assertEqual(self.wt_record(self.plan(), wt)[:2], ["keep", "changes-unlanded:2"])
+
+    def test_a_worktree_mid_rebase_is_kept_with_the_branch_it_rewrites(self):
+        self.branch("rebasing", "c.txt", "mine\n")
+        self.land_merge("rebasing")
+        self.on_main("c.txt", "theirs\n")
+        wt = self.worktree("rebasing")
+        commit(wt, "c.txt", "mine again\n", "conflicting work")
+        self.assertNotEqual(run(wt, "git", "rebase", "origin/main").returncode, 0)  # stops on the conflict
+        self.age(wt)
+        lines = self.plan()
+        self.assertEqual(self.wt_record(lines, wt)[:2], ["keep", "in-progress"])
+        self.assertEqual(self.record(lines, "branch", "rebasing")[:2], ["keep", "worktree-kept"])
+
+    def test_a_recent_change_to_an_ignored_file_makes_a_worktree_recent(self):
+        git(self.w, "switch", "-q", "-c", "ign", "main")
+        commit(self.w, ".gitignore", ".env\n", "ignore env")
+        git(self.w, "switch", "-q", "main")
+        self.land_merge("ign")
+        wt = self.worktree("ign")
+        self.age(wt)
+        write(wt, ".env", "TOKEN=fresh\n")
+        self.assertEqual(self.wt_record(self.plan(), wt)[:2], ["skipped", "recent"])
+
     # stashes -----------------------------------------------------------
 
     def test_stashes_are_landed_only_when_every_file_landed(self):
@@ -279,6 +337,29 @@ class Plan(unittest.TestCase):
         lines = self.plan()
         self.assertEqual(self.record(lines, "stash", landed)[:2], ["landed", "changes-landed"])
         self.assertEqual(self.record(lines, "stash", kept)[:2], ["keep", "changes-unlanded:2"])
+
+    def test_a_stash_whose_only_change_is_staged_is_kept(self):
+        write(self.w, "base.txt", "staged\n")
+        git(self.w, "add", "base.txt")
+        write(self.w, "base.txt", "base\n")  # the working tree matches HEAD again
+        git(self.w, "stash", "push", "-q")
+        sha = git(self.w, "rev-parse", "stash@{0}")
+        self.assertEqual(self.record(self.plan(), "stash", sha)[:2], ["keep", "changes-unlanded:1"])
+
+    @unittest.skipIf(os.name == "nt", "file modes need a POSIX filesystem")
+    def test_a_stash_whose_only_change_is_a_mode_is_kept(self):
+        os.chmod(self.w / "base.txt", 0o755)
+        git(self.w, "stash", "push", "-q")
+        sha = git(self.w, "rev-parse", "stash@{0}")
+        self.assertEqual(self.record(self.plan(), "stash", sha)[:2], ["keep", "changes-unlanded:1"])
+
+    def test_a_stash_restoring_a_version_the_target_left_behind_is_kept(self):
+        self.on_main("r.txt", "old\n")
+        self.on_main("r.txt", "new\n")
+        write(self.w, "r.txt", "old\n")  # an old version, not one the target received after the stash's base
+        git(self.w, "stash", "push", "-q")
+        sha = git(self.w, "rev-parse", "stash@{0}")
+        self.assertEqual(self.record(self.plan(), "stash", sha)[:2], ["keep", "changes-unlanded:1"])
 
     # read-only ---------------------------------------------------------
 

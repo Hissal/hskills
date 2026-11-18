@@ -10,9 +10,9 @@ changes no ref, worktree, stash or file.
 --target   the ref work must have landed on; default <remote>/HEAD, the
            remote's default branch (--remote defaults to origin)
 --prs      a JSON array of the remote's pull requests, each with number,
-           state (OPEN, CLOSED or MERGED), headRefName and headRefOid, as
-           `gh pr list --state all --limit 10000 --json number,state,headRefName,headRefOid`
-           writes it
+           state (OPEN, CLOSED or MERGED), headRefName, headRefOid and
+           baseRefName, as `gh pr list --state all --limit 10000 --json
+           number,state,headRefName,headRefOid,baseRefName` writes it
 --no-prs   the remote has no pull requests to read; checks 3 and 4 and the
            open-PR guard then decide nothing
 --recent-days  a worktree with a file changed within this many days is
@@ -21,18 +21,20 @@ changes no ref, worktree, stash or file.
 A branch is landed by the first check that holds:
   ancestor        its tip is an ancestor of the target
   merge-tree      merging it into the target gives the target's own tree
-  pr-head:#N      its tip is the head of merged PR N
-  pr-ancestor:#N  its tip is an ancestor of merged PR N's head
+  pr-head:#N      its tip is the head of PR N, merged into the target's branch
+  pr-ancestor:#N  its tip is an ancestor of that PR's head
 Before those, it is kept when it is the target's branch name (default-branch),
-an open PR uses it by name or tip (open-pr:#N), or its worktree is kept or
-skipped (worktree-kept). Otherwise it is unresolved, with the PR that last used
-its name (merged-pr:#N, closed-pr:#N) or no-pr.
+an open PR uses it as head by name or tip (open-pr:#N) or as base
+(open-pr-base:#N), or its worktree is kept or skipped (worktree-kept).
+Otherwise it is unresolved, with the PR that last used its name
+(merged-pr:#N, closed-pr:#N) or no-pr.
 
 A worktree's committed work is its branch's (or detached HEAD's) verdict. Its
-uncommitted changes, and each stash, have landed when the target holds the
-same or a later version of every changed file: the file's content is on the
-target, or was at some point of the target's history; a deleted file is absent
-from the target.
+uncommitted changes (skip-worktree and assume-unchanged files included), and
+each stash's working-tree, staged and untracked changes, have landed when the
+target holds the same or a later version of every changed file: the file's
+content and mode are on the target now, or were added to it after the commit
+the change started from; a deleted file is absent from the target.
 
 Output, one record per line:
   target: <ref> <sha>
@@ -42,7 +44,9 @@ Output, one record per line:
   warning: <text>
   summary: landed <n> keep <n> unresolved <n> skipped <n>
 Verdicts are landed, keep, unresolved and skipped. Worktree reasons: main,
-current, locked, missing (its folder is gone), recent, branch-kept,
+current, locked, in-progress (a rebase, merge, cherry-pick, revert or bisect),
+missing (its folder is gone; the verdict is its commit's), recent (ignored
+files count), branch-kept,
 branch-unresolved, changes-unlanded:<n>, changes-landed, clean. Stash reasons:
 changes-landed, changes-unlanded:<n>.
 
@@ -55,6 +59,7 @@ from __future__ import annotations
 
 import json
 import os
+import stat
 import subprocess
 import sys
 import time
@@ -136,9 +141,10 @@ def load_prs(path: str | None) -> list[dict]:
     for pr in data:
         try:
             prs.append({"number": int(pr["number"]), "state": str(pr["state"]).upper(),
-                        "name": str(pr.get("headRefName") or ""), "oid": str(pr.get("headRefOid") or "")})
+                        "name": str(pr["headRefName"] or ""), "oid": str(pr["headRefOid"] or ""),
+                        "base": str(pr["baseRefName"] or "")})
         except (KeyError, TypeError, ValueError):
-            raise Stop("each --prs entry needs number, state, headRefName and headRefOid")
+            raise Stop("each --prs entry needs number, state, headRefName, headRefOid and baseRefName")
     return prs
 
 
@@ -173,7 +179,7 @@ def resolve_target(opts: dict) -> tuple[str, str, str]:
 
 
 def local_branches() -> list[tuple[str, str]]:
-    lines = out("for-each-ref", "--format=%(refname:short) %(objectname)", "refs/heads/").splitlines()
+    lines = out("for-each-ref", "--format=%(refname:lstrip=2) %(objectname)", "refs/heads/").splitlines()
     return [tuple(line.rsplit(" ", 1)) for line in lines if line]
 
 
@@ -202,11 +208,11 @@ def worktrees() -> list[dict]:
 class Landing:
     """Answers whether commits and file versions have landed on the target."""
 
-    def __init__(self, target: str, target_sha: str, prs: list[dict]):
+    def __init__(self, target: str, target_sha: str, default_name: str, prs: list[dict]):
         self.target, self.target_sha = target, target_sha
         self.target_tree = out("rev-parse", target_sha + "^{tree}")
-        self.history: dict[str, set[str]] = {}
-        merged = [pr for pr in prs if pr["state"] == "MERGED" and pr["oid"]]
+        self.history: dict[tuple[str, str], set[str]] = {}
+        merged = [pr for pr in prs if pr["state"] == "MERGED" and pr["oid"] and pr["base"] == default_name]
         present = self._present([pr["oid"] for pr in merged])
         self.missing = sorted({pr["oid"] for pr in merged} - present)
         self.merged = [pr for pr in merged if pr["oid"] in present]
@@ -244,62 +250,117 @@ class Landing:
                     return f"pr-ancestor:#{pr['number']}"
         return None
 
-    def _blobs_on_target(self, path: str) -> set[str]:
-        if path not in self.history:
-            res = git("log", "--format=", "--raw", "--no-abbrev", "--no-renames", "-z", self.target_sha, "--", path)
-            blobs = set()
+    def _added_since(self, path: str, base: str) -> set[str]:
+        """Each "<mode> <blob>" the target's commits after <base> gave <path>."""
+        if (path, base) not in self.history:
+            res = git("log", "--format=", "--raw", "--no-abbrev", "--no-renames", "-z",
+                      f"{base}..{self.target_sha}", "--", path)
+            versions = set()
             fields = res.stdout.split("\0")
             for i, field in enumerate(fields):
                 field = field.lstrip("\n")
                 if field.startswith(":"):
                     parts = field[1:].split()
                     if len(parts) >= 4 and i + 1 < len(fields) and fields[i + 1] == path:
-                        blobs.add(parts[3])
-            self.history[path] = blobs
-        return self.history[path]
+                        versions.add(f"{parts[1]} {parts[3]}")
+            self.history[(path, base)] = versions
+        return self.history[(path, base)]
 
-    def file_landed(self, path: str, blob: str | None) -> bool:
-        """blob None means the change deleted the file."""
-        now = git("rev-parse", "--verify", "-q", f"{self.target_sha}:{path}", check=False)
-        on_target = now.stdout.strip() if now.returncode == 0 else None
-        if blob is None:
+    def file_landed(self, path: str, version: str | None, base: str) -> bool:
+        """version is "<mode> <blob>", or None when the change deleted the file; base is the commit it started from."""
+        now = git("ls-tree", "-z", self.target_sha, "--", path).stdout.split("\0")[0]
+        on_target = " ".join(now.split("\t", 1)[0].split()[::2]) if now else None
+        if version is None:
             return on_target is None
-        return blob == on_target or blob in self._blobs_on_target(path)
+        return version == on_target or version in self._added_since(path, base)
+
+    def unlanded(self, changes: list[tuple[str, str | None]], base: str) -> int:
+        return sum(1 for path, version in changes if not self.file_landed(path, version, base))
+
+
+def file_mode(full: str) -> str:
+    st = os.lstat(full)
+    if stat.S_ISLNK(st.st_mode):
+        return "120000"
+    return "100755" if st.st_mode & 0o111 and os.name != "nt" else "100644"
 
 
 def worktree_changes(path: str) -> list[tuple[str, str | None]]:
-    """Each uncommitted change in a worktree: (path, blob of its content, or None if deleted)."""
-    tracked = [p for p in git("diff", "--name-only", "--no-renames", "-z", "HEAD", cwd=path).stdout.split("\0") if p]
-    untracked = [p for p in git("ls-files", "-z", "-o", "--exclude-standard", cwd=path).stdout.split("\0") if p]
-    paths = sorted(set(tracked) | set(untracked))
-    existing = [p for p in paths if os.path.lexists(os.path.join(path, p))]
+    """Each uncommitted change in a worktree: (path, "<mode> <blob>" of its content, or None if deleted)."""
+    modes: dict[str, str | None] = {}
+    raw = git("diff", "--raw", "--no-abbrev", "--no-renames", "-z", "HEAD", cwd=path).stdout.split("\0")
+    for i in range(0, len(raw) - 1, 2):
+        if raw[i].startswith(":"):
+            parts = raw[i][1:].split()
+            modes[raw[i + 1]] = None if parts[4] == "D" else parts[1]
+    for p in git("ls-files", "-z", "-o", "--exclude-standard", cwd=path).stdout.split("\0"):
+        if p:
+            modes[p] = file_mode(os.path.join(path, p))
+    # Files marked skip-worktree (S) or assume-unchanged (lowercase) hide their edits from diff and stash.
+    hidden = {}
+    for entry in git("ls-files", "-v", "-s", "-z", cwd=path).stdout.split("\0"):
+        if entry and (entry[0] == "S" or entry[0].islower()):
+            meta, p = entry[2:].split("\t", 1)
+            hidden[p] = meta.split()[0] + " " + meta.split()[1]
+    for p, index_version in hidden.items():
+        if not os.path.lexists(os.path.join(path, p)):
+            modes[p] = None
+        elif p not in modes:
+            modes[p] = index_version.split()[0]
+    existing = sorted(p for p, mode in modes.items() if mode is not None)
     blobs = {}
     if existing:
         res = git("hash-object", "--stdin-paths", cwd=path, stdin="\n".join(existing) + "\n")
         blobs = dict(zip(existing, res.stdout.split()))
-    return [(p, blobs.get(p)) for p in paths]
+    changes = []
+    for p, mode in sorted(modes.items()):
+        version = None if mode is None else f"{mode} {blobs[p]}"
+        if p in hidden and version == hidden[p]:
+            continue  # a hidden file left as it is
+        changes.append((p, version))
+    return changes
 
 
 def stash_changes(sha: str) -> list[tuple[str, str | None]]:
-    changes = {}
-    raw = git("diff", "--raw", "--no-abbrev", "--no-renames", "-z", sha + "^1", sha).stdout.split("\0")
-    for i in range(0, len(raw) - 1, 2):
-        meta, path = raw[i], raw[i + 1]
-        if not meta.startswith(":"):
-            continue
-        parts = meta[1:].split()
-        changes[path] = None if parts[4] == "D" else parts[3]
+    """Each change a stash holds against its base: working tree, index and untracked files."""
+    changes = set()
+    for side in (sha, sha + "^2"):
+        raw = git("diff", "--raw", "--no-abbrev", "--no-renames", "-z", sha + "^1", side).stdout.split("\0")
+        for i in range(0, len(raw) - 1, 2):
+            if raw[i].startswith(":"):
+                parts = raw[i][1:].split()
+                changes.add((raw[i + 1], None if parts[4] == "D" else f"{parts[1]} {parts[3]}"))
     if rev(sha + "^3"):
         for entry in git("ls-tree", "-r", "-z", sha + "^3").stdout.split("\0"):
             if entry:
                 meta, path = entry.split("\t", 1)
-                changes[path] = meta.split()[2]
-    return sorted(changes.items())
+                mode, _, blob = meta.split()
+                changes.add((path, f"{mode} {blob}"))
+    return sorted(changes, key=lambda c: (c[0], c[1] or ""))
+
+
+IN_PROGRESS = ("rebase-merge", "rebase-apply", "MERGE_HEAD", "CHERRY_PICK_HEAD", "REVERT_HEAD", "BISECT_LOG")
+
+
+def in_progress(path: str) -> tuple[bool, str | None]:
+    """Whether a worktree is mid-operation, and the branch a rebase there is rewriting."""
+    gitdir = out("rev-parse", "--absolute-git-dir", cwd=path)
+    busy = any(os.path.exists(os.path.join(gitdir, name)) for name in IN_PROGRESS)
+    for folder in ("rebase-merge", "rebase-apply"):
+        try:
+            with open(os.path.join(gitdir, folder, "head-name"), encoding="utf-8") as fh:
+                name = fh.read().strip()
+            if name.startswith("refs/heads/"):
+                return busy, name[len("refs/heads/"):]
+        except OSError:
+            pass
+    return busy, None
 
 
 def newest_change(path: str) -> float:
     newest = 0.0
     files = git("ls-files", "-z", "-c", "-o", "--exclude-standard", cwd=path).stdout.split("\0")
+    files += git("ls-files", "-z", "-o", "-i", "--exclude-standard", "--directory", cwd=path).stdout.split("\0")
     gitdir = out("rev-parse", "--absolute-git-dir", cwd=path)
     for full in [os.path.join(path, f) for f in files if f] + [os.path.join(gitdir, "index"), os.path.join(gitdir, "HEAD")]:
         try:
@@ -314,7 +375,7 @@ def plan(opts: dict) -> list[str]:
     check_git_version()
     prs = load_prs(opts["prs"])
     target, target_sha, default_name = resolve_target(opts)
-    landing = Landing(target, target_sha, prs)
+    landing = Landing(target, target_sha, default_name, prs)
     lines = [f"target: {target} {target_sha}"]
     if landing.missing:
         lines.append(f"warning: {len(landing.missing)} merged PR heads are not in this repository; "
@@ -332,6 +393,9 @@ def plan(opts: dict) -> list[str]:
         for pr in open_prs:
             if (name is not None and pr["name"] == name) or pr["oid"] == sha:
                 return "keep", f"open-pr:#{pr['number']}"
+        for pr in open_prs:
+            if name is not None and pr["base"] == name:
+                return "keep", f"open-pr-base:#{pr['number']}"
         check = landing.commit_check(sha)
         if check:
             return "landed", check
@@ -343,12 +407,20 @@ def plan(opts: dict) -> list[str]:
     branches = {name: (sha, *raw_verdict(name, sha)) for name, sha in local_branches()}
 
     toplevel = git("rev-parse", "--show-toplevel", check=False).stdout.strip()
+    counts = {"landed": 0, "keep": 0, "unresolved": 0, "skipped": 0}
     now = time.time()
     kept_by_worktree: set[str] = set()
     wt_lines = []
     for index, wt in enumerate(worktrees()):
         path = wt["path"]
         label = wt["branch"] or f"detached:{wt['head'] or ZERO}"
+        if wt["branch"] and wt["branch"] in branches:
+            commit_verdict = branches[wt["branch"]][1]
+        else:
+            commit_verdict = raw_verdict(None, wt["head"])[0] if wt["head"] else "unresolved"
+        busy, rebasing = (False, None)
+        if index and not wt["bare"] and os.path.isdir(path) and not wt["prunable"]:
+            busy, rebasing = in_progress(path)
         if index == 0 or wt["bare"]:
             verdict, reason = "keep", "main"
         elif toplevel and same_path(path, toplevel):
@@ -356,44 +428,40 @@ def plan(opts: dict) -> list[str]:
         elif wt["locked"]:
             verdict, reason = "keep", "locked"
         elif wt["prunable"] or not os.path.isdir(path):
-            verdict, reason = "landed", "missing"
+            verdict, reason = commit_verdict, "missing"
+        elif busy:
+            verdict, reason = "keep", "in-progress"
         elif now - newest_change(path) < opts["recent_days"] * 86400:
             verdict, reason = "skipped", "recent"
         else:
-            if wt["branch"] and wt["branch"] in branches:
-                commit_verdict = branches[wt["branch"]][1]
-            else:
-                commit_verdict = raw_verdict(None, wt["head"])[0] if wt["head"] else "unresolved"
             changes = worktree_changes(path)
-            unlanded = [p for p, blob in changes if not landing.file_landed(p, blob)]
+            unlanded = landing.unlanded(changes, wt["head"])
             if unlanded:
-                verdict, reason = "keep", f"changes-unlanded:{len(unlanded)}"
+                verdict, reason = "keep", f"changes-unlanded:{unlanded}"
             elif commit_verdict == "keep":
                 verdict, reason = "keep", "branch-kept"
             elif commit_verdict == "unresolved":
                 verdict, reason = "unresolved", "branch-unresolved"
             else:
                 verdict, reason = "landed", "changes-landed" if changes else "clean"
-        if wt["branch"] and verdict in ("keep", "skipped") and reason != "branch-kept":
-            kept_by_worktree.add(wt["branch"])
+        if verdict in ("keep", "skipped") and reason != "branch-kept":
+            kept_by_worktree.update(b for b in (wt["branch"], rebasing) if b)
+        counts[verdict] += 1
         wt_lines.append(f"worktree: {verdict} {reason} {label} {path}")
 
-    counts = {"landed": 0, "keep": 0, "unresolved": 0, "skipped": 0}
     for name in sorted(branches):
         sha, verdict, check = branches[name]
         if name in kept_by_worktree and verdict != "keep":
             verdict, check = "keep", "worktree-kept"
         counts[verdict] += 1
         lines.append(f"branch: {verdict} {check} {name} {sha}")
-    for line in wt_lines:
-        counts[line.split()[1]] += 1
     lines.extend(wt_lines)
 
     stashes = git("stash", "list", "--format=%H %gd").stdout.splitlines()
     for entry in stashes:
         sha, ref = entry.split(" ", 1)
-        unlanded = [p for p, blob in stash_changes(sha) if not landing.file_landed(p, blob)]
-        verdict, reason = ("keep", f"changes-unlanded:{len(unlanded)}") if unlanded else ("landed", "changes-landed")
+        unlanded = landing.unlanded(stash_changes(sha), sha + "^1")
+        verdict, reason = ("keep", f"changes-unlanded:{unlanded}") if unlanded else ("landed", "changes-landed")
         counts[verdict] += 1
         lines.append(f"stash: {verdict} {reason} {sha} {ref}")
 

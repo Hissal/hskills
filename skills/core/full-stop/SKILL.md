@@ -51,6 +51,7 @@ Report every slot:
 - **PR**: the link, the final head SHA, and that it is open and unmerged.
 - **Verdict**: **ready** (the done bar holds and nothing waits); **waiting on human approval** (only a required approval remains: name it, confirmed as the real blocker); or **blocked** (what prevents readiness, what you tried, what is needed).
 - **Proof**: how the change and each fix were proved.
+- **Process calls**: each process call the delivery procedure names, as made or skipped, with the reason for each skip.
 - **Reviewer outcome**: each finding fixed or disposed of, with the reason.
 - **Decisions**: each consequential assumption and choice, with its reason and the cost if wrong, merge-guard changes included.
 - **Follow-ups**: what you recorded and left out, with the reason.

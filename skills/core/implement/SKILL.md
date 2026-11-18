@@ -44,7 +44,7 @@ Before claiming the work compiles, works or is done, call the Skill tool with `v
 
 ## 5. Review
 
-Once done, call the Skill tool with `code-review` to review the work. Handle its findings by calling the Skill tool with `receiving-review`, which judges each one and verifies every fix. When the fixes change the tree, rerun through `verifying` the criteria checks they made stale, so every status belongs to the tree you push.
+Once done, call the Skill tool with `code-review` to review the work. Review every change, a small one included: reading the diff yourself is not the review. Handle its findings by calling the Skill tool with `receiving-review`, which judges each one and verifies every fix. When the fixes change the tree, rerun through `verifying` the criteria checks they made stale, so every status belongs to the tree you push.
 
 Before opening the PR or reporting the branch, finish every open item an agent can do: a check the branch fails, a fixable finding, an unbuilt or failing criterion, a criterion check you can run. Take each back through steps 3 to 5. What stays open is only what needs the user: a decision, access or authority you lack, or a check only a human can make.
 
@@ -60,4 +60,4 @@ Commit by the repo's convention, push, and open a PR whose body you write by cal
 
 ## 7. Report
 
-Give the branch and the PR link, or the branch and why no PR was opened; each acceptance criterion with its status from `verifying`; the review findings and their dispositions; what was considered and not built, with reasons; and any conflict between coding guidance and tooling configuration.
+Give the branch and the PR link, or the branch and why no PR was opened; each acceptance criterion with its status from `verifying`; the review findings and their dispositions; what was considered and not built, with reasons; any conflict between coding guidance and tooling configuration; and one line naming each process call above as made or skipped, with the reason for each skip, so a skipped review shows before anyone merges.

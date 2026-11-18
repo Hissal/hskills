@@ -106,6 +106,7 @@ As of **2026-10-28 (Europe/Helsinki)**. A transcription of the current blueprint
 | `loop-me` | experimental pack user-invoked | `mattpocock/skills`, completion wording preserved | — | Design recurring-work specifications; owner trial question/keep-if; no execution | [#53 resolution](https://github.com/Hissal/hskills/issues/53#issuecomment-6214483933); [#50 resolution](https://github.com/Hissal/hskills/issues/50#issuecomment-6426359993) |
 | `arena` | experimental pack user-invoked | New; pstack arena and CE ce-bakeoff ideas | — | Two independent implementations, separate evaluator, verify selected/optionally combined result | [#54 resolution](https://github.com/Hissal/hskills/issues/54#issuecomment-6215840308); [#50 resolution](https://github.com/Hissal/hskills/issues/50#issuecomment-6426359993) |
 | `council` | experimental pack user-invoked | tstack `council` (own-words SKILL.md), pinned at `1085050f`; reader brief and incomplete-return rules from `second-opinion` | — | Three providers' models comment on and score a target, once (Review) or in fix-and-review rounds up to a limit (Loop); members through `delegating` | — |
+| `prune-landed` | experimental pack user-invoked | New | — | Deletes local branches, worktrees and stashes whose work landed on the default branch, after a read-only plan script and the user's confirmation per step; keeps everything not proven landed | [#433](https://github.com/Hissal/hskills/issues/433) |
 | `consumer-review` | experimental pack user-invoked | Adapted workflow-chains C1 | — | Fresh-consumer installation/quickstart per target; future-core trial with stack extension points | [#48 resolution](https://github.com/Hissal/hskills/issues/48#issuecomment-6371179357); [#50 resolution](https://github.com/Hissal/hskills/issues/50#issuecomment-6426359993); [#73 resolution](https://github.com/Hissal/hskills/issues/73#issuecomment-6443641717); [#74 resolution](https://github.com/Hissal/hskills/issues/74#issuecomment-6442601759) |
 | `performance-review` | experimental pack user-invoked | Adapted dotnet performance catalog / #48 new pass | reviewing (explicit hard installation requirement, #74) | Report-only performance hypotheses/confirming measurements; stack anti-patterns/exclusions; future-core trial | [#48 resolution](https://github.com/Hissal/hskills/issues/48#issuecomment-6371179357); [#49 resolution](https://github.com/Hissal/hskills/issues/49#issuecomment-6397980226); [#50 resolution](https://github.com/Hissal/hskills/issues/50#issuecomment-6426359993); [#74 resolution](https://github.com/Hissal/hskills/issues/74#issuecomment-6442601759); final name for unnamed #48 pass |
 | `incident-review` | experimental pack user-invoked | Adapted wshobson incident lifecycle | — | Named incident impact/timeline/contributing conditions/follow-ups | [#49 resolution](https://github.com/Hissal/hskills/issues/49#issuecomment-6397980226); [#50 resolution](https://github.com/Hissal/hskills/issues/50#issuecomment-6426359993); [#73 resolution](https://github.com/Hissal/hskills/issues/73#issuecomment-6443641717); [#74 resolution](https://github.com/Hissal/hskills/issues/74#issuecomment-6442601759) |
@@ -120,6 +121,7 @@ As of **2026-10-28 (Europe/Helsinki)**. A transcription of the current blueprint
 | `loop-me` | Does the recurring-work focus uncover useful workflows or decisions that ordinary `grilling` and `to-spec` miss? | On a real recurring activity the owner chooses, it produces a spec the owner judges worth implementing, and the owner can name what the specialised questioning contributed. | The useful parts fit existing skills equally well, or the workspace notes add upkeep without helping. |
 | `arena` | Does building one goal twice independently, then judging the artifacts, give a better result than a single `implement` run often enough to justify about twice the cost? | On real goals the owner chooses where more than one approach is plausible, the evaluator's rulings rest on its own runs, and the owner can name runs where the comparison changed the outcome: a flaw in one candidate caught, or an idea carried over that a single build lacked. | The candidates routinely converge on the same design, the evaluator's pick rarely differs from what a review of one build would have said, or the extra build and evaluation cost more than the comparison adds. |
 | `council` | Do scores and comments from three models on three providers judge work better than one reviewer, and does the Loop's fix-and-review cycle reach work the owner accepts within its round limit? | On real targets the owner chooses, at least one a comparison of outcomes, the owner can name runs where a member caught what the others missed or where the spread of scores changed a decision, and Loop runs stop on satisfied members or a stated disagreement without growing the scope. | The three members routinely say the same thing, the scores carry no signal beyond the findings, or Loop runs hit the round limit often enough that three flagship reviews per round cost more than they add. |
+| `prune-landed` | Does a plan that proves which local work has landed make cleaning a clone safe and quick enough to run whenever it piles up? | On real clones the owner chooses, it deletes what the owner agrees had landed, keeps every branch, worktree and stash with work still unlanded, and its unresolved list is short enough to settle in the same session. | It deletes work the owner still needed, leaves most landed work unresolved, or the confirmations take longer than cleaning by hand. |
 
 ## study
 
@@ -194,7 +196,7 @@ These are **conditional offers**, not automatically selected project installs, c
 | roslyn-language-server / fallback csharp-lsp | external tool trial, not a skill | Microsoft Roslyn; fallback csharp-ls route | Pinned personal lspServers trial; Claude-only plugin capability | Trial authorized, final recommendation not decided; #64 remains open | [#48 resolution](https://github.com/Hissal/hskills/issues/48#issuecomment-6371179357) |
 | typescript-lsp | external per-project tool trial, not a skill | Named in web setup decision | Pinned, same trial terms as Roslyn | Optional TypeScript language-server trial | [#49 resolution](https://github.com/Hissal/hskills/issues/49#issuecomment-6397980226) |
 
-The vendor table has **19 offer rows**, including grouped skill families, an open-ended category and two tool trials. It has no defensible exact external-skill total; it must not be added to the 80 collection skills. Vercel web-design-guidelines is copied/pinned material **inside web-guide**, not a separate adopted installed skill. Host-provided authoring/document/API capabilities and placeholder generator research are not added to this offer table as invented collection picks.
+The vendor table has **19 offer rows**, including grouped skill families, an open-ended category and two tool trials. It has no defensible exact external-skill total; it must not be added to the 81 collection skills. Vercel web-design-guidelines is copied/pinned material **inside web-guide**, not a separate adopted installed skill. Host-provided authoring/document/API capabilities and placeholder generator research are not added to this offer table as invented collection picks.
 
 ## Supersession list
 
@@ -626,14 +628,14 @@ Other #51 decisions: no agents pack in the first build (setup offers Anthropic's
 | gamedev | 1 | 5 | 6 |
 | csharp | 1 | 0 | 1 |
 | web | 1 | 4 | 5 |
-| experimental | 1 | 8 | 9 |
+| experimental | 1 | 9 | 10 |
 | study | 1 | 1 | 2 |
 | onboarding | 1 | 0 | 1 |
-| **Collection total** | **31** | **49** | **80** |
+| **Collection total** | **31** | **50** | **81** |
 
 Core reconstruction is **42 (14 model + 28 user) in #45 + risky-changes (model) + dependency-audit (user) + break-ui (user) in #49 + reviewing (model) in amended #74 = 46 (16 model + 30 user) + commenting (model) in #88 = 47 (17 model + 30 user), less session-report (user), dropped by the owner as installable from Anthropic's own marketplace = 46 (17 model + 29 user) + issue (model) in #326 = 47 (18 model + 29 user) + babysit-pr (model), full-stop and full-send (user) moved from the experimental pack = 50 (19 model + 31 user)**. architecture-review is one renamed identity, not another addition; teach was already removed from the #45 core census.
 
-There are **7 decided packs**, containing **30 skills** (12 model-invoked, 18 user-invoked) beyond core. Experimental has eight user-invoked trials and its guide; study adds teach plus study-guide; onboarding has the generated automatic guide alone.
+There are **7 decided packs**, containing **31 skills** (12 model-invoked, 19 user-invoked) beyond core. Experimental has nine user-invoked trials and its guide; study adds teach plus study-guide; onboarding has the generated automatic guide alone.
 
 Support inventory: **2 independent personal core always-on pieces** (steering source and command guard); the always-on table has six descriptive rows including their components and project configuration. Freeze enforcement is a component of the guard; freeze/unfreeze entry skills are already counted in core. No default always-on domain-pack piece is adopted. The separate support table has **10 non-skill machinery rows**. The vendor table has **19 conditional offer rows**, not 19 known external skill identities. These figures are intentionally not added together as one installed-item total.
 
@@ -691,6 +693,7 @@ changing skill identity or requirements with
 | `hissal.hskills/onboarding-guide` | [`onboarding-guide`](../skills/packs/onboarding/onboarding-guide/SKILL.md) | — |
 | `hissal.hskills/pr` | [`pr`](../skills/core/pr/SKILL.md) | — |
 | `hissal.hskills/prototype` | [`prototype`](../skills/core/prototype/SKILL.md) | — |
+| `hissal.hskills/prune-landed` | [`prune-landed`](../skills/packs/experimental/prune-landed/SKILL.md) | — |
 | `hissal.hskills/receiving-review` | [`receiving-review`](../skills/core/receiving-review/SKILL.md) | — |
 | `hissal.hskills/refactoring` | [`refactoring`](../skills/core/refactoring/SKILL.md) | — |
 | `hissal.hskills/research` | [`research`](../skills/core/research/SKILL.md) | — |

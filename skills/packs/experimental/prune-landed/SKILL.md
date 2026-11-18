@@ -1,0 +1,63 @@
+---
+name: prune-landed
+description: Delete the local branches, worktrees and stashes whose work has landed on the default branch, and keep everything not proven landed.
+disable-model-invocation: true
+argument-hint: "Nothing, or a remote other than origin"
+metadata:
+  agent-skills-sync.schema: "1"
+  agent-skills-sync.id: "hissal.hskills/prune-landed"
+  opencode/autoinvoke: "false"
+---
+
+# Prune landed
+
+Clean a local clone: delete each local branch, worktree and stash whose work has **landed** on the default branch, and keep the rest. Landed means proven by the plan script or, for an unresolved branch, by a merged PR you name. Remote branches are out of scope.
+
+Done when every record in the plan is deleted, kept or skipped as the user confirmed, and your report gives each one's outcome and the restore list's path.
+
+## Guardrails
+
+These hold for every step:
+
+- **Keep what is not proven landed.** Delete only what the plan marks `landed`, or an unresolved branch you settled in step 3. The default branch and any branch an open PR uses are never touched; the plan keeps them.
+- **Confirm before each destructive step.** Each of step 6's three deletions waits for the user's yes to the exact list it removes. With no way to ask, or no answer, delete nothing and end with the question.
+- **Save before you delete.** Write the restore list (step 5) before the first deletion.
+
+## 1. Gather the facts
+
+- **Target.** Fetch the remote (`origin` unless the user names another). The target is its default branch, `<remote>/HEAD`; when that is unset, run `git remote set-head <remote> --auto`.
+- **Pull requests.** On GitHub, fetch every PR head's commits without creating refs, `git fetch <remote> 'refs/pull/*/head'`, and list the PRs to a file with `gh pr list --state all --limit 10000 --json number,state,headRefName,headRefOid`. On another forge, write the same JSON from its API. When the remote has no pull requests at all, the plan runs with `--no-prs`. When it has them and you cannot read them, stop and say what access is missing: without them the open-PR guard cannot hold.
+
+## 2. Plan
+
+Run [`prune-plan.py`](scripts/prune-plan.py) by its absolute path with `--help` first; never read it. It needs Python 3 (`python3`, or `python` on Windows) and git 2.38 or later. It reads the repository and prints one record per branch, worktree and stash with its verdict (`landed`, `keep`, `unresolved` or `skipped`) and the check or reason that decided it. It changes nothing.
+
+A `warning:` about missing PR heads means step 1's fetch did not bring them: fetch them and plan again.
+
+## 3. Settle the unresolved branches
+
+For each `unresolved` branch, compare its unique commits (`git log <target>..<branch>`, and their diffs) with what landed: the PR its record names, later squash commits on the target, and the target's current content of each file the branch changes. It has landed when a merged PR or commits on the target hold every change it makes, the same or later; name that PR or commit. Otherwise keep it, saying what has not landed. A worktree whose only reason is `branch-unresolved` follows its branch.
+
+## 4. Check the worktrees still in use
+
+Every worktree to remove may belong to a running session. Where the harness lets you ask whether a thread or session still uses a worktree, ask it, and keep each worktree in use. Otherwise the confirmation in step 6 lists each worktree by path, and the user answers for each.
+
+## 5. Save the restore list
+
+Write a restore list to `prune-<date-time>.txt` in the repository's common git directory (`git rev-parse --git-common-dir`): every local branch's name and SHA, each worktree to remove with its path and HEAD, and each stash to drop with its SHA and message. Tell the user its path and the restore commands:
+
+- a branch: `git branch <name> <sha>`
+- a worktree: `git worktree add <path> <branch or sha>`
+- a stash: `git stash store -m "<message>" <sha>`
+
+## 6. Delete, one confirmed step at a time
+
+Show the plan's outcome as three lists (worktrees, branches, stashes), each record with its verdict and the check, reason or PR that decided it, then the kept, skipped and unresolved records with their reasons. Ask for each list before acting on it, in this order:
+
+1. **Worktrees.** For one with uncommitted changes, first `git -C <path> stash push -u -m "prune: <path>"`, and add the stash to the restore list. Then `git worktree remove <path>`. A `missing` worktree's record goes with `git worktree prune`. A removal git refuses stays, with git's reason in the report.
+2. **Branches.** Delete each with `git update-ref -d refs/heads/<name> <planned sha>`, so a branch that moved since the plan stays.
+3. **Stashes.** Run the plan again, and drop only stashes it marks `landed`, the stashes step 6.1 made included. Drop by SHA, finding each one's current `stash@{n}` just before its drop, highest index first.
+
+## 7. Report
+
+Give each record's outcome: deleted, kept, skipped or left unresolved, with its reason, and each unresolved branch settled in step 3 with the PR or commit that holds its work. End with the restore list's path and the restore commands.

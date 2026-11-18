@@ -148,6 +148,10 @@
     "path": "skills/core/prototype",
     "requires": []
   },
+  "hissal.hskills/prune-landed": {
+    "path": "skills/packs/experimental/prune-landed",
+    "requires": []
+  },
   "hissal.hskills/receiving-review": {
     "path": "skills/core/receiving-review",
     "requires": []

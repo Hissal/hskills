@@ -1,3 +1,7 @@
+## Load `writing-for-agents` before editing agent text
+
+**Before your first edit to a skill (anything under `skills/`), `AGENTS.md`, `CLAUDE.md` or any doc an agent reaches by a pointer, load the `writing-for-agents` skill.** When it is not installed, read this repo's copy, [`skills/core/writing-for-agents/SKILL.md`](skills/core/writing-for-agents/SKILL.md), and the references it points to for your case. This holds inside every workflow (`implement`, `full-stop`, `full-send`, review-fix rounds) even when the workflow never names it, and for a one-line edit too. Agents that skipped it grew skill text over review rounds and needed an extra trim round.
+
 ## Agent skills
 
 ### Issue tracker

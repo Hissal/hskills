@@ -8,7 +8,7 @@ One procedure behind two entry skills: `full-stop` (goal or spec to a PR ready f
 - [Run](#run)
 - [Bounds and learning](#bounds-and-learning)
 
-The calls below to `tdd`, `verifying`, `pr` and `delegating` are process calls, not requirements: when one is not installed, say so once and carry on doing its part as the step describes. A workflow the owner asked for by name is the exception: when it is not installed, that is the missing-access stop.
+The calls below to `tdd`, `verifying`, `code-review`, `receiving-review`, `pr` and `delegating` are process calls, not requirements: when one is not installed, say so once and carry on doing its part as the step describes. A workflow the owner asked for by name is the exception: when it is not installed, that is the missing-access stop.
 
 ## Branch authority
 
@@ -42,8 +42,9 @@ Everything else is yours to decide: choose a sensible default and record the cho
 2. **Branch.** Work on an isolated branch: a new one from the up-to-date default branch, in a worktree when the host gives you one. It is the run's own branch under [branch authority](#branch-authority). Freeze edits to a path only when the owner asks.
 3. **Build** what the goal asks, in full, and nothing more. Read the project's selected coding guidance and its tooling configuration through the project configuration (the files linked from the `## Agent skills` block in `AGENTS.md` or `CLAUDE.md`); where the two disagree, the tooling configuration wins, and each conflict goes in the final report. Write tests through `tdd` where the change allows.
 4. **Prove** the change through `verifying`: evidence from a run that it does what the goal asks.
-5. **Open the PR.** Commit, push, and open the PR through `pr`, ready for review rather than as a draft, so checks and automated reviews run. Then run any check the entry skill adds for an open PR.
-6. **Tend** it through `babysit-pr` to its done bar. This run's authority, stop conditions and the entry skill's rules stay in force through every round. Proof and review cover the final diff: re-prove each behaviour change and each meaningful conflict fix through `verifying` before the entry skill's last step.
+5. **Review** the diff through `code-review`, passing it the goal's issue as its spec, or with none the framed goal written to a file outside the checkout, and take its findings through `receiving-review`. Re-prove through `verifying` what the fixes change. Review every change, a small one included: reading the diff yourself stands in for `code-review` only when it is not installed, and the review bots that run on the open PR never do. Open the PR once every finding has its disposition.
+6. **Open the PR.** Commit, push, and open the PR through `pr`, ready for review rather than as a draft, so checks and automated reviews run. Then run any check the entry skill adds for an open PR.
+7. **Tend** it through `babysit-pr` to its done bar. This run's authority, stop conditions and the entry skill's rules stay in force through every round. Proof and review cover the final diff: re-prove each behaviour change and each meaningful conflict fix through `verifying` before the entry skill's last step.
 
 ## Bounds and learning
 

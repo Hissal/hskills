@@ -65,6 +65,7 @@ Report every slot:
 - **PR**: the link, and its final head SHA.
 - **Verdict**: **merged** (give the merge commit SHA and the method used); **waiting on human approval** (only a required approval remains: name it, confirmed as the real blocker); or **blocked** (what prevents the merge, what you tried, what is needed).
 - **Proof**: how the change and each fix were proved.
+- **Process calls**: each process call the delivery procedure names, as made, skipped or failed, with the reason for each skip or failure (a review that stopped or left missing coverage failed).
 - **Reviewer outcome**: each finding fixed or disposed of, with the reason.
 - **Decisions**: each consequential assumption and choice, with its reason and the cost if wrong.
 - **Follow-ups**: what you recorded and left out, with the reason.

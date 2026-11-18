@@ -30,10 +30,11 @@ GIT_LOCATION = ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECT
                 "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR", "GIT_PREFIX")
 
 
-def run(cwd: Path, *args: str) -> subprocess.CompletedProcess:
+def run(cwd: Path, *args: str, env: dict | None = None) -> subprocess.CompletedProcess:
+    extra = env or {}
     env = {k: v for k, v in os.environ.items() if k not in GIT_LOCATION}
     # No global or system config: a hooksPath or commit signing there would change what the cases see.
-    env.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
+    env.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1", **extra)
     return subprocess.run(list(args), cwd=cwd, capture_output=True, text=True, env=env)
 
 
@@ -121,12 +122,12 @@ class Plan(unittest.TestCase):
             if (gitdir / f).exists():
                 os.utime(gitdir / f, (old, old))
 
-    def plan(self, *args: str, code: int = 0) -> list[str]:
+    def plan(self, *args: str, code: int = 0, env: dict | None = None) -> list[str]:
         if not any(a in ("--prs", "--no-prs") for a in args) and code == 0:
             prs = self.tmp / "prs.json"
             prs.write_text(json.dumps(self.prs), encoding="utf-8")
             args = ("--prs", str(prs), *args)
-        res = run(self.w, sys.executable, str(SCRIPT), *args)
+        res = run(self.w, sys.executable, str(SCRIPT), *args, env=env)
         self.assertEqual(res.returncode, code, f"prune-plan {' '.join(args)}: {res.stdout}{res.stderr}")
         if code:
             self.assertTrue(res.stderr.strip().splitlines()[-1].startswith("prune-plan: "), res.stderr)
@@ -268,6 +269,49 @@ class Plan(unittest.TestCase):
         lines = self.plan()
         self.assertEqual(self.wt_record(lines, wt)[:2], ["keep", "changes-unlanded:3"])
         self.assertEqual(self.record(lines, "branch", "half")[:2], ["keep", "worktree-kept"])
+
+    def test_an_unlanded_staged_version_keeps_a_worktree_whose_disk_copy_landed(self):
+        self.branch("staged", "st.txt", "st\n")
+        self.land_merge("staged")
+        wt = self.worktree("staged")
+        write(wt, "st.txt", "staged only\n")
+        git(wt, "add", "st.txt")
+        write(wt, "st.txt", "st\n")  # the disk copy is back to the landed version
+        self.age(wt)
+        self.assertEqual(self.wt_record(self.plan(), wt)[:2], ["keep", "changes-unlanded:1"])
+
+    def test_an_inherited_git_dir_does_not_hide_a_worktrees_changes(self):
+        self.branch("env", "e.txt", "e\n")
+        self.land_merge("env")
+        wt = self.worktree("env")
+        write(wt, "e.txt", "unlanded\n")
+        self.age(wt)
+        lines = self.plan(env={"GIT_DIR": str(self.w / ".git"), "GIT_WORK_TREE": str(self.w)})
+        self.assertEqual(self.wt_record(lines, wt)[:2], ["keep", "changes-unlanded:1"])
+
+    @unittest.skipIf(os.name == "nt", "symbolic links need a POSIX filesystem")
+    def test_a_dangling_link_in_a_worktree_is_planned_as_unlanded(self):
+        self.branch("link", "l.txt", "l\n")
+        self.land_merge("link")
+        wt = self.worktree("link")
+        self.age(wt)
+        os.symlink("nowhere", wt / "dangling")
+        os.utime(wt / "dangling", (time.time() - MONTH,) * 2, follow_symlinks=False)
+        self.assertEqual(self.wt_record(self.plan(), wt)[:2], ["keep", "changes-unlanded:1"])
+
+    def test_a_recent_file_inside_an_old_ignored_folder_makes_a_worktree_recent(self):
+        git(self.w, "switch", "-q", "-c", "build", "main")
+        commit(self.w, ".gitignore", "out/\n", "ignore out")
+        git(self.w, "switch", "-q", "main")
+        self.land_merge("build")
+        wt = self.worktree("build")
+        (wt / "out").mkdir()
+        write(wt / "out", "log.txt", "old\n")
+        self.age(wt)
+        write(wt / "out", "log.txt", "changed today\n")  # rewriting a file leaves the folder's time alone
+        old = time.time() - MONTH
+        os.utime(wt / "out", (old, old))
+        self.assertEqual(self.wt_record(self.plan(), wt)[:2], ["skipped", "recent"])
 
     def test_a_worktree_on_an_unresolved_branch_is_unresolved(self):
         self.branch("open-q", "q.txt", "q\n")

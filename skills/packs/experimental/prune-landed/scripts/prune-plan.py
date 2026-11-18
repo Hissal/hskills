@@ -66,6 +66,9 @@ import time
 
 USAGE = __doc__.split("\n\n")[1]
 ZERO = "0" * 40
+# Inherited from a git hook or wrapper, these would aim every call at one repository, whatever its cwd.
+GIT_LOCATION = ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+                "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR", "GIT_PREFIX")
 
 
 class Stop(Exception):
@@ -73,7 +76,8 @@ class Stop(Exception):
 
 
 def git(*args: str, cwd: str | None = None, stdin: str | None = None, check: bool = True) -> subprocess.CompletedProcess:
-    env = dict(os.environ, GIT_TERMINAL_PROMPT="0", LC_ALL="C", GIT_OPTIONAL_LOCKS="0")
+    env = {k: v for k, v in os.environ.items() if k not in GIT_LOCATION}
+    env.update(GIT_TERMINAL_PROMPT="0", LC_ALL="C", GIT_OPTIONAL_LOCKS="0")
     res = subprocess.run(["git", *args], cwd=cwd, input=stdin, capture_output=True, text=True,
                          encoding="utf-8", errors="surrogateescape", env=env)
     if check and res.returncode != 0:
@@ -308,16 +312,28 @@ def worktree_changes(path: str) -> list[tuple[str, str | None]]:
         elif p not in modes:
             modes[p] = index_version.split()[0]
     existing = sorted(p for p, mode in modes.items() if mode is not None)
+    links = [p for p in existing if os.path.islink(os.path.join(path, p))]
+    files = [p for p in existing if p not in links]
     blobs = {}
-    if existing:
-        res = git("hash-object", "--stdin-paths", cwd=path, stdin="\n".join(existing) + "\n")
-        blobs = dict(zip(existing, res.stdout.split()))
+    if files:
+        res = git("hash-object", "--stdin-paths", cwd=path, stdin="\n".join(files) + "\n")
+        blobs = dict(zip(files, res.stdout.split()))
+    for p in links:  # git stores a link's text, not what it points to
+        blobs[p] = git("hash-object", "--no-filters", "--stdin", cwd=path, stdin=os.readlink(os.path.join(path, p))).stdout.strip()
     changes = []
     for p, mode in sorted(modes.items()):
         version = None if mode is None else f"{mode} {blobs[p]}"
         if p in hidden and version == hidden[p]:
             continue  # a hidden file left as it is
         changes.append((p, version))
+    # A staged version can differ from the file on disk; it has to land too.
+    raw = git("diff", "--cached", "--raw", "--no-abbrev", "--no-renames", "-z", "HEAD", cwd=path).stdout.split("\0")
+    for i in range(0, len(raw) - 1, 2):
+        if raw[i].startswith(":"):
+            parts = raw[i][1:].split()
+            staged = (raw[i + 1], None if parts[4] == "D" else f"{parts[1]} {parts[3]}")
+            if staged not in changes:
+                changes.append(staged)
     return changes
 
 
@@ -360,9 +376,16 @@ def in_progress(path: str) -> tuple[bool, str | None]:
 def newest_change(path: str) -> float:
     newest = 0.0
     files = git("ls-files", "-z", "-c", "-o", "--exclude-standard", cwd=path).stdout.split("\0")
-    files += git("ls-files", "-z", "-o", "-i", "--exclude-standard", "--directory", cwd=path).stdout.split("\0")
     gitdir = out("rev-parse", "--absolute-git-dir", cwd=path)
-    for full in [os.path.join(path, f) for f in files if f] + [os.path.join(gitdir, "index"), os.path.join(gitdir, "HEAD")]:
+    paths = [os.path.join(path, f) for f in files if f] + [os.path.join(gitdir, "index"), os.path.join(gitdir, "HEAD")]
+    # Ignored files count too; a file changed inside an ignored folder leaves the folder's own time alone.
+    for entry in git("ls-files", "-z", "-o", "-i", "--exclude-standard", "--directory", cwd=path).stdout.split("\0"):
+        if entry:
+            full = os.path.join(path, entry)
+            paths.append(full)
+            for root, _dirs, names in os.walk(full):
+                paths.extend(os.path.join(root, n) for n in names)
+    for full in paths:
         try:
             newest = max(newest, os.lstat(full).st_mtime)
         except OSError:

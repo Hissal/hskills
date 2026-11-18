@@ -26,8 +26,8 @@ These hold for every step:
 
 ## 1. Gather the facts
 
-- **Target.** Fetch the remote (`origin` unless the user names another). The target is its default branch, `<remote>/HEAD`; when that is unset, run `git remote set-head <remote> --auto`.
-- **Pull requests.** On GitHub, fetch every PR head's commits without creating refs, `git fetch <remote> 'refs/pull/*/head'`, and list the PRs to a file with `gh pr list --state all --limit 10000 --json number,state,headRefName,headRefOid,baseRefName`. On another forge, write the same JSON from its API. When the remote has no pull requests at all, the plan runs with `--no-prs`.
+- **Target.** Fetch the remote (`origin` unless the user names another), then run `git remote set-head <remote> --auto`, so `<remote>/HEAD` names its current default branch. That branch is the target.
+- **Pull requests.** On GitHub, list the PRs of the remote's own repository (its `owner/repo`, from `git remote get-url <remote>`) to a file: `gh pr list --repo <owner/repo> --state all --limit <n> --json number,state,headRefName,headRefOid,baseRefName`. Start with a limit of 10000 and raise it until the list comes back shorter than the limit, so no open PR is missing. Then fetch each merged PR's head by name, with no destination, so no ref is created: `git fetch <remote> refs/pull/<n>/head ...`, a few hundred per command. On another forge, write the same JSON from its API. When the remote has no pull requests at all, the plan runs with `--no-prs`.
 
 ## 2. Plan
 
@@ -51,11 +51,13 @@ Write a restore list to `prune-<date-time>.txt` in the repository's common git d
 - a worktree: `git worktree add <path> <branch or sha>`
 - a stash: `git stash store -m "<message>" <sha>`
 
+These work until `git gc` prunes the commits nothing else reaches, two weeks by default (`gc.pruneExpire`). Say so with the path.
+
 ## 6. Delete, one confirmed step at a time
 
 Show the plan's outcome as three lists (worktrees, branches, stashes), each record with its verdict and the check, reason or PR that decided it, then the kept, skipped and unresolved records with their reasons. Ask for each list before acting on it, in this order:
 
-1. **Worktrees.** Removal also deletes a worktree's ignored files, which no stash keeps: list each one's (`git -C <path> status --ignored --short`) with it when you ask. For one with uncommitted changes, first `git -C <path> stash push -u -m "prune: <path>"`, and add the stash to the restore list. Then `git worktree remove <path>`. Clear `missing` worktrees with `git worktree prune` only when `git worktree prune --dry-run --verbose` names exactly the confirmed ones; otherwise leave them. A removal git refuses stays, with git's reason in the report.
+1. **Worktrees.** With each, list its ignored files (`git -C <path> status --ignored --short`): removal deletes them, and no stash keeps them. Just before removing one, check that its HEAD is still the planned one and its status still matches the plan; when either changed, keep it and plan again. When it has uncommitted changes, `git -C <path> stash push -u -m "prune: <path>"` and add the stash to the restore list. Then `git worktree remove <path>`. Clear `missing` worktrees with `git worktree prune` only when `git worktree prune --dry-run --verbose` names exactly the confirmed ones; otherwise leave them. A removal git refuses stays, with git's reason in the report.
 2. **Branches.** Leave out each branch still checked out in a worktree (`git worktree list`): one the user kept, or one git refused to remove. Delete the rest with `git update-ref -d refs/heads/<name> <planned sha>`, so a branch that moved since the plan stays.
 3. **Stashes.** Run the plan again, and drop only stashes it marks `landed`, the stashes step 6.1 made included. Drop by SHA, finding each one's current `stash@{n}` just before its drop, highest index first.
 

@@ -7,7 +7,7 @@ metadata:
   opencode/autoinvoke: "true"
 ---
 
-Done when the body follows this template, every result in it comes from evidence already gathered, every issue it delivers carries the link its state calls for, every gap is on the **Not done** line, and every detail from a source more private than the PR is restated as [Private details](#private-details) sets. Writing or updating a body runs nothing.
+Done when the body follows this template, every result in it comes from evidence already gathered, every issue it delivers carries the link its state calls for, in a form the host reads back, every gap is on the **Not done** line, and every detail from a source more private than the PR is restated as [Private details](#private-details) sets. Writing or updating a body runs nothing; reading the posted PR back is not a run.
 
 When the PR is part of a stack (the host has linked it into a native stack, its base is another open PR's head, or its head is another open PR's base), read [the stack reference](references/STACK.md) before writing, pushing or merging: how a lower PR is changed and the stack pushed, which PRs keep their checks after a restack, and how each PR links its tickets. Skip it and the PRs above a change go stale, or a push overwrites someone else's work.
 
@@ -201,6 +201,8 @@ Link every issue the PR delivers by the state of its work, decided afresh from e
 - **`Refs #N`**: something on the issue is faulty or unfinished: a criterion that failed, is not built, or has a check an agent could run that has not passed; work not on the branch; an unfixed defect in the issue's work; a decision only the owner can make.
 
 A spec or parent issue closes only when every issue under it closes. A PR that never merges, such as a prototype, delivers nothing and only refs its issue. Before a merge, set every link by this rule and report each `Refs` and each human check still open.
+
+Give each closing issue its own keyword, as in `Closes #12, closes #13`: GitHub can drop an issue from a list that shares one keyword, such as the last of `Closes #12, #13 and #14`. After each post or edit of a PR into the default branch, read the host's closing references back (on GitHub, `gh pr view <number> --json closingIssuesReferences`) and fix the body until they hold exactly the issues it closes. A PR into another branch may show none; [the stack reference](references/STACK.md) covers that case.
 
 ### Private details
 

@@ -1,7 +1,7 @@
 'use strict';
 // Fixture runner: node scripts/check/test/run.js
 // Each case in cases.js is written to a scratch git repository (untracked
-// unless the case stages files), the check runs on it as a child process, and
+// unless the case stages files), the check runs on it, and
 // the exit code and the FAIL/WARN lines are compared with the case's
 // expectation. Message wording is never compared. The check must leave every
 // fixture file as written: it never rewrites the tree.
@@ -12,6 +12,16 @@
 //   'real'                         the pinned agnix from node_modules; the case
 //                                  is skipped, and said so, when it is absent
 //
+// A case runs the check inside this process (check.js's run), with the case's
+// environment and the stub answering for agnix, so it costs no Node start. A
+// case that sets `agnix` runs `node check.js <fixture>` as a child process
+// instead: those cases cover the command line, its exit code and the way the
+// check starts agnix. `--spawn` runs every case that way.
+//
+// `--only <text>` runs just the fixture cases whose name contains the text and
+// none of the suites below. It is for repeating one failing case: it says it
+// was partial, and the run a push needs is the one without it.
+//
 // It also runs babysit-pr's pr-wait tests (scripts/pr-wait/test/run.py) as
 // one case, skipped on Windows or without python3, and pr's pr-stack tests
 // (scripts/pr-stack/test/run.py) as one case on every platform, skipped only
@@ -19,14 +29,33 @@
 
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
 const { spawnSync } = require('child_process');
-const cases = require('./cases');
+
+const argv = process.argv.slice(2);
+const flags = { spawn: false, only: null };
+for (let i = 0; i < argv.length; i++) {
+  if (argv[i] === '--spawn') flags.spawn = true;
+  else if (argv[i] === '--only' && argv[i + 1]) flags.only = argv[++i];
+  else {
+    console.log('usage: node scripts/check/test/run.js [--only <text in a case name>] [--spawn]');
+    process.exit(2);
+  }
+}
+
+const allCases = require('./cases');
+const cases = flags.only === null ? allCases : allCases.filter((c) => c.name.includes(flags.only));
+const check = require('../check');
+const agnixRule = require('../rules/agnix');
+const agnixStub = require('./agnix-stub');
 const { git, write, tempDir } = require('../../test-util');
-require('./temp-cases');
-require('./catalog');
-require('../../plugins/test/run');
-require('../../floor-guard/test/run');
-require('../../install/test/pool-cases');
+if (flags.only === null) {
+  require('./temp-cases');
+  require('./catalog');
+  require('../../plugins/test/run');
+  require('../../floor-guard/test/run');
+  require('../../install/test/pool-cases');
+}
 
 const CHECK = path.join(__dirname, '..', 'check.js');
 const REPO = path.join(__dirname, '..', '..', '..');
@@ -37,7 +66,31 @@ let failed = 0;
 let passed = 0;
 let skipped = 0;
 
-
+// Runs the check on one fixture and returns { status, stdout, stderr }.
+function runCheck(c, dir, env) {
+  if (flags.spawn || c.agnix) return spawnSync(process.execPath, [CHECK, dir], { encoding: 'utf8', env });
+  const saved = { env: Object.assign({}, process.env), log: console.log, exec: agnixRule.exec };
+  const out = [];
+  let status;
+  let stderr = '';
+  for (const name of Object.keys(process.env)) if (!(name in env)) delete process.env[name];
+  Object.assign(process.env, env);
+  console.log = (...args) => out.push(util.format(...args));
+  agnixRule.exec = (bin, args) => agnixStub.reply(args, process.env.AGNIX_STUB);
+  try {
+    status = check.run(dir);
+  } catch (e) {
+    // an uncaught error ends the command line with exit 1 and its stack
+    status = 1;
+    stderr = e.stack;
+  } finally {
+    console.log = saved.log;
+    agnixRule.exec = saved.exec;
+    for (const name of Object.keys(process.env)) if (!(name in saved.env)) delete process.env[name];
+    Object.assign(process.env, saved.env);
+  }
+  return { status, stdout: out.map((l) => l + '\n').join(''), stderr };
+}
 
 // An expectation line is "<fail|warn> <rule> <file>".
 const key = (level, rule, file) => level.toLowerCase() + ' ' + rule + ' ' + file;
@@ -87,7 +140,7 @@ try {
 
     // a file a before script deleted is not compared
     const written = Object.fromEntries(Object.keys(Object.assign({}, c.committed, c.files)).filter((f) => fs.existsSync(path.join(dir, ...f.split('/')))).map((f) => [f, fs.readFileSync(path.join(dir, ...f.split('/')))]));
-    const res = spawnSync(process.execPath, [CHECK, dir], { encoding: 'utf8', env });
+    const res = runCheck(c, dir, env);
     const got = res.stdout.split('\n').map((l) => l.match(FINDING)).filter(Boolean).map((m) => key(m[1], m[3], m[2])).sort();
     const want = (c.expect || []).slice().sort();
     const exit = want.some((w) => w.startsWith('fail ')) ? 1 : 0;
@@ -113,49 +166,57 @@ try {
   fs.rmSync(scratch, { recursive: true, force: true });
 }
 
-// babysit-pr's bundled pr-wait has Python behaviour tests. pr-wait runs on
-// Linux and macOS only (it locks with fcntl), so Windows skips them, as does a
-// machine without python3.
-const PR_WAIT_TESTS = path.join(REPO, 'scripts', 'pr-wait', 'test', 'run.py');
-if (process.platform === 'win32') {
-  skipped++;
-  console.log('skip pr-wait tests: pr-wait does not run on Windows');
-} else {
-  const res = spawnSync('python3', [PR_WAIT_TESTS], { encoding: 'utf8' });
-  if (res.error && res.error.code === 'ENOENT') {
-    skipped++;
-    console.log('skip pr-wait tests: python3 not found');
-  } else if (res.status === 0) {
-    passed++;
-  } else {
-    failed++;
-    console.log('FAIL pr-wait tests (python3 ' + path.relative(REPO, PR_WAIT_TESTS) + ')');
-    console.log('     ' + (res.stderr || res.stdout).trim().split('\n').slice(-20).join('\n     '));
+if (flags.only !== null) {
+  if (!cases.length) {
+    console.log('FAILED: no case name contains ' + JSON.stringify(flags.only));
+    process.exit(1);
   }
-}
-
-// pr's bundled pr-stack runs on every platform, Windows included, so its tests
-// do too. Windows runners may name Python 3 `python` rather than `python3`.
-const PR_STACK_TESTS = path.join(REPO, 'scripts', 'pr-stack', 'test', 'run.py');
-const python = ['python3', 'python'].find((cmd) => {
-  const probe = spawnSync(cmd, ['-c', 'import sys; sys.exit(sys.version_info[0] != 3)'], { encoding: 'utf8' });
-  return !probe.error && probe.status === 0;
-});
-if (!python && process.env.CI) {
-  // CI is where the Windows run is proved, so a missing Python fails there.
-  failed++;
-  console.log('FAIL pr-stack tests: Python 3 not found');
-} else if (!python) {
-  skipped++;
-  console.log('skip pr-stack tests: Python 3 not found');
+  console.log('partial run: ' + cases.length + ' of ' + allCases.length + ' fixture cases and no other suite; run without --only before a push');
 } else {
-  const res = spawnSync(python, [PR_STACK_TESTS], { encoding: 'utf8' });
-  if (res.status === 0) {
-    passed++;
+  // babysit-pr's bundled pr-wait has Python behaviour tests. pr-wait runs on
+  // Linux and macOS only (it locks with fcntl), so Windows skips them, as does a
+  // machine without python3.
+  const PR_WAIT_TESTS = path.join(REPO, 'scripts', 'pr-wait', 'test', 'run.py');
+  if (process.platform === 'win32') {
+    skipped++;
+    console.log('skip pr-wait tests: pr-wait does not run on Windows');
   } else {
+    const res = spawnSync('python3', [PR_WAIT_TESTS], { encoding: 'utf8' });
+    if (res.error && res.error.code === 'ENOENT') {
+      skipped++;
+      console.log('skip pr-wait tests: python3 not found');
+    } else if (res.status === 0) {
+      passed++;
+    } else {
+      failed++;
+      console.log('FAIL pr-wait tests (python3 ' + path.relative(REPO, PR_WAIT_TESTS) + ')');
+      console.log('     ' + (res.stderr || res.stdout).trim().split('\n').slice(-20).join('\n     '));
+    }
+  }
+
+  // pr's bundled pr-stack runs on every platform, Windows included, so its tests
+  // do too. Windows runners may name Python 3 `python` rather than `python3`.
+  const PR_STACK_TESTS = path.join(REPO, 'scripts', 'pr-stack', 'test', 'run.py');
+  const python = ['python3', 'python'].find((cmd) => {
+    const probe = spawnSync(cmd, ['-c', 'import sys; sys.exit(sys.version_info[0] != 3)'], { encoding: 'utf8' });
+    return !probe.error && probe.status === 0;
+  });
+  if (!python && process.env.CI) {
+    // CI is where the Windows run is proved, so a missing Python fails there.
     failed++;
-    console.log('FAIL pr-stack tests (' + python + ' ' + path.relative(REPO, PR_STACK_TESTS) + ')');
-    console.log('     ' + (res.stderr || res.stdout).trim().split('\n').slice(-20).join('\n     '));
+    console.log('FAIL pr-stack tests: Python 3 not found');
+  } else if (!python) {
+    skipped++;
+    console.log('skip pr-stack tests: Python 3 not found');
+  } else {
+    const res = spawnSync(python, [PR_STACK_TESTS], { encoding: 'utf8' });
+    if (res.status === 0) {
+      passed++;
+    } else {
+      failed++;
+      console.log('FAIL pr-stack tests (' + python + ' ' + path.relative(REPO, PR_STACK_TESTS) + ')');
+      console.log('     ' + (res.stderr || res.stdout).trim().split('\n').slice(-20).join('\n     '));
+    }
   }
 }
 

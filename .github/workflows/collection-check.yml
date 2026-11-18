@@ -40,6 +40,10 @@ jobs:
         with:
           node-version: '22'
       - name: Install pinned agnix
+        # bash, not the Windows default pwsh: agnix's installer unpacks with
+        # Windows PowerShell, which under pwsh inherits PowerShell 7's module
+        # path, loads its Archive module and fails to extract.
+        shell: bash
         run: npm ci
       - name: Verify release candidates offline
         run: node scripts/release/dry-run.js

@@ -11,27 +11,34 @@ const path = require('path');
 const { load } = require('./collection');
 const rules = require('./rules');
 
-const root = path.resolve(process.argv[2] || path.join(__dirname, '..', '..'));
+// run(root) checks one tree, prints its lines and returns the exit code. The
+// fixture runner calls it in its own process, so it never exits and reads the
+// environment afresh on every call.
+function run(root) {
+  let collection;
+  try {
+    collection = load(root);
+  } catch (e) {
+    console.log('FAIL ' + root + ' [check] ' + e.message);
+    return 1;
+  }
 
-let collection;
-try {
-  collection = load(root);
-} catch (e) {
-  console.log('FAIL ' + root + ' [check] ' + e.message);
-  process.exit(1);
+  const findings = require('./tripwires').report(collection);
+  for (const rule of rules) {
+    for (const f of rule.check(collection)) findings.push(Object.assign({ rule: rule.id, level: rule.level }, f));
+  }
+
+  let fails = 0;
+  let warns = 0;
+  for (const f of findings) {
+    if (f.level === 'fail') fails++;
+    else warns++;
+    console.log((f.level === 'fail' ? 'FAIL ' : 'WARN ') + f.file + (f.line ? ':' + f.line : '') + ' [' + f.rule + '] ' + f.message);
+  }
+  console.log((fails ? 'FAILED' : 'ok') + ': ' + collection.skills.length + ' skills, ' + collection.files.length + ' files, ' + fails + ' failures, ' + warns + ' warnings');
+  return fails ? 1 : 0;
 }
 
-const findings = require('./tripwires').report(collection);
-for (const rule of rules) {
-  for (const f of rule.check(collection)) findings.push(Object.assign({ rule: rule.id, level: rule.level }, f));
-}
+module.exports = { run };
 
-let fails = 0;
-let warns = 0;
-for (const f of findings) {
-  if (f.level === 'fail') fails++;
-  else warns++;
-  console.log((f.level === 'fail' ? 'FAIL ' : 'WARN ') + f.file + (f.line ? ':' + f.line : '') + ' [' + f.rule + '] ' + f.message);
-}
-console.log((fails ? 'FAILED' : 'ok') + ': ' + collection.skills.length + ' skills, ' + collection.files.length + ' files, ' + fails + ' failures, ' + warns + ' warnings');
-process.exit(fails ? 1 : 0);
+if (require.main === module) process.exit(run(path.resolve(process.argv[2] || path.join(__dirname, '..', '..'))));

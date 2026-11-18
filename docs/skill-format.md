@@ -277,6 +277,11 @@ node scripts/gates/test/run.js
 
 Every change to the check keeps both green: the runner, and the check on the real tree.
 
+The runner calls the check inside its own process, once per case, so a case costs no Node start. A rule therefore reads its environment variables when it checks, not when its file loads, and keeps nothing between two checks. A case that sets `agnix` runs `node scripts/check/check.js <fixture>` as a child process instead, which covers the command line, its exit code and how the check starts agnix.
+
+- `node scripts/check/test/run.js --only <text>` runs only the fixture cases whose name contains the text, and none of the other suites. Use it to repeat one failing case. It prints that the run was partial; the run a push needs is the one without it.
+- `node scripts/check/test/run.js --spawn` runs every case as a child process. Use it when a case passes one way and fails the other.
+
 The fixture runner also runs the `constraints` floor guard's contract cases, [`scripts/floor-guard/test/cases.js`](../scripts/floor-guard/test/cases.js), against real git repositories; `node scripts/floor-guard/test/run.js` runs them alone.
 
 Run `npm ci` before the check and its fixtures to install pinned agnix; real-agnix cases then run rather than skip.

@@ -10,7 +10,8 @@
 // missing install, a version other than the pin, or a failed run is one
 // warning on package.json: the trial never fails the check.
 // HSKILLS_CHECK_AGNIX names another agnix script to run (the fixture
-// runner's stub).
+// runner's stub). `exec` is how the rule runs agnix; the fixture runner swaps
+// it to answer from the stub without starting a process.
 
 const fs = require('fs');
 const path = require('path');
@@ -25,11 +26,12 @@ const trouble = (message) => [{ file: 'package.json', message: message + '; agni
 module.exports = {
   id: 'agnix',
   level: 'warn',
+  exec: (bin, args, cwd) => spawnSync(process.execPath, [bin, ...args], { cwd, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }),
   check(c) {
     const bin = process.env.HSKILLS_CHECK_AGNIX || path.join(REPO, 'node_modules', 'agnix', 'bin', 'agnix');
     if (!fs.existsSync(bin)) return trouble('agnix ' + PIN + ' is not installed: run `npm ci`');
 
-    const res = spawnSync(process.execPath, [bin, '--config', CONFIG, '--format', 'json', '.'], { cwd: c.root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+    const res = module.exports.exec(bin, ['--config', CONFIG, '--format', 'json', '.'], c.root);
     let out;
     try {
       out = JSON.parse(res.stdout);

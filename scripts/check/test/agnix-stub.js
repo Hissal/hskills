@@ -13,24 +13,31 @@
 const fs = require('fs');
 const path = require('path');
 
-const args = process.argv.slice(2);
-const opt = JSON.parse(process.env.AGNIX_STUB || '{}');
-const config = args[args.indexOf('--config') + 1];
-const refused =
-  args.some((a) => /^--(fix|fix-safe|fix-unsafe|dry-run|show-fixes)$/.test(a)) ? 'autofix flag passed: ' + args.join(' ')
-    : args[args.indexOf('--format') + 1] !== 'json' ? 'no --format json'
-      : !args.includes('--config') || !fs.existsSync(config) ? 'no --config file'
-        : null;
-if (refused) {
-  console.log('agnix-stub refused: ' + refused);
-  process.exit(2);
-}
-if (opt.raw !== undefined) {
-  console.log(opt.raw);
-  process.exit(1);
+const PIN = require(path.join(__dirname, '..', '..', '..', 'package.json')).devDependencies.agnix;
+
+// The stub's answer to one call: { stdout, status }. The fixture runner calls
+// this directly for cases it runs in its own process.
+function reply(args, stubJson) {
+  const opt = JSON.parse(stubJson || '{}');
+  const config = args[args.indexOf('--config') + 1];
+  const refused =
+    args.some((a) => /^--(fix|fix-safe|fix-unsafe|dry-run|show-fixes)$/.test(a)) ? 'autofix flag passed: ' + args.join(' ')
+      : args[args.indexOf('--format') + 1] !== 'json' ? 'no --format json'
+        : !args.includes('--config') || !fs.existsSync(config) ? 'no --config file'
+          : null;
+  if (refused) return { stdout: 'agnix-stub refused: ' + refused + '\n', status: 2 };
+  if (opt.raw !== undefined) return { stdout: opt.raw + '\n', status: 1 };
+  const diagnostics = opt.diagnostics || [];
+  return {
+    stdout: JSON.stringify({ version: opt.version || PIN, files_checked: 0, diagnostics, summary: {} }) + '\n',
+    status: diagnostics.some((d) => d.level === 'error') ? 1 : 0,
+  };
 }
 
-const pin = require(path.join(__dirname, '..', '..', '..', 'package.json')).devDependencies.agnix;
-const diagnostics = opt.diagnostics || [];
-console.log(JSON.stringify({ version: opt.version || pin, files_checked: 0, diagnostics, summary: {} }));
-process.exit(diagnostics.some((d) => d.level === 'error') ? 1 : 0);
+module.exports = { reply };
+
+if (require.main === module) {
+  const res = reply(process.argv.slice(2), process.env.AGNIX_STUB);
+  process.stdout.write(res.stdout);
+  process.exit(res.status);
+}

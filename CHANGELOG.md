@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.2.0](https://github.com/Hissal/hskills/compare/v0.1.1...v0.2.0) (2026-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **core:** move full-stop, full-send and babysit-pr into core ([#424](https://github.com/Hissal/hskills/issues/424))
+
+### Features
+
+* **core:** move full-stop, full-send and babysit-pr into core ([#424](https://github.com/Hissal/hskills/issues/424)) ([599190a](https://github.com/Hissal/hskills/commit/599190a3b92704a4386ea6e261f6376feb65fc1f))
+* **experimental-pack:** add the prune-landed trial ([#434](https://github.com/Hissal/hskills/issues/434)) ([2ffe075](https://github.com/Hissal/hskills/commit/2ffe0757f32c71be61ef61015014723f07f39e22))
+
+
+### Bug Fixes
+
+* **full-send:** review before the PR and report skipped process calls ([d4360ac](https://github.com/Hissal/hskills/commit/d4360ac058a97df7ffeca30cb50a08051c145913))
+* **full-stop:** review before the PR and report skipped process calls ([d4360ac](https://github.com/Hissal/hskills/commit/d4360ac058a97df7ffeca30cb50a08051c145913))
+* **handoff:** make loading the listed skills the reader's one instruction ([#425](https://github.com/Hissal/hskills/issues/425)) ([080dbb6](https://github.com/Hissal/hskills/commit/080dbb601cb199f9f1cb9065038ff26e746ca48b))
+* **implement:** review small diffs and report skipped process calls ([d4360ac](https://github.com/Hissal/hskills/commit/d4360ac058a97df7ffeca30cb50a08051c145913))
+* **pr:** give each closing issue its own keyword and read links back ([#429](https://github.com/Hissal/hskills/issues/429)) ([d7682ea](https://github.com/Hissal/hskills/commit/d7682ea7f0e2f51f74c9bc759743df6ca918db04))
+
 ## [0.1.1](https://github.com/Hissal/hskills/compare/v0.1.0...v0.1.1) (2026-11-14)
 
 

@@ -57,7 +57,8 @@
       "skills/packs/experimental/arena",
       "skills/packs/experimental/council",
       "skills/packs/experimental/experimental-guide",
-      "skills/packs/experimental/loop-me"
+      "skills/packs/experimental/loop-me",
+      "skills/packs/experimental/prune-landed"
     ],
     "onboarding": [
       "skills/packs/onboarding/onboarding-guide"

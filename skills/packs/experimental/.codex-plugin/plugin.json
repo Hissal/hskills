@@ -6,6 +6,7 @@
     "./arena",
     "./council",
     "./experimental-guide",
-    "./loop-me"
+    "./loop-me",
+    "./prune-landed"
   ]
 }
